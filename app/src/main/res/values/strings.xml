@@ -58,4 +58,5 @@
     <string name="team">Team</string>
     <string name="rrr_at_start">RRR at start: %s</string>
     <string name="required_runs_balls_at_end">Required at the end\n%s</string>
+    <string name="google_login">Google Login</string>
 </resources>

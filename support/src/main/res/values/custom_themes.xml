@@ -68,6 +68,9 @@
         <item name="textInputStyle">@style/TextInputLayoutStyle</item>
     </style>
 
+    <style name="AppTheme.Merged.Login">
+        <item name="android:windowBackground">@drawable/img_splash</item>
+    </style>
 
     <style name="SplashTheme" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">?colorPrimary</item>
@@ -75,4 +78,6 @@
         <item name="postSplashScreenTheme">@style/AppTheme.Merged</item>
         <item name="android:windowSplashScreenBehavior" tools:targetApi="33">icon_preferred</item>
     </style>
+
+
 </resources>

@@ -8,8 +8,10 @@ import androidx.credentials.GetCredentialResponse
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.core.CoreApp
+import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
 
 /**
  * Utility class to facilitate Google Sign-In using Credential Manager.
@@ -27,7 +29,7 @@ class GoogleSignInUtil(private val activity: Activity) {
 
         // Configure Google ID option for authorized accounts
         val googleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(true)
+            .setFilterByAuthorizedAccounts(false)
             .setServerClientId(serverClientId)
             .setAutoSelectEnabled(true)
             .build()
@@ -90,17 +92,22 @@ class GoogleSignInUtil(private val activity: Activity) {
                         onSuccess(idToken)
                     } catch (e: GoogleIdTokenParsingException) {
                         // Invoke the failure callback with the parsing exception
+                        AppLog.loge(false, kotlinFileName, "handleSignInSuccess", e, Exception())
                         onFailure(e)
                     }
                 } else {
                     // Invoke the failure callback with an unexpected credential type exception
-                    onFailure(Exception("Unexpected type of credential"))
+                    val e = Exception("Unexpected type of credential")
+                    AppLog.loge(false, kotlinFileName, "handleSignInSuccess", e, Exception())
+                    onFailure(e)
                 }
             }
 
             else -> {
                 // Invoke the failure callback with an unexpected credential type exception
-                onFailure(Exception("Unexpected type of credential"))
+                val e = Exception("Unexpected type of credential")
+                AppLog.loge(false, kotlinFileName, "handleSignInSuccess", e, Exception())
+                onFailure(e)
             }
         }
     }

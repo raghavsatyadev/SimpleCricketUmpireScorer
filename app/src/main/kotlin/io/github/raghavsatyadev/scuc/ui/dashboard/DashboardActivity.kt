@@ -8,14 +8,18 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import io.github.raghavsatyadev.scuc.databinding.ActivityDashboardBinding
 import io.github.raghavsatyadev.scuc.ui.create_match.CreateMatchActivity
+import io.github.raghavsatyadev.scuc.ui.login.LoginActivity
 import io.github.raghavsatyadev.scuc.ui.match_complete.MatchCompleteActivity
 import io.github.raghavsatyadev.scuc.ui.match_record.MatchRecordActivity
 import io.github.raghavsatyadev.support.core.CoreActivity
+import io.github.raghavsatyadev.support.extensions.activity_result.ActivityResultExtensions.registerActivityForResult
+import io.github.raghavsatyadev.support.extensions.activity_result.ResultType
 import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.loadAds
 import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.showInterstitialAd
 import io.github.raghavsatyadev.support.list.CustomClickListener
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.isMatchCompleted
 import io.github.raghavsatyadev.support.models.essential.Resource
+import io.github.raghavsatyadev.support.sign_in.FirebaseAuthUtil
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,6 +35,14 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
         ): Intent = Intent(context, DashboardActivity::class.java).apply { putExtras(bundle) }
     }
 
+    val launcher = registerActivityForResult { resultType, data ->
+        if (resultType == ResultType.OK) {
+            loadUI()
+        } else {
+            finishAffinity()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -44,7 +56,18 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
 
     private fun setupUI() {
         binding.listMatchRecords.adapter = adapter
-        loadUI()
+
+        lifecycleScope.launch {
+            if (FirebaseAuthUtil.instance!!.isLoggedIn()) {
+                loadUI()
+            } else {
+                openLoginActivity()
+            }
+        }
+    }
+
+    private fun openLoginActivity() {
+        launcher.launch(LoginActivity.getIntentObject(this))
     }
 
     private fun loadUI() {

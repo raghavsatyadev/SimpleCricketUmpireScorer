@@ -20,18 +20,14 @@ import kotlinx.coroutines.tasks.await
 class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp) {
     companion object {
         @Volatile
-        private var instance: FirebaseAuthUtil? = null
+        var instance: FirebaseAuthUtil? = null
+            @Synchronized
+            get() = field
+                ?: throw IllegalStateException("Initialize in Application class using create()")
 
-        @Throws(IllegalStateException::class)
         @Synchronized
-        fun getInstance(firebaseApp: FirebaseApp? = null): FirebaseAuthUtil {
-            return if (instance != null) {
-                instance!!
-            } else if (firebaseApp != null) {
-                FirebaseAuthUtil(firebaseApp).also { instance = it }
-            } else {
-                throw IllegalStateException("FirebaseApp is null")
-            }
+        fun create(firebaseApp: FirebaseApp) {
+            FirebaseAuthUtil(firebaseApp).also { instance = it }
         }
     }
 
@@ -50,6 +46,10 @@ class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp)
                 userID = it.uid
             )
         }
+
+    fun isLoggedIn(): Boolean {
+        return auth.currentUser != null
+    }
 
     /** Reloads the currently signed-in user's data. */
     fun reloadAuthCurrentUser() {
@@ -85,7 +85,9 @@ class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp)
                 AppPrefsUtil.saveUserDetails(user)
                 user to null
             } else {
-                null to CustomError(ErrorCode.AUTH_FAILED, Exception("Firebase user is null"))
+                val e = Exception("Firebase user is null")
+                AppLog.loge(false, kotlinFileName, "signInWithGoogle", e, Exception())
+                null to CustomError(ErrorCode.AUTH_FAILED, e)
             }
         } catch (e: Exception) {
             AppLog.loge(false, kotlinFileName, "signInWithGoogle", e, Exception())

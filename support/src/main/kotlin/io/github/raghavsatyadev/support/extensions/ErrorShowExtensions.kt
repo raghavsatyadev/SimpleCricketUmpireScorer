@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import androidx.activity.ComponentActivity
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -39,14 +40,14 @@ object ErrorShowExtensions {
     // region Error Dialog
     fun Fragment.errorDialog(
         message: String,
-    ) {
-        requireContext().errorDialogPrivate(message)
+    ): AlertDialog? {
+        return requireContext().errorDialogPrivate(message)
     }
 
     private fun Context.errorDialogPrivate(
         message: String,
-    ) {
-        MaterialAlertDialogBuilder(this).setTitle(R.string.error).setMessage(message)
+    ): AlertDialog? {
+        return MaterialAlertDialogBuilder(this).setTitle(R.string.error).setMessage(message)
             .setNegativeButton(
                 R.string.okay
             ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }.show()
@@ -55,21 +56,21 @@ object ErrorShowExtensions {
     fun Fragment.errorDialog(
         @StringRes
         message: Int,
-    ) {
-        requireContext().errorDialogPrivate(getString(message))
+    ): AlertDialog? {
+        return requireContext().errorDialogPrivate(getString(message))
     }
 
     fun ComponentActivity.errorDialog(
         message: String,
-    ) {
-        errorDialogPrivate(message)
+    ): AlertDialog? {
+        return errorDialogPrivate(message)
     }
 
     fun ComponentActivity.errorDialog(
         @StringRes
         message: Int,
-    ) {
-        errorDialogPrivate(getString(message))
+    ): AlertDialog? {
+        return errorDialogPrivate(getString(message))
     }
     // endregion
 }

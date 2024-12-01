@@ -49,6 +49,12 @@
             android:windowSoftInputMode="adjustPan"
             />
         <activity
+            android:name=".ui.login.LoginActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:theme="@style/AppTheme.Merged.Login"
+            android:windowSoftInputMode="adjustPan"
+            />
+        <activity
             android:name=".ui.create_match.CreateMatchActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:windowSoftInputMode="adjustPan"
