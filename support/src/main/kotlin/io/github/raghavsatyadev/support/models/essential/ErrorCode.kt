@@ -10,6 +10,7 @@ enum class ErrorCode(
     val warning: Int?,
 ) {
     UNKNOWN_ERROR(null),
+    AUTH_FAILED(null),
 }
 
 fun CustomError.handleError(activity: ComponentActivity) {

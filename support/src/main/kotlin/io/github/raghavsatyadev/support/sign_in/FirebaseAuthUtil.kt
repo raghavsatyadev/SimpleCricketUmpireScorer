@@ -1,0 +1,100 @@
+package io.github.raghavsatyadev.support.sign_in
+
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import io.github.raghavsatyadev.support.AppLog
+import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
+import io.github.raghavsatyadev.support.models.User
+import io.github.raghavsatyadev.support.models.essential.CustomError
+import io.github.raghavsatyadev.support.models.essential.ErrorCode
+import io.github.raghavsatyadev.support.preferences.AppPrefsUtil
+import kotlinx.coroutines.tasks.await
+
+/**
+ * Utility class to handle Firebase Authentication operations with Google
+ * Sign-In.
+ */
+class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp) {
+    companion object {
+        @Volatile
+        private var instance: FirebaseAuthUtil? = null
+
+        @Throws(IllegalStateException::class)
+        @Synchronized
+        fun getInstance(firebaseApp: FirebaseApp? = null): FirebaseAuthUtil {
+            return if (instance != null) {
+                instance!!
+            } else if (firebaseApp != null) {
+                FirebaseAuthUtil(firebaseApp).also { instance = it }
+            } else {
+                throw IllegalStateException("FirebaseApp is null")
+            }
+        }
+    }
+
+    private val auth: FirebaseAuth by lazy { Firebase.auth(firebaseApp) }
+
+    /**
+     * Retrieves the currently signed-in user, if any.
+     *
+     * @return The currently signed-in [User], or null if no user is signed in.
+     */
+    val currentUser: User?
+        get() = auth.currentUser?.let {
+            User(
+                name = it.displayName ?: "",
+                email = it.email ?: "",
+                userID = it.uid
+            )
+        }
+
+    /** Reloads the currently signed-in user's data. */
+    fun reloadAuthCurrentUser() {
+        auth.currentUser?.reload()
+    }
+
+    /**
+     * Retrieves the unique identifier of the currently signed-in user.
+     *
+     * @return The user ID, or null if no user is signed in.
+     */
+    val currentUserId: String?
+        get() = auth.currentUser?.uid
+
+    /**
+     * Signs in a user using the provided Google ID token.
+     *
+     * @param idToken The Google ID token obtained from the sign-in process.
+     * @return A [Pair] containing the signed-in [User] and a [CustomError] if
+     *    any occurred.
+     */
+    suspend fun signInWithGoogle(idToken: String): Pair<User?, CustomError?> {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        return try {
+            val authResult = auth.signInWithCredential(credential).await()
+            val firebaseUser = authResult.user
+            if (firebaseUser != null) {
+                val user = User(
+                    name = firebaseUser.displayName ?: "",
+                    email = firebaseUser.email ?: "",
+                    userID = firebaseUser.uid
+                )
+                AppPrefsUtil.saveUserDetails(user)
+                user to null
+            } else {
+                null to CustomError(ErrorCode.AUTH_FAILED, Exception("Firebase user is null"))
+            }
+        } catch (e: Exception) {
+            AppLog.loge(false, kotlinFileName, "signInWithGoogle", e, Exception())
+            null to CustomError(ErrorCode.AUTH_FAILED, e)
+        }
+    }
+
+    /** Signs out the currently signed-in user. */
+    fun signOut() {
+        auth.signOut()
+    }
+}

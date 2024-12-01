@@ -292,9 +292,9 @@ dependencies {
     implementation(libs.bundles.ktor)
 
     // Room
-    implementation(libs.androidx.room)
-    implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.compiler)
+    implementation(libs.room)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
 
     // WorkManager
     implementation(libs.androidx.work.runtime)

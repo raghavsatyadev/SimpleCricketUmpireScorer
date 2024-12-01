@@ -3,6 +3,7 @@ package io.github.raghavsatyadev.support.preferences
 import io.github.raghavsatyadev.support.core.CoreApp
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toJsonString
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toKotlinObject
+import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.preferences.AppPrefsExtensions.deleteAllPrefs
 import io.github.raghavsatyadev.support.preferences.AppPrefsExtensions.getPrefs
 import io.github.raghavsatyadev.support.preferences.AppPrefsExtensions.savePref
@@ -43,8 +44,23 @@ object AppPrefsUtil {
         return CoreApp.instance.getPrefs(NOTIFICATION_ENABLED, true)
     }
 
+    suspend fun saveUserDetails(user: User) {
+        CoreApp.instance.savePref(CustomKeys.USER, user.toJsonString())
+    }
 
-    object Keys
+    fun getUserDetails(): Flow<User?> {
+        return CoreApp.instance.getPrefs(CustomKeys.USER, "").map {
+            if (it.isEmpty()) {
+                null
+            } else {
+                it.toKotlinObject<User>()
+            }
+        }
+    }
+
+    object CustomKeys {
+        const val USER = "user"
+    }
 
     object FCM {
         const val TOKEN = "token"

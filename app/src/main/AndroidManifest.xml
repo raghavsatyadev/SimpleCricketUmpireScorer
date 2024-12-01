@@ -25,19 +25,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:testOnly="false"
-        android:theme="@style/AppTheme.Merged.ButtonRounded"
+        android:theme="@style/AppTheme.Merged"
         tools:replace="android:allowBackup,android:supportsRtl"
         tools:targetApi="tiramisu"
         >
-
         <activity
-            android:name=".ui.other.SplashActivity"
+            android:name=".ui.dashboard.DashboardActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:exported="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppThemeDay.Entry"
+            android:theme="@style/SplashTheme"
             android:windowSoftInputMode="adjustPan"
-            tools:ignore="DiscouragedApi,LockedOrientationActivity"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,11 +43,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.dashboard.DashboardActivity"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-            android:windowSoftInputMode="adjustPan"
-            />
         <activity
             android:name=".ui.match_record.MatchRecordActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"

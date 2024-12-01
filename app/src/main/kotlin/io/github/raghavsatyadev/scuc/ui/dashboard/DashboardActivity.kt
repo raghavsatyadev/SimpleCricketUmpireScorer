@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import io.github.raghavsatyadev.scuc.databinding.ActivityDashboardBinding
 import io.github.raghavsatyadev.scuc.ui.create_match.CreateMatchActivity
@@ -28,6 +29,11 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
             context: Context,
             bundle: Bundle = Bundle.EMPTY,
         ): Intent = Intent(context, DashboardActivity::class.java).apply { putExtras(bundle) }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
+        super.onCreate(savedInstanceState)
     }
 
     override fun createReference(savedInstanceState: Bundle?) {

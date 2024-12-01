@@ -25,38 +25,38 @@ versionName = "0.0.1"
 
 # Plugin Versions
 agp = "8.9.0-alpha03"
-kotlin = "2.1.0-RC2"
-com-google-devtools-ksp = "2.1.0-RC2-1.0.28"
+kotlin = "2.1.0"
+com-google-devtools-ksp = "2.1.0-1.0.29"
 com-google-gms = "4.4.2"
 
 # Library Versions
-activity-ktx = "1.10.0-beta01"
-androidx-core-ktx = "1.15.0"
+activity = "1.10.0-beta01"
+androidx-core = "1.15.0"
 androidx-junit = "1.2.1"
-androidx-navigation = "2.9.0-alpha03"
 androidx-test-core-ktx = "1.6.1"
 appcompat = "1.7.0"
 coil = "3.0.4"
-credentials = "1.5.0-beta01"
-google-id = "1.1.1"
 collection-ktx = "1.5.0-alpha06"
-com-google-firebase = "3.0.2"
 constraintlayout = "2.2.0"
 coroutines = "1.9.0"
-datastore-preferences = "1.1.1"
+credentials = "1.5.0-beta01"
+datastore = "1.1.1"
 desugar-jdk-libs = "2.1.3"
 firebase-analytics-ktx = "22.1.2"
-firebase-crashlytics-ktx = "19.2.1"
-firebase-messaging-ktx = "24.1.0"
 firebase-auth = "23.1.0"
+firebase-crashlytics-ktx = "19.2.1"
+firebase-gradle = "3.0.2"
+firebase-messaging-ktx = "24.1.0"
 fragment-ktx = "1.8.5"
+google-id = "1.1.1"
 junit = "4.13.2"
 junit-jupiter = "5.11.3"
 ktor = "3.0.1"
-lifecycle-runtime-ktx = "2.9.0-alpha07"
+lifecycle = "2.9.0-alpha07"
 lottie = "6.6.0"
 material = "1.13.0-alpha08"
 multidex = "2.0.1"
+navigation = "2.9.0-alpha03"
 org-sonarqube = "5.0.0.4638"
 permissionx = "1.8.1"
 play-services-ads = "23.5.0"
@@ -66,50 +66,52 @@ room = "2.7.0-alpha11"
 rules = "1.6.1"
 runner = "1.6.2"
 serialization = "1.7.3"
+splashscreen = "1.2.0-alpha02"
 swiperefreshlayout = "1.2.0-alpha01"
 work-runtime-ktx = "2.10.0"
 
 [libraries]
 # Classpaths
-androidx-navigation = { group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version.ref = "androidx-navigation" }
-com-google-firebase = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "com-google-firebase" }
+androidx-navigation = { group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version.ref = "navigation" }
+com-google-firebase = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebase-gradle" }
 
 # Android
-androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "activity-ktx" }
+androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-collection = { module = "androidx.collection:collection-ktx", version.ref = "collection-ktx" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
-androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
+androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
-androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore-preferences" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment-ktx" }
 androidx-play-credentials = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 material = { module = "com.google.android.material:material", version.ref = "material" }
 
 #Kotlin
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
 #Lifecycle
-androidx-lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle-runtime-ktx" }
-androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle-runtime-ktx" }
-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
+lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
+lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 
 #Navigation
-androidx-navigation-fragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "androidx-navigation" }
-androidx-navigation-runtime = { module = "androidx.navigation:navigation-runtime-ktx", version.ref = "androidx-navigation" }
-androidx-navigation-ui = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "androidx-navigation" }
+navigation-fragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
+navigation-runtime = { module = "androidx.navigation:navigation-runtime-ktx", version.ref = "navigation" }
+navigation-ui = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
 
 #Firebase
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebase-analytics-ktx" }
+firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebase-auth" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "firebase-crashlytics-ktx" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx", version.ref = "firebase-messaging-ktx" }
-firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebase-auth" }
 
 #Google
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "play-services-auth" }
@@ -117,18 +119,18 @@ play-services-ads = { module = "com.google.android.gms:play-services-ads", versi
 google-id = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "google-id" }
 
 #Ktor
-ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
-ktor-client-serialization-jvm = { module = "io.ktor:ktor-client-serialization-jvm", version.ref = "ktor" }
-ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-serialization-jvm = { module = "io.ktor:ktor-client-serialization-jvm", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 #Room
-androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-androidx-room = { module = "androidx.room:room-ktx", version.ref = "room" }
-androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 
 #WorkManager
 androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime-ktx" }
@@ -146,11 +148,11 @@ androidx-multidex = { module = "androidx.multidex:multidex", version.ref = "mult
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar-jdk-libs" }
 
 #Tests
-androidx-test-core = { module = "androidx.test:core-ktx", version.ref = "androidx-test-core-ktx" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-junit" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
+androidx-test-core = { module = "androidx.test:core-ktx", version.ref = "androidx-test-core-ktx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
 
@@ -161,8 +163,8 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 google-gms = { id = "com.google.gms.google-services", version.ref = "com-google-gms" }
 
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "com-google-devtools-ksp" }
 
 org-sonarqube = { id = "org.sonarqube", version.ref = "org-sonarqube" }
@@ -171,56 +173,57 @@ room = { id = "androidx.room", version.ref = "room" }
 [bundles]
 kotlin = [
     "kotlin-stdlib-jdk8",
-    "kotlinx-coroutines-core",
     "kotlinx-coroutines-android",
+    "kotlinx-coroutines-core",
     "kotlinx-serialization-json",
 ]
 androidx = [
-    "androidx-core",
-    "androidx-collection",
-    "androidx-appcompat",
-    "androidx-datastore-preferences",
-    "androidx-recyclerview",
-    "androidx-swiperefreshlayout",
-    "androidx-constraintlayout",
     "androidx-activity",
+    "androidx-appcompat",
+    "androidx-collection",
+    "androidx-constraintlayout",
+    "androidx-core",
+    "androidx-credentials",
+    "androidx-datastore-preferences",
     "androidx-fragment",
     "androidx-play-credentials",
-    "androidx-credentials",
+    "androidx-recyclerview",
+    "androidx-splashscreen",
+    "androidx-swiperefreshlayout",
     "material",
 ]
 lifecycle = [
-    "androidx-lifecycle-common-java8",
-    "androidx-lifecycle-viewmodel",
+    "lifecycle-common-java8",
     "lifecycle-runtime",
+    "lifecycle-viewmodel",
 ]
 navigation = [
-    "androidx-navigation-ui",
-    "androidx-navigation-fragment",
-    "androidx-navigation-runtime",
+    "navigation-fragment",
+    "navigation-runtime",
+    "navigation-ui",
 ]
 coil = [
     "coil",
     "coil-network-ktor3",
 ]
 firebase = [
-    "firebase-auth",
     "firebase-analytics",
+    "firebase-auth",
     "firebase-crashlytics",
     "firebase-messaging",
 ]
 google = [
-    "play-services-auth",
-    "play-services-ads",
     "google-id",
+    "play-services-ads",
+    "play-services-auth",
 ]
 ktor = [
-    "ktor-client-core",
-    "ktor-client-okhttp",
     "ktor-client-android",
-    "ktor-client-serialization-jvm",
-    "ktor-client-logging",
     "ktor-client-content-negotiation",
+    "ktor-client-core",
+    "ktor-client-logging",
+    "ktor-client-okhttp",
+    "ktor-client-serialization-jvm",
     "ktor-serialization-kotlinx-json",
 ]
 other = [
@@ -228,18 +231,18 @@ other = [
     "lottie",
 ]
 test = [
-    "junit",
-    "androidx-test-core",
-    "androidx-runner",
-    "androidx-rules",
-    "androidx-room-testing",
     "androidx-junit",
+    "androidx-room-testing",
+    "androidx-rules",
+    "androidx-runner",
+    "androidx-test-core",
+    "junit",
     "junit-jupiter"
 ]
 androidTest = [
-    "androidx-test-core",
-    "androidx-runner",
-    "androidx-rules",
-    "androidx-room-testing",
     "androidx-junit",
+    "androidx-room-testing",
+    "androidx-rules",
+    "androidx-runner",
+    "androidx-test-core",
 ]

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppThemeDay" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/md_theme_primary_light</item>
@@ -68,13 +68,11 @@
         <item name="textInputStyle">@style/TextInputLayoutStyle</item>
     </style>
 
-    <style name="AppTheme.Merged.ButtonRounded">
-    </style>
 
-    <style name="AppThemeDay.Entry">
-        <item name="android:windowBackground">@drawable/img_splash</item>
-        <item name="materialButtonStyle">@style/ButtonEntry</item>
-        <item name="textInputStyle">@style/TextInputLayoutStyle</item>
+    <style name="SplashTheme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">?colorPrimary</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.Merged</item>
+        <item name="android:windowSplashScreenBehavior" tools:targetApi="33">icon_preferred</item>
     </style>
-
 </resources>

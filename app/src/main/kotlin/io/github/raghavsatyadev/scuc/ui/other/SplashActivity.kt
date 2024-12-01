@@ -1,6 +1,5 @@
 package io.github.raghavsatyadev.scuc.ui.other
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,7 +11,6 @@ import io.github.raghavsatyadev.support.extensions.OrientationExtensions.enableF
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@SuppressLint("CustomSplashScreen")
 class SplashActivity : CoreActivity<ActivitySplashBinding>() {
     private var isStopped = false
 

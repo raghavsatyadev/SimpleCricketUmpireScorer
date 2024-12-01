@@ -48,14 +48,11 @@ android {
 
         ndk { abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a")) }
 
-        props.getProperty("admob_app_id")?.let {
-            resValue("string", "admob_app_id", it)
-        }
-        props.getProperty("admob_banner_ad_unit_id")?.let {
-            resValue("string", "admob_banner_ad_unit_id", it)
-        }
-        props.getProperty("admob_interstitial_ad_unit_id")?.let {
-            resValue("string", "admob_interstitial_ad_unit_id", it)
+        props.entries.forEach { (key, value) ->
+            val keyString = key.toString()
+            if (keyString.startsWith("res_")) {
+                resValue("string", keyString.replace("res_", ""), value.toString())
+            }
         }
     }
     signingConfigs {
@@ -164,9 +161,9 @@ dependencies {
     implementation(libs.bundles.ktor)
 
     // Room
-    implementation(libs.androidx.room)
-    implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.compiler)
+    implementation(libs.room)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
 
     // WorkManager
     implementation(libs.androidx.work.runtime)
