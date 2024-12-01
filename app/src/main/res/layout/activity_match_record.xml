@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.match_record.MatchRecordActivity"
+    >
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/tool_bar"
+        />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:padding="15dp"
+        app:layout_constraintBottom_toTopOf="@id/ad_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_end_inning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/end_inning"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/txt_required_runs_balls"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_end_match"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/end_match"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/txt_required_runs_balls"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/group_required_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="txt_required_runs_balls,space_rr,txt_rrr,btn_end_match"
+                tools:visibility="visible"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txt_required_runs_balls"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                app:layout_constraintBottom_toTopOf="@id/space_rr"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="Required\n67 (18)"
+                />
+
+            <View
+                android:id="@+id/space_rr"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginBottom="10dp"
+                android:alpha="0.5"
+                android:background="?colorAccent"
+                app:layout_constraintBottom_toTopOf="@id/txt_crr"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txt_crr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                app:layout_constraintBottom_toTopOf="@id/space_runs_wickets"
+                app:layout_constraintEnd_toStartOf="@+id/txt_rrr"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="CRR: 6.7"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txt_rrr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                app:layout_constraintBottom_toTopOf="@id/space_runs_wickets"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/txt_crr"
+                tools:text="RRR: 6.7"
+                />
+
+            <View
+                android:id="@+id/space_runs_wickets"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginBottom="10dp"
+                android:alpha="0.5"
+                android:background="?colorAccent"
+                app:layout_constraintBottom_toTopOf="@id/txt_runs_wickets"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txt_runs_wickets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/txt_overs"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="500-5"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txt_overs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+                app:layout_constraintBottom_toTopOf="@id/btn_minus_wicket"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="50.5 / 60"
+                />
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/btn_minus_wicket"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="10dp"
+                android:contentDescription="@string/minus_wicket"
+                app:backgroundTint="?colorPrimary"
+                app:collapsedSize="50dp"
+                app:icon="@drawable/ic_minus"
+                app:iconSize="25dp"
+                app:iconTint="?colorSurfaceVariant"
+                app:layout_constraintBottom_toTopOf="@id/space_minus_top"
+                app:layout_constraintDimensionRatio="h,1:1"
+                app:layout_constraintEnd_toEndOf="@id/btn_add_ball"
+                app:layout_constraintStart_toStartOf="@id/btn_add_ball"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wickets"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                app:layout_constraintBottom_toBottomOf="@id/btn_minus_wicket"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/btn_minus_wicket"
+                />
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/btn_add_wicket"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="10dp"
+                android:contentDescription="@string/add_wicket"
+                app:backgroundTint="?colorPrimary"
+                app:collapsedSize="50dp"
+                app:icon="@drawable/ic_add"
+                app:iconSize="25dp"
+                app:iconTint="?colorSurfaceVariant"
+                app:layout_constraintBottom_toTopOf="@id/space_minus_top"
+                app:layout_constraintDimensionRatio="h,1:1"
+                app:layout_constraintEnd_toEndOf="@id/btn_add_run"
+                app:layout_constraintStart_toStartOf="@id/btn_add_run"
+                />
+
+            <View
+                android:id="@+id/space_minus_top"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginBottom="10dp"
+                android:alpha="0.5"
+                android:background="?colorAccent"
+                app:layout_constraintBottom_toTopOf="@id/btn_minus_ball"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/btn_minus_ball"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="10dp"
+                android:contentDescription="@string/minus_ball"
+                app:backgroundTint="?colorPrimary"
+                app:collapsedSize="50dp"
+                app:icon="@drawable/ic_minus"
+                app:iconSize="25dp"
+                app:iconTint="?colorSurfaceVariant"
+                app:layout_constraintBottom_toTopOf="@id/label_overs"
+                app:layout_constraintDimensionRatio="h,1:1"
+                app:layout_constraintEnd_toEndOf="@id/btn_add_ball"
+                app:layout_constraintStart_toStartOf="@id/btn_add_ball"
+                />
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/btn_minus_run"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="10dp"
+                android:contentDescription="@string/minus_run"
+                app:backgroundTint="?colorPrimary"
+                app:collapsedSize="50dp"
+                app:icon="@drawable/ic_minus"
+                app:iconSize="25dp"
+                app:iconTint="?colorSurfaceVariant"
+                app:layout_constraintBottom_toTopOf="@id/label_runs"
+                app:layout_constraintDimensionRatio="h,1:1"
+                app:layout_constraintEnd_toEndOf="@id/btn_add_run"
+                app:layout_constraintStart_toStartOf="@id/btn_add_run"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/label_overs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/overs"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                app:layout_constraintBottom_toTopOf="@id/guideline_add_buttons"
+                app:layout_constraintEnd_toEndOf="@id/btn_add_ball"
+                app:layout_constraintStart_toStartOf="@id/btn_add_ball"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/label_runs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/runs"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                app:layout_constraintBottom_toTopOf="@id/guideline_add_buttons"
+                app:layout_constraintEnd_toEndOf="@id/btn_add_run"
+                app:layout_constraintStart_toStartOf="@id/btn_add_run"
+                />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_add_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent=".80"
+                />
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/btn_add_ball"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@string/add_ball"
+                app:backgroundTint="?colorPrimary"
+                app:chainUseRtl="true"
+                app:collapsedSize="100dp"
+                app:icon="@drawable/ic_add"
+                app:iconSize="50dp"
+                app:iconTint="?colorSurfaceVariant"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="h,1:1"
+                app:layout_constraintEnd_toStartOf="@+id/btn_add_run"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/guideline_add_buttons"
+                />
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/btn_add_run"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@string/add_run"
+                app:backgroundTint="?colorPrimary"
+                app:collapsedSize="100dp"
+                app:icon="@drawable/ic_add"
+                app:iconSize="50dp"
+                app:iconTint="?colorSurfaceVariant"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="h,1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btn_add_ball"
+                app:layout_constraintTop_toBottomOf="@id/guideline_add_buttons"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/ad_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <include
+        android:id="@+id/loader"
+        layout="@layout/loader"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

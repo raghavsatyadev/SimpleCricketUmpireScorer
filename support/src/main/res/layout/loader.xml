@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/box_progress_bar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_alpha_20"
+    android:gravity="center"
+    android:translationZ="50dp"
+    android:visibility="gone"
+    tools:visibility="gone"
+    >
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progress_bar"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/round_gray"
+        android:indeterminate="true"
+        android:padding="10dp"
+        android:progressBackgroundTint="?colorSecondary"
+        app:hideAnimationBehavior="outward"
+        app:indicatorColor="?colorPrimary"
+        app:indicatorDirectionCircular="clockwise"
+        app:showAnimationBehavior="inward"
+        />
+</RelativeLayout>

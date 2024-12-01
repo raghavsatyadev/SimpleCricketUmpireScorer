@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="md_theme_primary">@color/md_theme_primary_light</color>
+    <color name="md_theme_onPrimary">@color/md_theme_onPrimary_light</color>
+    <color name="md_theme_primaryContainer">@color/md_theme_primaryContainer_light</color>
+    <color name="md_theme_onPrimaryContainer">@color/md_theme_onPrimaryContainer_light</color>
+    <color name="md_theme_secondary">@color/md_theme_secondary_light</color>
+    <color name="md_theme_onSecondary">@color/md_theme_onSecondary_light</color>
+    <color name="md_theme_secondaryContainer">@color/md_theme_secondaryContainer_light</color>
+    <color name="md_theme_onSecondaryContainer">@color/md_theme_onSecondaryContainer_light</color>
+    <color name="md_theme_tertiary">@color/md_theme_tertiary_light</color>
+    <color name="md_theme_onTertiary">@color/md_theme_onTertiary_light</color>
+    <color name="md_theme_tertiaryContainer">@color/md_theme_tertiaryContainer_light</color>
+    <color name="md_theme_onTertiaryContainer">@color/md_theme_onTertiaryContainer_light</color>
+    <color name="md_theme_error">@color/md_theme_error_light</color>
+    <color name="md_theme_onError">@color/md_theme_onError_light</color>
+    <color name="md_theme_errorContainer">@color/md_theme_errorContainer_light</color>
+    <color name="md_theme_onErrorContainer">@color/md_theme_onErrorContainer_light</color>
+    <color name="md_theme_background">@color/md_theme_background_light</color>
+    <color name="md_theme_onBackground">@color/md_theme_onBackground_light</color>
+    <color name="md_theme_surface">@color/md_theme_surface_light</color>
+    <color name="md_theme_onSurface">@color/md_theme_onSurface_light</color>
+    <color name="md_theme_surfaceVariant">@color/md_theme_surfaceVariant_light</color>
+    <color name="md_theme_onSurfaceVariant">@color/md_theme_onSurfaceVariant_light</color>
+    <color name="md_theme_outline">@color/md_theme_outline_light</color>
+    <color name="md_theme_outlineVariant">@color/md_theme_outlineVariant_light</color>
+    <color name="md_theme_scrim">@color/md_theme_scrim_light</color>
+    <color name="md_theme_inverseSurface">@color/md_theme_inverseSurface_light</color>
+    <color name="md_theme_inverseOnSurface">@color/md_theme_inverseOnSurface_light</color>
+    <color name="md_theme_inversePrimary">@color/md_theme_inversePrimary_light</color>
+    <color name="md_theme_primaryFixed">@color/md_theme_primaryFixed_light</color>
+    <color name="md_theme_onPrimaryFixed">@color/md_theme_onPrimaryFixed_light</color>
+    <color name="md_theme_primaryFixedDim">@color/md_theme_primaryFixedDim_light</color>
+    <color name="md_theme_onPrimaryFixedVariant">@color/md_theme_onPrimaryFixedVariant_light</color>
+    <color name="md_theme_secondaryFixed">@color/md_theme_secondaryFixed_light</color>
+    <color name="md_theme_onSecondaryFixed">@color/md_theme_onSecondaryFixed_light</color>
+    <color name="md_theme_secondaryFixedDim">@color/md_theme_secondaryFixedDim_light</color>
+    <color name="md_theme_onSecondaryFixedVariant">@color/md_theme_onSecondaryFixedVariant_light
+    </color>
+    <color name="md_theme_tertiaryFixed">@color/md_theme_tertiaryFixed_light</color>
+    <color name="md_theme_onTertiaryFixed">@color/md_theme_onTertiaryFixed_light</color>
+    <color name="md_theme_tertiaryFixedDim">@color/md_theme_tertiaryFixedDim_light</color>
+    <color name="md_theme_onTertiaryFixedVariant">@color/md_theme_onTertiaryFixedVariant_light
+    </color>
+    <color name="md_theme_surfaceDim">@color/md_theme_surfaceDim_light</color>
+    <color name="md_theme_surfaceBright">@color/md_theme_surfaceBright_light</color>
+    <color name="md_theme_surfaceContainerLowest">@color/md_theme_surfaceContainerLowest_light
+    </color>
+    <color name="md_theme_surfaceContainerLow">@color/md_theme_surfaceContainerLow_light</color>
+    <color name="md_theme_surfaceContainer">@color/md_theme_surfaceContainer_light</color>
+    <color name="md_theme_surfaceContainerHigh">@color/md_theme_surfaceContainerHigh_light</color>
+    <color name="md_theme_surfaceContainerHighest">@color/md_theme_surfaceContainerHighest_light
+    </color>
+    <color name="md_theme_primary_mediumContrast">@color/md_theme_primary_mediumContrast_light
+    </color>
+    <color name="md_theme_onPrimary_mediumContrast">@color/md_theme_onPrimary_mediumContrast_light
+    </color>
+    <color name="md_theme_primaryContainer_mediumContrast">
+        @color/md_theme_primaryContainer_mediumContrast_light
+    </color>
+    <color name="md_theme_onPrimaryContainer_mediumContrast">
+        @color/md_theme_onPrimaryContainer_mediumContrast_light
+    </color>
+    <color name="md_theme_secondary_mediumContrast">@color/md_theme_secondary_mediumContrast_light
+    </color>
+    <color name="md_theme_onSecondary_mediumContrast">
+        @color/md_theme_onSecondary_mediumContrast_light
+    </color>
+    <color name="md_theme_secondaryContainer_mediumContrast">
+        @color/md_theme_secondaryContainer_mediumContrast_light
+    </color>
+    <color name="md_theme_onSecondaryContainer_mediumContrast">
+        @color/md_theme_onSecondaryContainer_mediumContrast_light
+    </color>
+    <color name="md_theme_tertiary_mediumContrast">@color/md_theme_tertiary_mediumContrast_light
+    </color>
+    <color name="md_theme_onTertiary_mediumContrast">
+        @color/md_theme_onTertiary_mediumContrast_light
+    </color>
+    <color name="md_theme_tertiaryContainer_mediumContrast">
+        @color/md_theme_tertiaryContainer_mediumContrast_light
+    </color>
+    <color name="md_theme_onTertiaryContainer_mediumContrast">
+        @color/md_theme_onTertiaryContainer_mediumContrast_light
+    </color>
+    <color name="md_theme_error_mediumContrast">@color/md_theme_error_mediumContrast_light</color>
+    <color name="md_theme_onError_mediumContrast">@color/md_theme_onError_mediumContrast_light
+    </color>
+    <color name="md_theme_errorContainer_mediumContrast">
+        @color/md_theme_errorContainer_mediumContrast_light
+    </color>
+    <color name="md_theme_onErrorContainer_mediumContrast">
+        @color/md_theme_onErrorContainer_mediumContrast_light
+    </color>
+    <color name="md_theme_background_mediumContrast">
+        @color/md_theme_background_mediumContrast_light
+    </color>
+    <color name="md_theme_onBackground_mediumContrast">
+        @color/md_theme_onBackground_mediumContrast_light
+    </color>
+    <color name="md_theme_surface_mediumContrast">@color/md_theme_surface_mediumContrast_light
+    </color>
+    <color name="md_theme_onSurface_mediumContrast">@color/md_theme_onSurface_mediumContrast_light
+    </color>
+    <color name="md_theme_surfaceVariant_mediumContrast">
+        @color/md_theme_surfaceVariant_mediumContrast_light
+    </color>
+    <color name="md_theme_onSurfaceVariant_mediumContrast">
+        @color/md_theme_onSurfaceVariant_mediumContrast_light
+    </color>
+    <color name="md_theme_outline_mediumContrast">@color/md_theme_outline_mediumContrast_light
+    </color>
+    <color name="md_theme_outlineVariant_mediumContrast">
+        @color/md_theme_outlineVariant_mediumContrast_light
+    </color>
+    <color name="md_theme_scrim_mediumContrast">@color/md_theme_scrim_mediumContrast_light</color>
+    <color name="md_theme_inverseSurface_mediumContrast">
+        @color/md_theme_inverseSurface_mediumContrast_light
+    </color>
+    <color name="md_theme_inverseOnSurface_mediumContrast">
+        @color/md_theme_inverseOnSurface_mediumContrast_light
+    </color>
+    <color name="md_theme_inversePrimary_mediumContrast">
+        @color/md_theme_inversePrimary_mediumContrast_light
+    </color>
+    <color name="md_theme_primaryFixed_mediumContrast">
+        @color/md_theme_primaryFixed_mediumContrast_light
+    </color>
+    <color name="md_theme_onPrimaryFixed_mediumContrast">
+        @color/md_theme_onPrimaryFixed_mediumContrast_light
+    </color>
+    <color name="md_theme_primaryFixedDim_mediumContrast">
+        @color/md_theme_primaryFixedDim_mediumContrast_light
+    </color>
+    <color name="md_theme_onPrimaryFixedVariant_mediumContrast">
+        @color/md_theme_onPrimaryFixedVariant_mediumContrast_light
+    </color>
+    <color name="md_theme_secondaryFixed_mediumContrast">
+        @color/md_theme_secondaryFixed_mediumContrast_light
+    </color>
+    <color name="md_theme_onSecondaryFixed_mediumContrast">
+        @color/md_theme_onSecondaryFixed_mediumContrast_light
+    </color>
+    <color name="md_theme_secondaryFixedDim_mediumContrast">
+        @color/md_theme_secondaryFixedDim_mediumContrast_light
+    </color>
+    <color name="md_theme_onSecondaryFixedVariant_mediumContrast">
+        @color/md_theme_onSecondaryFixedVariant_mediumContrast_light
+    </color>
+    <color name="md_theme_tertiaryFixed_mediumContrast">
+        @color/md_theme_tertiaryFixed_mediumContrast_light
+    </color>
+    <color name="md_theme_onTertiaryFixed_mediumContrast">
+        @color/md_theme_onTertiaryFixed_mediumContrast_light
+    </color>
+    <color name="md_theme_tertiaryFixedDim_mediumContrast">
+        @color/md_theme_tertiaryFixedDim_mediumContrast_light
+    </color>
+    <color name="md_theme_onTertiaryFixedVariant_mediumContrast">
+        @color/md_theme_onTertiaryFixedVariant_mediumContrast_light
+    </color>
+    <color name="md_theme_surfaceDim_mediumContrast">
+        @color/md_theme_surfaceDim_mediumContrast_light
+    </color>
+    <color name="md_theme_surfaceBright_mediumContrast">
+        @color/md_theme_surfaceBright_mediumContrast_light
+    </color>
+    <color name="md_theme_surfaceContainerLowest_mediumContrast">
+        @color/md_theme_surfaceContainerLowest_mediumContrast_light
+    </color>
+    <color name="md_theme_surfaceContainerLow_mediumContrast">
+        @color/md_theme_surfaceContainerLow_mediumContrast_light
+    </color>
+    <color name="md_theme_surfaceContainer_mediumContrast">
+        @color/md_theme_surfaceContainer_mediumContrast_light
+    </color>
+    <color name="md_theme_surfaceContainerHigh_mediumContrast">
+        @color/md_theme_surfaceContainerHigh_mediumContrast_light
+    </color>
+    <color name="md_theme_surfaceContainerHighest_mediumContrast">
+        @color/md_theme_surfaceContainerHighest_mediumContrast_light
+    </color>
+    <color name="md_theme_primary_highContrast">@color/md_theme_primary_highContrast_light</color>
+    <color name="md_theme_onPrimary_highContrast">@color/md_theme_onPrimary_highContrast_light
+    </color>
+    <color name="md_theme_primaryContainer_highContrast">
+        @color/md_theme_primaryContainer_highContrast_light
+    </color>
+    <color name="md_theme_onPrimaryContainer_highContrast">
+        @color/md_theme_onPrimaryContainer_highContrast_light
+    </color>
+    <color name="md_theme_secondary_highContrast">@color/md_theme_secondary_highContrast_light
+    </color>
+    <color name="md_theme_onSecondary_highContrast">@color/md_theme_onSecondary_highContrast_light
+    </color>
+    <color name="md_theme_secondaryContainer_highContrast">
+        @color/md_theme_secondaryContainer_highContrast_light
+    </color>
+    <color name="md_theme_onSecondaryContainer_highContrast">
+        @color/md_theme_onSecondaryContainer_highContrast_light
+    </color>
+    <color name="md_theme_tertiary_highContrast">@color/md_theme_tertiary_highContrast_light</color>
+    <color name="md_theme_onTertiary_highContrast">@color/md_theme_onTertiary_highContrast_light
+    </color>
+    <color name="md_theme_tertiaryContainer_highContrast">
+        @color/md_theme_tertiaryContainer_highContrast_light
+    </color>
+    <color name="md_theme_onTertiaryContainer_highContrast">
+        @color/md_theme_onTertiaryContainer_highContrast_light
+    </color>
+    <color name="md_theme_error_highContrast">@color/md_theme_error_highContrast_light</color>
+    <color name="md_theme_onError_highContrast">@color/md_theme_onError_highContrast_light</color>
+    <color name="md_theme_errorContainer_highContrast">
+        @color/md_theme_errorContainer_highContrast_light
+    </color>
+    <color name="md_theme_onErrorContainer_highContrast">
+        @color/md_theme_onErrorContainer_highContrast_light
+    </color>
+    <color name="md_theme_background_highContrast">@color/md_theme_background_highContrast_light
+    </color>
+    <color name="md_theme_onBackground_highContrast">
+        @color/md_theme_onBackground_highContrast_light
+    </color>
+    <color name="md_theme_surface_highContrast">@color/md_theme_surface_highContrast_light</color>
+    <color name="md_theme_onSurface_highContrast">@color/md_theme_onSurface_highContrast_light
+    </color>
+    <color name="md_theme_surfaceVariant_highContrast">
+        @color/md_theme_surfaceVariant_highContrast_light
+    </color>
+    <color name="md_theme_onSurfaceVariant_highContrast">
+        @color/md_theme_onSurfaceVariant_highContrast_light
+    </color>
+    <color name="md_theme_outline_highContrast">@color/md_theme_outline_highContrast_light</color>
+    <color name="md_theme_outlineVariant_highContrast">
+        @color/md_theme_outlineVariant_highContrast_light
+    </color>
+    <color name="md_theme_scrim_highContrast">@color/md_theme_scrim_highContrast_light</color>
+    <color name="md_theme_inverseSurface_highContrast">
+        @color/md_theme_inverseSurface_highContrast_light
+    </color>
+    <color name="md_theme_inverseOnSurface_highContrast">
+        @color/md_theme_inverseOnSurface_highContrast_light
+    </color>
+    <color name="md_theme_inversePrimary_highContrast">
+        @color/md_theme_inversePrimary_highContrast_light
+    </color>
+    <color name="md_theme_primaryFixed_highContrast">
+        @color/md_theme_primaryFixed_highContrast_light
+    </color>
+    <color name="md_theme_onPrimaryFixed_highContrast">
+        @color/md_theme_onPrimaryFixed_highContrast_light
+    </color>
+    <color name="md_theme_primaryFixedDim_highContrast">
+        @color/md_theme_primaryFixedDim_highContrast_light
+    </color>
+    <color name="md_theme_onPrimaryFixedVariant_highContrast">
+        @color/md_theme_onPrimaryFixedVariant_highContrast_light
+    </color>
+    <color name="md_theme_secondaryFixed_highContrast">
+        @color/md_theme_secondaryFixed_highContrast_light
+    </color>
+    <color name="md_theme_onSecondaryFixed_highContrast">
+        @color/md_theme_onSecondaryFixed_highContrast_light
+    </color>
+    <color name="md_theme_secondaryFixedDim_highContrast">
+        @color/md_theme_secondaryFixedDim_highContrast_light
+    </color>
+    <color name="md_theme_onSecondaryFixedVariant_highContrast">
+        @color/md_theme_onSecondaryFixedVariant_highContrast_light
+    </color>
+    <color name="md_theme_tertiaryFixed_highContrast">
+        @color/md_theme_tertiaryFixed_highContrast_light
+    </color>
+    <color name="md_theme_onTertiaryFixed_highContrast">
+        @color/md_theme_onTertiaryFixed_highContrast_light
+    </color>
+    <color name="md_theme_tertiaryFixedDim_highContrast">
+        @color/md_theme_tertiaryFixedDim_highContrast_light
+    </color>
+    <color name="md_theme_onTertiaryFixedVariant_highContrast">
+        @color/md_theme_onTertiaryFixedVariant_highContrast_light
+    </color>
+    <color name="md_theme_surfaceDim_highContrast">@color/md_theme_surfaceDim_highContrast_light
+    </color>
+    <color name="md_theme_surfaceBright_highContrast">
+        @color/md_theme_surfaceBright_highContrast_light
+    </color>
+    <color name="md_theme_surfaceContainerLowest_highContrast">
+        @color/md_theme_surfaceContainerLowest_highContrast_light
+    </color>
+    <color name="md_theme_surfaceContainerLow_highContrast">
+        @color/md_theme_surfaceContainerLow_highContrast_light
+    </color>
+    <color name="md_theme_surfaceContainer_highContrast">
+        @color/md_theme_surfaceContainer_highContrast_light
+    </color>
+    <color name="md_theme_surfaceContainerHigh_highContrast">
+        @color/md_theme_surfaceContainerHigh_highContrast_light
+    </color>
+    <color name="md_theme_surfaceContainerHighest_highContrast">
+        @color/md_theme_surfaceContainerHighest_highContrast_light
+    </color>
+</resources>

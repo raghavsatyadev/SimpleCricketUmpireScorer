@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Admob -->
+    <string name="admob_test_banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/9214589741</string>
+    <string name="admob_test_interstitial_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/1033173712</string>
+
+    <!--Notification-->
+    <string name="general_notification_channel_id" translatable="false">general</string>
+</resources>

@@ -1,0 +1,23 @@
+<resources>
+    <!--Permission Dialog-->
+    <string name="permission_positive_button">OK</string>
+    <string name="permission_negative_button">Cancel</string>
+    <string name="permission_deny_reason_message">These permissions are required for the application to work
+        successfully
+    </string>
+    <string name="permission_forward_settings_message">You need to allow necessary permissions in Settings manually
+    </string>
+
+    <!--Notification-->
+    <string name="general_notification_channel_name">General</string>
+    <string name="general_notification_channel_description">General Notifications</string>
+    <string name="default_notification_message">You have received a notification</string>
+
+    <!-- Warnings -->
+    <string name="warning_connect_internet">Please connect to internet.</string>
+    <string name="warning_update_play_service">Update Play Service and Restart app</string>
+
+    <!-- General -->
+    <string name="error">Error</string>
+    <string name="okay">Okay</string>
+</resources>

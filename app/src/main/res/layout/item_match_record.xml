@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="10dp"
+    app:contentPadding="10dp"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txt_combined_match_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="DRAW"
+            />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="top"
+            app:constraint_referenced_ids="txt_team_2_match_status,txt_team_1_match_status,txt_team_1_name,txt_team_2_name"
+            />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_match_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="txt_team_1_match_status,txt_team_2_match_status"
+            tools:visibility="visible"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txt_team_1_match_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@id/separator_team"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_combined_match_status"
+            tools:text="WON"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txt_team_1_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@id/separator_team"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_team_1_match_status"
+            tools:text="Team Archan"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txt_team_1_score"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="@id/separator_team"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_team_1_name"
+            tools:text="58-2 (18.2)"
+            />
+
+        <View
+            android:id="@+id/separator_team"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:alpha="0.5"
+            android:background="?colorAccent"
+            app:layout_constraintBottom_toTopOf="@id/barrier_score"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_combined_match_status"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txt_team_2_match_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/separator_team"
+            app:layout_constraintTop_toBottomOf="@id/txt_combined_match_status"
+            tools:text="LOST"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txt_team_2_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/separator_team"
+            app:layout_constraintTop_toBottomOf="@id/txt_team_2_match_status"
+            tools:text="Team Tarang"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txt_team_2_score"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/separator_team"
+            app:layout_constraintTop_toBottomOf="@id/txt_team_2_name"
+            tools:text="58-2 (18.2)"
+            />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="txt_team_1_score,txt_team_2_score"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txt_match_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barrier_score"
+            tools:text="Rajkot"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txt_match_duration"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_match_location"
+            tools:text="23-11-2024 9:55 AM - 23-11-2024 11:55 PM"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

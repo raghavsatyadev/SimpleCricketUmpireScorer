@@ -1,0 +1,91 @@
+package io.github.raghavsatyadev.scuc.ui.dashboard
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
+import io.github.raghavsatyadev.scuc.databinding.ActivityDashboardBinding
+import io.github.raghavsatyadev.scuc.ui.create_match.CreateMatchActivity
+import io.github.raghavsatyadev.scuc.ui.match_complete.MatchCompleteActivity
+import io.github.raghavsatyadev.scuc.ui.match_record.MatchRecordActivity
+import io.github.raghavsatyadev.support.core.CoreActivity
+import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.loadAds
+import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.showInterstitialAd
+import io.github.raghavsatyadev.support.list.CustomClickListener
+import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.isMatchCompleted
+import io.github.raghavsatyadev.support.models.essential.Resource
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
+    private val viewModel: DashboardViewModel by viewModels()
+    private val adapter: MatchRecordAdapter by lazy { MatchRecordAdapter(this) }
+
+    companion object {
+        fun getIntentObject(
+            context: Context,
+            bundle: Bundle = Bundle.EMPTY,
+        ): Intent = Intent(context, DashboardActivity::class.java).apply { putExtras(bundle) }
+    }
+
+    override fun createReference(savedInstanceState: Bundle?) {
+        loadAds(binding.adView)
+
+        setupUI()
+    }
+
+    private fun setupUI() {
+        binding.listMatchRecords.adapter = adapter
+        loadUI()
+    }
+
+    private fun loadUI() {
+        lifecycleScope.launch {
+            withContext(ioDispatcher) {
+                viewModel.loadMatchRecords()
+                viewModel.getMatchRecordsEvent().collectLatest {
+                    withContext(mainDispatcher) {
+                        when (it.status) {
+                            Resource.Status.SUCCESS -> {
+                                adapter.replaceAll(it.data)
+                            }
+
+                            else -> {
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun createBinding(savedInstanceState: Bundle?) =
+        ActivityDashboardBinding.inflate(layoutInflater)
+
+    override fun getToolBar() = binding.toolbar
+
+    override fun setListeners(isEnabled: Boolean) {
+        if (isEnabled) {
+            binding.btnAddMatch.setOnClickListener {
+                showInterstitialAd {
+                    startActivity(CreateMatchActivity.getIntentObject(this))
+                }
+            }
+            adapter.itemClickListener = CustomClickListener(
+                onClick = { position, view, _ ->
+                    val record = adapter.getItem(position)
+                    if (record.status.isMatchCompleted()) {
+                        startActivity(MatchCompleteActivity.getIntentObject(this, record.id))
+                    } else {
+                        startActivity(MatchRecordActivity.getIntentObject(this, record))
+                    }
+                })
+        } else {
+            binding.btnAddMatch.setOnClickListener(null)
+        }
+    }
+}
+

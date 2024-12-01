@@ -1,0 +1,61 @@
+<resources>
+    <!-- Dashboard -->
+    <string name="add_match">Add Match</string>
+    <string name="won">Won</string>
+    <string name="lost">Lost</string>
+    <string name="draw">Draw</string>
+    <string name="in_progress">In Progress</string>
+
+    <!-- Create Match -->
+    <string name="create_match_title">Create Match</string>
+    <string name="match_date_time">Match Date &amp; Time</string>
+    <string name="team_1_name">Team 1 Name</string>
+    <string name="team_2_name">Team 2 Name</string>
+    <string name="overs_per_inning">Overs per Inning</string>
+    <string name="team_1">Team 1</string>
+    <string name="team_2">Team 2</string>
+    <string name="toss_won_by">Toss won by?</string>
+    <string name="which_team_bats_first">Which team bats first?</string>
+    <string name="match_location">Match Location</string>
+    <string name="save">Save</string>
+    <string name="warning_match_location">Please enter match location</string>
+    <string name="warning_match_date_time">Please enter match date &amp; time</string>
+    <string name="warning_overs">Please enter overs</string>
+    <string name="warning_team_1_name">Please enter team 1 name</string>
+    <string name="warning_team_2_name">Please enter team 2 name</string>
+
+    <!-- Match Record -->
+    <string name="match_record_title">Match Record</string>
+
+    <string name="runs">Runs</string>
+    <string name="overs">Overs</string>
+    <string name="wickets">Wickets</string>
+
+    <string name="add_ball">Add Ball</string>
+    <string name="add_run">Add Run</string>
+    <string name="add_wicket">Add Wicket</string>
+    <string name="minus_wicket">Minus Wicket</string>
+    <string name="minus_ball">Minus Ball</string>
+    <string name="minus_run">Minus Run</string>
+
+    <string name="crr">CRR: %s</string>
+    <string name="rrr">RRR: %s</string>
+    <string name="required_runs_balls">Required\n%s</string>
+
+    <string name="end_inning">End Inning</string>
+    <string name="end_match">End Match</string>
+    <string name="reset">Reset</string>
+
+    <!-- Match Reset Dialog -->
+    <string name="reset_match">Reset Match Details</string>
+
+    <!-- Match Complete -->
+    <string name="match_complete_title">Match Details</string>
+    <string name="reset_match_message">Do you want to reset just this inning or the full match?</string>
+    <string name="reset_inning">Inning</string>
+    <string name="cancel">Cancel</string>
+    <string name="reset_full">Match</string>
+    <string name="team">Team</string>
+    <string name="rrr_at_start">RRR at start: %s</string>
+    <string name="required_runs_balls_at_end">Required at the end\n%s</string>
+</resources>

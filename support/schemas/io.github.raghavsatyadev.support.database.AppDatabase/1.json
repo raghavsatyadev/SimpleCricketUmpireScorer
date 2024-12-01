@@ -1,0 +1,133 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "c30e840477f47e0bcefb32bd5ef0a707",
+    "entities": [
+      {
+        "tableName": "match_record",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `startDateTime` INTEGER NOT NULL, `endDateTime` INTEGER NOT NULL, `ballsPerInning` INTEGER NOT NULL, `tossWonByTeam1` INTEGER NOT NULL, `isTeam1BattingFirst` INTEGER NOT NULL, `isFirstInningComplete` INTEGER NOT NULL, `rrrAt2ndInningStart` TEXT NOT NULL, `status` TEXT NOT NULL, `location` TEXT NOT NULL, `team1_team` TEXT NOT NULL, `team1_runs` INTEGER NOT NULL, `team1_wickets` INTEGER NOT NULL, `team1_balls` INTEGER NOT NULL, `team2_team` TEXT NOT NULL, `team2_runs` INTEGER NOT NULL, `team2_wickets` INTEGER NOT NULL, `team2_balls` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startDateTime",
+            "columnName": "startDateTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endDateTime",
+            "columnName": "endDateTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ballsPerInning",
+            "columnName": "ballsPerInning",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tossWonByTeam1",
+            "columnName": "tossWonByTeam1",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isTeam1BattingFirst",
+            "columnName": "isTeam1BattingFirst",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFirstInningComplete",
+            "columnName": "isFirstInningComplete",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rrrAt2ndInningStart",
+            "columnName": "rrrAt2ndInningStart",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team1Detail.team",
+            "columnName": "team1_team",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team1Detail.runs",
+            "columnName": "team1_runs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team1Detail.wickets",
+            "columnName": "team1_wickets",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team1Detail.balls",
+            "columnName": "team1_balls",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team2Detail.team",
+            "columnName": "team2_team",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team2Detail.runs",
+            "columnName": "team2_runs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team2Detail.wickets",
+            "columnName": "team2_wickets",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team2Detail.balls",
+            "columnName": "team2_balls",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c30e840477f47e0bcefb32bd5ef0a707')"
+    ]
+  }
+}
