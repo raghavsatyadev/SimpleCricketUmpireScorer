@@ -19,8 +19,9 @@ import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.database.RoomDBUtil
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
 import io.github.raghavsatyadev.support.extensions.GoogleExtensions.checkPlayServiceAvailability
+import io.github.raghavsatyadev.support.google.FireStoreUtil
+import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.networking.KtorUtil
-import io.github.raghavsatyadev.support.sign_in.FirebaseAuthUtil
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -75,7 +76,10 @@ class CoreApp : Application(), CoroutineScope {
         if (checkPlayServiceAvailability()) {
             MobileAds.initialize(this)
             val firebaseApp = FirebaseApp.initializeApp(this)
-            firebaseApp?.let { FirebaseAuthUtil.create(it) }
+            firebaseApp?.let {
+                FirebaseAuthUtil.create(it)
+                FireStoreUtil.create(it)
+            }
         } else {
             Toast.makeText(this, R.string.warning_update_play_service, Toast.LENGTH_SHORT).show()
         }

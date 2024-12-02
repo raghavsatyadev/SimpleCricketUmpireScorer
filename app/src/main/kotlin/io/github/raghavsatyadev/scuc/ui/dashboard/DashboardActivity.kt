@@ -16,10 +16,10 @@ import io.github.raghavsatyadev.support.extensions.activity_result.ActivityResul
 import io.github.raghavsatyadev.support.extensions.activity_result.ResultType
 import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.loadAds
 import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.showInterstitialAd
+import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.list.CustomClickListener
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.isMatchCompleted
 import io.github.raghavsatyadev.support.models.essential.Resource
-import io.github.raghavsatyadev.support.sign_in.FirebaseAuthUtil
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,7 +58,7 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
         binding.listMatchRecords.adapter = adapter
 
         lifecycleScope.launch {
-            if (FirebaseAuthUtil.instance!!.isLoggedIn()) {
+            if (FirebaseAuthUtil.getInstance().isLoggedIn()) {
                 loadUI()
             } else {
                 openLoginActivity()

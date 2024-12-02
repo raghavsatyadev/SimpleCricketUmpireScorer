@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.support.sign_in
+package io.github.raghavsatyadev.support.google
 
 import android.app.Activity
 import androidx.credentials.CredentialManager

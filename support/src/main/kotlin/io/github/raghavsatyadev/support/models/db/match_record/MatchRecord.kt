@@ -7,6 +7,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.github.raghavsatyadev.support.Constants.DB.Tables
+import io.github.raghavsatyadev.support.Constants.FieldKeys
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -31,8 +32,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Entity(tableName = Tables.MATCH_RECORD_TABLE)
 data class MatchRecord(
-    @SerialName(Tables.MATCH_RECORD_ID)
-    @ColumnInfo(Tables.MATCH_RECORD_ID)
+    @SerialName(FieldKeys.MATCH_RECORD_ID)
+    @ColumnInfo(FieldKeys.MATCH_RECORD_ID)
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0,
 

@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.support.sign_in
+package io.github.raghavsatyadev.support.google
 
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -10,7 +10,6 @@ import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
-import io.github.raghavsatyadev.support.preferences.AppPrefsUtil
 import kotlinx.coroutines.tasks.await
 
 /**
@@ -20,14 +19,17 @@ import kotlinx.coroutines.tasks.await
 class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp) {
     companion object {
         @Volatile
-        var instance: FirebaseAuthUtil? = null
-            @Synchronized
-            get() = field
-                ?: throw IllegalStateException("Initialize in Application class using create()")
+        private var instance: FirebaseAuthUtil? = null
 
         @Synchronized
         fun create(firebaseApp: FirebaseApp) {
             FirebaseAuthUtil(firebaseApp).also { instance = it }
+        }
+
+        @Synchronized
+        fun getInstance(): FirebaseAuthUtil {
+            return instance
+                ?: throw IllegalStateException("Initialize in Application class using create()")
         }
     }
 
@@ -82,8 +84,12 @@ class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp)
                     email = firebaseUser.email ?: "",
                     userID = firebaseUser.uid
                 )
-                AppPrefsUtil.saveUserDetails(user)
-                user to null
+                try {
+                    FireStoreUtil.getInstance().setUser(user) to null
+                } catch (e: Exception) {
+                    AppLog.loge(false, kotlinFileName, "signInWithGoogle", e, Exception())
+                    null to CustomError(ErrorCode.AUTH_FAILED, e)
+                }
             } else {
                 val e = Exception("Firebase user is null")
                 AppLog.loge(false, kotlinFileName, "signInWithGoogle", e, Exception())

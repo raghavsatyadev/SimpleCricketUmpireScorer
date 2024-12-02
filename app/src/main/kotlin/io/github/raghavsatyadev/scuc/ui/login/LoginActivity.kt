@@ -9,8 +9,8 @@ import io.github.raghavsatyadev.scuc.databinding.ActivityLoginBinding
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.core.CoreActivity
 import io.github.raghavsatyadev.support.extensions.ErrorShowExtensions.errorDialog
+import io.github.raghavsatyadev.support.google.GoogleSignInUtil
 import io.github.raghavsatyadev.support.models.essential.Resource
-import io.github.raghavsatyadev.support.sign_in.GoogleSignInUtil
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

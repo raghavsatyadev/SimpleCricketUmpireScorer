@@ -2,8 +2,6 @@ package io.github.raghavsatyadev.support
 
 object Constants {
     object Other {
-        const val SPLASH_COUNTER: Long = 3000
-
         const val MEDIA_TYPE_JSON = "application/json; charset=utf-8"
     }
 
@@ -13,8 +11,18 @@ object Constants {
 
         object Tables {
             const val MATCH_RECORD_TABLE = "match_record"
+        }
+    }
 
-            const val MATCH_RECORD_ID = "id"
+    object FieldKeys {
+        const val MATCH_RECORD_ID = "id"
+
+        const val USER_ID = "userID"
+    }
+
+    object FirebaseConstants {
+        object Collections {
+            const val USER = "User"
         }
     }
 

@@ -4,7 +4,8 @@ import androidx.room.Dao
 import androidx.room.RawQuery
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
-import io.github.raghavsatyadev.support.Constants
+import io.github.raghavsatyadev.support.Constants.DB.Tables
+import io.github.raghavsatyadev.support.Constants.FieldKeys
 import io.github.raghavsatyadev.support.database.BaseDao
 import io.github.raghavsatyadev.support.database.BaseDataUtil
 import io.github.raghavsatyadev.support.database.RoomDBUtil
@@ -27,11 +28,11 @@ class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchR
     }
 
     override fun getTableName(): String {
-        return Constants.DB.Tables.MATCH_RECORD_TABLE
+        return Tables.MATCH_RECORD_TABLE
     }
 
     override fun getPrimaryKey(): String {
-        return Constants.DB.Tables.MATCH_RECORD_ID
+        return FieldKeys.MATCH_RECORD_ID
     }
 
     fun getAllLive(sortKey: String = ""): Flow<List<MatchRecord>> {

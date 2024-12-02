@@ -4,11 +4,11 @@ import androidx.lifecycle.viewModelScope
 import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.core.CoreViewModel
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
+import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
+import io.github.raghavsatyadev.support.google.GoogleSignInUtil
 import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
 import io.github.raghavsatyadev.support.models.essential.Resource
-import io.github.raghavsatyadev.support.sign_in.FirebaseAuthUtil
-import io.github.raghavsatyadev.support.sign_in.GoogleSignInUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -29,7 +29,7 @@ class LoginViewModel : CoreViewModel() {
                     viewModelScope.launch {
                         withContext(ioDispatcher) {
                             val signInWithGoogle =
-                                FirebaseAuthUtil.instance!!.signInWithGoogle(idToken)
+                                FirebaseAuthUtil.getInstance().signInWithGoogle(idToken)
                             val user = signInWithGoogle.first
                             if (user != null) {
                                 loginEvent.emit(Resource.success(true))
