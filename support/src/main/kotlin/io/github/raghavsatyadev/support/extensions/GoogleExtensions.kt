@@ -6,6 +6,8 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import io.github.raghavsatyadev.support.extensions.ImplicitIntentExtensions.openPlayServiceUpdate
 import io.github.raghavsatyadev.support.extensions.Randoms.randomInt
+import java.security.MessageDigest
+import java.util.UUID
 
 @Suppress("unused")
 object GoogleExtensions {
@@ -67,5 +69,18 @@ object GoogleExtensions {
         val playServicesVersion = apiAvailability.getApkVersion(this)
 
         return isAvailable == ConnectionResult.SUCCESS && playServicesVersion >= REQUIRED_PLAY_SERVICES_VERSION
+    }
+
+    fun generateGoogleNonce(): String {
+        val rawNonce = UUID.randomUUID().toString()
+        val bytes = rawNonce.toString().toByteArray()
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+        val hashedNonce = digest.fold("") { str, it ->
+            str + "%02x".format(it
+            )
+        }
+
+        return hashedNonce
     }
 }

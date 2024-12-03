@@ -12,6 +12,7 @@ import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.core.CoreApp
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
+import io.github.raghavsatyadev.support.extensions.GoogleExtensions.generateGoogleNonce
 
 /**
  * Utility class to facilitate Google Sign-In using Credential Manager.
@@ -24,20 +25,16 @@ class GoogleSignInUtil(private val activity: Activity) {
     private val credentialRequest: GetCredentialRequest
 
     init {
-        // Retrieve the server client ID from resources
         val serverClientId = CoreApp.Companion.instance.getString(R.string.google_web_client_id)
 
-        // Configure Google ID option for authorized accounts
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
             .setServerClientId(serverClientId)
-            .setAutoSelectEnabled(true)
+            .setAutoSelectEnabled(true).setNonce(generateGoogleNonce())
             .build()
 
-        // Build the credential request with the Google ID option
-        credentialRequest = GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
+        credentialRequest =
+            GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
     }
 
     /**
