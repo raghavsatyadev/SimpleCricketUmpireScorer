@@ -66,7 +66,7 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
 
             if (showRequiredScore) {
                 binding.txtRrr.text =
-                    getString(R.string.rrr_at_start, matchRecord.rrrAt2ndInningStart)
+                    getString(R.string.rrr_at_start, matchRecord.rrrAtSecondInningStart)
                 binding.txtRequiredRunsBalls.text =
                     getString(R.string.required_runs_balls_at_end, requiredRunsBalls)
                 binding.groupRequiredScore.visible()

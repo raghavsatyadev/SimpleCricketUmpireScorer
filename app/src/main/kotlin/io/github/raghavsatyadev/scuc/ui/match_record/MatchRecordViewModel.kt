@@ -191,7 +191,7 @@ class MatchRecordViewModel : CoreViewModel() {
             withContext(ioDispatcher) {
                 val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
                 matchRecord.isFirstInningComplete = true
-                matchRecord.rrrAt2ndInningStart = matchRecord.getRRR()
+                matchRecord.rrrAtSecondInningStart = matchRecord.getRRR()
                 MatchRecordDataUtil.getInstance().update(matchRecord)
             }
         }

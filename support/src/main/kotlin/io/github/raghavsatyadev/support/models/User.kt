@@ -1,6 +1,7 @@
 package io.github.raghavsatyadev.support.models
 
 import android.os.Parcelable
+import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import com.google.firebase.firestore.PropertyName
 import io.github.raghavsatyadev.support.Constants.FieldKeys
@@ -8,8 +9,9 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
+@Keep
 @Parcelize
+@Serializable
 data class User(
     var name: String,
     var email: String,

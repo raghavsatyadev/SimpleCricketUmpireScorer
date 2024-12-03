@@ -11,13 +11,29 @@ object Constants {
 
         object Tables {
             const val MATCH_RECORD_TABLE = "match_record"
+            const val TEAM_TABLE = "team"
         }
     }
 
     object FieldKeys {
-        const val MATCH_RECORD_ID = "id"
+        // region Match Record
+        const val MATCH_RECORD_ID = "match_record_id"
+        const val START_DATE_TIME = "start_date_time"
+        const val END_DATE_TIME = "end_date_time"
+        const val TEAM_1 = "team_1"
+        const val TEAM_2 = "team_2"
+        const val BALLS_PER_INNING = "balls_per_inning"
+        const val DID_TEAM_1_WON_TOSS = "did_team_1_won_toss"
+        const val IS_TEAM_1_BATTING_FIRST = "is_team_1_batting_first"
+        const val IS_FIRST_INNING_COMPLETE = "is_first_inning_complete"
+        const val RRR_AT_SECOND_INNING_START = "rrr_at_second_inning_start"
+        const val STATUS = "status"
+        const val LOCATION = "location"
+        // endregion
 
-        const val USER_ID = "userID"
+        const val TEAM_ID = "team_id"
+
+        const val USER_ID = "user_id"
     }
 
     object FirebaseConstants {

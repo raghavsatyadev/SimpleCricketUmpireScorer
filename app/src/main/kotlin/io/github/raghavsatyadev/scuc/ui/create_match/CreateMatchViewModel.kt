@@ -74,9 +74,9 @@ class CreateMatchViewModel : CoreViewModel() {
                         location = matchLocation,
                         startDateTime = matchDateTime,
                         ballsPerInning = inningOvers.toInt() * 6,
-                        team1Detail = TeamDetail(team = Team(team1Name)),
-                        team2Detail = TeamDetail(team = Team(team2Name)),
-                        tossWonByTeam1 = didTeam1WinToss,
+                        team1Detail = TeamDetail(team = Team(name = team1Name)),
+                        team2Detail = TeamDetail(team = Team(name = team2Name)),
+                        didTeam1WonToss = didTeam1WinToss,
                         isTeam1BattingFirst = batFirstTeam1,
                     )
                     val id = MatchRecordDataUtil.getInstance().insertIgnore(matchRecord)
