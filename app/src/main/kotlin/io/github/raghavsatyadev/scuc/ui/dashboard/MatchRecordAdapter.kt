@@ -17,8 +17,7 @@ class MatchRecordAdapter(context: Context) :
     val inProgress: String = context.getString(R.string.in_progress)
     val lostColor: Int = context.getColor(android.R.color.holo_red_dark)
     val winColor: Int = context.getColor(android.R.color.holo_green_dark)
-    val drawColor: Int =
-        context.getColor(android.R.color.holo_blue_dark)
+    val drawColor: Int = context.getColor(android.R.color.holo_blue_dark)
     val inProgressColor: Int =
         context.getAttrColor(com.google.android.material.R.attr.colorSurfaceInverse)
 
@@ -27,16 +26,8 @@ class MatchRecordAdapter(context: Context) :
         viewType: Int,
         from: LayoutInflater,
     ): MatchRecordHolder {
-        return MatchRecordHolder.getInstance(
-            ItemMatchRecordBinding.inflate(from, parent, false),
-            itemClickListener,
-            won,
-            lost,
-            draw,
-            inProgress,
-            lostColor,
-            winColor,
-            drawColor,
+        return MatchRecordHolder.getInstance(ItemMatchRecordBinding.inflate(from, parent, false),
+            itemClickListener, won, lost, draw, inProgress, lostColor, winColor, drawColor,
             inProgressColor
         )
     }

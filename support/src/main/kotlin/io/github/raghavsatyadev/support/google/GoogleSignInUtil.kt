@@ -27,10 +27,12 @@ class GoogleSignInUtil(private val activity: Activity) {
     init {
         val serverClientId = CoreApp.Companion.instance.getString(R.string.google_web_client_id)
 
-        val googleIdOption = GetGoogleIdOption.Builder()
+        val googleIdOption = GetGoogleIdOption
+            .Builder()
             .setFilterByAuthorizedAccounts(false)
             .setServerClientId(serverClientId)
-            .setAutoSelectEnabled(true).setNonce(generateGoogleNonce())
+            .setAutoSelectEnabled(true)
+            .setNonce(generateGoogleNonce())
             .build()
 
         credentialRequest =

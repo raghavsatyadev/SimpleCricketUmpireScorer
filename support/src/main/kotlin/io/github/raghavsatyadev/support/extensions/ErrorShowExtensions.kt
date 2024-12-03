@@ -24,7 +24,8 @@ object ErrorShowExtensions {
         @StringRes
         message: Int,
     ) {
-        Snackbar.make(requireContext(), requireView(), getString(message), Snackbar.LENGTH_LONG)
+        Snackbar
+            .make(requireContext(), requireView(), getString(message), Snackbar.LENGTH_LONG)
             .show()
     }
 
@@ -32,7 +33,8 @@ object ErrorShowExtensions {
         @StringRes
         message: Int,
     ) {
-        Snackbar.make(findViewById(android.R.id.content), getString(message), Snackbar.LENGTH_LONG)
+        Snackbar
+            .make(findViewById(android.R.id.content), getString(message), Snackbar.LENGTH_LONG)
             .show()
     }
     // endregion
@@ -47,10 +49,12 @@ object ErrorShowExtensions {
     private fun Context.errorDialogPrivate(
         message: String,
     ): AlertDialog? {
-        return MaterialAlertDialogBuilder(this).setTitle(R.string.error).setMessage(message)
-            .setNegativeButton(
-                R.string.okay
-            ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }.show()
+        return MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.error)
+            .setMessage(message)
+            .setNegativeButton(R.string.okay
+            ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+            .show()
     }
 
     fun Fragment.errorDialog(

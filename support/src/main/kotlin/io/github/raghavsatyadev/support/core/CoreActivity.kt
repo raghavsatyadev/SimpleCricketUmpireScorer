@@ -136,8 +136,7 @@ abstract class CoreActivity<Binding : ViewBinding> : AppCompatActivity(), Corout
     private fun disableScreen(disable: Boolean) {
         if (disable) {
             if (loader != null) loader?.root?.hideKeyBoard()
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
         } else {

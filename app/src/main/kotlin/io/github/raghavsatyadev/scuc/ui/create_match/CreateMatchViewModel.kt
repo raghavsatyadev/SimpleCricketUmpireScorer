@@ -84,11 +84,8 @@ class CreateMatchViewModel : CoreViewModel() {
                     createMatchRecordEvent.emit(Resource.success(matchRecord))
                 } catch (e: Exception) {
                     createMatchRecordEvent.emit(
-                        Resource.error(
-                            CustomError(
-                                ErrorCode.UNKNOWN_ERROR,
-                                e
-                            )
+                        Resource.error(CustomError(ErrorCode.UNKNOWN_ERROR, e
+                        )
                         )
                     )
                 }

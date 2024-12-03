@@ -35,11 +35,13 @@ class MatchRecordViewModel : CoreViewModel() {
         }
     }
 
-    fun reset(matchRecordID: Long, resetFull: Boolean = false): Boolean {
+    fun reset(
+        matchRecordID: Long,
+        resetFull: Boolean = false,
+    ): Boolean {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val matchRecord =
-                    MatchRecordDataUtil.getInstance().getItem(matchRecordID)
+                val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
                 if (resetFull) {
                     matchRecord.team1Detail.runs = 0
                     matchRecord.team1Detail.wickets = 0
@@ -65,7 +67,11 @@ class MatchRecordViewModel : CoreViewModel() {
         return true
     }
 
-    fun setRun(matchRecordID: Long, runCount: Int, increase: Boolean = true) {
+    fun setRun(
+        matchRecordID: Long,
+        runCount: Int,
+        increase: Boolean = true,
+    ) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
                 val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)

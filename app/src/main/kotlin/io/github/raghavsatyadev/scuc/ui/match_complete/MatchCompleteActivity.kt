@@ -25,10 +25,9 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
         fun getIntentObject(
             context: Context,
             matchRecordID: Long,
-        ): Intent =
-            Intent(context, MatchCompleteActivity::class.java).apply {
-                putExtra(MATCH_RECORD_ID, matchRecordID)
-            }
+        ): Intent = Intent(context, MatchCompleteActivity::class.java).apply {
+            putExtra(MATCH_RECORD_ID, matchRecordID)
+        }
     }
 
     private val viewModel: MatchCompleteViewModel by viewModels()
@@ -36,8 +35,7 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
     private lateinit var matchRecord: MatchRecord
     private lateinit var basicDetailsTeam1: BasicMatchUIDetails
     private lateinit var basicDetailsTeam2: BasicMatchUIDetails
-    private val buttonCheckedListener = object :
-        MaterialButtonToggleGroup.OnButtonCheckedListener {
+    private val buttonCheckedListener = object : MaterialButtonToggleGroup.OnButtonCheckedListener {
         override fun onButtonChecked(
             group: MaterialButtonToggleGroup?,
             checkedId: Int,

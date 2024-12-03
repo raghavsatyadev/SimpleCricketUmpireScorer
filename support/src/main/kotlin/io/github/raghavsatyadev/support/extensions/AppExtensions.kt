@@ -32,12 +32,7 @@ object AppExtensions {
         listener: ((String) -> Unit),
     ) {
         movementMethod = LinkMovementMethod.getInstance()
-        text = buildClickableForegroundSpan(
-            fullString,
-            color,
-            applyColor,
-            partStrings,
-            listener
+        text = buildClickableForegroundSpan(fullString, color, applyColor, partStrings, listener
         )
     }
 
@@ -68,10 +63,7 @@ object AppExtensions {
 
             if (applyColor) {
                 color?.let {
-                    ssb.setSpan(
-                        ForegroundColorSpan(color),
-                        indexOf,
-                        indexOf + value.length,
+                    ssb.setSpan(ForegroundColorSpan(color), indexOf, indexOf + value.length,
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
                 }

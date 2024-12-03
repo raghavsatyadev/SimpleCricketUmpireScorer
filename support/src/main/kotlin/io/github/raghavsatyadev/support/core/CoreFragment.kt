@@ -59,7 +59,10 @@ abstract class CoreFragment<Binding : ViewBinding> : Fragment(), CoroutineScope 
     }
 
 
-    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    final override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         coreActivity = requireActivity() as CoreActivity<*>
 
@@ -78,7 +81,10 @@ abstract class CoreFragment<Binding : ViewBinding> : Fragment(), CoroutineScope 
         setListeners(false)
     }
 
-    abstract fun createReference(view: View, savedInstanceState: Bundle?)
+    abstract fun createReference(
+        view: View,
+        savedInstanceState: Bundle?,
+    )
 
     private fun setupBinding(
         layoutInflater: LayoutInflater,
@@ -142,8 +148,7 @@ abstract class CoreFragment<Binding : ViewBinding> : Fragment(), CoroutineScope 
     private fun disableScreen(disable: Boolean) {
         if (disable) {
             if (loader != null) loader?.root?.hideKeyBoard()
-            requireActivity().window.setFlags(
-                LayoutParams.FLAG_NOT_TOUCHABLE,
+            requireActivity().window.setFlags(LayoutParams.FLAG_NOT_TOUCHABLE,
                 LayoutParams.FLAG_NOT_TOUCHABLE
             )
         } else {

@@ -80,8 +80,7 @@ object APIFieldExtensions {
         var parameters = ""
         this.let { map ->
             map.entries.parallelStream().forEach {
-                parameters += it.key + "=" + URLEncoder.encode(
-                    it.value,
+                parameters += it.key + "=" + URLEncoder.encode(it.value,
                     Charsets.UTF_8.displayName()
                 ) + "&"
             }

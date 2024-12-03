@@ -35,7 +35,8 @@ object NetworkExtensions {
         view?.let {
             if (!isConnected) {
                 Handler(Looper.getMainLooper()).post {
-                    Snackbar.make(it, R.string.warning_connect_internet, Snackbar.LENGTH_LONG)
+                    Snackbar
+                        .make(it, R.string.warning_connect_internet, Snackbar.LENGTH_LONG)
                         .show()
                 }
             }

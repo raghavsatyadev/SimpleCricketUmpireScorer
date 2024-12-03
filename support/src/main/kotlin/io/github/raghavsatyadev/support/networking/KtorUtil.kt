@@ -23,8 +23,7 @@ object KtorUtil {
         httpClient = HttpClient(Android) {
             expectSuccess = true
             install(ContentNegotiation) {
-                json(
-                    kotlinJsonSerializer
+                json(kotlinJsonSerializer
                 )
             }
             install(Logging) {

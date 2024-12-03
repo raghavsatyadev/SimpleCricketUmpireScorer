@@ -94,11 +94,12 @@ object NavigationExtensions {
     fun AppCompatActivity.findActivityNavController(
         @IdRes
         navHostContainerID: Int,
-    ) =
-        (supportFragmentManager.findFragmentById(navHostContainerID) as NavHostFragment).navController
+    ) = (supportFragmentManager.findFragmentById(navHostContainerID
+    ) as NavHostFragment).navController
 
     fun AppCompatActivity.setupAppBarConfiguration(
-        navGraph: NavGraph, navController: NavController,
+        navGraph: NavGraph,
+        navController: NavController,
     ): AppBarConfiguration {
         val appBarConfiguration = AppBarConfiguration.Builder(navGraph).build()
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)

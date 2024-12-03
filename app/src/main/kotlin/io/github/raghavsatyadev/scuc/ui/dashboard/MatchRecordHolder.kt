@@ -37,23 +37,19 @@ class MatchRecordHolder(
             drawColor: Int,
             inProgressColor: Int,
         ): MatchRecordHolder {
-            return MatchRecordHolder(
-                binding,
-                itemClickListener,
-                won,
-                lost,
-                draw,
-                inProgress,
-                lostColor,
-                winColor,
-                drawColor,
-                inProgressColor
+            return MatchRecordHolder(binding, itemClickListener, won, lost, draw, inProgress,
+                lostColor, winColor, drawColor, inProgressColor
             )
         }
     }
 
     @SuppressLint("SetTextI18n")
-    override fun bind(model: MatchRecord, itemViewType: Int, position: Int, itemCount: Int) {
+    override fun bind(
+        model: MatchRecord,
+        itemViewType: Int,
+        position: Int,
+        itemCount: Int,
+    ) {
         with(binding) {
             with(model) {
                 txtTeam1Name.text = team1Detail.team.name

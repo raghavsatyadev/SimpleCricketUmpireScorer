@@ -24,7 +24,10 @@ object AppPrefsExtensions {
 
     val Context.dataStore: DataStore<Preferences> by preferencesDataStore(APP_PREFS_NAME)
 
-    suspend inline fun <T> Context.savePref(key: String, value: T) {
+    suspend inline fun <T> Context.savePref(
+        key: String,
+        value: T,
+    ) {
         dataStore.edit {
             when (value) {
                 is Boolean -> it[booleanPreferencesKey(key)] = value

@@ -66,8 +66,11 @@ class CoreApp : Application(), CoroutineScope {
             ImageLoader.Builder(instance).memoryCache {
                 MemoryCache.Builder().maxSizePercent(instance, 0.25).build()
             }.diskCache {
-                DiskCache.Builder().directory(cacheDir.resolve("image_cache"))
-                    .maxSizeBytes(5 * 1024 * 1024).build()
+                DiskCache
+                    .Builder()
+                    .directory(cacheDir.resolve("image_cache"))
+                    .maxSizeBytes(5 * 1024 * 1024)
+                    .build()
             }.logger(DebugLogger()).build()
         }
     }

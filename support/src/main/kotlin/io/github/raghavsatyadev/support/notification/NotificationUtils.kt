@@ -64,18 +64,12 @@ object NotificationUtils {
         }
 
         val builder: NotificationCompat.Builder =
-            getNotificationBuilder(
-                if (!TextUtils.isEmpty(title)) title else appName,
-                message,
-                imageURL,
-                defaultSoundUri,
-                channelIdChanged,
+            getNotificationBuilder(if (!TextUtils.isEmpty(title)) title else appName, message,
+                imageURL, defaultSoundUri, channelIdChanged,
                 PendingIntent.getActivity(this, notificationIdChanged, intent, pendingIntentFlag)
             )
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             return null
@@ -94,8 +88,9 @@ object NotificationUtils {
         channelId: String?,
         defaultSoundUri: Uri,
     ): String {
-        val id =
-            if (TextUtils.isEmpty(channelId)) getString(R.string.general_notification_channel_id) else channelId!!
+        val id = if (TextUtils.isEmpty(channelId)) getString(
+            R.string.general_notification_channel_id
+        ) else channelId!!
         val notificationChannel = createNotificationChannel(id, defaultSoundUri)
         notificationManager.createNotificationChannel(notificationChannel)
         return id
@@ -111,11 +106,7 @@ object NotificationUtils {
         val channelDescription: String =
             getString(R.string.general_notification_channel_description)
         val importance = NotificationManagerCompat.IMPORTANCE_DEFAULT
-        return getNotificationChannelBuilder(
-            id,
-            channelName,
-            channelDescription,
-            importance,
+        return getNotificationChannelBuilder(id, channelName, channelDescription, importance,
             defaultSoundUri
         ).build()
     }
@@ -188,18 +179,18 @@ object NotificationUtils {
 
     private fun setNotificationStyle(
         builder: NotificationCompat.Builder,
-        icLauncher: Bitmap, imageURL: String?,
+        icLauncher: Bitmap,
+        imageURL: String?,
         title: String?,
         message: String?,
     ): NotificationCompat.Builder {
         builder.apply {
             if (!TextUtils.isEmpty(imageURL)) {
-                setStyle(
-                    BigPictureStyle()
-                        .bigLargeIcon(icLauncher)
-                        .setSummaryText(message)
-                        .setBigContentTitle(title)
-                        .bigPicture(getBitmapFromUrl(imageURL))
+                setStyle(BigPictureStyle()
+                    .bigLargeIcon(icLauncher)
+                    .setSummaryText(message)
+                    .setBigContentTitle(title)
+                    .bigPicture(getBitmapFromUrl(imageURL))
                 )
             } else {
                 setStyle(BigTextStyle().bigText(message))

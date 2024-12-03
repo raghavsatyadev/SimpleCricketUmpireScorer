@@ -59,7 +59,10 @@ class NotificationListener : FirebaseMessagingService(), CoroutineScope {
         }
     }
 
-    private suspend fun handlePacketMessage(from: String?, message: String?) {
+    private suspend fun handlePacketMessage(
+        from: String?,
+        message: String?,
+    ) {
         if (from != null) {
             if (from.startsWith("/topics/")) {
                 val topic = from.replace("/topics/", "")
@@ -68,12 +71,7 @@ class NotificationListener : FirebaseMessagingService(), CoroutineScope {
                         traverseMessage(message)
                     }
                 } catch (e: NullPointerException) {
-                    AppLog.loge(
-                        false,
-                        kotlinFileName,
-                        "onMessageReceived",
-                        e,
-                        Exception()
+                    AppLog.loge(false, kotlinFileName, "onMessageReceived", e, Exception()
                     )
                 }
             } else {

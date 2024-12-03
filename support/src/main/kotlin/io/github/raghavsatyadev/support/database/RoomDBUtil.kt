@@ -14,14 +14,13 @@ object RoomDBUtil {
     @Synchronized
     fun getDatabase(): AppDatabase {
         if (database == null) {
-            database =
-                Room.databaseBuilder(CoreApp.instance, AppDatabase::class.java, Constants.DB.NAME)
-                    .allowMainThreadQueries()
-                    .addMigrations(*MigrationUtil.migrations)
-                    .fallbackToDestructiveMigration(true)
-                    .addCallback(object : Callback() {
-                    })
-                    .build()
+            database = Room
+                .databaseBuilder(CoreApp.instance, AppDatabase::class.java, Constants.DB.NAME)
+                .allowMainThreadQueries()
+                .addMigrations(*MigrationUtil.migrations)
+                .fallbackToDestructiveMigration(true)
+                .addCallback(object : Callback() {})
+                .build()
         }
         return database!!
     }

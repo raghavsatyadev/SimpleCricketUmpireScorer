@@ -104,8 +104,7 @@ object MatchRecordExtensions {
         val currentRuns = getRuns(shouldPrepareTeam1Details)
         val currentWickets = getWickets(shouldPrepareTeam1Details)
         val currentBalls = getBalls(shouldPrepareTeam1Details)
-        val currentRunsAndWickets = formatCurrentRunsAndWickets(
-            currentRuns, currentWickets
+        val currentRunsAndWickets = formatCurrentRunsAndWickets(currentRuns, currentWickets
         )
         val currentOvers = "${formatToOvers(currentBalls)} / ${formatToOvers(ballsPerInning)}"
         val currentCRR = getCRR(shouldPrepareTeam1Details)
@@ -149,7 +148,10 @@ object MatchRecordExtensions {
     fun MatchRecord.getTeam2FormattedScore() =
         "${getRuns(false)}-${getWickets(false)} (${formatToOvers(getBalls(false))})"
 
-    fun formatCurrentRunsAndWickets(runs: Int, wickets: Int) = "$runs-$wickets"
+    fun formatCurrentRunsAndWickets(
+        runs: Int,
+        wickets: Int,
+    ) = "$runs-$wickets"
 
     fun formatToOvers(balls: Int): String {
         return "${balls / 6}.${balls % 6}"

@@ -41,7 +41,9 @@ abstract class BaseDataUtil<T, D : BaseDao<T>> {
     }
 
     open fun delete(id: Long): Int {
-        return getDao().delete(SimpleSQLiteQuery("DELETE FROM `${getTableName()}` WHERE `${getPrimaryKey()}` = `$id`"))
+        return getDao().delete(
+            SimpleSQLiteQuery("DELETE FROM `${getTableName()}` WHERE `${getPrimaryKey()}` = `$id`")
+        )
     }
 
     open fun delete(t: T): Int {
@@ -53,7 +55,10 @@ abstract class BaseDataUtil<T, D : BaseDao<T>> {
     }
 
     open fun delete(primaryKeyId: String): Int {
-        return getDao().delete(SimpleSQLiteQuery("DELETE FROM `${getTableName()}` WHERE `${getPrimaryKey()}` LIKE '$primaryKeyId'"))
+        return getDao().delete(SimpleSQLiteQuery(
+            "DELETE FROM `${getTableName()}` WHERE `${getPrimaryKey()}` LIKE '$primaryKeyId'"
+        )
+        )
     }
 
     open fun deleteAll(): Int {

@@ -23,8 +23,7 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
         fun getIntentObject(
             context: Context,
             bundle: Bundle = Bundle.EMPTY,
-        ): Intent =
-            Intent(context, LoginActivity::class.java).apply { putExtras(bundle) }
+        ): Intent = Intent(context, LoginActivity::class.java).apply { putExtras(bundle) }
     }
 
 
@@ -50,8 +49,7 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
 
                         Resource.Status.ERROR -> {
                             hideProgressBar()
-                            val errorDialog =
-                                errorDialog(R.string.warning_unknown_error)
+                            val errorDialog = errorDialog(R.string.warning_unknown_error)
                             errorDialog?.setOnDismissListener { dialog ->
                                 setResult(RESULT_CANCELED)
                                 finish()

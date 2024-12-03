@@ -43,13 +43,9 @@ class LoginViewModel : CoreViewModel() {
                 }, onFailure = { exception ->
                     AppLog.loge(false, kotlinFileName, "signIn", exception, Exception())
                     viewModelScope.launch {
-                        loginEvent.emit(
-                            Resource.error(
-                                CustomError(
-                                    ErrorCode.AUTH_FAILED,
-                                    exception
-                                )
-                            )
+                        loginEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, exception
+                        )
+                        )
                         )
                     }
                 })

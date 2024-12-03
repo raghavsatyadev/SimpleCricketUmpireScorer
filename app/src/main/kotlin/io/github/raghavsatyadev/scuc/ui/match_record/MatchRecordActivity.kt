@@ -62,15 +62,19 @@ class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
     }
 
     private fun showResetDialog(): Boolean {
-        MaterialAlertDialogBuilder(this).setTitle(R.string.reset_match)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.reset_match)
             .setMessage(R.string.reset_match_message)
             .setPositiveButton(R.string.reset_inning) { _, _ ->
                 viewModel.reset(matchRecordID)
-            }.setNeutralButton(R.string.cancel) { dialog, _ ->
+            }
+            .setNeutralButton(R.string.cancel) { dialog, _ ->
                 dialog.dismiss()
-            }.setNegativeButton(R.string.reset_full) { _, _ ->
+            }
+            .setNegativeButton(R.string.reset_full) { _, _ ->
                 viewModel.reset(matchRecordID, true)
-            }.show()
+            }
+            .show()
         return true
     }
 

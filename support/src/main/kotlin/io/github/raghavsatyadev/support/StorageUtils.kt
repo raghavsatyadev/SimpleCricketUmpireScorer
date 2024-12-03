@@ -24,12 +24,7 @@ object StorageUtils {
         try {
             if (replace || !file.exists()) file.createNewFile()
         } catch (e: IOException) {
-            AppLog.loge(
-                false,
-                kotlinFileName,
-                "createFile",
-                e,
-                Exception()
+            AppLog.loge(false, kotlinFileName, "createFile", e, Exception()
             )
         }
         return file
@@ -59,7 +54,6 @@ object StorageUtils {
                 file.delete()
             }
             file
-        } else
-            rootDir
+        } else rootDir
     }
 }

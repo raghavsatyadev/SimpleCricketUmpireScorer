@@ -120,8 +120,7 @@
         <item name="colorOnPrimary">@color/toolbar_button</item>
     </style>
 
-    <style name="ToolbarTextStyle" parent="TextAppearance.Material3.HeadlineSmall">
-    </style>
+    <style name="ToolbarTextStyle" parent="TextAppearance.Material3.HeadlineSmall"></style>
 
     <style name="ToolBarStyle" parent="Widget.MaterialComponents.ActionBar.Primary">
         <item name="actionMenuTextColor">?colorSurface</item>

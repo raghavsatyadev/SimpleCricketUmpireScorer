@@ -25,7 +25,10 @@ object MenuExtensions {
         menuHost = requireActivity()
 
         menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            override fun onCreateMenu(
+                menu: Menu,
+                menuInflater: MenuInflater,
+            ) {
                 menuRes.forEach {
                     menuInflater.inflate(it, menu)
                 }
@@ -48,9 +51,7 @@ object MenuExtensions {
         menuPrepareListener: ((Menu) -> Unit)? = null,
         onMenuItemClickListener: (MenuItem) -> Boolean,
     ) {
-        setupOptionsMenus(
-            arrayOf(menuRes),
-            onMenuItemClickListener = onMenuItemClickListener,
+        setupOptionsMenus(arrayOf(menuRes), onMenuItemClickListener = onMenuItemClickListener,
             menuPrepareListener = menuPrepareListener
         )
     }
@@ -62,7 +63,10 @@ object MenuExtensions {
         onMenuItemClickListener: (MenuItem) -> Boolean,
     ) {
         addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            override fun onCreateMenu(
+                menu: Menu,
+                menuInflater: MenuInflater,
+            ) {
                 menuRes.forEach {
                     menuInflater.inflate(it, menu)
                 }

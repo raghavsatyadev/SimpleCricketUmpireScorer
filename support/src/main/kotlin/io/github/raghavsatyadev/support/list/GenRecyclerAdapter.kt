@@ -17,48 +17,49 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
     var itemClickListener: CustomClickListener? = null
 
     val itemTouchHelper by lazy {
-        val simpleItemTouchCallback =
-            object :
-                ItemTouchHelper.SimpleCallback(
-                    ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END,
-                    0
-                ) {
+        val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END,
+            0
+        ) {
 
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder,
-                ): Boolean {
-                    val adapter = recyclerView.adapter as GenRecyclerAdapter<*, *, *>
-                    val from = viewHolder.absoluteAdapterPosition
-                    val to = target.absoluteAdapterPosition
-                    adapter.moveItem(from, to)
-                    return true
-                }
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder,
+            ): Boolean {
+                val adapter = recyclerView.adapter as GenRecyclerAdapter<*, *, *>
+                val from = viewHolder.absoluteAdapterPosition
+                val to = target.absoluteAdapterPosition
+                adapter.moveItem(from, to)
+                return true
+            }
 
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                }
+            override fun onSwiped(
+                viewHolder: RecyclerView.ViewHolder,
+                direction: Int,
+            ) {
+            }
 
-                override fun onSelectedChanged(
-                    viewHolder: RecyclerView.ViewHolder?,
-                    actionState: Int,
-                ) {
-                    super.onSelectedChanged(viewHolder, actionState)
+            override fun onSelectedChanged(
+                viewHolder: RecyclerView.ViewHolder?,
+                actionState: Int,
+            ) {
+                super.onSelectedChanged(viewHolder, actionState)
 
-                    if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
-                        viewHolder?.itemView?.alpha = 0.5f
-                    }
-                }
-
-                override fun clearView(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                ) {
-                    super.clearView(recyclerView, viewHolder)
-
-                    viewHolder.itemView.alpha = 1.0f
+                if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                    viewHolder?.itemView?.alpha = 0.5f
                 }
             }
+
+            override fun clearView(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+            ) {
+                super.clearView(recyclerView, viewHolder)
+
+                viewHolder.itemView.alpha = 1.0f
+            }
+        }
 
         ItemTouchHelper(simpleItemTouchCallback)
     }
@@ -87,7 +88,10 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
         }
     }
 
-    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    final override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): ViewHolder {
         return creatingViewHolder(parent, viewType, LayoutInflater.from(parent.context))
     }
 
@@ -97,7 +101,10 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
         from: LayoutInflater,
     ): ViewHolder
 
-    final override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    final override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int,
+    ) {
         holder.bind(getItem(position), getItemViewType(position), position, itemCount)
     }
 
@@ -133,7 +140,10 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
         models?.let { replaceAll(ArrayList(models)) }
     }
 
-    open fun replaceItem(model: Model, position: Int) {
+    open fun replaceItem(
+        model: Model,
+        position: Int,
+    ) {
         if (itemCount > position) {
             items[position] = model
             notifyItemChanged(position)
@@ -157,12 +167,18 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
         }
     }
 
-    open fun addItem(model: Model, position: Int) {
+    open fun addItem(
+        model: Model,
+        position: Int,
+    ) {
         items.add(position, model)
         notifyItemInserted(position)
     }
 
-    open fun setItem(model: Model, position: Int) {
+    open fun setItem(
+        model: Model,
+        position: Int,
+    ) {
         items[position] = model
         notifyItemChanged(position)
     }
@@ -179,7 +195,10 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
         }
     }
 
-    fun moveItem(from: Int, to: Int) {
+    fun moveItem(
+        from: Int,
+        to: Int,
+    ) {
         val fromEmoji = items[from]
         items.removeAt(from)
         if (to < from) {

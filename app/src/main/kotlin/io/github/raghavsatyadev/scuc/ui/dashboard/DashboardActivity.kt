@@ -103,15 +103,14 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
                     startActivity(CreateMatchActivity.getIntentObject(this))
                 }
             }
-            adapter.itemClickListener = CustomClickListener(
-                onClick = { position, view, _ ->
-                    val record = adapter.getItem(position)
-                    if (record.isMatchCompleted()) {
-                        startActivity(MatchCompleteActivity.getIntentObject(this, record.id))
-                    } else {
-                        startActivity(MatchRecordActivity.getIntentObject(this, record))
-                    }
-                })
+            adapter.itemClickListener = CustomClickListener(onClick = { position, view, _ ->
+                val record = adapter.getItem(position)
+                if (record.isMatchCompleted()) {
+                    startActivity(MatchCompleteActivity.getIntentObject(this, record.id))
+                } else {
+                    startActivity(MatchRecordActivity.getIntentObject(this, record))
+                }
+            })
         } else {
             binding.btnAddMatch.setOnClickListener(null)
         }

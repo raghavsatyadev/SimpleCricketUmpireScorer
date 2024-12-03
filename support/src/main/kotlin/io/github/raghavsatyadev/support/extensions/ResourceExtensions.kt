@@ -147,9 +147,7 @@ object ResourceExtensions {
     }
 
     fun Context.dpToPx(dp: Int): Float {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp.toFloat(),
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(),
             resources.displayMetrics
         )
     }

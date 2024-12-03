@@ -28,8 +28,9 @@ class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp)
 
         @Synchronized
         fun getInstance(): FirebaseAuthUtil {
-            return instance
-                ?: throw IllegalStateException("Initialize in Application class using create()")
+            return instance ?: throw IllegalStateException(
+                "Initialize in Application class using create()"
+            )
         }
     }
 
@@ -42,10 +43,7 @@ class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp)
      */
     val currentUser: User?
         get() = auth.currentUser?.let {
-            User(
-                name = it.displayName ?: "",
-                email = it.email ?: "",
-                userID = it.uid
+            User(name = it.displayName ?: "", email = it.email ?: "", userID = it.uid
             )
         }
 
@@ -79,11 +77,10 @@ class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp)
             val authResult = auth.signInWithCredential(credential).await()
             val firebaseUser = authResult.user
             if (firebaseUser != null) {
-                val user = User(
-                    name = firebaseUser.displayName ?: "",
-                    email = firebaseUser.email ?: "",
-                    userID = firebaseUser.uid
-                )
+                val user =
+                    User(name = firebaseUser.displayName ?: "", email = firebaseUser.email ?: "",
+                        userID = firebaseUser.uid
+                    )
                 try {
                     FireStoreUtil.getInstance().setUser(user) to null
                 } catch (e: Exception) {

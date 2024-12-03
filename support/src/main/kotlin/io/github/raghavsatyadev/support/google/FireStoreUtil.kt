@@ -25,8 +25,9 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
 
         @Synchronized
         fun getInstance(): FireStoreUtil {
-            return instance
-                ?: throw IllegalStateException("Initialize in Application class using create()")
+            return instance ?: throw IllegalStateException(
+                "Initialize in Application class using create()"
+            )
         }
     }
 
@@ -45,10 +46,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
 
     // region User
     suspend fun setUser(user: User): User {
-        val task =
-            db.collection(FirebaseConstants.Collections.USER)
-                .document(user.userID)
-                .set(user)
+        val task = db.collection(FirebaseConstants.Collections.USER).document(user.userID).set(user)
 
         with(task) {
             await()

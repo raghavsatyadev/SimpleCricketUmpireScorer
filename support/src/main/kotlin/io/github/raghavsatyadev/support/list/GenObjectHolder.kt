@@ -13,5 +13,10 @@ abstract class GenObjectHolder<Model, Binding : ViewBinding>(
         }
     }
 
-    abstract fun bind(model: Model, itemViewType: Int, position: Int, itemCount: Int)
+    abstract fun bind(
+        model: Model,
+        itemViewType: Int,
+        position: Int,
+        itemCount: Int,
+    )
 }

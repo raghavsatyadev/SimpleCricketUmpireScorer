@@ -23,7 +23,8 @@ object Validators {
      */
     fun isValidPassword(password: String?): Boolean {
         val passwordPattern = "^(?=.*\\d)(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$"
-        return !TextUtils.isEmpty(password) && Pattern.compile(passwordPattern)
+        return !TextUtils.isEmpty(password) && Pattern
+            .compile(passwordPattern)
             .matcher(password?.trim()!!)
             .matches()
 
@@ -35,7 +36,8 @@ object Validators {
      */
     fun isValidFlatNumber(flatNumber: String?): Boolean {
         val pattern = "^[A-E]-([1-9]|1[0-3])0[1-4]$"
-        return !TextUtils.isEmpty(flatNumber) && Pattern.compile(pattern.trim())
+        return !TextUtils.isEmpty(flatNumber) && Pattern
+            .compile(pattern.trim())
             .matcher(flatNumber!!)
             .matches()
     }
@@ -51,7 +53,8 @@ object Validators {
         val statePattern = "[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}" // GJ03AB1234
         val bharatPattern = "[0-9]{2}BH[0-9]{4}[A-Z]{1,2}" // 24BH1234AB
         val pattern = "((?:$statePattern)|(?:$bharatPattern))"
-        return !TextUtils.isEmpty(numberPlate) && Pattern.compile(pattern.trim())
+        return !TextUtils.isEmpty(numberPlate) && Pattern
+            .compile(pattern.trim())
             .matcher(numberPlate)
             .matches()
     }

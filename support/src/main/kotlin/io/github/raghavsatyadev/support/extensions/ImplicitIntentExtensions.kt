@@ -34,7 +34,9 @@ object ImplicitIntentExtensions {
     }
 
     fun Context.emailTo(
-        emailID: String, subject: String?, mailContent: String?,
+        emailID: String,
+        subject: String?,
+        mailContent: String?,
     ) {
         val emailIntent = Intent(Intent.ACTION_SENDTO)
         emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(emailID))
@@ -44,22 +46,26 @@ object ImplicitIntentExtensions {
         startActivity(Intent.createChooser(emailIntent, "Send email..."))
     }
 
-    fun Context.copyToClipboard(label: String? = null, data: String?) {
+    fun Context.copyToClipboard(
+        label: String? = null,
+        data: String?,
+    ) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip =
-            ClipData.newPlainText(label ?: getString(R.string.app_name), data)
+        val clip = ClipData.newPlainText(label ?: getString(R.string.app_name), data)
         clipboard.setPrimaryClip(clip)
     }
 
-    fun Fragment.copyToClipboard(label: String? = null, data: String?) {
+    fun Fragment.copyToClipboard(
+        label: String? = null,
+        data: String?,
+    ) {
         requireContext().copyToClipboard(label, data)
     }
 
     fun Context.openGoogleMaps(keyword: String?) {
         try {
             val mapString =
-                "https://www.google.com/maps/search/?api=1&query=" + URLEncoder.encode(
-                    keyword,
+                "https://www.google.com/maps/search/?api=1&query=" + URLEncoder.encode(keyword,
                     "utf-8"
                 )
             openBrowser(mapString)
@@ -108,7 +114,8 @@ object ImplicitIntentExtensions {
     }
 
     fun Context.shareFile(file: File) {
-        ShareCompat.IntentBuilder(this)
+        ShareCompat
+            .IntentBuilder(this)
             .setStream(file.getUriForFile(this))
             .setType(URLConnection.guessContentTypeFromName(file.name))
             .createChooserIntent()
@@ -117,7 +124,8 @@ object ImplicitIntentExtensions {
     }
 
     fun File.shareFile(context: Context) {
-        ShareCompat.IntentBuilder(context)
+        ShareCompat
+            .IntentBuilder(context)
             .setStream(getUriForFile(context))
             .setType(URLConnection.guessContentTypeFromName(name))
             .createChooserIntent()
