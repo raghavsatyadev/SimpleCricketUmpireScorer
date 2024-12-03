@@ -1,5 +1,6 @@
 package io.github.raghavsatyadev.support.models.db.match_record
 
+import io.github.raghavsatyadev.support.extensions.DateExtensions.formatMillisToDate
 import io.github.raghavsatyadev.support.models.BasicMatchUIDetails
 import java.util.Locale
 
@@ -172,9 +173,20 @@ object MatchRecordExtensions {
         else -> true
     }
 
-    fun MatchStatus.isMatchCompleted() =
-        !(this == MatchStatus.NOT_STARTED || this == MatchStatus.IN_PROGRESS)
+    fun MatchRecord.isMatchCompleted() =
+        !(status == MatchStatus.NOT_STARTED || status == MatchStatus.IN_PROGRESS)
 
     fun BasicMatchUIDetails.isMatchCompleted() =
         !(matchStatus == MatchStatus.NOT_STARTED || matchStatus == MatchStatus.IN_PROGRESS)
+
+    fun MatchRecord.getMatchTimings(): String {
+        val matchEndTimeString = if (isMatchCompleted()) {
+            " - ${endDateTime.formatMillisToDate()}"
+        } else {
+            ""
+        }
+        val matchStartTime = startDateTime.formatMillisToDate()
+        val matchTimings = matchStartTime + matchEndTimeString
+        return matchTimings
+    }
 }

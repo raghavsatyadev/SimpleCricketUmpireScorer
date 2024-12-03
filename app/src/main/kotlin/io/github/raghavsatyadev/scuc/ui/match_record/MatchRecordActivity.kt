@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.github.raghavsatyadev.scuc.R
 import io.github.raghavsatyadev.scuc.databinding.ActivityMatchRecordBinding
+import io.github.raghavsatyadev.scuc.databinding.DialogEditTotalOversBinding
 import io.github.raghavsatyadev.scuc.ui.match_complete.MatchCompleteActivity
 import io.github.raghavsatyadev.support.core.CoreActivity
 import io.github.raghavsatyadev.support.extensions.MenuExtensions.setupOptionsMenus
@@ -118,9 +119,11 @@ class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
                         binding.txtRrr.text = getString(R.string.rrr, currentRRR)
                         binding.txtRequiredRunsBalls.text =
                             getString(R.string.required_runs_balls, requiredRunsBalls)
-                        binding.groupRequiredScore.visible()
+                        binding.groupSecondInning.visible()
+                        binding.groupFirstInning.gone()
                     } else {
-                        binding.groupRequiredScore.gone()
+                        binding.groupFirstInning.visible()
+                        binding.groupSecondInning.gone()
                     }
 
                     binding.txtRunsWickets.text = currentRunsAndWickets
@@ -165,6 +168,9 @@ class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
             binding.btnEndMatch.setOnClickListener {
                 viewModel.endMatch(matchRecordID)
             }
+            binding.btnEditOvers.setOnClickListener {
+                showEditOversDialog()
+            }
         } else {
             binding.btnAddRun.setOnClickListener(null)
             binding.btnAddWicket.setOnClickListener(null)
@@ -174,6 +180,32 @@ class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
             binding.btnMinusWicket.setOnClickListener(null)
             binding.btnMinusRun.setOnClickListener(null)
             binding.btnEndMatch.setOnClickListener(null)
+            binding.btnEditOvers.setOnClickListener(null)
         }
+    }
+
+    private fun showEditOversDialog() {
+        // make the binding of dialog view
+        val dialogBinding = DialogEditTotalOversBinding.inflate(layoutInflater)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.edit_total_overs)
+            .setView(dialogBinding.root)
+            .setPositiveButton(R.string.save) { dialog, _ ->
+                val editedOvers = dialogBinding.edTotalOvers.text.toString().toInt()
+                lifecycleScope.launch {
+                    viewModel.editTotalOvers(matchRecordID, editedOvers)
+                }
+                dialog.dismiss()
+
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+        dialogBinding.edTotalOvers.setText(extractTotalOvers(binding.txtOvers.text.toString()))
+    }
+
+    private fun extractTotalOvers(overString: String): String {
+        return overString.split("/")[1].toDouble().toInt().toString()
     }
 }

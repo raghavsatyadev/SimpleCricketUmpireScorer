@@ -2,12 +2,12 @@ package io.github.raghavsatyadev.scuc.ui.dashboard
 
 import android.annotation.SuppressLint
 import io.github.raghavsatyadev.scuc.databinding.ItemMatchRecordBinding
-import io.github.raghavsatyadev.support.extensions.DateExtensions.formatMillisToDate
 import io.github.raghavsatyadev.support.extensions.ViewExtensions.gone
 import io.github.raghavsatyadev.support.extensions.ViewExtensions.visible
 import io.github.raghavsatyadev.support.list.CustomClickListener
 import io.github.raghavsatyadev.support.list.GenObjectHolder
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
+import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.getMatchTimings
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.getTeam1FormattedScore
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.getTeam2FormattedScore
 import io.github.raghavsatyadev.support.models.db.match_record.MatchStatus
@@ -62,8 +62,7 @@ class MatchRecordHolder(
                 txtTeam2Score.text = getTeam2FormattedScore()
 
                 txtMatchLocation.text = location
-                txtMatchDuration.text =
-                    "${startDateTime.formatMillisToDate()} - ${endDateTime.formatMillisToDate()}"
+                txtMatchDuration.text = getMatchTimings()
 
                 when (status) {
                     MatchStatus.TEAM_1_WON -> {

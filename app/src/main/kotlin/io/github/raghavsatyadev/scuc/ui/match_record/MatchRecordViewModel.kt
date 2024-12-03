@@ -216,4 +216,17 @@ class MatchRecordViewModel : CoreViewModel() {
             }
         }
     }
+
+    fun editTotalOvers(
+        matchRecordID: Long,
+        editedOvers: Int,
+    ) {
+        viewModelScope.launch {
+            withContext(ioDispatcher) {
+                val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
+                matchRecord.ballsPerInning = editedOvers * 6
+                MatchRecordDataUtil.getInstance().update(matchRecord)
+            }
+        }
+    }
 }

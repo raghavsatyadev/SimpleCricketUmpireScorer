@@ -49,6 +49,9 @@
     <!-- Match Reset Dialog -->
     <string name="reset_match">Reset Match Details</string>
 
+    <!-- Edit Total Overs Dialog -->
+    <string name="edit_total_overs">Edit Total Overs</string>
+
     <!-- Match Complete -->
     <string name="match_complete_title">Match Details</string>
     <string name="reset_match_message">Do you want to reset just this inning or the full match?</string>
