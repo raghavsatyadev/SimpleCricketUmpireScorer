@@ -19,6 +19,7 @@ import kotlinx.serialization.Serializable
  * @constructor Create empty Match record
  * @property id
  * @property startDateTime
+ * @property endDateTime
  * @property team1Detail
  * @property team2Detail
  * @property ballsPerInning
@@ -27,6 +28,10 @@ import kotlinx.serialization.Serializable
  *    team 2 is batting first
  * @property status status of the match [MatchStatus]
  * @property location
+ * @property matchAdminID
+ * @property matchSharedUserIDs
+ * @property isFirstInningComplete
+ * @property rrrAtSecondInningStart
  */
 @Keep
 @Parcelize
