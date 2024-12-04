@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "5e276f12104f24ff5b2fd02fd522833a",
+    "identityHash": "8dd958a71ea8f25e36e745091deeaa18",
     "entities": [
       {
         "tableName": "match_record",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`match_record_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `start_date_time` INTEGER NOT NULL, `end_date_time` INTEGER NOT NULL, `balls_per_inning` INTEGER NOT NULL, `did_team_1_won_toss` INTEGER NOT NULL, `is_team_1_batting_first` INTEGER NOT NULL, `is_first_inning_complete` INTEGER NOT NULL, `rrr_at_second_inning_start` TEXT NOT NULL, `status` TEXT NOT NULL, `location` TEXT NOT NULL, `team_1_team` TEXT NOT NULL, `team_1_runs` INTEGER NOT NULL, `team_1_wickets` INTEGER NOT NULL, `team_1_balls` INTEGER NOT NULL, `team_2_team` TEXT NOT NULL, `team_2_runs` INTEGER NOT NULL, `team_2_wickets` INTEGER NOT NULL, `team_2_balls` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`match_record_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `start_date_time` INTEGER NOT NULL, `end_date_time` INTEGER NOT NULL, `balls_per_inning` INTEGER NOT NULL, `did_team_1_won_toss` INTEGER NOT NULL, `is_team_1_batting_first` INTEGER NOT NULL, `is_first_inning_complete` INTEGER NOT NULL, `rrr_at_second_inning_start` TEXT NOT NULL, `status` TEXT NOT NULL, `location` TEXT NOT NULL, `match_admin_id` TEXT NOT NULL, `match_shared_user_ids` TEXT NOT NULL, `team_1_team` TEXT NOT NULL, `team_1_runs` INTEGER NOT NULL, `team_1_wickets` INTEGER NOT NULL, `team_1_balls` INTEGER NOT NULL, `team_2_team` TEXT NOT NULL, `team_2_runs` INTEGER NOT NULL, `team_2_wickets` INTEGER NOT NULL, `team_2_balls` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -69,6 +69,18 @@
             "notNull": true
           },
           {
+            "fieldPath": "matchAdminID",
+            "columnName": "match_admin_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "matchSharedUserIDs",
+            "columnName": "match_shared_user_ids",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "team1Detail.team",
             "columnName": "team_1_team",
             "affinity": "TEXT",
@@ -127,7 +139,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5e276f12104f24ff5b2fd02fd522833a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8dd958a71ea8f25e36e745091deeaa18')"
     ]
   }
 }

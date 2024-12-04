@@ -1,11 +1,11 @@
-package io.github.raghavsatyadev.support.extensions
+package io.github.raghavsatyadev.support.google
 
 import android.app.Activity
 import android.content.Context
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import io.github.raghavsatyadev.support.extensions.ImplicitIntentExtensions.openPlayServiceUpdate
-import io.github.raghavsatyadev.support.extensions.Randoms.randomInt
+import io.github.raghavsatyadev.support.extensions.Randoms
 import java.security.MessageDigest
 import java.util.UUID
 
@@ -30,7 +30,7 @@ object GoogleExtensions {
 
             else -> {
                 val errorDialog =
-                    apiAvailability.getErrorDialog(this, availabilityCode, randomInt())
+                    apiAvailability.getErrorDialog(this, availabilityCode, Randoms.randomInt())
 
                 if (errorDialog != null) {
                     errorDialog.setOnDismissListener {
@@ -53,7 +53,7 @@ object GoogleExtensions {
         return if (isAvailable == ConnectionResult.SUCCESS) {
             if (playServicesVersion >= REQUIRED_PLAY_SERVICES_VERSION) {
                 PlayServiceStatus.AVAILABLE to ConnectionResult.SUCCESS
-            } else PlayServiceStatus.UPDATE_REQUIRED to isAvailable
+            } else PlayServiceStatus.UPDATE_REQUIRED to ConnectionResult.SUCCESS
         } else PlayServiceStatus.NOT_AVAILABLE to isAvailable
     }
 

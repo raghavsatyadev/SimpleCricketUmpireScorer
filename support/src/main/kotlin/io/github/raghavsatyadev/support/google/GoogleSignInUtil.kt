@@ -12,7 +12,7 @@ import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.core.CoreApp
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
-import io.github.raghavsatyadev.support.extensions.GoogleExtensions.generateGoogleNonce
+import io.github.raghavsatyadev.support.google.GoogleExtensions.generateGoogleNonce
 
 /**
  * Utility class to facilitate Google Sign-In using Credential Manager.

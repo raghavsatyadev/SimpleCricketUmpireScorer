@@ -18,9 +18,9 @@ import io.github.raghavsatyadev.support.BuildConfig
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.database.RoomDBUtil
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
-import io.github.raghavsatyadev.support.extensions.GoogleExtensions.checkPlayServiceAvailability
 import io.github.raghavsatyadev.support.google.FireStoreUtil
 import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
+import io.github.raghavsatyadev.support.google.GoogleExtensions.checkPlayServiceAvailability
 import io.github.raghavsatyadev.support.networking.KtorUtil
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
