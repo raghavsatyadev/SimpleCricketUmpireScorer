@@ -104,4 +104,16 @@ data class MatchRecord(
     @get:PropertyName(FieldKeys.LOCATION)
     @set:PropertyName(FieldKeys.LOCATION)
     var location: String = "",
+
+    @SerialName(FieldKeys.MATCH_ADMIN_ID)
+    @ColumnInfo(FieldKeys.MATCH_ADMIN_ID)
+    @get:PropertyName(FieldKeys.MATCH_ADMIN_ID)
+    @set:PropertyName(FieldKeys.MATCH_ADMIN_ID)
+    var matchAdminID: String = "",
+
+    @SerialName(FieldKeys.MATCH_SHARED_USER_IDS)
+    @ColumnInfo(FieldKeys.MATCH_SHARED_USER_IDS)
+    @get:PropertyName(FieldKeys.MATCH_SHARED_USER_IDS)
+    @set:PropertyName(FieldKeys.MATCH_SHARED_USER_IDS)
+    var matchSharedUserIDs: List<String> = emptyList(),
 ) : Parcelable

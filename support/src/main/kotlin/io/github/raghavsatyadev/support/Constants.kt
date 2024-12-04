@@ -29,6 +29,8 @@ object Constants {
         const val RRR_AT_SECOND_INNING_START = "rrr_at_second_inning_start"
         const val STATUS = "status"
         const val LOCATION = "location"
+        const val MATCH_ADMIN_ID = "match_admin_id"
+        const val MATCH_SHARED_USER_IDS = "match_shared_user_ids"
         // endregion
 
         const val TEAM_ID = "team_id"
