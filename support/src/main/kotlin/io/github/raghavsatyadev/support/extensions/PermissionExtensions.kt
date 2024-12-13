@@ -7,8 +7,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.permissionx.guolindev.PermissionX
 import io.github.raghavsatyadev.support.R
-import io.github.raghavsatyadev.support.extensions.PermissionExtensions.checkPermission
-import io.github.raghavsatyadev.support.extensions.PermissionExtensions.checkPermissions
 
 @Suppress(
     "unused",

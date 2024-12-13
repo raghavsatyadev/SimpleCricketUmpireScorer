@@ -26,19 +26,28 @@ class MigrationTest {
     @Throws(IOException::class)
     fun migrateAll() {
         // Create earliest version of the database.
-        helper.createDatabase(testDB, 1).apply {
-            close()
-        }
+        helper
+            .createDatabase(
+                testDB,
+                1
+            )
+            .apply {
+                close()
+            }
 
         // Open latest version of the database. Room will validate the schema
         // once all migrations execute.
-        Room.databaseBuilder(
-            InstrumentationRegistry.getInstrumentation().targetContext,
-            AppDatabase::class.java,
-            testDB
-        ).addMigrations(*allMigrations).build().apply {
-            openHelper.writableDatabase.close()
-        }
+        Room
+            .databaseBuilder(
+                InstrumentationRegistry.getInstrumentation().targetContext,
+                AppDatabase::class.java,
+                testDB
+            )
+            .addMigrations(*allMigrations)
+            .build()
+            .apply {
+                openHelper.writableDatabase.close()
+            }
 
         println("Successfully migrated all")
     }

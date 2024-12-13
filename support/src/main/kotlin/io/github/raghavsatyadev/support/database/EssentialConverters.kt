@@ -71,7 +71,7 @@ class EssentialConverters {
     }
     // endregion
 
-    //region App Specific Converters
+    // region App Specific Converters
     @TypeConverter
     fun fromTimestamp(timestamp: Timestamp): Long {
         return timestamp.seconds.times(1000)
@@ -81,5 +81,5 @@ class EssentialConverters {
     fun toTimestamp(millis: Long): Timestamp {
         return Timestamp(Date(millis))
     }
-    //endregion
+    // endregion
 }

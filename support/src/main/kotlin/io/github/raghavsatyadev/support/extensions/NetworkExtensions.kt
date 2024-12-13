@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import io.github.raghavsatyadev.support.R
-import io.github.raghavsatyadev.support.extensions.NetworkExtensions.isInternetAvailable
 
 @Suppress(
     "MemberVisibilityCanBePrivate",

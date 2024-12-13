@@ -15,8 +15,6 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import io.github.raghavsatyadev.support.BuildConfig
-import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.loadAds
-import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.showInterstitialAd
 import kotlinx.coroutines.launch
 
 object AdExtensions {

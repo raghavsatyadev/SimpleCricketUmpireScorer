@@ -112,7 +112,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
                 readTask.await()
                 if (readTask.isSuccessful) {
                     try {
-                        val record: MatchRecord =  readTask.result.toDataObject<MatchRecord>()
+                        val record: MatchRecord = readTask.result.toDataObject<MatchRecord>()
                         MatchRecordDataUtil
                             .getInstance()
                             .insertIgnore(record)

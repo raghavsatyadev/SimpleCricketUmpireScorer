@@ -15,15 +15,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.IntegerRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import io.github.raghavsatyadev.support.extensions.ResourceExtensions.dpToPx
-import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getAttrColor
-import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getAttrColorString
-import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getAttrColorStringWithoutHash
-import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getAttributeValue
-import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getConColor
-import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getConDimen
-import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getConDrawable
-import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getConInt
 import java.util.Locale
 
 @Suppress("MemberVisibilityCanBePrivate")

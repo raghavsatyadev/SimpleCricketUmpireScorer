@@ -11,8 +11,6 @@ import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
 import io.github.raghavsatyadev.support.extensions.FileExtensions.getUriForFile
-import io.github.raghavsatyadev.support.extensions.ImplicitIntentExtensions.copyToClipboard
-import io.github.raghavsatyadev.support.extensions.ImplicitIntentExtensions.openDialer
 import java.io.File
 import java.io.UnsupportedEncodingException
 import java.net.URLConnection
