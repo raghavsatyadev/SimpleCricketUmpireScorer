@@ -23,7 +23,10 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
         fun getIntentObject(
             context: Context,
             bundle: Bundle = Bundle.EMPTY,
-        ): Intent = Intent(context, LoginActivity::class.java).apply { putExtras(bundle) }
+        ): Intent = Intent(
+            context,
+            LoginActivity::class.java
+        ).apply { putExtras(bundle) }
     }
 
 
@@ -34,34 +37,36 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
     private fun startSignIn() {
         lifecycleScope.launch {
             viewModel.signIn(signInUtil)
-            viewModel.getLoginEvent().collectLatest { value ->
-                withContext(mainDispatcher) {
-                    when (value.status) {
-                        Resource.Status.LOADING -> {
-                            showProgressBar()
-                        }
+            viewModel
+                .getLoginEvent()
+                .collectLatest { value ->
+                    withContext(mainDispatcher) {
+                        when (value.status) {
+                            Resource.Status.LOADING -> {
+                                showProgressBar()
+                            }
 
-                        Resource.Status.SUCCESS -> {
-                            hideProgressBar()
-                            setResult(RESULT_OK)
-                            finish()
-                        }
-
-                        Resource.Status.ERROR -> {
-                            hideProgressBar()
-                            val errorDialog = errorDialog(R.string.warning_unknown_error)
-                            errorDialog?.setOnDismissListener { dialog ->
-                                setResult(RESULT_CANCELED)
+                            Resource.Status.SUCCESS -> {
+                                hideProgressBar()
+                                setResult(RESULT_OK)
                                 finish()
                             }
-                        }
 
-                        Resource.Status.EMPTY -> {
-                            hideProgressBar()
+                            Resource.Status.ERROR -> {
+                                hideProgressBar()
+                                val errorDialog = errorDialog(R.string.warning_unknown_error)
+                                errorDialog?.setOnDismissListener { dialog ->
+                                    setResult(RESULT_CANCELED)
+                                    finish()
+                                }
+                            }
+
+                            Resource.Status.EMPTY -> {
+                                hideProgressBar()
+                            }
                         }
                     }
                 }
-            }
         }
     }
 

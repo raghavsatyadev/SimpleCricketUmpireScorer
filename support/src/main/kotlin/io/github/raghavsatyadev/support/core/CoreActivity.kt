@@ -28,7 +28,13 @@ abstract class CoreActivity<Binding : ViewBinding> : AppCompatActivity(), Corout
     private var loader: LoaderBinding? = null
 
     private val handler = CoroutineExceptionHandler { _, exception ->
-        AppLog.loge(false, getClassName() + kotlinFileName, "mainHandler", exception, exception)
+        AppLog.loge(
+            false,
+            getClassName() + kotlinFileName,
+            "mainHandler",
+            exception,
+            exception
+        )
     }
 
     override val coroutineContext: CoroutineContext
@@ -136,7 +142,8 @@ abstract class CoreActivity<Binding : ViewBinding> : AppCompatActivity(), Corout
     private fun disableScreen(disable: Boolean) {
         if (disable) {
             if (loader != null) loader?.root?.hideKeyBoard()
-            window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             )
         } else {

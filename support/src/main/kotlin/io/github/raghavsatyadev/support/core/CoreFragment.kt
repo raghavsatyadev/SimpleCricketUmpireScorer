@@ -34,7 +34,13 @@ abstract class CoreFragment<Binding : ViewBinding> : Fragment(), CoroutineScope 
     lateinit var coreActivity: CoreActivity<*>
 
     private val handler = CoroutineExceptionHandler { _, exception ->
-        AppLog.loge(false, getClassName() + kotlinFileName, "mainHandler", exception, exception)
+        AppLog.loge(
+            false,
+            getClassName() + kotlinFileName,
+            "mainHandler",
+            exception,
+            exception
+        )
     }
 
     override val coroutineContext: CoroutineContext
@@ -53,7 +59,11 @@ abstract class CoreFragment<Binding : ViewBinding> : Fragment(), CoroutineScope 
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        setupBinding(inflater, container, savedInstanceState)
+        setupBinding(
+            inflater,
+            container,
+            savedInstanceState
+        )
 
         return binding.root
     }
@@ -63,11 +73,17 @@ abstract class CoreFragment<Binding : ViewBinding> : Fragment(), CoroutineScope 
         view: View,
         savedInstanceState: Bundle?,
     ) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(
+            view,
+            savedInstanceState
+        )
         coreActivity = requireActivity() as CoreActivity<*>
 
         findProgressBar()
-        createReference(view, savedInstanceState)
+        createReference(
+            view,
+            savedInstanceState
+        )
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(State.STARTED) {
@@ -91,7 +107,11 @@ abstract class CoreFragment<Binding : ViewBinding> : Fragment(), CoroutineScope 
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ) {
-        binding = createBinding(layoutInflater, container, savedInstanceState)
+        binding = createBinding(
+            layoutInflater,
+            container,
+            savedInstanceState
+        )
     }
 
     abstract fun createBinding(
@@ -148,7 +168,8 @@ abstract class CoreFragment<Binding : ViewBinding> : Fragment(), CoroutineScope 
     private fun disableScreen(disable: Boolean) {
         if (disable) {
             if (loader != null) loader?.root?.hideKeyBoard()
-            requireActivity().window.setFlags(LayoutParams.FLAG_NOT_TOUCHABLE,
+            requireActivity().window.setFlags(
+                LayoutParams.FLAG_NOT_TOUCHABLE,
                 LayoutParams.FLAG_NOT_TOUCHABLE
             )
         } else {

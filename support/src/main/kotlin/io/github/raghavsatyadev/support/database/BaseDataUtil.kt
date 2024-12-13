@@ -55,9 +55,10 @@ abstract class BaseDataUtil<T, D : BaseDao<T>> {
     }
 
     open fun delete(primaryKeyId: String): Int {
-        return getDao().delete(SimpleSQLiteQuery(
-            "DELETE FROM `${getTableName()}` WHERE `${getPrimaryKey()}` LIKE '$primaryKeyId'"
-        )
+        return getDao().delete(
+            SimpleSQLiteQuery(
+                "DELETE FROM `${getTableName()}` WHERE `${getPrimaryKey()}` LIKE '$primaryKeyId'"
+            )
         )
     }
 

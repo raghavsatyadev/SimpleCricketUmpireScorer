@@ -13,11 +13,24 @@ import io.github.raghavsatyadev.support.R
 object ErrorShowExtensions {
     // region SnackBar
     fun Fragment.snackBar(message: String) {
-        Snackbar.make(requireContext(), requireView(), message, Snackbar.LENGTH_LONG).show()
+        Snackbar
+            .make(
+                requireContext(),
+                requireView(),
+                message,
+                Snackbar.LENGTH_LONG
+            )
+            .show()
     }
 
     fun ComponentActivity.snackBar(message: String) {
-        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show()
+        Snackbar
+            .make(
+                findViewById(android.R.id.content),
+                message,
+                Snackbar.LENGTH_LONG
+            )
+            .show()
     }
 
     fun Fragment.snackBar(
@@ -25,7 +38,12 @@ object ErrorShowExtensions {
         message: Int,
     ) {
         Snackbar
-            .make(requireContext(), requireView(), getString(message), Snackbar.LENGTH_LONG)
+            .make(
+                requireContext(),
+                requireView(),
+                getString(message),
+                Snackbar.LENGTH_LONG
+            )
             .show()
     }
 
@@ -34,7 +52,11 @@ object ErrorShowExtensions {
         message: Int,
     ) {
         Snackbar
-            .make(findViewById(android.R.id.content), getString(message), Snackbar.LENGTH_LONG)
+            .make(
+                findViewById(android.R.id.content),
+                getString(message),
+                Snackbar.LENGTH_LONG
+            )
             .show()
     }
     // endregion
@@ -52,7 +74,8 @@ object ErrorShowExtensions {
         return MaterialAlertDialogBuilder(this)
             .setTitle(R.string.error)
             .setMessage(message)
-            .setNegativeButton(R.string.okay
+            .setNegativeButton(
+                R.string.okay
             ) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
             .show()
     }

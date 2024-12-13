@@ -40,9 +40,15 @@ object OrientationExtensions {
     }
 
     fun Activity.enableFullScreen() {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowCompat.setDecorFitsSystemWindows(
+            window,
+            false
+        )
 
-        val controllerCompat = WindowInsetsControllerCompat(window, window.decorView)
+        val controllerCompat = WindowInsetsControllerCompat(
+            window,
+            window.decorView
+        )
 
         controllerCompat.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -57,7 +63,10 @@ object OrientationExtensions {
     }
 
     fun Activity.disableFullScreen() {
-        val controllerCompat = WindowInsetsControllerCompat(window, window.decorView)
+        val controllerCompat = WindowInsetsControllerCompat(
+            window,
+            window.decorView
+        )
 
         controllerCompat.show(WindowInsetsCompat.Type.systemBars())
     }

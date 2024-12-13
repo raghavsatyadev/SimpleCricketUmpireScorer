@@ -31,7 +31,13 @@ class NotificationListener : FirebaseMessagingService(), CoroutineScope {
     private lateinit var job: Job
 
     private val handler = CoroutineExceptionHandler { _, exception ->
-        AppLog.loge(false, kotlinFileName, "handler", exception, Exception())
+        AppLog.loge(
+            false,
+            kotlinFileName,
+            "handler",
+            exception,
+            Exception()
+        )
     }
 
     override fun onCreate() {
@@ -55,7 +61,10 @@ class NotificationListener : FirebaseMessagingService(), CoroutineScope {
         val from = packet.from
         val message = getMessageFromData(packet)
         launch {
-            handlePacketMessage(from, message)
+            handlePacketMessage(
+                from,
+                message
+            )
         }
     }
 
@@ -65,13 +74,24 @@ class NotificationListener : FirebaseMessagingService(), CoroutineScope {
     ) {
         if (from != null) {
             if (from.startsWith("/topics/")) {
-                val topic = from.replace("/topics/", "")
+                val topic = from.replace(
+                    "/topics/",
+                    ""
+                )
                 try {
-                    if (getFCMTopics().first().contains(topic)) {
+                    if (getFCMTopics()
+                            .first()
+                            .contains(topic)
+                    ) {
                         traverseMessage(message)
                     }
                 } catch (e: NullPointerException) {
-                    AppLog.loge(false, kotlinFileName, "onMessageReceived", e, Exception()
+                    AppLog.loge(
+                        false,
+                        kotlinFileName,
+                        "onMessageReceived",
+                        e,
+                        Exception()
                     )
                 }
             } else {
@@ -88,7 +108,13 @@ class NotificationListener : FirebaseMessagingService(), CoroutineScope {
             try {
                 message = getMessageFromPacket(packet)
             } catch (e: JSONException) {
-                AppLog.loge(false, kotlinFileName, "handleDataMessage", e, Exception())
+                AppLog.loge(
+                    false,
+                    kotlinFileName,
+                    "handleDataMessage",
+                    e,
+                    Exception()
+                )
             }
         } else if (packet.notification != null && !TextUtils.isEmpty(packet.notification?.body)) {
             message = packet.notification!!.body
@@ -107,7 +133,10 @@ class NotificationListener : FirebaseMessagingService(), CoroutineScope {
             if (keys.hasNext()) {
                 while (keys.hasNext()) {
                     val key = keys.next()
-                    jsonObject.put(key, data[key])
+                    jsonObject.put(
+                        key,
+                        data[key]
+                    )
                 }
                 message = jsonObject.toString()
             }
@@ -135,7 +164,13 @@ class NotificationListener : FirebaseMessagingService(), CoroutineScope {
 
         suspend fun saveTokenProcess(token: String) {
             if (BuildConfig.DEBUG) {
-                AppLog.loge(true, kotlinFileName, "saveTokenProcess", token, Exception())
+                AppLog.loge(
+                    true,
+                    kotlinFileName,
+                    "saveTokenProcess",
+                    token,
+                    Exception()
+                )
             }
 
             saveFCMToken(token)
@@ -144,7 +179,11 @@ class NotificationListener : FirebaseMessagingService(), CoroutineScope {
 
         suspend fun recreateToken() {
             withContext(defaultDispatcher) {
-                Tasks.await(FirebaseMessaging.getInstance().deleteToken())
+                Tasks.await(
+                    FirebaseMessaging
+                        .getInstance()
+                        .deleteToken()
+                )
                 Tasks.await(FirebaseMessaging.getInstance().token)
             }
         }
@@ -160,7 +199,13 @@ class NotificationListener : FirebaseMessagingService(), CoroutineScope {
                     modifiedTopics.add(topic)
                     pubSub.subscribeToTopic(topic)
                 } catch (e: JSONException) {
-                    AppLog.loge(false, kotlinFileName, "subscribeTopics", e, Exception())
+                    AppLog.loge(
+                        false,
+                        kotlinFileName,
+                        "subscribeTopics",
+                        e,
+                        Exception()
+                    )
                 }
             }
             setFCMTopics(modifiedTopics)
@@ -178,7 +223,10 @@ class NotificationListener : FirebaseMessagingService(), CoroutineScope {
         }
 
         private fun makeTopic(string: String): String {
-            return string.replace("(\\W|^_)*".toRegex(), "")
+            return string.replace(
+                "(\\W|^_)*".toRegex(),
+                ""
+            )
         }
     }
 }

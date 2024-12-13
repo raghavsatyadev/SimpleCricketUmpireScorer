@@ -23,11 +23,21 @@ class DashboardViewModel : CoreViewModel() {
         viewModelScope.launch {
             withContext(ioDispatcher) {
                 try {
-                    MatchRecordDataUtil.getInstance().getAllLive().collectLatest {
-                        matchRecordsEvent.emit(Resource.success(it))
-                    }
+                    MatchRecordDataUtil
+                        .getInstance()
+                        .getAllLive()
+                        .collectLatest {
+                            matchRecordsEvent.emit(Resource.success(it))
+                        }
                 } catch (e: Exception) {
-                    matchRecordsEvent.emit(Resource.error(CustomError(ErrorCode.UNKNOWN_ERROR, e)))
+                    matchRecordsEvent.emit(
+                        Resource.error(
+                            CustomError(
+                                ErrorCode.UNKNOWN_ERROR,
+                                e
+                            )
+                        )
+                    )
                 }
             }
         }

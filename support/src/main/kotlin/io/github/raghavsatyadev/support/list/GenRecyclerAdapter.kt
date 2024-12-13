@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 
-@Suppress("MemberVisibilityCanBePrivate", "unused")
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "unused"
+)
 abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : GenObjectHolder<Model, Binding>>(
     var items: ArrayList<Model>,
 ) : RecyclerView.Adapter<ViewHolder>() {
@@ -30,7 +33,10 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
                 val adapter = recyclerView.adapter as GenRecyclerAdapter<*, *, *>
                 val from = viewHolder.absoluteAdapterPosition
                 val to = target.absoluteAdapterPosition
-                adapter.moveItem(from, to)
+                adapter.moveItem(
+                    from,
+                    to
+                )
                 return true
             }
 
@@ -44,7 +50,10 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
                 viewHolder: RecyclerView.ViewHolder?,
                 actionState: Int,
             ) {
-                super.onSelectedChanged(viewHolder, actionState)
+                super.onSelectedChanged(
+                    viewHolder,
+                    actionState
+                )
 
                 if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
                     viewHolder?.itemView?.alpha = 0.5f
@@ -55,7 +64,10 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
             ) {
-                super.clearView(recyclerView, viewHolder)
+                super.clearView(
+                    recyclerView,
+                    viewHolder
+                )
 
                 viewHolder.itemView.alpha = 1.0f
             }
@@ -92,7 +104,11 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
         parent: ViewGroup,
         viewType: Int,
     ): ViewHolder {
-        return creatingViewHolder(parent, viewType, LayoutInflater.from(parent.context))
+        return creatingViewHolder(
+            parent,
+            viewType,
+            LayoutInflater.from(parent.context)
+        )
     }
 
     abstract fun creatingViewHolder(
@@ -105,7 +121,12 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
         holder: ViewHolder,
         position: Int,
     ) {
-        holder.bind(getItem(position), getItemViewType(position), position, itemCount)
+        holder.bind(
+            getItem(position),
+            getItemViewType(position),
+            position,
+            itemCount
+        )
     }
 
     fun getItem(position: Int) = items[position]
@@ -121,18 +142,36 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
             items.addAll(models)
 
             if (oldItemCount == 0) {
-                notifyItemRangeInserted(oldItemCount, newItemCount)
+                notifyItemRangeInserted(
+                    oldItemCount,
+                    newItemCount
+                )
             } else if (newItemCount < oldItemCount) {
-                notifyItemRangeChanged(0, newItemCount)
-                notifyItemRangeRemoved(newItemCount, oldItemCount - newItemCount)
+                notifyItemRangeChanged(
+                    0,
+                    newItemCount
+                )
+                notifyItemRangeRemoved(
+                    newItemCount,
+                    oldItemCount - newItemCount
+                )
             } else {
-                notifyItemRangeChanged(0, oldItemCount)
-                notifyItemRangeInserted(oldItemCount, newItemCount - oldItemCount)
+                notifyItemRangeChanged(
+                    0,
+                    oldItemCount
+                )
+                notifyItemRangeInserted(
+                    oldItemCount,
+                    newItemCount - oldItemCount
+                )
             }
         } else {
             val oldItemCount = itemCount
             items.clear()
-            notifyItemRangeRemoved(0, oldItemCount)
+            notifyItemRangeRemoved(
+                0,
+                oldItemCount
+            )
         }
     }
 
@@ -156,14 +195,20 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
     open fun addAll(models: ArrayList<Model>) {
         val position = itemCount
         items.addAll(models)
-        notifyItemRangeInserted(position, models.size)
+        notifyItemRangeInserted(
+            position,
+            models.size
+        )
     }
 
     open fun deleteAll() {
         val itemCount = itemCount
         if (itemCount != 0) {
             items.clear()
-            notifyItemRangeRemoved(0, itemCount)
+            notifyItemRangeRemoved(
+                0,
+                itemCount
+            )
         }
     }
 
@@ -171,7 +216,10 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
         model: Model,
         position: Int,
     ) {
-        items.add(position, model)
+        items.add(
+            position,
+            model
+        )
         notifyItemInserted(position)
     }
 
@@ -202,10 +250,19 @@ abstract class GenRecyclerAdapter<Model, Binding : ViewBinding, ViewHolder : Gen
         val fromEmoji = items[from]
         items.removeAt(from)
         if (to < from) {
-            items.add(to, fromEmoji)
+            items.add(
+                to,
+                fromEmoji
+            )
         } else {
-            items.add(to - 1, fromEmoji)
+            items.add(
+                to - 1,
+                fromEmoji
+            )
         }
-        notifyItemMoved(from, to)
+        notifyItemMoved(
+            from,
+            to
+        )
     }
 }

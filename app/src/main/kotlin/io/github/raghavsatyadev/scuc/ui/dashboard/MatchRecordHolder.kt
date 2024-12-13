@@ -23,7 +23,10 @@ class MatchRecordHolder(
     private val winColor: Int,
     private val drawColor: Int,
     private val inProgressColor: Int,
-) : GenObjectHolder<MatchRecord, ItemMatchRecordBinding>(binding, itemClickListener) {
+) : GenObjectHolder<MatchRecord, ItemMatchRecordBinding>(
+    binding,
+    itemClickListener
+) {
     companion object {
         fun getInstance(
             binding: ItemMatchRecordBinding,
@@ -37,8 +40,17 @@ class MatchRecordHolder(
             drawColor: Int,
             inProgressColor: Int,
         ): MatchRecordHolder {
-            return MatchRecordHolder(binding, itemClickListener, won, lost, draw, inProgress,
-                lostColor, winColor, drawColor, inProgressColor
+            return MatchRecordHolder(
+                binding,
+                itemClickListener,
+                won,
+                lost,
+                draw,
+                inProgress,
+                lostColor,
+                winColor,
+                drawColor,
+                inProgressColor
             )
         }
     }

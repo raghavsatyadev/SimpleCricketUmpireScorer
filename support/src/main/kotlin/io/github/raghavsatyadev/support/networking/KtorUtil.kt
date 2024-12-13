@@ -23,7 +23,8 @@ object KtorUtil {
         httpClient = HttpClient(Android) {
             expectSuccess = true
             install(ContentNegotiation) {
-                json(kotlinJsonSerializer
+                json(
+                    kotlinJsonSerializer
                 )
             }
             install(Logging) {
@@ -36,11 +37,17 @@ object KtorUtil {
                 exponentialDelay()
                 // If you want to add some additional params in header
                 modifyRequest { request ->
-                    request.headers.append("x-retry-count", 2.toString())
+                    request.headers.append(
+                        "x-retry-count",
+                        2.toString()
+                    )
                 }
             }
             install(HttpCache) {
-                val cacheFile = File(StorageUtils.getCacheDirectory(), "networking").apply {
+                val cacheFile = File(
+                    StorageUtils.getCacheDirectory(),
+                    "networking"
+                ).apply {
                     mkdirs()
                     if (!exists()) {
                         createNewFile()

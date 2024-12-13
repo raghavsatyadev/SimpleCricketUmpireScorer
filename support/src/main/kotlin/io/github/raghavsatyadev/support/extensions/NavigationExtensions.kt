@@ -20,7 +20,10 @@ import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.core.CoreActivity
 import io.github.raghavsatyadev.support.core.CoreFragment
 
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+@Suppress(
+    "unused",
+    "MemberVisibilityCanBePrivate"
+)
 object NavigationExtensions {
     private fun getAnimationNavOption() = navOptions {
         anim {
@@ -44,14 +47,23 @@ object NavigationExtensions {
         navOptions: NavOptions? = null,
         navExtras: Navigator.Extras? = null,
     ) {
-        navigate(resId, args, navOptions ?: getAnimationNavOption(), navExtras)
+        navigate(
+            resId,
+            args,
+            navOptions ?: getAnimationNavOption(),
+            navExtras
+        )
     }
 
     fun NavController.navigateAction(
         action: NavAction,
         bundle: Bundle? = null,
     ) {
-        navigateWithAnimation(action.destinationId, bundle, action.navOptions)
+        navigateWithAnimation(
+            action.destinationId,
+            bundle,
+            action.navOptions
+        )
     }
 
     fun NavController.navigateInitial(
@@ -64,7 +76,11 @@ object NavigationExtensions {
                 inclusive = true
             }
         }
-        navigateWithAnimation(destinationId, bundle, navOptions)
+        navigateWithAnimation(
+            destinationId,
+            bundle,
+            navOptions
+        )
     }
 
     fun <V : ViewBinding> CoreFragment<V>.navigateToFragmentId(
@@ -94,15 +110,22 @@ object NavigationExtensions {
     fun AppCompatActivity.findActivityNavController(
         @IdRes
         navHostContainerID: Int,
-    ) = (supportFragmentManager.findFragmentById(navHostContainerID
+    ) = (supportFragmentManager.findFragmentById(
+        navHostContainerID
     ) as NavHostFragment).navController
 
     fun AppCompatActivity.setupAppBarConfiguration(
         navGraph: NavGraph,
         navController: NavController,
     ): AppBarConfiguration {
-        val appBarConfiguration = AppBarConfiguration.Builder(navGraph).build()
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+        val appBarConfiguration = AppBarConfiguration
+            .Builder(navGraph)
+            .build()
+        NavigationUI.setupActionBarWithNavController(
+            this,
+            navController,
+            appBarConfiguration
+        )
         return appBarConfiguration
     }
 }

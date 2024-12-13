@@ -10,14 +10,20 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import io.github.raghavsatyadev.support.R
+import io.github.raghavsatyadev.support.extensions.NetworkExtensions.isInternetAvailable
 
-@Suppress("MemberVisibilityCanBePrivate", "unused")
+@Suppress(
+    "MemberVisibilityCanBePrivate",
+    "unused"
+)
 object NetworkExtensions {
 
     /** checks for network immediately and returns true if connected */
     private fun Context.isInternetAvailableLocal(): Boolean {
-        val connectivityManager =
-            ContextCompat.getSystemService(this, ConnectivityManager::class.java)
+        val connectivityManager = ContextCompat.getSystemService(
+            this,
+            ConnectivityManager::class.java
+        )
         val network = connectivityManager?.activeNetwork ?: return false
         val networkCapabilities =
             connectivityManager.getNetworkCapabilities(network) ?: return false
@@ -36,7 +42,11 @@ object NetworkExtensions {
             if (!isConnected) {
                 Handler(Looper.getMainLooper()).post {
                     Snackbar
-                        .make(it, R.string.warning_connect_internet, Snackbar.LENGTH_LONG)
+                        .make(
+                            it,
+                            R.string.warning_connect_internet,
+                            Snackbar.LENGTH_LONG
+                        )
                         .show()
                 }
             }

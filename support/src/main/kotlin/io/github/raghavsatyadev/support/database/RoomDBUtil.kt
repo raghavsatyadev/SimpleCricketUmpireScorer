@@ -15,7 +15,11 @@ object RoomDBUtil {
     fun getDatabase(): AppDatabase {
         if (database == null) {
             database = Room
-                .databaseBuilder(CoreApp.instance, AppDatabase::class.java, Constants.DB.NAME)
+                .databaseBuilder(
+                    CoreApp.instance,
+                    AppDatabase::class.java,
+                    Constants.DB.NAME
+                )
                 .allowMainThreadQueries()
                 .addMigrations(*MigrationUtil.migrations)
                 .fallbackToDestructiveMigration(true)
@@ -27,7 +31,9 @@ object RoomDBUtil {
 
     fun deleteAll() {
         CoreApp.instance.launch {
-            MatchRecordDataUtil.getInstance().deleteAll()
+            MatchRecordDataUtil
+                .getInstance()
+                .deleteAll()
         }
     }
 }

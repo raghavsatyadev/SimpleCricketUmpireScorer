@@ -27,7 +27,11 @@ object MatchRecordExtensions {
             "N/A"
         } else {
             val crr = runs * 6.0 / balls
-            String.format(Locale.getDefault(), "%.2f", crr)
+            String.format(
+                Locale.getDefault(),
+                "%.2f",
+                crr
+            )
         }
     }
 
@@ -76,7 +80,11 @@ object MatchRecordExtensions {
         val rrr = (runsRequired.toDouble() * 6) / ballsRemaining
 
         // Format the result to 2 decimal places
-        return String.format(Locale.getDefault(), "%.2f", rrr)
+        return String.format(
+            Locale.getDefault(),
+            "%.2f",
+            rrr
+        )
     }
 
     /**
@@ -104,7 +112,9 @@ object MatchRecordExtensions {
         val currentRuns = getRuns(shouldPrepareTeam1Details)
         val currentWickets = getWickets(shouldPrepareTeam1Details)
         val currentBalls = getBalls(shouldPrepareTeam1Details)
-        val currentRunsAndWickets = formatCurrentRunsAndWickets(currentRuns, currentWickets
+        val currentRunsAndWickets = formatCurrentRunsAndWickets(
+            currentRuns,
+            currentWickets
         )
         val currentOvers = "${formatToOvers(currentBalls)} / ${formatToOvers(ballsPerInning)}"
         val currentCRR = getCRR(shouldPrepareTeam1Details)
@@ -121,7 +131,6 @@ object MatchRecordExtensions {
         )
 
         return BasicMatchUIDetails(
-            // TODO: lets not make the team as a separate table
             currentTeamName = if (shouldPrepareTeam1Details) {
                 team1Detail.teamName
             } else {

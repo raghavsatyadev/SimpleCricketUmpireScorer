@@ -6,6 +6,8 @@ import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUt
 
 class MatchCompleteViewModel : CoreViewModel() {
     fun getMatchRecord(matchRecordId: String): MatchRecord {
-        return MatchRecordDataUtil.getInstance().getItem(matchRecordId)
+        return MatchRecordDataUtil
+            .getInstance()
+            .getItem(matchRecordId)
     }
 }

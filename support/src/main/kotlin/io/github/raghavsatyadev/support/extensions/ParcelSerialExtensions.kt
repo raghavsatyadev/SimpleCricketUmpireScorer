@@ -13,7 +13,10 @@ object ParcelSerialExtensions {
         key: String,
         kClass: KClass<T>,
     ) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        getParcelableExtra(key, kClass.java)
+        getParcelableExtra(
+            key,
+            kClass.java
+        )
     } else {
         getParcelableExtra(key) as? T
     }
@@ -23,7 +26,10 @@ object ParcelSerialExtensions {
         key: String,
         kClass: KClass<T>,
     ) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        getSerializableExtra(key, kClass.java)
+        getSerializableExtra(
+            key,
+            kClass.java
+        )
     } else {
         getSerializableExtra(key) as? T
     }

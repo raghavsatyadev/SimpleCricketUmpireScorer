@@ -35,8 +35,10 @@ class GoogleSignInUtil(private val activity: Activity) {
             .setNonce(generateGoogleNonce())
             .build()
 
-        credentialRequest =
-            GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+        credentialRequest = GetCredentialRequest
+            .Builder()
+            .addCredentialOption(googleIdOption)
+            .build()
     }
 
     /**
@@ -58,7 +60,11 @@ class GoogleSignInUtil(private val activity: Activity) {
                 context = activity,
             )
             // Handle successful sign-in
-            handleSignInSuccess(result, onSuccess, onFailure)
+            handleSignInSuccess(
+                result,
+                onSuccess,
+                onFailure
+            )
         } catch (e: Exception) {
             // Handle sign-in failure
             onFailure(e)
@@ -91,13 +97,25 @@ class GoogleSignInUtil(private val activity: Activity) {
                         onSuccess(idToken)
                     } catch (e: GoogleIdTokenParsingException) {
                         // Invoke the failure callback with the parsing exception
-                        AppLog.loge(false, kotlinFileName, "handleSignInSuccess", e, Exception())
+                        AppLog.loge(
+                            false,
+                            kotlinFileName,
+                            "handleSignInSuccess",
+                            e,
+                            Exception()
+                        )
                         onFailure(e)
                     }
                 } else {
                     // Invoke the failure callback with an unexpected credential type exception
                     val e = Exception("Unexpected type of credential")
-                    AppLog.loge(false, kotlinFileName, "handleSignInSuccess", e, Exception())
+                    AppLog.loge(
+                        false,
+                        kotlinFileName,
+                        "handleSignInSuccess",
+                        e,
+                        Exception()
+                    )
                     onFailure(e)
                 }
             }
@@ -105,7 +123,13 @@ class GoogleSignInUtil(private val activity: Activity) {
             else -> {
                 // Invoke the failure callback with an unexpected credential type exception
                 val e = Exception("Unexpected type of credential")
-                AppLog.loge(false, kotlinFileName, "handleSignInSuccess", e, Exception())
+                AppLog.loge(
+                    false,
+                    kotlinFileName,
+                    "handleSignInSuccess",
+                    e,
+                    Exception()
+                )
                 onFailure(e)
             }
         }

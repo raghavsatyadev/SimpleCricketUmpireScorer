@@ -18,7 +18,10 @@ object ActivityResultExtensions {
         listener: ActivityResultListener,
     ): ActivityResultLauncher<Intent> {
         return registerForActivityResult(StartActivityForResult()) { result: ActivityResult ->
-            listener.onResult(ResultType.getEnumByResultIndex(result.resultCode), result.data)
+            listener.onResult(
+                ResultType.getEnumByResultIndex(result.resultCode),
+                result.data
+            )
         }
     }
 
@@ -26,7 +29,10 @@ object ActivityResultExtensions {
         listener: ActivityResultListener,
     ): ActivityResultLauncher<IntentSenderRequest> {
         return registerForActivityResult(StartIntentSenderForResult()) { result: ActivityResult ->
-            listener.onResult(ResultType.getEnumByResultIndex(result.resultCode), result.data)
+            listener.onResult(
+                ResultType.getEnumByResultIndex(result.resultCode),
+                result.data
+            )
         }
     }
 
@@ -34,14 +40,20 @@ object ActivityResultExtensions {
         intent: IntentSender,
         optionsCompat: ActivityOptionsCompat? = null,
     ) {
-        launch(Builder(intent).build(), optionsCompat)
+        launch(
+            Builder(intent).build(),
+            optionsCompat
+        )
     }
 
     fun Fragment.registerActivityForResult(
         listener: ActivityResultListener,
     ): ActivityResultLauncher<Intent> {
         return registerForActivityResult(StartActivityForResult()) { result: ActivityResult ->
-            listener.onResult(ResultType.getEnumByResultIndex(result.resultCode), result.data)
+            listener.onResult(
+                ResultType.getEnumByResultIndex(result.resultCode),
+                result.data
+            )
         }
     }
 
@@ -49,7 +61,10 @@ object ActivityResultExtensions {
         listener: ActivityResultListener,
     ): ActivityResultLauncher<IntentSenderRequest> {
         return registerForActivityResult(StartIntentSenderForResult()) { result: ActivityResult ->
-            listener.onResult(ResultType.getEnumByResultIndex(result.resultCode), result.data)
+            listener.onResult(
+                ResultType.getEnumByResultIndex(result.resultCode),
+                result.data
+            )
         }
     }
 }

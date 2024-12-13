@@ -15,6 +15,15 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.IntegerRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import io.github.raghavsatyadev.support.extensions.ResourceExtensions.dpToPx
+import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getAttrColor
+import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getAttrColorString
+import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getAttrColorStringWithoutHash
+import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getAttributeValue
+import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getConColor
+import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getConDimen
+import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getConDrawable
+import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getConInt
 import java.util.Locale
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -23,7 +32,11 @@ object ResourceExtensions {
         format: String,
         vararg formatArgs: Any?,
     ): String {
-        return String.format(Locale.getDefault(), format, *formatArgs)
+        return String.format(
+            Locale.getDefault(),
+            format,
+            *formatArgs
+        )
     }
 
     fun Context.getConDimen(
@@ -59,7 +72,10 @@ object ResourceExtensions {
         drawableId: Int?,
     ): Drawable? {
         if (drawableId == null) return null
-        return ContextCompat.getDrawable(this, drawableId)
+        return ContextCompat.getDrawable(
+            this,
+            drawableId
+        )
     }
 
     fun Fragment.getConDrawable(
@@ -75,7 +91,10 @@ object ResourceExtensions {
         @ColorRes
         colorId: Int,
     ): Int {
-        return ContextCompat.getColor(this, colorId)
+        return ContextCompat.getColor(
+            this,
+            colorId
+        )
     }
 
     @ColorInt
@@ -106,7 +125,10 @@ object ResourceExtensions {
         @AttrRes
         attrID: Int,
     ): String {
-        return getAttributeValue(attrID, "%06X")
+        return getAttributeValue(
+            attrID,
+            "%06X"
+        )
     }
 
     fun Fragment.getAttrColorStringWithoutHash(
@@ -121,7 +143,11 @@ object ResourceExtensions {
         format: String,
     ): String {
         val outValue = TypedValue()
-        theme.resolveAttribute(attrID, outValue, true)
+        theme.resolveAttribute(
+            attrID,
+            outValue,
+            true
+        )
         return format.format(0xFFFFFF and outValue.data)
     }
 
@@ -129,14 +155,20 @@ object ResourceExtensions {
         attrID: Int,
         format: String,
     ): String {
-        return requireContext().getAttributeValue(attrID, format)
+        return requireContext().getAttributeValue(
+            attrID,
+            format
+        )
     }
 
     fun Context.getAttrColorString(
         @AttrRes
         attrID: Int,
     ): String {
-        return getAttributeValue(attrID, "#%06X")
+        return getAttributeValue(
+            attrID,
+            "#%06X"
+        )
     }
 
     fun Fragment.getAttrColorString(
@@ -147,7 +179,9 @@ object ResourceExtensions {
     }
 
     fun Context.dpToPx(dp: Int): Float {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(),
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp.toFloat(),
             resources.displayMetrics
         )
     }

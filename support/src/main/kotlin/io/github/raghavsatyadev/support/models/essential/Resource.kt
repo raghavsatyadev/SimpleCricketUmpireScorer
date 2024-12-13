@@ -21,7 +21,11 @@ data class Resource<out T>(
 
     companion object {
         fun <T> success(data: T?): Resource<T> {
-            return Resource(200, Status.SUCCESS, data, null
+            return Resource(
+                200,
+                Status.SUCCESS,
+                data,
+                null
             )
         }
 
@@ -30,7 +34,11 @@ data class Resource<out T>(
             code: Int? = 400,
             data: T? = null,
         ): Resource<T> {
-            return Resource(code, Status.ERROR, data, error
+            return Resource(
+                code,
+                Status.ERROR,
+                data,
+                error
             )
         }
 
@@ -40,8 +48,14 @@ data class Resource<out T>(
             code: Int? = 400,
             data: T? = null,
         ): Resource<T> {
-            return Resource(code, Status.ERROR, data,
-                CustomError(errorCode, Exception(errorMessage))
+            return Resource(
+                code,
+                Status.ERROR,
+                data,
+                CustomError(
+                    errorCode,
+                    Exception(errorMessage)
+                )
             )
         }
 
@@ -51,17 +65,32 @@ data class Resource<out T>(
             code: Int? = 400,
             data: T? = null,
         ): Resource<T> {
-            return Resource(code, Status.ERROR, data, CustomError(errorCode, exception)
+            return Resource(
+                code,
+                Status.ERROR,
+                data,
+                CustomError(
+                    errorCode,
+                    exception
+                )
             )
         }
 
         fun <T> loading(data: T? = null): Resource<T> {
-            return Resource(100, Status.LOADING, data, null
+            return Resource(
+                100,
+                Status.LOADING,
+                data,
+                null
             )
         }
 
         fun <T> empty(): Resource<T> {
-            return Resource(null, Status.EMPTY, null, null
+            return Resource(
+                null,
+                Status.EMPTY,
+                null,
+                null
             )
         }
     }

@@ -9,7 +9,11 @@ abstract class GenObjectHolder<Model, Binding : ViewBinding>(
 ) : RecyclerView.ViewHolder(binding.root) {
     init {
         binding.root.setOnClickListener {
-            listener?.onItemClick(layoutPosition, it, false)
+            listener?.onItemClick(
+                layoutPosition,
+                it,
+                false
+            )
         }
     }
 

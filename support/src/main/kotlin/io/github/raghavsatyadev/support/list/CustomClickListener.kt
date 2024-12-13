@@ -10,6 +10,10 @@ open class CustomClickListener(
         v: View?,
         isLongClick: Boolean = false,
     ) {
-        onClick(position, v, isLongClick)
+        onClick(
+            position,
+            v,
+            isLongClick
+        )
     }
 }

@@ -7,8 +7,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.permissionx.guolindev.PermissionX
 import io.github.raghavsatyadev.support.R
+import io.github.raghavsatyadev.support.extensions.PermissionExtensions.checkPermission
+import io.github.raghavsatyadev.support.extensions.PermissionExtensions.checkPermissions
 
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+@Suppress(
+    "unused",
+    "MemberVisibilityCanBePrivate"
+)
 object PermissionExtensions {
     fun FragmentActivity.getPermissionX(
         permissions: List<String>,
@@ -20,14 +25,16 @@ object PermissionExtensions {
         .permissions(permissions)
         .explainReasonBeforeRequest()
         .onExplainRequestReason { scope, deniedList ->
-            scope.showRequestReasonDialog(deniedList,
+            scope.showRequestReasonDialog(
+                deniedList,
                 permissionReason ?: getString(R.string.permission_deny_reason_message),
                 getString(R.string.permission_positive_button),
                 getString(R.string.permission_negative_button)
             )
         }
         .onForwardToSettings { scope, deniedList ->
-            scope.showForwardToSettingsDialog(deniedList,
+            scope.showForwardToSettingsDialog(
+                deniedList,
                 getString(R.string.permission_forward_settings_message),
                 getString(R.string.permission_positive_button),
                 getString(R.string.permission_negative_button)
@@ -51,14 +58,16 @@ object PermissionExtensions {
         .permissions(permissions)
         .explainReasonBeforeRequest()
         .onExplainRequestReason { scope, deniedList ->
-            scope.showRequestReasonDialog(deniedList,
+            scope.showRequestReasonDialog(
+                deniedList,
                 permissionReason ?: getString(R.string.permission_deny_reason_message),
                 getString(R.string.permission_positive_button),
                 getString(R.string.permission_negative_button)
             )
         }
         .onForwardToSettings { scope, deniedList ->
-            scope.showForwardToSettingsDialog(deniedList,
+            scope.showForwardToSettingsDialog(
+                deniedList,
                 getString(R.string.permission_forward_settings_message),
                 getString(R.string.permission_positive_button),
                 getString(R.string.permission_negative_button)
@@ -73,11 +82,15 @@ object PermissionExtensions {
         }
 
     fun Context.checkPermissions(permissions: ArrayList<String>): Boolean {
-        return permissions.map { checkPermission(it) }.find { !it } != false
+        return permissions
+            .map { checkPermission(it) }
+            .find { !it } != false
     }
 
     fun Context.checkPermission(permission: String): Boolean {
-        return ActivityCompat.checkSelfPermission(this, permission
+        return ActivityCompat.checkSelfPermission(
+            this,
+            permission
         ) == PackageManager.PERMISSION_GRANTED
     }
 

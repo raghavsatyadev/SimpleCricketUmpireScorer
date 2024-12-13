@@ -32,7 +32,9 @@ object FileExtensions {
     }
 
     fun File.getUriForFile(context: Context): Uri {
-        return FileProvider.getUriForFile(context, CoreApp.instance.packageName + ".fileprovider",
+        return FileProvider.getUriForFile(
+            context,
+            CoreApp.instance.packageName + ".fileprovider",
             this
         )
     }

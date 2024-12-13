@@ -32,7 +32,12 @@ object AppExtensions {
         listener: ((String) -> Unit),
     ) {
         movementMethod = LinkMovementMethod.getInstance()
-        text = buildClickableForegroundSpan(fullString, color, applyColor, partStrings, listener
+        text = buildClickableForegroundSpan(
+            fullString,
+            color,
+            applyColor,
+            partStrings,
+            listener
         )
     }
 
@@ -48,22 +53,30 @@ object AppExtensions {
 
         partStrings.forEach { value ->
             val indexOf = fullString.indexOf(value)
-            ssb.setSpan(object : ClickableSpan() {
-                override fun onClick(widget: View) {
-                    widget.cancelPendingInputEvents()
-                    listener(value)
-                }
+            ssb.setSpan(
+                object : ClickableSpan() {
+                    override fun onClick(widget: View) {
+                        widget.cancelPendingInputEvents()
+                        listener(value)
+                    }
 
-                override fun updateDrawState(ds: TextPaint) {
-                    super.updateDrawState(ds)
-                    ds.isFakeBoldText = true
-                    ds.isUnderlineText = false
-                }
-            }, indexOf, indexOf + value.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    override fun updateDrawState(ds: TextPaint) {
+                        super.updateDrawState(ds)
+                        ds.isFakeBoldText = true
+                        ds.isUnderlineText = false
+                    }
+                },
+                indexOf,
+                indexOf + value.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
 
             if (applyColor) {
                 color?.let {
-                    ssb.setSpan(ForegroundColorSpan(color), indexOf, indexOf + value.length,
+                    ssb.setSpan(
+                        ForegroundColorSpan(color),
+                        indexOf,
+                        indexOf + value.length,
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
                 }

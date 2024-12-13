@@ -1,4 +1,7 @@
-@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+@file:Suppress(
+    "MemberVisibilityCanBePrivate",
+    "unused"
+)
 
 package io.github.raghavsatyadev.support.extensions.ads
 
@@ -12,6 +15,8 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import io.github.raghavsatyadev.support.BuildConfig
+import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.loadAds
+import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.showInterstitialAd
 import kotlinx.coroutines.launch
 
 object AdExtensions {
@@ -60,7 +65,10 @@ object AdExtensions {
     private fun ComponentActivity.showBannerAd(adView: AdView) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                AdUtil.loadBannerAd(this@showBannerAd, adView)
+                AdUtil.loadBannerAd(
+                    this@showBannerAd,
+                    adView
+                )
             }
         }
     }

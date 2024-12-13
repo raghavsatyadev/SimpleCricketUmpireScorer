@@ -12,7 +12,10 @@ object Randoms {
      * @return random int
      */
     fun randomInt(initialValue: Int = 1): Int {
-        return Random.nextInt(initialValue, Int.MAX_VALUE)
+        return Random.nextInt(
+            initialValue,
+            Int.MAX_VALUE
+        )
     }
 
     /**
@@ -22,10 +25,16 @@ object Randoms {
      * @return random long
      */
     fun randomLong(initialValue: Long = 1): Long {
-        return Random.nextLong(initialValue, Long.MAX_VALUE)
+        return Random.nextLong(
+            initialValue,
+            Long.MAX_VALUE
+        )
     }
 
     fun <T> selectRandomElement(vararg elements: T): T {
-        return elements[Random.nextInt(0, elements.size)]
+        return elements[Random.nextInt(
+            0,
+            elements.size
+        )]
     }
 }

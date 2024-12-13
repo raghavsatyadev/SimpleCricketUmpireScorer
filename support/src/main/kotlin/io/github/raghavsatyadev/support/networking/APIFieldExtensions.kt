@@ -17,7 +17,10 @@ import org.json.JSONObject
 import java.io.File
 import java.net.URLEncoder
 
-@Suppress("unused", "MemberVisibilityCanBePrivate")
+@Suppress(
+    "unused",
+    "MemberVisibilityCanBePrivate"
+)
 object APIFieldExtensions {
 
     /**
@@ -32,7 +35,13 @@ object APIFieldExtensions {
             try {
                 return file.toMultiPartFile(fileParameter)
             } catch (e: Exception) {
-                AppLog.loge(false, "APIFieldUtil.java", "getMultiPartFile", e, Exception())
+                AppLog.loge(
+                    false,
+                    "APIFieldUtil.java",
+                    "getMultiPartFile",
+                    e,
+                    Exception()
+                )
             }
         }
         return null
@@ -47,9 +56,19 @@ object APIFieldExtensions {
     fun File.toMultiPartFile(fileParameter: String): MultipartBody.Part? {
         try {
             val type = getMimeType()?.toMediaTypeOrNull()
-            return MultipartBody.Part.createFormData(fileParameter, name, asRequestBody(type))
+            return MultipartBody.Part.createFormData(
+                fileParameter,
+                name,
+                asRequestBody(type)
+            )
         } catch (e: Exception) {
-            AppLog.loge(false, kotlinFileName, "getMultiPartFile", e, Exception())
+            AppLog.loge(
+                false,
+                kotlinFileName,
+                "getMultiPartFile",
+                e,
+                Exception()
+            )
         }
         return null
     }
@@ -71,7 +90,9 @@ object APIFieldExtensions {
     fun HashMap<String, String?>?.removeNullValues(): HashMap<String, String> {
         val map = HashMap<String, String>()
         this?.let { it1 ->
-            it1.entries.parallelStream().forEach { map[it.key] = it.value ?: "" }
+            it1.entries
+                .parallelStream()
+                .forEach { map[it.key] = it.value ?: "" }
         }
         return map
     }
@@ -79,11 +100,14 @@ object APIFieldExtensions {
     fun HashMap<String, String>.convertHashMapToURLParameters(): String {
         var parameters = ""
         this.let { map ->
-            map.entries.parallelStream().forEach {
-                parameters += it.key + "=" + URLEncoder.encode(it.value,
-                    Charsets.UTF_8.displayName()
-                ) + "&"
-            }
+            map.entries
+                .parallelStream()
+                .forEach {
+                    parameters += it.key + "=" + URLEncoder.encode(
+                        it.value,
+                        Charsets.UTF_8.displayName()
+                    ) + "&"
+                }
         }
         return parameters
     }
@@ -101,12 +125,16 @@ object APIFieldExtensions {
 
     fun JSONObject.toJSONRequestBody(): RequestBody {
         val mediaType = MEDIA_TYPE_JSON.toMediaType()
-        return this.toString().toRequestBody(mediaType)
+        return this
+            .toString()
+            .toRequestBody(mediaType)
     }
 
     fun JSONArray.toJSONRequestBody(): RequestBody {
         val mediaType = MEDIA_TYPE_JSON.toMediaType()
-        return this.toString().toRequestBody(mediaType)
+        return this
+            .toString()
+            .toRequestBody(mediaType)
     }
 }
 

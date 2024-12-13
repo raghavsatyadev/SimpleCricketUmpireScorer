@@ -11,8 +11,10 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 
 object ExceptionSerializer : KSerializer<Exception> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("Exception", PrimitiveKind.STRING)
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+        "Exception",
+        PrimitiveKind.STRING
+    )
 
     override fun serialize(
         encoder: Encoder,

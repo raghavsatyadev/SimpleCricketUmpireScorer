@@ -59,22 +59,38 @@ object NotificationUtils {
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
-            channelIdChanged =
-                getNotificationChannelID(notificationManager, channelIdChanged, defaultSoundUri)
+            channelIdChanged = getNotificationChannelID(
+                notificationManager,
+                channelIdChanged,
+                defaultSoundUri
+            )
         }
 
-        val builder: NotificationCompat.Builder =
-            getNotificationBuilder(if (!TextUtils.isEmpty(title)) title else appName, message,
-                imageURL, defaultSoundUri, channelIdChanged,
-                PendingIntent.getActivity(this, notificationIdChanged, intent, pendingIntentFlag)
+        val builder: NotificationCompat.Builder = getNotificationBuilder(
+            if (!TextUtils.isEmpty(title)) title else appName,
+            message,
+            imageURL,
+            defaultSoundUri,
+            channelIdChanged,
+            PendingIntent.getActivity(
+                this,
+                notificationIdChanged,
+                intent,
+                pendingIntentFlag
             )
+        )
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             return null
         }
-        notificationManager.notify(notificationIdChanged, builder.build())
+        notificationManager.notify(
+            notificationIdChanged,
+            builder.build()
+        )
         return notificationIdChanged
     }
 
@@ -91,7 +107,10 @@ object NotificationUtils {
         val id = if (TextUtils.isEmpty(channelId)) getString(
             R.string.general_notification_channel_id
         ) else channelId!!
-        val notificationChannel = createNotificationChannel(id, defaultSoundUri)
+        val notificationChannel = createNotificationChannel(
+            id,
+            defaultSoundUri
+        )
         notificationManager.createNotificationChannel(notificationChannel)
         return id
     }
@@ -106,7 +125,11 @@ object NotificationUtils {
         val channelDescription: String =
             getString(R.string.general_notification_channel_description)
         val importance = NotificationManagerCompat.IMPORTANCE_DEFAULT
-        return getNotificationChannelBuilder(id, channelName, channelDescription, importance,
+        return getNotificationChannelBuilder(
+            id,
+            channelName,
+            channelDescription,
+            importance,
             defaultSoundUri
         ).build()
     }
@@ -119,14 +142,22 @@ object NotificationUtils {
         importance: Int,
         defaultSoundUri: Uri,
     ): NotificationChannelCompat.Builder {
-        return NotificationChannelCompat.Builder(id!!, importance).apply {
-            setName(channelName)
-            setSound(defaultSoundUri, null)
-            setDescription(channelDescription)
-            setShowBadge(true)
-            setVibrationEnabled(true)
-            setLightsEnabled(true)
-        }
+        return NotificationChannelCompat
+            .Builder(
+                id!!,
+                importance
+            )
+            .apply {
+                setName(channelName)
+                setSound(
+                    defaultSoundUri,
+                    null
+                )
+                setDescription(channelDescription)
+                setShowBadge(true)
+                setVibrationEnabled(true)
+                setLightsEnabled(true)
+            }
     }
 
     private fun Context.getNotificationBuilder(
@@ -146,27 +177,47 @@ object NotificationUtils {
 
         val notificationColor: Int = getConColor(R.color.notification_color)
 
-        val builder = NotificationCompat.Builder(this, channelIdChanged!!).apply {
-            setAutoCancel(true)
-            setSmallIcon(smallIcon)
-            setLargeIcon(icLauncher)
-            setSound(defaultSoundUri)
-            color = notificationColor
-            setContentTitle(title)
-            setContentText(message)
-            setTicker(title)
-            setColorized(true)
-            setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
-            if (pendingIntent != null) setContentIntent(pendingIntent)
-        }
+        val builder = NotificationCompat
+            .Builder(
+                this,
+                channelIdChanged!!
+            )
+            .apply {
+                setAutoCancel(true)
+                setSmallIcon(smallIcon)
+                setLargeIcon(icLauncher)
+                setSound(defaultSoundUri)
+                color = notificationColor
+                setContentTitle(title)
+                setContentText(message)
+                setTicker(title)
+                setColorized(true)
+                setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
+                if (pendingIntent != null) setContentIntent(pendingIntent)
+            }
 
-        return setNotificationStyle(builder, icLauncher, imageURL, title, message)
+        return setNotificationStyle(
+            builder,
+            icLauncher,
+            imageURL,
+            title,
+            message
+        )
     }
 
     private fun getBitmapFromDrawable(drawable: Drawable): Bitmap {
-        val bmp = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, ARGB_8888)
+        val bmp = Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            ARGB_8888
+        )
         val canvas = Canvas(bmp)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.setBounds(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        )
         drawable.draw(canvas)
         return bmp
     }
@@ -186,11 +237,12 @@ object NotificationUtils {
     ): NotificationCompat.Builder {
         builder.apply {
             if (!TextUtils.isEmpty(imageURL)) {
-                setStyle(BigPictureStyle()
-                    .bigLargeIcon(icLauncher)
-                    .setSummaryText(message)
-                    .setBigContentTitle(title)
-                    .bigPicture(getBitmapFromUrl(imageURL))
+                setStyle(
+                    BigPictureStyle()
+                        .bigLargeIcon(icLauncher)
+                        .setSummaryText(message)
+                        .setBigContentTitle(title)
+                        .bigPicture(getBitmapFromUrl(imageURL))
                 )
             } else {
                 setStyle(BigTextStyle().bigText(message))
@@ -209,7 +261,13 @@ object NotificationUtils {
             val input = connection.inputStream
             BitmapFactory.decodeStream(input)
         } catch (e: Exception) {
-            AppLog.loge(false, kotlinFileName, "getBitmapFromUrl", e, Exception())
+            AppLog.loge(
+                false,
+                kotlinFileName,
+                "getBitmapFromUrl",
+                e,
+                Exception()
+            )
             null
         }
     }

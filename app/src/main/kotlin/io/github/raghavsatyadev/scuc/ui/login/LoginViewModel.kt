@@ -25,30 +25,43 @@ class LoginViewModel : CoreViewModel() {
         viewModelScope.launch {
             loginEvent.emit(Resource.loading())
             withContext(ioDispatcher) {
-                signInUtil.startSignIn(onSuccess = { idToken ->
-                    viewModelScope.launch {
-                        withContext(ioDispatcher) {
-                            val signInWithGoogle =
-                                FirebaseAuthUtil.getInstance().signInWithGoogle(idToken)
-                            val user = signInWithGoogle.first
-                            if (user != null) {
-                                loginEvent.emit(Resource.success(true))
-                            } else if (signInWithGoogle.second != null) {
-                                loginEvent.emit(Resource.error(signInWithGoogle.second!!))
-                            } else {
-                                loginEvent.emit(Resource.error(null))
+                signInUtil.startSignIn(
+                    onSuccess = { idToken ->
+                        viewModelScope.launch {
+                            withContext(ioDispatcher) {
+                                val signInWithGoogle = FirebaseAuthUtil
+                                    .getInstance()
+                                    .signInWithGoogle(idToken)
+                                val user = signInWithGoogle.first
+                                if (user != null) {
+                                    loginEvent.emit(Resource.success(true))
+                                } else if (signInWithGoogle.second != null) {
+                                    loginEvent.emit(Resource.error(signInWithGoogle.second!!))
+                                } else {
+                                    loginEvent.emit(Resource.error(null))
+                                }
                             }
                         }
-                    }
-                }, onFailure = { exception ->
-                    AppLog.loge(false, kotlinFileName, "signIn", exception, Exception())
-                    viewModelScope.launch {
-                        loginEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, exception
+                    },
+                    onFailure = { exception ->
+                        AppLog.loge(
+                            false,
+                            kotlinFileName,
+                            "signIn",
+                            exception,
+                            Exception()
                         )
-                        )
-                        )
-                    }
-                })
+                        viewModelScope.launch {
+                            loginEvent.emit(
+                                Resource.error(
+                                    CustomError(
+                                        ErrorCode.AUTH_FAILED,
+                                        exception
+                                    )
+                                )
+                            )
+                        }
+                    })
             }
         }
     }

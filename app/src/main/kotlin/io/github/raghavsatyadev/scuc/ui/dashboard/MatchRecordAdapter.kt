@@ -9,8 +9,7 @@ import io.github.raghavsatyadev.support.extensions.ResourceExtensions.getAttrCol
 import io.github.raghavsatyadev.support.list.GenRecyclerAdapter
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 
-class MatchRecordAdapter(context: Context) :
-    GenRecyclerAdapter<MatchRecord, ItemMatchRecordBinding, MatchRecordHolder>() {
+class MatchRecordAdapter(context: Context) : GenRecyclerAdapter<MatchRecord, ItemMatchRecordBinding, MatchRecordHolder>() {
     val won: String = context.getString(R.string.won)
     val lost: String = context.getString(R.string.lost)
     val draw: String = context.getString(R.string.draw)
@@ -26,8 +25,20 @@ class MatchRecordAdapter(context: Context) :
         viewType: Int,
         from: LayoutInflater,
     ): MatchRecordHolder {
-        return MatchRecordHolder.getInstance(ItemMatchRecordBinding.inflate(from, parent, false),
-            itemClickListener, won, lost, draw, inProgress, lostColor, winColor, drawColor,
+        return MatchRecordHolder.getInstance(
+            ItemMatchRecordBinding.inflate(
+                from,
+                parent,
+                false
+            ),
+            itemClickListener,
+            won,
+            lost,
+            draw,
+            inProgress,
+            lostColor,
+            winColor,
+            drawColor,
             inProgressColor
         )
     }

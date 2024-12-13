@@ -27,11 +27,15 @@ object ImageExtensions {
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
     ) {
-        val pair =
-            getImageLoaderBuilder(url = url, placeHolderImage = placeHolder, errorImage = error,
-                crossFade = crossFade, cacheAllowed = cacheAllowed, errorListener = errorListener,
-                listener = listener
-            )
+        val pair = getImageLoaderBuilder(
+            url = url,
+            placeHolderImage = placeHolder,
+            errorImage = error,
+            crossFade = crossFade,
+            cacheAllowed = cacheAllowed,
+            errorListener = errorListener,
+            listener = listener
+        )
 
         pair.first.enqueue(pair.second.build())
     }
@@ -59,7 +63,10 @@ object ImageExtensions {
                         request: ImageRequest,
                         result: ErrorResult,
                     ) {
-                        super.onError(request, result)
+                        super.onError(
+                            request,
+                            result
+                        )
                         errorListener?.invoke(result.throwable)
                     }
 
@@ -67,14 +74,20 @@ object ImageExtensions {
                         request: ImageRequest,
                         result: SuccessResult,
                     ) {
-                        super.onSuccess(request, result)
+                        super.onSuccess(
+                            request,
+                            result
+                        )
                         listener?.invoke()
                     }
                 })
                 crossfade(crossFade)
             }
 
-            return Pair(imageLoader, builder)
+            return Pair(
+                imageLoader,
+                builder
+            )
         }
     }
 
@@ -87,8 +100,11 @@ object ImageExtensions {
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
     ) {
-        loadImage(url = url, placeHolder = context.getConDrawable(placeHolderRes),
-            error = context.getConDrawable(errorRes), listener = listener,
+        loadImage(
+            url = url,
+            placeHolder = context.getConDrawable(placeHolderRes),
+            error = context.getConDrawable(errorRes),
+            listener = listener,
             errorListener = errorListener
         )
     }
@@ -101,8 +117,12 @@ object ImageExtensions {
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
     ) {
-        loadImage(url = url, placeHolder = placeHolder, error = context.getConDrawable(errorRes),
-            listener = listener, errorListener = errorListener
+        loadImage(
+            url = url,
+            placeHolder = placeHolder,
+            error = context.getConDrawable(errorRes),
+            listener = listener,
+            errorListener = errorListener
         )
     }
 
@@ -114,8 +134,12 @@ object ImageExtensions {
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
     ) {
-        loadImage(url = url, placeHolder = context.getConDrawable(placeHolderRes), error = error,
-            listener = listener, errorListener = errorListener
+        loadImage(
+            url = url,
+            placeHolder = context.getConDrawable(placeHolderRes),
+            error = error,
+            listener = listener,
+            errorListener = errorListener
         )
     }
 
@@ -146,8 +170,11 @@ object ImageExtensions {
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
     ) {
-        loadImage(urlRes = urlRes, placeHolder = context.getConDrawable(placeHolderRes),
-            error = context.getConDrawable(errorRes), listener = listener,
+        loadImage(
+            urlRes = urlRes,
+            placeHolder = context.getConDrawable(placeHolderRes),
+            error = context.getConDrawable(errorRes),
+            listener = listener,
             errorListener = errorListener
         )
     }
@@ -161,8 +188,11 @@ object ImageExtensions {
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
     ) {
-        loadImage(urlRes = urlRes, placeHolder = placeHolder,
-            error = context.getConDrawable(errorRes), listener = listener,
+        loadImage(
+            urlRes = urlRes,
+            placeHolder = placeHolder,
+            error = context.getConDrawable(errorRes),
+            listener = listener,
             errorListener = errorListener
         )
     }
@@ -176,8 +206,12 @@ object ImageExtensions {
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
     ) {
-        loadImage(urlRes = urlRes, placeHolder = context.getConDrawable(placeHolderRes),
-            error = error, listener = listener, errorListener = errorListener
+        loadImage(
+            urlRes = urlRes,
+            placeHolder = context.getConDrawable(placeHolderRes),
+            error = error,
+            listener = listener,
+            errorListener = errorListener
         )
     }
 }

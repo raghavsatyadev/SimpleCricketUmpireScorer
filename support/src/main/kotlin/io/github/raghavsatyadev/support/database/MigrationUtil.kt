@@ -5,7 +5,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 object MigrationUtil {
 
-    private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+    private val MIGRATION_1_2: Migration = object : Migration(
+        1,
+        2
+    ) {
         override fun migrate(db: SupportSQLiteDatabase) {
         }
     }

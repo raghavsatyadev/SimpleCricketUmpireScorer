@@ -24,7 +24,9 @@ class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchR
     }
 
     override fun getDao(): MatchRecordDao {
-        return RoomDBUtil.getDatabase().songDetailDao()
+        return RoomDBUtil
+            .getDatabase()
+            .songDetailDao()
     }
 
     override fun getTableName(): String {

@@ -29,8 +29,11 @@ object GoogleExtensions {
             }
 
             else -> {
-                val errorDialog =
-                    apiAvailability.getErrorDialog(this, availabilityCode, Randoms.randomInt())
+                val errorDialog = apiAvailability.getErrorDialog(
+                    this,
+                    availabilityCode,
+                    Randoms.randomInt()
+                )
 
                 if (errorDialog != null) {
                     errorDialog.setOnDismissListener {
@@ -72,12 +75,17 @@ object GoogleExtensions {
     }
 
     fun generateGoogleNonce(): String {
-        val rawNonce = UUID.randomUUID().toString()
-        val bytes = rawNonce.toString().toByteArray()
+        val rawNonce = UUID
+            .randomUUID()
+            .toString()
+        val bytes = rawNonce
+            .toString()
+            .toByteArray()
         val md = MessageDigest.getInstance("SHA-256")
         val digest = md.digest(bytes)
         val hashedNonce = digest.fold("") { str, it ->
-            str + "%02x".format(it
+            str + "%02x".format(
+                it
             )
         }
 

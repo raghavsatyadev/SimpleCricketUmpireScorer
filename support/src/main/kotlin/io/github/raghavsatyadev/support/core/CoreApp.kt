@@ -33,7 +33,13 @@ class CoreApp : Application(), CoroutineScope {
     private lateinit var job: Job
 
     private val handler = CoroutineExceptionHandler { _, exception ->
-        AppLog.loge(false, kotlinFileName, "handler", exception, Exception())
+        AppLog.loge(
+            false,
+            kotlinFileName,
+            "handler",
+            exception,
+            Exception()
+        )
     }
 
     override val coroutineContext: CoroutineContext
@@ -63,15 +69,26 @@ class CoreApp : Application(), CoroutineScope {
 
     private fun setupCoil() {
         SingletonImageLoader.setSafe {
-            ImageLoader.Builder(instance).memoryCache {
-                MemoryCache.Builder().maxSizePercent(instance, 0.25).build()
-            }.diskCache {
-                DiskCache
-                    .Builder()
-                    .directory(cacheDir.resolve("image_cache"))
-                    .maxSizeBytes(5 * 1024 * 1024)
-                    .build()
-            }.logger(DebugLogger()).build()
+            ImageLoader
+                .Builder(instance)
+                .memoryCache {
+                    MemoryCache
+                        .Builder()
+                        .maxSizePercent(
+                            instance,
+                            0.25
+                        )
+                        .build()
+                }
+                .diskCache {
+                    DiskCache
+                        .Builder()
+                        .directory(cacheDir.resolve("image_cache"))
+                        .maxSizeBytes(5 * 1024 * 1024)
+                        .build()
+                }
+                .logger(DebugLogger())
+                .build()
         }
     }
 
@@ -84,7 +101,13 @@ class CoreApp : Application(), CoroutineScope {
                 FireStoreUtil.create(it)
             }
         } else {
-            Toast.makeText(this, R.string.warning_update_play_service, Toast.LENGTH_SHORT).show()
+            Toast
+                .makeText(
+                    this,
+                    R.string.warning_update_play_service,
+                    Toast.LENGTH_SHORT
+                )
+                .show()
         }
     }
 

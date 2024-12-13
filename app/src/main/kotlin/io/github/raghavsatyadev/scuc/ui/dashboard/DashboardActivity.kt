@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat.finishAffinity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import io.github.raghavsatyadev.scuc.databinding.ActivityDashboardBinding
@@ -32,7 +34,10 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
         fun getIntentObject(
             context: Context,
             bundle: Bundle = Bundle.EMPTY,
-        ): Intent = Intent(context, DashboardActivity::class.java).apply { putExtras(bundle) }
+        ): Intent = Intent(
+            context,
+            DashboardActivity::class.java
+        ).apply { putExtras(bundle) }
     }
 
     val launcher = registerActivityForResult { resultType, data ->
@@ -58,7 +63,10 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
         binding.listMatchRecords.adapter = adapter
 
         lifecycleScope.launch {
-            if (FirebaseAuthUtil.getInstance().isLoggedIn()) {
+            if (FirebaseAuthUtil
+                    .getInstance()
+                    .isLoggedIn()
+            ) {
                 loadUI()
             } else {
                 openLoginActivity()
@@ -74,19 +82,21 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
         lifecycleScope.launch {
             withContext(ioDispatcher) {
                 viewModel.loadMatchRecords()
-                viewModel.getMatchRecordsEvent().collectLatest {
-                    withContext(mainDispatcher) {
-                        when (it.status) {
-                            Resource.Status.SUCCESS -> {
-                                adapter.replaceAll(it.data)
-                            }
+                viewModel
+                    .getMatchRecordsEvent()
+                    .collectLatest {
+                        withContext(mainDispatcher) {
+                            when (it.status) {
+                                Resource.Status.SUCCESS -> {
+                                    adapter.replaceAll(it.data)
+                                }
 
-                            else -> {
+                                else -> {
 
+                                }
                             }
                         }
                     }
-                }
             }
         }
     }
@@ -113,7 +123,12 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
                         )
                     )
                 } else {
-                    startActivity(MatchRecordActivity.getIntentObject(this, record))
+                    startActivity(
+                        MatchRecordActivity.getIntentObject(
+                            this,
+                            record
+                        )
+                    )
                 }
             })
         } else {

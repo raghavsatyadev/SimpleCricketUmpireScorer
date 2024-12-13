@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.lifecycleScope
 import io.github.raghavsatyadev.scuc.R
 import io.github.raghavsatyadev.scuc.databinding.ActivityCreateMatchBinding
@@ -30,7 +31,10 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
         fun getIntentObject(
             context: Context,
             bundle: Bundle = Bundle.EMPTY,
-        ): Intent = Intent(context, CreateMatchActivity::class.java).apply { putExtras(bundle) }
+        ): Intent = Intent(
+            context,
+            CreateMatchActivity::class.java
+        ).apply { putExtras(bundle) }
     }
 
     override fun getToolBar() = binding.toolbar
@@ -187,27 +191,29 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
                 didTeam1WinToss,
                 batFirstTeam1
             )
-            viewModel.getCreateMatchRecordEvent().collectLatest {
-                when (it.status) {
-                    Resource.Status.SUCCESS -> {
-                        val record = it.data ?: return@collectLatest
-                        startActivity(
-                            MatchRecordActivity.getIntentObject(
-                                this@CreateMatchActivity,
-                                record
+            viewModel
+                .getCreateMatchRecordEvent()
+                .collectLatest {
+                    when (it.status) {
+                        Resource.Status.SUCCESS -> {
+                            val record = it.data ?: return@collectLatest
+                            startActivity(
+                                MatchRecordActivity.getIntentObject(
+                                    this@CreateMatchActivity,
+                                    record
+                                )
                             )
-                        )
-                        finish()
-                    }
+                            finish()
+                        }
 
-                    Resource.Status.ERROR -> {
-                        errorDialog(it.error?.exception?.message.toString())
-                    }
+                        Resource.Status.ERROR -> {
+                            errorDialog(it.error?.exception?.message.toString())
+                        }
 
-                    else -> {
+                        else -> {
+                        }
                     }
                 }
-            }
         }
     }
 }
