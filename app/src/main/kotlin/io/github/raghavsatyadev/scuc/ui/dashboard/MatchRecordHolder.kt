@@ -52,8 +52,8 @@ class MatchRecordHolder(
     ) {
         with(binding) {
             with(model) {
-                txtTeam1Name.text = team1Detail.team.name
-                txtTeam2Name.text = team2Detail.team.name
+                txtTeam1Name.text = team1Detail.teamName
+                txtTeam2Name.text = team2Detail.teamName
                 txtTeam1Score.text = getTeam1FormattedScore()
                 txtTeam2Score.text = getTeam2FormattedScore()
 

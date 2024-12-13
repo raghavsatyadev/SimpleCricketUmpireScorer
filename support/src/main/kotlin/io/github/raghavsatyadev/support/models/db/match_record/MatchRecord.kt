@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
  * Match record
  *
  * @constructor Create empty Match record
- * @property id
+ * @property matchRecordId
  * @property startDateTime
  * @property endDateTime
  * @property team1Detail
@@ -42,8 +42,8 @@ data class MatchRecord(
     @ColumnInfo(FieldKeys.MATCH_RECORD_ID)
     @get:PropertyName(FieldKeys.MATCH_RECORD_ID)
     @set:PropertyName(FieldKeys.MATCH_RECORD_ID)
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0,
+    @PrimaryKey()
+    var matchRecordId: String = "",
 
     @SerialName(FieldKeys.START_DATE_TIME)
     @ColumnInfo(FieldKeys.START_DATE_TIME)
@@ -114,7 +114,7 @@ data class MatchRecord(
     @ColumnInfo(FieldKeys.MATCH_ADMIN_ID)
     @get:PropertyName(FieldKeys.MATCH_ADMIN_ID)
     @set:PropertyName(FieldKeys.MATCH_ADMIN_ID)
-    var matchAdminID: String = "",
+    var matchAdminID: String,
 
     @SerialName(FieldKeys.MATCH_SHARED_USER_IDS)
     @ColumnInfo(FieldKeys.MATCH_SHARED_USER_IDS)

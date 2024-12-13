@@ -121,10 +121,11 @@ object MatchRecordExtensions {
         )
 
         return BasicMatchUIDetails(
+            // TODO: lets not make the team as a separate table
             currentTeamName = if (shouldPrepareTeam1Details) {
-                team1Detail.team.name
+                team1Detail.teamName
             } else {
-                team2Detail.team.name
+                team2Detail.teamName
             },
             currentRunsAndWickets = currentRunsAndWickets,
             currentOvers = currentOvers,

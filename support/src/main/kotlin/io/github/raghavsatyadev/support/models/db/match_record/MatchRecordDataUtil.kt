@@ -43,7 +43,7 @@ class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchR
         return getDao().getCountLive(SimpleSQLiteQuery(buildGetCountQuery()))
     }
 
-    fun getItemLive(id: Long): Flow<MatchRecord> {
+    fun getItemLive(id: String): Flow<MatchRecord> {
         return getDao().getItemLive(SimpleSQLiteQuery(buildGetItemQuery(id.toString())))
     }
 

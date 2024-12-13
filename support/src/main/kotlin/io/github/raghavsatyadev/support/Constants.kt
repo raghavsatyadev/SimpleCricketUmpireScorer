@@ -11,7 +11,6 @@ object Constants {
 
         object Tables {
             const val MATCH_RECORD_TABLE = "match_record"
-            const val TEAM_TABLE = "team"
         }
     }
 
@@ -33,9 +32,7 @@ object Constants {
         const val MATCH_SHARED_USER_IDS = "match_shared_user_ids"
         // endregion
 
-        // region Team
-        const val TEAM_ID = "team_id"
-        // endregion
+        const val TEAM_NAME = "team_name"
 
         const val USER_ID = "user_id"
     }
@@ -43,6 +40,7 @@ object Constants {
     object FirebaseConstants {
         object Collections {
             const val USER = "User"
+            const val MATCH_RECORD = "Match"
         }
     }
 

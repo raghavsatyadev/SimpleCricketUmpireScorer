@@ -11,6 +11,8 @@ import io.github.raghavsatyadev.support.Constants.FirebaseConstants
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toJsonString
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toKotlinObject
 import io.github.raghavsatyadev.support.models.User
+import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
+import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUtil
 import kotlinx.coroutines.tasks.await
 
 class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
@@ -32,21 +34,26 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
     }
 
     private val db by lazy {
-        Firebase.firestore(firebaseApp).apply {
-            val settings = firestoreSettings {
-                setLocalCacheSettings(memoryCacheSettings {})
-                setLocalCacheSettings(persistentCacheSettings {})
+        Firebase
+            .firestore(firebaseApp)
+            .apply {
+                val settings = firestoreSettings {
+                    setLocalCacheSettings(memoryCacheSettings {})
+                    setLocalCacheSettings(persistentCacheSettings {})
+                }
+                firestoreSettings = settings
+                persistentCacheIndexManager?.apply {
+                    enableIndexAutoCreation()
+                } ?: println("indexManager is null")
             }
-            firestoreSettings = settings
-            persistentCacheIndexManager?.apply {
-                enableIndexAutoCreation()
-            } ?: println("indexManager is null")
-        }
     }
 
     // region User
     suspend fun setUser(user: User): User {
-        val task = db.collection(FirebaseConstants.Collections.USER).document(user.userID).set(user)
+        val task = db
+            .collection(FirebaseConstants.Collections.USER)
+            .document(user.userID)
+            .set(user)
 
         with(task) {
             await()
@@ -59,7 +66,10 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
     }
 
     suspend fun readUser(id: String): User {
-        val task = db.collection(FirebaseConstants.Collections.USER).document(id).get()
+        val task = db
+            .collection(FirebaseConstants.Collections.USER)
+            .document(id)
+            .get()
         with(task) {
             await()
             if (isSuccessful) {
@@ -71,7 +81,28 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
     }
     // endregion
 
+    // region MatchRecord
+    suspend fun setMatchRecord(matchRecord: MatchRecord): MatchRecord {
+        val document = db
+            .collection(FirebaseConstants.Collections.MATCH_RECORD)
+            .document()
+        matchRecord.matchRecordId = document.id
+        val task = document.set(matchRecord)
+        with(task) {
+            await()
+            if (!isSuccessful) {
+                throw exception ?: Exception("Unknown Exception")
+            } else {
+                MatchRecordDataUtil
+                    .getInstance()
+                    .insertIgnore(matchRecord)
+                return matchRecord
+            }
+        }
+    }
+    // endregion
 
-    private inline fun <reified T> DocumentSnapshot.toDataObject(): T =
-        data.toJsonString().toKotlinObject()
+    private inline fun <reified T> DocumentSnapshot.toDataObject(): T = data
+        .toJsonString()
+        .toKotlinObject()
 }

@@ -17,6 +17,12 @@
     <string name="warning_connect_internet">Please connect to internet.</string>
     <string name="warning_update_play_service">Update Play Service and Restart app</string>
     <string name="warning_unknown_error">Unknown Error</string>
+    <string name="warning_match_location">Please enter match location</string>
+    <string name="warning_match_date_time">Please enter match date &amp; time</string>
+    <string name="warning_overs">Please enter overs</string>
+    <string name="warning_team_1_name">Please enter team 1 name</string>
+    <string name="warning_team_2_name">Please enter team 2 name</string>
+    <string name="warning_please_login">Please login first</string>
 
     <!-- General -->
     <string name="error">Error</string>

@@ -28,7 +28,10 @@ class MatchRecordViewModel : CoreViewModel() {
             withContext(ioDispatcher) {
                 record.status = MatchStatus.IN_PROGRESS
                 MatchRecordDataUtil.getInstance().update(record)
-                MatchRecordDataUtil.getInstance().getItemLive(record.id).collectLatest { value ->
+                MatchRecordDataUtil
+                    .getInstance()
+                    .getItemLive(record.matchRecordId)
+                    .collectLatest { value ->
                     matchRecordEvent.emit(Resource.success(value.toBasicMatchUIDetails()))
                 }
             }
@@ -36,7 +39,7 @@ class MatchRecordViewModel : CoreViewModel() {
     }
 
     fun reset(
-        matchRecordID: Long,
+        matchRecordID: String,
         resetFull: Boolean = false,
     ): Boolean {
         viewModelScope.launch {
@@ -68,7 +71,7 @@ class MatchRecordViewModel : CoreViewModel() {
     }
 
     fun setRun(
-        matchRecordID: Long,
+        matchRecordID: String,
         runCount: Int,
         increase: Boolean = true,
     ) {
@@ -116,7 +119,7 @@ class MatchRecordViewModel : CoreViewModel() {
     }
 
     fun setWicket(
-        matchRecordID: Long,
+        matchRecordID: String,
         increase: Boolean = true,
     ) {
         viewModelScope.launch {
@@ -150,7 +153,7 @@ class MatchRecordViewModel : CoreViewModel() {
     }
 
     fun setBall(
-        matchRecordID: Long,
+        matchRecordID: String,
         ballCount: Int,
         increase: Boolean = true,
     ) {
@@ -192,7 +195,7 @@ class MatchRecordViewModel : CoreViewModel() {
         }
     }
 
-    fun endInning(matchRecordID: Long) {
+    fun endInning(matchRecordID: String) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
                 val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
@@ -203,7 +206,7 @@ class MatchRecordViewModel : CoreViewModel() {
         }
     }
 
-    fun endMatch(matchRecordID: Long) {
+    fun endMatch(matchRecordID: String) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
                 val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
@@ -224,7 +227,7 @@ class MatchRecordViewModel : CoreViewModel() {
     }
 
     fun editTotalOvers(
-        matchRecordID: Long,
+        matchRecordID: String,
         editedOvers: Int,
     ) {
         viewModelScope.launch {

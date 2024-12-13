@@ -16,6 +16,7 @@ import io.github.raghavsatyadev.support.extensions.DateExtensions.formatMillisTo
 import io.github.raghavsatyadev.support.extensions.ErrorShowExtensions.errorDialog
 import io.github.raghavsatyadev.support.extensions.ViewExtensions.isEditable
 import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.loadAds
+import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.models.essential.Resource
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,6 +24,7 @@ import java.util.Calendar
 
 class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
     private val viewModel: CreateMatchViewModel by viewModels()
+    private var currentUserId: String? = null
 
     companion object {
         fun getIntentObject(
@@ -39,6 +41,8 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
         loadAds(binding.adView)
 
         binding.edMatchDateTime.isEditable = false
+
+        currentUserId = FirebaseAuthUtil.getInstance().currentUserId
     }
 
     private fun showDateTimePicker(text: String) {
@@ -50,24 +54,53 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
         }
         calendar.timeInMillis = dateTime
 
-        val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
-            calendar.set(Calendar.YEAR, year)
-            calendar.set(Calendar.MONTH, month)
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, year, month, dayOfMonth ->
+                calendar.set(
+                    Calendar.YEAR,
+                    year
+                )
+                calendar.set(
+                    Calendar.MONTH,
+                    month
+                )
+                calendar.set(
+                    Calendar.DAY_OF_MONTH,
+                    dayOfMonth
+                )
 
-            val timePickerDialog = TimePickerDialog(this, { _, hourOfDay, minute ->
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                calendar.set(Calendar.MINUTE, minute)
-                calendar.set(Calendar.SECOND, 0)
-                calendar.set(Calendar.MILLISECOND, 0)
+                val timePickerDialog = TimePickerDialog(
+                    this,
+                    { _, hourOfDay, minute ->
+                        calendar.set(
+                            Calendar.HOUR_OF_DAY,
+                            hourOfDay
+                        )
+                        calendar.set(
+                            Calendar.MINUTE,
+                            minute
+                        )
+                        calendar.set(
+                            Calendar.SECOND,
+                            0
+                        )
+                        calendar.set(
+                            Calendar.MILLISECOND,
+                            0
+                        )
 
-                val selectedDateTime = calendar.timeInMillis
-                binding.edMatchDateTime.setText(selectedDateTime.formatMillisToDate())
-            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE),
-                false // Set to false to use 12-hour view
-            )
-            timePickerDialog.show()
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                        val selectedDateTime = calendar.timeInMillis
+                        binding.edMatchDateTime.setText(selectedDateTime.formatMillisToDate())
+                    },
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    false // Set to false to use 12-hour view
+                )
+                timePickerDialog.show()
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         )
         datePickerDialog.show()
@@ -106,21 +139,34 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
         var batFirstTeam1 = binding.btnBatFirstTeam1.id == binding.toggleBatFirst.checkedButtonId
 
         try {
-            isMatchDetailsValid =
-                viewModel.validateMatchDetails(this, matchLocation, matchDateTime, inningOvers,
-                    team1Name, team2Name
-                )
+            isMatchDetailsValid = viewModel.validateMatchDetails(
+                this,
+                currentUserId,
+                matchLocation,
+                matchDateTime,
+                inningOvers,
+                team1Name,
+                team2Name
+            )
         } catch (e: Exception) {
             errorDialog(e.message.toString())
         }
         if (isMatchDetailsValid) {
-            saveMatchRecord(matchLocation, matchDateTime, inningOvers, team1Name, team2Name,
-                didTeam1WinToss, batFirstTeam1
+            saveMatchRecord(
+                currentUserId!!,
+                matchLocation,
+                matchDateTime,
+                inningOvers,
+                team1Name,
+                team2Name,
+                didTeam1WinToss,
+                batFirstTeam1
             )
         }
     }
 
     private fun saveMatchRecord(
+        currentUserId: String,
         matchLocation: String,
         matchDateTime: String,
         inningOvers: String,
@@ -130,15 +176,25 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
         batFirstTeam1: Boolean,
     ) {
         lifecycleScope.launch {
-            viewModel.createMatch(matchLocation, matchDateTime.formatDateToMillis(), inningOvers,
-                team1Name, team2Name, didTeam1WinToss, batFirstTeam1
+            viewModel.createMatch(
+                this@CreateMatchActivity,
+                currentUserId,
+                matchLocation,
+                matchDateTime.formatDateToMillis(),
+                inningOvers,
+                team1Name,
+                team2Name,
+                didTeam1WinToss,
+                batFirstTeam1
             )
             viewModel.getCreateMatchRecordEvent().collectLatest {
                 when (it.status) {
                     Resource.Status.SUCCESS -> {
                         val record = it.data ?: return@collectLatest
                         startActivity(
-                            MatchRecordActivity.getIntentObject(this@CreateMatchActivity, record
+                            MatchRecordActivity.getIntentObject(
+                                this@CreateMatchActivity,
+                                record
                             )
                         )
                         finish()

@@ -24,14 +24,20 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
         private const val MATCH_RECORD_ID = "match_record_id"
         fun getIntentObject(
             context: Context,
-            matchRecordID: Long,
-        ): Intent = Intent(context, MatchCompleteActivity::class.java).apply {
-            putExtra(MATCH_RECORD_ID, matchRecordID)
+            matchRecordID: String,
+        ): Intent = Intent(
+            context,
+            MatchCompleteActivity::class.java
+        ).apply {
+            putExtra(
+                MATCH_RECORD_ID,
+                matchRecordID
+            )
         }
     }
 
     private val viewModel: MatchCompleteViewModel by viewModels()
-    private var matchRecordId: Long = -1
+    private var matchRecordId: String = ""
     private lateinit var matchRecord: MatchRecord
     private lateinit var basicDetailsTeam1: BasicMatchUIDetails
     private lateinit var basicDetailsTeam2: BasicMatchUIDetails
@@ -63,10 +69,14 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
                 (loadTeam1Details && !isBattingFirst) || (!loadTeam1Details && isBattingFirst)
 
             if (showRequiredScore) {
-                binding.txtRrr.text =
-                    getString(R.string.rrr_at_start, matchRecord.rrrAtSecondInningStart)
-                binding.txtRequiredRunsBalls.text =
-                    getString(R.string.required_runs_balls_at_end, requiredRunsBalls)
+                binding.txtRrr.text = getString(
+                    R.string.rrr_at_start,
+                    matchRecord.rrrAtSecondInningStart
+                )
+                binding.txtRequiredRunsBalls.text = getString(
+                    R.string.required_runs_balls_at_end,
+                    requiredRunsBalls
+                )
                 binding.groupRequiredScore.visible()
             } else {
                 binding.groupRequiredScore.gone()
@@ -75,14 +85,17 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
             binding.txtTeamName.text = currentTeamName
             binding.txtRunsWickets.text = currentRunsAndWickets
             binding.txtOvers.text = currentOvers
-            binding.txtCrr.text = getString(R.string.crr, currentCRR)
+            binding.txtCrr.text = getString(
+                R.string.crr,
+                currentCRR
+            )
         }
     }
 
     override fun createReference(savedInstanceState: Bundle?) {
         loadAds(binding.adView)
         setToolBarTitle(R.string.match_complete_title)
-        matchRecordId = intent.getLongExtra(MATCH_RECORD_ID, 0)
+        matchRecordId = intent.getStringExtra(MATCH_RECORD_ID) ?: ""
         loadUI()
     }
 
