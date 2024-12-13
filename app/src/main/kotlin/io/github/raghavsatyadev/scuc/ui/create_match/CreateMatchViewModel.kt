@@ -33,20 +33,34 @@ class CreateMatchViewModel : CoreViewModel() {
         team1Name: String,
         team2Name: String,
     ): Boolean {
-        if (currentUserId.isNullOrEmpty()) {
-            throw Exception(context.getString(R.string.warning_please_login))
-        } else if (matchLocation.isEmpty()) {
-            throw Exception(context.getString(R.string.warning_match_location))
-        } else if (matchDate.isEmpty()) {
-            throw Exception(context.getString(R.string.warning_match_date_time))
-        } else if (inningOver.isEmpty()) {
-            throw Exception(context.getString(R.string.warning_overs))
-        } else if (team1Name.isEmpty()) {
-            throw Exception(context.getString(R.string.warning_team_1_name))
-        } else if (team2Name.isEmpty()) {
-            throw Exception(context.getString(R.string.warning_team_2_name))
-        } else {
-            return true
+        when {
+            currentUserId.isNullOrEmpty() -> {
+                throw Exception(context.getString(R.string.warning_please_login))
+            }
+
+            matchLocation.isEmpty() -> {
+                throw Exception(context.getString(R.string.warning_match_location))
+            }
+
+            matchDate.isEmpty() -> {
+                throw Exception(context.getString(R.string.warning_match_date_time))
+            }
+
+            inningOver.isEmpty() -> {
+                throw Exception(context.getString(R.string.warning_overs))
+            }
+
+            team1Name.isEmpty() -> {
+                throw Exception(context.getString(R.string.warning_team_1_name))
+            }
+
+            team2Name.isEmpty() -> {
+                throw Exception(context.getString(R.string.warning_team_2_name))
+            }
+
+            else -> {
+                return true
+            }
         }
     }
 

@@ -92,10 +92,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
             .document()
         matchRecord.matchRecordId = document.id
         val task = db.runTransaction {
-            it.set(
-                document,
-                matchRecord
-            )
+            it[document] = matchRecord
             it.update(
                 document,
                 SERVER_UPDATE_DATE_TIME,

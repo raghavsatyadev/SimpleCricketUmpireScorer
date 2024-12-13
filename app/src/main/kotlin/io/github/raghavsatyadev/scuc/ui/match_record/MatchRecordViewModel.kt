@@ -94,18 +94,14 @@ class MatchRecordViewModel : CoreViewModel() {
                     val firstInningComplete = matchRecord.isFirstInningComplete
                     if (team1CurrentlyBatting) {
                         // handle 2nd batting team's total runs not getting more than 1st batting team's runs +1
-                        if (firstInningComplete) {
-                            if (matchRecord.team1Detail.runs + runCount > matchRecord.team2Detail.runs + 1) {
-                                return@withContext
-                            }
+                        if (firstInningComplete && matchRecord.team1Detail.runs + runCount > matchRecord.team2Detail.runs + 1) {
+                            return@withContext
                         }
                         matchRecord.team1Detail.runs += runCount
                     } else {
                         // handle 2nd batting team's total runs not getting more than 1st batting team's runs +1
-                        if (firstInningComplete) {
-                            if (matchRecord.team2Detail.runs + runCount > matchRecord.team1Detail.runs + 1) {
-                                return@withContext
-                            }
+                        if (firstInningComplete && matchRecord.team2Detail.runs + runCount > matchRecord.team1Detail.runs + 1) {
+                            return@withContext
                         }
                         matchRecord.team2Detail.runs += runCount
                     }

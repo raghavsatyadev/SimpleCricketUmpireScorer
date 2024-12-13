@@ -35,21 +35,30 @@ sonar {
 }
 
 fun readProperties(propertiesFile: File) = Properties().apply {
-    propertiesFile.inputStream().use { fis ->
-        load(fis)
-    }
+    propertiesFile
+        .inputStream()
+        .use { fis ->
+            load(fis)
+        }
 }
 
 val props = readProperties(file("../secret.properties"))
-
 android {
     namespace = libs.versions.nameSpace.get()
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk = libs.versions.compileSdk
+        .get()
+        .toInt()
     defaultConfig {
         applicationId = libs.versions.appIdDev.get()
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = libs.versions.versionCode.get().toInt()
+        minSdk = libs.versions.minSdk
+            .get()
+            .toInt()
+        targetSdk = libs.versions.targetSdk
+            .get()
+            .toInt()
+        versionCode = libs.versions.versionCode
+            .get()
+            .toInt()
         versionName = libs.versions.versionName.get()
         multiDexEnabled = true
 
@@ -57,7 +66,9 @@ android {
     }
     signingConfigs {
         create("release") {
-            props.getProperty("storeFile")?.let { storeFile = file(it) }
+            props
+                .getProperty("storeFile")
+                ?.let { storeFile = file(it) }
             storePassword = props.getProperty("storePassword")
             keyAlias = props.getProperty("keyAlias")
             keyPassword = props.getProperty("keyPassword")
@@ -89,7 +100,12 @@ android {
 
             ndk {
                 abiFilters.clear()
-                abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a"))
+                abiFilters.addAll(
+                    listOf(
+                        "armeabi-v7a",
+                        "arm64-v8a"
+                    )
+                )
             }
         }
         getByName("debug") {
@@ -140,10 +156,16 @@ android {
     }
     applicationVariants.configureEach {
         val variant = this
-        if (!variant.name.lowercase(Locale.getDefault()).contains("debug")) {
+        if (!variant.name
+                .lowercase(Locale.getDefault())
+                .contains("debug")
+        ) {
             outputs.configureEach {
                 val output = this
-                renameOutputs(variant, output)
+                renameOutputs(
+                    variant,
+                    output
+                )
             }
         }
     }
@@ -168,18 +190,22 @@ fun moveAAB(
 
     val copyBundleTask = tasks.register<Copy>("copy${variantNameCapitalized}Bundle") {
         dependsOn(bundleTask)
-        bundleTask.get().doLast {
-            println("Copying AAB to output directory: $buildOutputDirectory")
-            copy {
-                val aabFile = buildTypeDirectory.walkTopDown().find { it.name.endsWith(".aab") }
-                print("AAB Location: ${aabFile?.absolutePath ?: "EMPTY"}")
-                from(aabFile)
-                into(buildOutputDirectory)
-                rename { "$outputFullName.aab" }
+        bundleTask
+            .get()
+            .doLast {
+                println("Copying AAB to output directory: $buildOutputDirectory")
+                copy {
+                    val aabFile = buildTypeDirectory
+                        .walkTopDown()
+                        .find { it.name.endsWith(".aab") }
+                    print("AAB Location: ${aabFile?.absolutePath ?: "EMPTY"}")
+                    from(aabFile)
+                    into(buildOutputDirectory)
+                    rename { "$outputFullName.aab" }
+                }
+                println("Deleting build type directory: $buildTypeDirectory")
+                buildTypeDirectory.parentFile?.deleteRecursively()
             }
-            println("Deleting build type directory: $buildTypeDirectory")
-            buildTypeDirectory.parentFile?.deleteRecursively()
-        }
     }
     bundleTask.configure {
         finalizedBy(copyBundleTask)
@@ -194,43 +220,48 @@ fun moveAPK(
     variantName: String?,
     buildTypeDirectory: File,
 ) {
-    variant.assembleProvider.get().doLast {
-        println("Copying APK to output directory: $buildOutputDirectoryPath")
-        copy {
-            from(output.outputFile.absolutePath)
-            into(buildOutputDirectoryPath)
-            rename {
-                "${outputFullName}.apk"
+    variant.assembleProvider
+        .get()
+        .doLast {
+            println("Copying APK to output directory: $buildOutputDirectoryPath")
+            copy {
+                from(output.outputFile.absolutePath)
+                into(buildOutputDirectoryPath)
+                rename {
+                    "${outputFullName}.apk"
+                }
             }
-        }
 
-        println("Copying mapping file to output directory: $buildOutputDirectoryPath")
-        copy {
-            from(variant.mappingFileProvider.get())
-            into(buildOutputDirectoryPath)
-            rename {
-                "${outputFullName}.txt"
+            println("Copying mapping file to output directory: $buildOutputDirectoryPath")
+            copy {
+                from(variant.mappingFileProvider.get())
+                into(buildOutputDirectoryPath)
+                rename {
+                    "${outputFullName}.txt"
+                }
             }
-        }
 
-        val nativeSymbolsDir =
-            file("${layout.buildDirectory.asFile}/app/intermediates/merged_native_libs/${variantName}/out/lib")
+            val nativeSymbolsDir =
+                file("${layout.buildDirectory.asFile}/app/intermediates/merged_native_libs/${variantName}/out/lib")
 
-        if (nativeSymbolsDir.exists()) {
-            println("Zipping native debug symbols and copying them to output directory: $buildOutputDirectoryPath")
+            if (nativeSymbolsDir.exists()) {
+                println("Zipping native debug symbols and copying them to output directory: $buildOutputDirectoryPath")
 
-            val zipFile = file("$buildOutputDirectoryPath/$outputFullName-native_debug_symbols.zip")
+                val zipFile =
+                    file("$buildOutputDirectoryPath/$outputFullName-native_debug_symbols.zip")
 
-            ant.invokeMethod(
-                "zip", mapOf(
-                    "destfile" to zipFile, "basedir" to nativeSymbolsDir
+                ant.invokeMethod(
+                    "zip",
+                    mapOf(
+                        "destfile" to zipFile,
+                        "basedir" to nativeSymbolsDir
+                    )
                 )
-            )
-        }
+            }
 
-        println("Deleting build type directory: $buildTypeDirectory")
-        buildTypeDirectory.parentFile?.deleteRecursively()
-    }
+            println("Deleting build type directory: $buildTypeDirectory")
+            buildTypeDirectory.parentFile?.deleteRecursively()
+        }
 }
 
 fun renameOutputs(
@@ -239,7 +270,10 @@ fun renameOutputs(
 ): BaseVariantOutput {
     val variantName = variant.name
 
-    if (variantName.lowercase().contains("release")) {
+    if (variantName
+            .lowercase()
+            .contains("release")
+    ) {
         val outputFullName = getBuildName(variantName)
         val buildTypeDirectory = output.outputFile.parentFile
         val buildOutputDirectory = buildTypeDirectory?.parentFile?.parentFile
@@ -248,7 +282,10 @@ fun renameOutputs(
 
         if (buildOutputDirectoryPath != null) {
             moveAAB(
-                variant, outputFullName, buildOutputDirectory, buildTypeDirectory
+                variant,
+                outputFullName,
+                buildOutputDirectory,
+                buildTypeDirectory
             )
             moveAPK(
                 variant,

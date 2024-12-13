@@ -38,7 +38,7 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
         ).apply { putExtras(bundle) }
     }
 
-    val launcher = registerActivityForResult { resultType, data ->
+    val launcher = registerActivityForResult { resultType, _ ->
         if (resultType == ResultType.OK) {
             loadUI()
         } else {
@@ -111,7 +111,7 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
                     startActivity(CreateMatchActivity.getIntentObject(this))
                 }
             }
-            adapter.itemClickListener = CustomClickListener(onClick = { position, view, _ ->
+            adapter.itemClickListener = CustomClickListener(onClick = { position, _, _ ->
                 val record = adapter.getItem(position)
                 if (record.isMatchCompleted()) {
                     startActivity(

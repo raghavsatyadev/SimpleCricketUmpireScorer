@@ -121,51 +121,30 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
         val datePickerDialog = DatePickerDialog(
             this,
             { _, year, month, dayOfMonth ->
-                calendar.set(
-                    Calendar.YEAR,
-                    year
-                )
-                calendar.set(
-                    Calendar.MONTH,
-                    month
-                )
-                calendar.set(
-                    Calendar.DAY_OF_MONTH,
-                    dayOfMonth
-                )
+                calendar[Calendar.YEAR] = year
+                calendar[Calendar.MONTH] = month
+                calendar[Calendar.DAY_OF_MONTH] = dayOfMonth
 
                 val timePickerDialog = TimePickerDialog(
                     this,
                     { _, hourOfDay, minute ->
-                        calendar.set(
-                            Calendar.HOUR_OF_DAY,
-                            hourOfDay
-                        )
-                        calendar.set(
-                            Calendar.MINUTE,
-                            minute
-                        )
-                        calendar.set(
-                            Calendar.SECOND,
-                            0
-                        )
-                        calendar.set(
-                            Calendar.MILLISECOND,
-                            0
-                        )
+                        calendar[Calendar.HOUR_OF_DAY] = hourOfDay
+                        calendar[Calendar.MINUTE] = minute
+                        calendar[Calendar.SECOND] = 0
+                        calendar[Calendar.MILLISECOND] = 0
 
                         val selectedDateTime = calendar.timeInMillis
                         binding.edMatchDateTime.setText(selectedDateTime.formatMillisToDate())
                     },
-                    calendar.get(Calendar.HOUR_OF_DAY),
-                    calendar.get(Calendar.MINUTE),
+                    calendar[Calendar.HOUR_OF_DAY],
+                    calendar[Calendar.MINUTE],
                     false // Set to false to use 12-hour view
                 )
                 timePickerDialog.show()
             },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
+            calendar[Calendar.YEAR],
+            calendar[Calendar.MONTH],
+            calendar[Calendar.DAY_OF_MONTH]
         )
         datePickerDialog.show()
     }

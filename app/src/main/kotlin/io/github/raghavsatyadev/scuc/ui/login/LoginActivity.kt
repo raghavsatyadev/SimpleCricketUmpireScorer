@@ -55,7 +55,7 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
                             Resource.Status.ERROR -> {
                                 hideProgressBar()
                                 val errorDialog = errorDialog(R.string.warning_unknown_error)
-                                errorDialog?.setOnDismissListener { dialog ->
+                                errorDialog?.setOnDismissListener { _ ->
                                     setResult(RESULT_CANCELED)
                                     finish()
                                 }

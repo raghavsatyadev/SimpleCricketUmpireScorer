@@ -55,14 +55,14 @@ class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchR
     }
 
     @Dao
-    abstract class MatchRecordDao : BaseDao<MatchRecord> {
+    interface MatchRecordDao : BaseDao<MatchRecord> {
         @RawQuery(observedEntities = [MatchRecord::class])
-        abstract fun getAllLive(simpleSQLiteQuery: SimpleSQLiteQuery): Flow<List<MatchRecord>>
+        fun getAllLive(simpleSQLiteQuery: SimpleSQLiteQuery): Flow<List<MatchRecord>>
 
         @RawQuery(observedEntities = [MatchRecord::class])
-        abstract fun getCountLive(supportSQLiteQuery: SupportSQLiteQuery): Flow<Long>
+        fun getCountLive(supportSQLiteQuery: SupportSQLiteQuery): Flow<Long>
 
         @RawQuery(observedEntities = [MatchRecord::class])
-        abstract fun getItemLive(query: SupportSQLiteQuery): Flow<MatchRecord>
+        fun getItemLive(query: SupportSQLiteQuery): Flow<MatchRecord>
     }
 }
