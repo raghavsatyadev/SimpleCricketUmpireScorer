@@ -33,10 +33,10 @@ com-google-gms = "4.4.2"
 activity = "1.10.0-rc01"
 androidx-core = "1.15.0"
 androidx-junit = "1.2.1"
-androidx-test-core-ktx = "1.6.1"
+androidx-test-core = "1.6.1"
 appcompat = "1.7.0"
 coil = "3.0.4"
-collection-ktx = "1.5.0-beta01"
+collection = "1.5.0-beta01"
 constraintlayout = "2.2.0"
 coroutines = "1.9.0"
 credentials = "1.5.0-beta01"
@@ -49,7 +49,7 @@ firebase-crashlytics-ktx = "19.3.0"
 firebase-firestore = "25.1.1"
 firebase-gradle = "3.0.2"
 firebase-messaging-ktx = "24.1.0"
-fragment-ktx = "1.8.5"
+fragment = "1.8.5"
 google-id = "1.1.1"
 junit = "4.13.2"
 junit-jupiter = "5.11.3"
@@ -59,7 +59,6 @@ lottie = "6.6.0"
 material = "1.13.0-alpha08"
 multidex = "2.0.1"
 navigation = "2.9.0-alpha04"
-sonarqube = "6.0.1.5171"
 permissionx = "1.8.1"
 play-services-ads = "23.6.0"
 play-services-auth = "21.3.0"
@@ -68,9 +67,10 @@ room = "2.7.0-alpha12"
 rules = "1.6.1"
 runner = "1.6.2"
 serialization = "1.7.3"
+sonarqube = "6.0.1.5171"
 splashscreen = "1.2.0-alpha02"
 swiperefreshlayout = "1.2.0-alpha01"
-work-runtime-ktx = "2.10.0"
+work-manager = "2.10.0"
 
 [libraries]
 # Classpaths
@@ -80,12 +80,12 @@ com-google-firebase = { group = "com.google.firebase", name = "firebase-crashlyt
 # Android
 androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
-androidx-collection = { module = "androidx.collection:collection-ktx", version.ref = "collection-ktx" }
+androidx-collection = { module = "androidx.collection:collection-ktx", version.ref = "collection" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
-androidx-fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment-ktx" }
+androidx-fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment" }
 androidx-play-credentials = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
@@ -138,7 +138,7 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 
 #WorkManager
-androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime-ktx" }
+androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "work-manager" }
 
 #Coil
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
@@ -157,7 +157,7 @@ androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-j
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
-androidx-test-core = { module = "androidx.test:core-ktx", version.ref = "androidx-test-core-ktx" }
+androidx-test-core = { module = "androidx.test:core-ktx", version.ref = "androidx-test-core" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
 
