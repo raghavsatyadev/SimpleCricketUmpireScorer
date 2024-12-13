@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.core.CoreViewModel
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
+import io.github.raghavsatyadev.support.google.FireStoreUtil
 import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.google.GoogleSignInUtil
 import io.github.raghavsatyadev.support.models.essential.CustomError
@@ -34,6 +35,9 @@ class LoginViewModel : CoreViewModel() {
                                     .signInWithGoogle(idToken)
                                 val user = signInWithGoogle.first
                                 if (user != null) {
+                                    FireStoreUtil
+                                        .getInstance()
+                                        .initialize()
                                     loginEvent.emit(Resource.success(true))
                                 } else if (signInWithGoogle.second != null) {
                                     loginEvent.emit(Resource.error(signInWithGoogle.second!!))

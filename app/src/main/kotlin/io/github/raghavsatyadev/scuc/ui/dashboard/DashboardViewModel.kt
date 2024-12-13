@@ -1,6 +1,7 @@
 package io.github.raghavsatyadev.scuc.ui.dashboard
 
 import androidx.lifecycle.viewModelScope
+import io.github.raghavsatyadev.support.Constants.FieldKeys
 import io.github.raghavsatyadev.support.core.CoreViewModel
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUtil
@@ -25,7 +26,7 @@ class DashboardViewModel : CoreViewModel() {
                 try {
                     MatchRecordDataUtil
                         .getInstance()
-                        .getAllLive()
+                        .getAllLive("`${FieldKeys.START_DATE_TIME}` DESC")
                         .collectLatest {
                             matchRecordsEvent.emit(Resource.success(it))
                         }

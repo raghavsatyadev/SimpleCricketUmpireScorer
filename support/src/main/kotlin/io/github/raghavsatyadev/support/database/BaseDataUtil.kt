@@ -41,6 +41,14 @@ abstract class BaseDataUtil<T, D : BaseDao<T>> {
         return getDao().update(ts)
     }
 
+    open fun upsert(t: T) {
+        return getDao().upsert(t)
+    }
+
+    open fun upsert(t: List<T>) {
+        return getDao().upsert(t)
+    }
+
     open fun delete(id: Long): Int {
         return getDao().delete(
             SimpleSQLiteQuery("DELETE FROM `${getTableName()}` WHERE `${getPrimaryKey()}` = `$id`")
@@ -97,7 +105,7 @@ abstract class BaseDataUtil<T, D : BaseDao<T>> {
     }
 
     fun buildGetAllSortedQuery(sortKey: String): String {
-        val sortQuery = if (sortKey.isEmpty()) "" else " ORDER BY `$sortKey`"
+        val sortQuery = if (sortKey.isEmpty()) "" else " ORDER BY $sortKey"
         val query = "SELECT * FROM `${getTableName()}`$sortQuery"
         return query
     }
