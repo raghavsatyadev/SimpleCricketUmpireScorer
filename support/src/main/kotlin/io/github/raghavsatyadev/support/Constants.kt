@@ -30,6 +30,8 @@ object Constants {
         const val LOCATION = "location"
         const val MATCH_ADMIN_ID = "match_admin_id"
         const val MATCH_SHARED_USER_IDS = "match_shared_user_ids"
+        const val LOCAL_UPDATE_DATE_TIME = "local_update_date_time"
+        const val SERVER_UPDATE_DATE_TIME = "server_update_date_time"
         // endregion
 
         const val TEAM_NAME = "team_name"

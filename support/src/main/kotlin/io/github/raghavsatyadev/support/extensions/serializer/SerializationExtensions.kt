@@ -1,9 +1,27 @@
 package io.github.raghavsatyadev.support.extensions.serializer
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 
 @Suppress("unused")
 object SerializationExtensions {
+    @OptIn(ExperimentalSerializationApi::class)
+    val kotlinJsonSerializer = Json {
+        serializersModule = SerializersModule {
+            contextual(ExceptionSerializer)
+            contextual(DynamicLookupSerializer)
+            contextual(TimeStampSerializer)
+            contextual(DateSerializer)
+            contextual(InstantSerializer)
+            contextual(HashMapSerializer)
+            contextual(ArrayListSerializer)
+        }
+        prettyPrint = true
+    }
+
     inline fun <reified T> String.toKotlinObject(): T {
         return kotlinJsonSerializer.decodeFromString(this)
     }

@@ -10,6 +10,7 @@ import io.github.raghavsatyadev.support.database.BaseDao
 import io.github.raghavsatyadev.support.database.BaseDataUtil
 import io.github.raghavsatyadev.support.database.RoomDBUtil
 import kotlinx.coroutines.flow.Flow
+import java.time.Instant
 
 class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchRecordDao>() {
     companion object {
@@ -47,6 +48,11 @@ class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchR
 
     fun getItemLive(id: String): Flow<MatchRecord> {
         return getDao().getItemLive(SimpleSQLiteQuery(buildGetItemQuery(id.toString())))
+    }
+
+    override fun update(record: MatchRecord): Int {
+        // record.localUpdateDateTime = Instant.now()
+        return super.update(record)
     }
 
     @Dao

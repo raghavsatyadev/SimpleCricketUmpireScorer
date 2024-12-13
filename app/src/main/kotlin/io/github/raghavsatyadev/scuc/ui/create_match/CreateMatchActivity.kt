@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import io.github.raghavsatyadev.scuc.BuildConfig
 import io.github.raghavsatyadev.scuc.R
 import io.github.raghavsatyadev.scuc.databinding.ActivityCreateMatchBinding
 import io.github.raghavsatyadev.scuc.ui.match_record.MatchRecordActivity
@@ -21,6 +23,7 @@ import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.models.essential.Resource
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.time.Instant
 import java.util.Calendar
 
 class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
@@ -39,6 +42,8 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
 
     override fun getToolBar() = binding.toolbar
 
+    override fun getProgressBar() = binding.loader
+
     override fun createReference(savedInstanceState: Bundle?) {
         setToolBarTitle(R.string.create_match_title)
 
@@ -47,6 +52,61 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
         binding.edMatchDateTime.isEditable = false
 
         currentUserId = FirebaseAuthUtil.getInstance().currentUserId
+
+        listenForStates()
+
+        // TODO: remove this thing
+        if (BuildConfig.DEBUG) {
+            setDebugValues()
+        }
+    }
+
+    private fun setDebugValues() {
+        binding.edMatchDateTime.setText(
+            Instant
+                .now()
+                .toEpochMilli()
+                .formatMillisToDate()
+                .toString()
+        )
+        binding.edTeam1Name.setText("Team 1")
+        binding.edTeam2Name.setText("Team 2")
+        binding.edMatchLocation.setText("Location")
+        binding.edInningOver.setText("20")
+    }
+
+    private fun listenForStates() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel
+                    .getCreateMatchRecordEvent()
+                    .collectLatest {
+                        when (it.status) {
+                            Resource.Status.SUCCESS -> {
+                                hideProgressBar()
+                                val record = it.data ?: return@collectLatest
+                                startActivity(
+                                    MatchRecordActivity.getIntentObject(
+                                        this@CreateMatchActivity,
+                                        record
+                                    )
+                                )
+                                finish()
+                            }
+
+                            Resource.Status.ERROR -> {
+                                hideProgressBar()
+                                errorDialog(it.error?.exception?.message.toString())
+                            }
+
+                            Resource.Status.EMPTY -> {}
+                            Resource.Status.LOADING -> {
+                                showProgressBar()
+                            }
+                        }
+                    }
+            }
+        }
     }
 
     private fun showDateTimePicker(text: String) {
@@ -191,29 +251,6 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
                 didTeam1WinToss,
                 batFirstTeam1
             )
-            viewModel
-                .getCreateMatchRecordEvent()
-                .collectLatest {
-                    when (it.status) {
-                        Resource.Status.SUCCESS -> {
-                            val record = it.data ?: return@collectLatest
-                            startActivity(
-                                MatchRecordActivity.getIntentObject(
-                                    this@CreateMatchActivity,
-                                    record
-                                )
-                            )
-                            finish()
-                        }
-
-                        Resource.Status.ERROR -> {
-                            errorDialog(it.error?.exception?.message.toString())
-                        }
-
-                        else -> {
-                        }
-                    }
-                }
         }
     }
 }

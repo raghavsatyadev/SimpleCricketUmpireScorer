@@ -22,6 +22,7 @@ class MatchRecordViewModel : CoreViewModel() {
 
     fun getMatchRecordEvent() = matchRecordEvent.asSharedFlow()
 
+    // region Reading Match Record
     fun getMatchRecord(record: MatchRecord) {
         matchRecordEvent = MutableStateFlow(Resource.loading())
         viewModelScope.launch {
@@ -39,7 +40,9 @@ class MatchRecordViewModel : CoreViewModel() {
             }
         }
     }
+    // endregion
 
+    // region Updating Match Record
     fun reset(
         matchRecordID: String,
         resetFull: Boolean = false,
@@ -268,4 +271,5 @@ class MatchRecordViewModel : CoreViewModel() {
             }
         }
     }
+    // endregion
 }

@@ -1,8 +1,9 @@
+@file:Suppress("unused")
+
 package io.github.raghavsatyadev.support.database
 
 import androidx.sqlite.db.SimpleSQLiteQuery
 
-@Suppress("unused")
 abstract class BaseDataUtil<T, D : BaseDao<T>> {
     abstract fun getDao(): D
     abstract fun getTableName(): String

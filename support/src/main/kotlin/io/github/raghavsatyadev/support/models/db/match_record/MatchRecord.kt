@@ -6,33 +6,18 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
+import com.google.firebase.firestore.ServerTimestamp
 import io.github.raghavsatyadev.support.Constants.DB.Tables
 import io.github.raghavsatyadev.support.Constants.FieldKeys
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.Instant
 
-/**
- * Match record
- *
- * @constructor Create empty Match record
- * @property matchRecordId
- * @property startDateTime
- * @property endDateTime
- * @property team1Detail
- * @property team2Detail
- * @property ballsPerInning
- * @property didTeam1WonToss true if toss won by team 1
- * @property isTeam1BattingFirst true if team 1 is batting first, false if
- *    team 2 is batting first
- * @property status status of the match [MatchStatus]
- * @property location
- * @property matchAdminID
- * @property matchSharedUserIDs
- * @property isFirstInningComplete
- * @property rrrAtSecondInningStart
- */
 @Keep
 @Parcelize
 @Serializable
@@ -121,4 +106,18 @@ data class MatchRecord(
     @get:PropertyName(FieldKeys.MATCH_SHARED_USER_IDS)
     @set:PropertyName(FieldKeys.MATCH_SHARED_USER_IDS)
     var matchSharedUserIDs: List<String> = emptyList(),
+
+    @SerialName(FieldKeys.LOCAL_UPDATE_DATE_TIME)
+    @ColumnInfo(FieldKeys.LOCAL_UPDATE_DATE_TIME)
+    @get:Exclude
+    @Contextual
+    var localUpdateDateTime: Instant = Instant.now(),
+
+    @SerialName(FieldKeys.SERVER_UPDATE_DATE_TIME)
+    @ColumnInfo(FieldKeys.SERVER_UPDATE_DATE_TIME)
+    @ServerTimestamp
+    @get:PropertyName(FieldKeys.SERVER_UPDATE_DATE_TIME)
+    @set:PropertyName(FieldKeys.SERVER_UPDATE_DATE_TIME)
+    @Contextual
+    var serverUpdateDateTime: Timestamp? = null,
 ) : Parcelable

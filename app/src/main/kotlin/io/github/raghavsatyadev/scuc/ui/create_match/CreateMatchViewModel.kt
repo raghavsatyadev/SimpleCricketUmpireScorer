@@ -14,6 +14,7 @@ import io.github.raghavsatyadev.support.models.essential.ErrorCode
 import io.github.raghavsatyadev.support.models.essential.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -21,7 +22,7 @@ class CreateMatchViewModel : CoreViewModel() {
     private var createMatchRecordEvent: MutableStateFlow<Resource<MatchRecord>> =
         MutableStateFlow(Resource.empty())
 
-    fun getCreateMatchRecordEvent() = createMatchRecordEvent.asSharedFlow()
+    fun getCreateMatchRecordEvent() = createMatchRecordEvent.asStateFlow()
 
     @Throws(Exception::class)
     fun validateMatchDetails(
@@ -84,7 +85,7 @@ class CreateMatchViewModel : CoreViewModel() {
                         team2Detail = TeamDetail(teamName = team2Name),
                         didTeam1WonToss = didTeam1WinToss,
                         isTeam1BattingFirst = batFirstTeam1,
-                        matchAdminID = currentUserId
+                        matchAdminID = currentUserId,
                     )
                     FireStoreUtil
                         .getInstance()

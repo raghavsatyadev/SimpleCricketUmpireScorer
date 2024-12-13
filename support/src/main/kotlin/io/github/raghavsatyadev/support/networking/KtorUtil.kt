@@ -1,7 +1,7 @@
 package io.github.raghavsatyadev.support.networking
 
 import io.github.raghavsatyadev.support.StorageUtils
-import io.github.raghavsatyadev.support.extensions.serializer.kotlinJsonSerializer
+import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.kotlinJsonSerializer
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.HttpRequestRetry

@@ -2,12 +2,16 @@ package io.github.raghavsatyadev.support.google
 
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.memoryCacheSettings
 import com.google.firebase.firestore.ktx.persistentCacheSettings
 import com.google.firebase.ktx.Firebase
+import io.github.raghavsatyadev.support.AppLog
+import io.github.raghavsatyadev.support.Constants.FieldKeys.SERVER_UPDATE_DATE_TIME
 import io.github.raghavsatyadev.support.Constants.FirebaseConstants
+import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toJsonString
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toKotlinObject
 import io.github.raghavsatyadev.support.models.User
@@ -87,16 +91,44 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
             .collection(FirebaseConstants.Collections.MATCH_RECORD)
             .document()
         matchRecord.matchRecordId = document.id
-        val task = document.set(matchRecord)
+        val task = db.runTransaction {
+            it.set(
+                document,
+                matchRecord
+            )
+            it.update(
+                document,
+                SERVER_UPDATE_DATE_TIME,
+                FieldValue.serverTimestamp()
+            )
+        }
+
         with(task) {
             await()
             if (!isSuccessful) {
                 throw exception ?: Exception("Unknown Exception")
             } else {
-                MatchRecordDataUtil
-                    .getInstance()
-                    .insertIgnore(matchRecord)
-                return matchRecord
+                val readTask = document.get()
+                readTask.await()
+                if (readTask.isSuccessful) {
+                    try {
+                        val record: MatchRecord =  readTask.result.toDataObject<MatchRecord>()
+                        MatchRecordDataUtil
+                            .getInstance()
+                            .insertIgnore(record)
+                        return record
+                    } catch (e: Exception) {
+                        AppLog.loge(
+                            false,
+                            kotlinFileName,
+                            "setMatchRecord",
+                            e,
+                            Exception()
+                        )
+                        throw e
+                    }
+                }
+                throw Exception("Unknown Exception")
             }
         }
     }
