@@ -115,9 +115,9 @@ data class MatchRecord(
 
     @SerialName(FieldKeys.SERVER_UPDATE_DATE_TIME)
     @ColumnInfo(FieldKeys.SERVER_UPDATE_DATE_TIME)
-    @ServerTimestamp
     @get:PropertyName(FieldKeys.SERVER_UPDATE_DATE_TIME)
     @set:PropertyName(FieldKeys.SERVER_UPDATE_DATE_TIME)
     @Contextual
+    @ServerTimestamp
     var serverUpdateDateTime: Timestamp? = null,
 ) : Parcelable

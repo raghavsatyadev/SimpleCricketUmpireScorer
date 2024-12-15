@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.github.raghavsatyadev.scuc.databinding.ActivityLoginBinding
+import io.github.raghavsatyadev.scuc.databinding.DialogAlreadyLoggedInBinding
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.core.CoreActivity
 import io.github.raghavsatyadev.support.extensions.ErrorShowExtensions.errorDialog
@@ -36,7 +38,7 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
 
     private fun startSignIn() {
         lifecycleScope.launch {
-            viewModel.signIn(signInUtil)
+            viewModel.signInWithGoogle(signInUtil)
             viewModel
                 .getLoginEvent()
                 .collectLatest { value ->
@@ -48,8 +50,22 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
 
                             Resource.Status.SUCCESS -> {
                                 hideProgressBar()
-                                setResult(RESULT_OK)
-                                finish()
+                                when (value.data) {
+                                    LoginState.SUCCESS -> {
+                                        setResult(RESULT_OK)
+                                        finish()
+                                    }
+
+                                    LoginState.USER_ALREADY_LOGGED_IN -> {
+                                        showUserAlreadyLoggedInDialog()
+                                    }
+
+                                    else -> {
+                                        errorDialog(R.string.warning_unknown_error)
+                                        setResult(RESULT_CANCELED)
+                                        finish()
+                                    }
+                                }
                             }
 
                             Resource.Status.ERROR -> {
@@ -69,6 +85,33 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
                 }
         }
     }
+
+    private fun showUserAlreadyLoggedInDialog() {
+        val dialogBinding = DialogAlreadyLoggedInBinding.inflate(layoutInflater)
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(dialogBinding.root)
+            .setCancelable(false)
+            .show()
+        dialogBinding.btnForceLogin.setOnClickListener {
+            lifecycleScope.launch {
+                withContext(mainDispatcher) {
+                    dialog.dismiss()
+                }
+                viewModel.updateUserTokens()
+            }
+        }
+        dialogBinding.btnLogout.setOnClickListener {
+            lifecycleScope.launch {
+                viewModel.signOut(signInUtil)
+                withContext(mainDispatcher) {
+                    dialog.dismiss()
+                    finishAffinity()
+                }
+            }
+        }
+    }
+
+    override fun getProgressBar() = binding.loader
 
     override fun createBinding(savedInstanceState: Bundle?) =
         ActivityLoginBinding.inflate(layoutInflater)

@@ -1,6 +1,7 @@
 package io.github.raghavsatyadev.support.extensions
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -11,6 +12,12 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
+import io.github.raghavsatyadev.support.database.RoomDBUtil
+import io.github.raghavsatyadev.support.google.FireStoreUtil
+import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
+import io.github.raghavsatyadev.support.preferences.AppPrefsUtil
+import java.security.MessageDigest
+import java.util.UUID
 
 @Suppress("unused")
 object AppExtensions {
@@ -89,5 +96,45 @@ object AppExtensions {
         val currentNightMode =
             this.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         return currentNightMode == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    fun generateRandomNonce(): String {
+        val rawNonce = UUID
+            .randomUUID()
+            .toString()
+        val bytes = rawNonce
+            .toString()
+            .toByteArray()
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+        val hashedNonce = digest.fold("") { str, it ->
+            str + "%02x".format(
+                it
+            )
+        }
+
+        return hashedNonce
+    }
+
+    fun Context.restartApp() {
+        val packageManager = packageManager
+        val intent = packageManager.getLaunchIntentForPackage(packageName)
+        intent?.apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
+    }
+
+    suspend fun signOut(doSignOutFromFirestore: Boolean = false) {
+        if (doSignOutFromFirestore) {
+            FireStoreUtil
+                .getInstance()
+                .signOutUser()
+        }
+        FirebaseAuthUtil
+            .getInstance()
+            .signOut()
+        RoomDBUtil.deleteAll()
+        AppPrefsUtil.clearAppPreferences()
     }
 }

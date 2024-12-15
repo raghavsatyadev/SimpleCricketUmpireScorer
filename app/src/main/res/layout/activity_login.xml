@@ -21,4 +21,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.50"
         />
+
+    <include
+        android:id="@+id/loader"
+        layout="@layout/loader"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

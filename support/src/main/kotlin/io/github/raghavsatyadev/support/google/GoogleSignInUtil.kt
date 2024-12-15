@@ -11,8 +11,8 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingExcept
 import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.core.CoreApp
+import io.github.raghavsatyadev.support.extensions.AppExtensions.generateRandomNonce
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
-import io.github.raghavsatyadev.support.google.GoogleExtensions.generateGoogleNonce
 
 /**
  * Utility class to facilitate Google Sign-In using Credential Manager.
@@ -21,7 +21,7 @@ import io.github.raghavsatyadev.support.google.GoogleExtensions.generateGoogleNo
  */
 class GoogleSignInUtil(private val activity: Activity) {
     // Initialize Credential Manager
-    private val credentialManager: CredentialManager = CredentialManager.Companion.create(activity)
+    private val credentialManager: CredentialManager = CredentialManager.create(activity)
     private val credentialRequest: GetCredentialRequest
 
     init {
@@ -32,7 +32,7 @@ class GoogleSignInUtil(private val activity: Activity) {
             .setFilterByAuthorizedAccounts(false)
             .setServerClientId(serverClientId)
             .setAutoSelectEnabled(true)
-            .setNonce(generateGoogleNonce())
+            .setNonce(generateRandomNonce())
             .build()
 
         credentialRequest = GetCredentialRequest
@@ -40,6 +40,7 @@ class GoogleSignInUtil(private val activity: Activity) {
             .addCredentialOption(googleIdOption)
             .build()
     }
+
 
     /**
      * Initiates the sign-in process.

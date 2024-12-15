@@ -91,9 +91,7 @@ class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp)
                     userID = firebaseUser.uid
                 )
                 try {
-                    FireStoreUtil
-                        .getInstance()
-                        .setUser(user) to null
+                    user to null
                 } catch (e: Exception) {
                     AppLog.loge(
                         false,

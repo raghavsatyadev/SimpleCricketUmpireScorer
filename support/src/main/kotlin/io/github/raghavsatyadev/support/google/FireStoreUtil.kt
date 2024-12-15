@@ -14,12 +14,16 @@ import io.github.raghavsatyadev.support.Constants.FieldKeys
 import io.github.raghavsatyadev.support.Constants.FieldKeys.SERVER_UPDATE_DATE_TIME
 import io.github.raghavsatyadev.support.Constants.FirebaseConstants
 import io.github.raghavsatyadev.support.core.CoreApp
+import io.github.raghavsatyadev.support.extensions.AppExtensions
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
+import io.github.raghavsatyadev.support.extensions.AppExtensions.restartApp
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toJsonString
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toKotlinObject
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUtil
+import io.github.raghavsatyadev.support.preferences.AppPrefsUtil
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -32,7 +36,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
         fun create(firebaseApp: FirebaseApp) {
             FireStoreUtil(firebaseApp).also { instance = it }
             CoreApp.instance.launch {
-                getInstance().initialize()
+                getInstance().initialize(true)
             }
         }
 
@@ -59,10 +63,21 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
             }
     }
 
-    suspend fun initialize() {
+    suspend fun initialize(checkUserToken: Boolean = false) {
         try {
             val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
             if (currentUserId != null) {
+                if (checkUserToken) {
+                    val user = getUser(currentUserId)
+                    val userToken = AppPrefsUtil
+                        .getUserToken()
+                        .firstOrNull()
+                    if (user.loginToken != userToken) {
+                        AppExtensions.signOut()
+                        CoreApp.instance.restartApp()
+                        return
+                    }
+                }
                 val matchRecordTask = db
                     .collection(FirebaseConstants.Collections.MATCH_RECORD)
                     .where(
@@ -103,6 +118,8 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
 
     // region User
     suspend fun setUser(user: User): User {
+        val generateRandomNonce = AppExtensions.generateRandomNonce()
+        user.loginToken = generateRandomNonce
         val task = db
             .collection(FirebaseConstants.Collections.USER)
             .document(user.userID)
@@ -111,6 +128,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
         with(task) {
             await()
             if (isSuccessful) {
+                AppPrefsUtil.saveUserToken(generateRandomNonce)
                 return user
             } else {
                 throw exception ?: Exception("Unknown Exception")
@@ -118,7 +136,44 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
         }
     }
 
-    suspend fun readUser(id: String): User {
+    @Throws(Exception::class)
+    suspend fun updateUserLoginTokens(): Boolean {
+        val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
+        currentUserId?.let {
+            val generateRandomNonce = AppExtensions.generateRandomNonce()
+            val task = db
+                .collection(FirebaseConstants.Collections.USER)
+                .document(it)
+                .update(
+                    FieldKeys.LOGIN_TOKEN,
+                    generateRandomNonce,
+                )
+            task.await()
+            val successful = task.isSuccessful
+            if (successful) AppPrefsUtil.saveUserToken(generateRandomNonce)
+            return successful
+        }
+        return false
+    }
+
+    @Throws(Exception::class)
+    suspend fun signOutUser(): Boolean {
+        val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
+        currentUserId?.let {
+            val task = db
+                .collection(FirebaseConstants.Collections.USER)
+                .document(it)
+                .update(
+                    FieldKeys.LOGIN_TOKEN,
+                    null,
+                )
+            task.await()
+            return task.isSuccessful
+        }
+        return false
+    }
+
+    suspend fun getUser(id: String): User {
         val task = db
             .collection(FirebaseConstants.Collections.USER)
             .document(id)

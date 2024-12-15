@@ -21,4 +21,11 @@ data class User(
     @set:PropertyName(FieldKeys.USER_ID)
     @ColumnInfo(FieldKeys.USER_ID)
     var userID: String,
+
+    @SerialName(FieldKeys.LOGIN_TOKEN)
+    @get:PropertyName(FieldKeys.LOGIN_TOKEN)
+    @set:PropertyName(FieldKeys.LOGIN_TOKEN)
+    @ColumnInfo(FieldKeys.LOGIN_TOKEN)
+    var loginToken: String? = null,
+
 ) : Parcelable

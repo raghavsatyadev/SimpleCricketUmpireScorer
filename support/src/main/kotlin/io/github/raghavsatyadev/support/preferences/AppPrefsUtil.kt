@@ -9,6 +9,7 @@ import io.github.raghavsatyadev.support.preferences.AppPrefsExtensions.savePref
 import io.github.raghavsatyadev.support.preferences.AppPrefsUtil.FCM.NOTIFICATION_ENABLED
 import io.github.raghavsatyadev.support.preferences.AppPrefsUtil.FCM.TOKEN
 import io.github.raghavsatyadev.support.preferences.AppPrefsUtil.FCM.TOPICS
+import io.github.raghavsatyadev.support.preferences.AppPrefsUtil.Keys.USER_TOKEN
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -58,6 +59,21 @@ object AppPrefsUtil {
             NOTIFICATION_ENABLED,
             true
         )
+    }
+
+    fun getUserToken(): Flow<String?> {
+        return CoreApp.instance.getPrefs(USER_TOKEN)
+    }
+
+    suspend fun saveUserToken(token: String) {
+        CoreApp.instance.savePref(
+            USER_TOKEN,
+            token
+        )
+    }
+
+    object Keys {
+        const val USER_TOKEN = "user_token"
     }
 
     object FCM {

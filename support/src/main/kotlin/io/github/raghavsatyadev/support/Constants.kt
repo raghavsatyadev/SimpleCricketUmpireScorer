@@ -36,7 +36,10 @@ object Constants {
 
         const val TEAM_NAME = "team_name"
 
+        // region User
         const val USER_ID = "user_id"
+        const val LOGIN_TOKEN = "login_token"
+        // endregion
     }
 
     object FirebaseConstants {

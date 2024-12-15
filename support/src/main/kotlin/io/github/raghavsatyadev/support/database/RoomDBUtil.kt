@@ -4,7 +4,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase.Callback
 import io.github.raghavsatyadev.support.Constants
 import io.github.raghavsatyadev.support.core.CoreApp
-import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUtil
 import kotlinx.coroutines.launch
 
 object RoomDBUtil {
@@ -31,9 +30,7 @@ object RoomDBUtil {
 
     fun deleteAll() {
         CoreApp.instance.launch {
-            MatchRecordDataUtil
-                .getInstance()
-                .deleteAll()
+            getDatabase().clearAllTables()
         }
     }
 }
