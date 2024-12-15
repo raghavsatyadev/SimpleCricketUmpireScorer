@@ -3,15 +3,20 @@ package io.github.raghavsatyadev.support.extensions
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
+import android.text.style.BulletSpan
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.annotation.ColorInt
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
+import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.database.RoomDBUtil
 import io.github.raghavsatyadev.support.google.FireStoreUtil
 import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
@@ -123,6 +128,43 @@ object AppExtensions {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(intent)
+    }
+
+    fun AppCompatActivity.getAlreadyLoggedInText(): Spanned {
+        val title = getString(R.string.warning_already_logged_in_1)
+        val bulletPoint1 = getString(R.string.warning_already_logged_in_2)
+        val bulletPoint2 = getString(R.string.warning_already_logged_in_3)
+
+        val spannableString = SpannableStringBuilder()
+
+        // Add title
+        spannableString
+            .append(title)
+            .append("\n\n")
+
+        // Add first bullet point with indentation
+        val bullet1 = SpannableString(bulletPoint1)
+        bullet1.setSpan(
+            BulletSpan(40),
+            0,
+            bullet1.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        spannableString
+            .append(bullet1)
+            .append("\n\n")
+
+        // Add second bullet point with indentation
+        val bullet2 = SpannableString(bulletPoint2)
+        bullet2.setSpan(
+            BulletSpan(40),
+            0,
+            bullet2.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        spannableString.append(bullet2)
+
+        return spannableString
     }
 
     suspend fun signOut(doSignOutFromFirestore: Boolean = false) {

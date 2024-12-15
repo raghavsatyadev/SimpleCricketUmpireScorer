@@ -23,10 +23,12 @@
     <string name="warning_team_1_name">Please enter team 1 name</string>
     <string name="warning_team_2_name">Please enter team 2 name</string>
     <string name="warning_please_login">Please login first</string>
-    <string name="warning_already_logged_in">You are currently logged in on another device. To prevent data loss, please sync your data from that device first.\n\nIf you have already synced your data, click the \'Force Login\' button. If you haven\'t synced your data from the previous device, please click \'Logout\' to log out from the current device.</string>
+    <string name="warning_already_logged_in_1">You are currently logged in on another device. To prevent data loss, please sync your data from that device first.</string>
+    <string name="warning_already_logged_in_2">If you have synced your data, click the \'Force Login\' button. This will log you out from the other device.</string>
+    <string name="warning_already_logged_in_3">If you have not synced your data yet, please click \'Logout\' to log out from this device.</string>
+    <string name="dialog_already_logged_in_title">Already logged in?</string>
 
     <!-- General -->
     <string name="error">Error</string>
     <string name="okay">Okay</string>
-    <string name="dialog_already_logged_in_title">Already logged in?</string>
 </resources>

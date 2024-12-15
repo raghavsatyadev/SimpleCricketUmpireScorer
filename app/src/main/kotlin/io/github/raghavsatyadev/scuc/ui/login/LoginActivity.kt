@@ -7,9 +7,9 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.github.raghavsatyadev.scuc.databinding.ActivityLoginBinding
-import io.github.raghavsatyadev.scuc.databinding.DialogAlreadyLoggedInBinding
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.core.CoreActivity
+import io.github.raghavsatyadev.support.extensions.AppExtensions.getAlreadyLoggedInText
 import io.github.raghavsatyadev.support.extensions.ErrorShowExtensions.errorDialog
 import io.github.raghavsatyadev.support.google.GoogleSignInUtil
 import io.github.raghavsatyadev.support.models.essential.Resource
@@ -87,28 +87,28 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
     }
 
     private fun showUserAlreadyLoggedInDialog() {
-        val dialogBinding = DialogAlreadyLoggedInBinding.inflate(layoutInflater)
-        val dialog = MaterialAlertDialogBuilder(this)
-            .setView(dialogBinding.root)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.dialog_already_logged_in_title)
+            .setMessage(getAlreadyLoggedInText())
+            .setPositiveButton(io.github.raghavsatyadev.scuc.R.string.force_login) { dialog, _ ->
+                lifecycleScope.launch {
+                    withContext(mainDispatcher) {
+                        dialog.dismiss()
+                    }
+                    viewModel.updateUserTokens()
+                }
+            }
+            .setNegativeButton(io.github.raghavsatyadev.scuc.R.string.logout) { dialog, which ->
+                lifecycleScope.launch {
+                    viewModel.signOut(signInUtil)
+                    withContext(mainDispatcher) {
+                        dialog.dismiss()
+                        finishAffinity()
+                    }
+                }
+            }
             .setCancelable(false)
             .show()
-        dialogBinding.btnForceLogin.setOnClickListener {
-            lifecycleScope.launch {
-                withContext(mainDispatcher) {
-                    dialog.dismiss()
-                }
-                viewModel.updateUserTokens()
-            }
-        }
-        dialogBinding.btnLogout.setOnClickListener {
-            lifecycleScope.launch {
-                viewModel.signOut(signInUtil)
-                withContext(mainDispatcher) {
-                    dialog.dismiss()
-                    finishAffinity()
-                }
-            }
-        }
     }
 
     override fun getProgressBar() = binding.loader
