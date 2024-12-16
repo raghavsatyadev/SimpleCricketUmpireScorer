@@ -27,7 +27,6 @@ class MatchDataUpdateWorker(
         private const val UNIQUE_WORK_NAME = "MatchDataUpdate"
         private const val UNIQUE_WORK_NAME_PERIODIC = "MatchDataUpdatePeriodic"
         private const val MATCH_RECORD_ID = "matchRecordID"
-        private const val IS_PERIODIC = "isPeriodic"
 
         private val manager by lazy {
             WorkManager.Companion.getInstance(CoreApp.Companion.instance)
@@ -41,7 +40,7 @@ class MatchDataUpdateWorker(
             )
         }
 
-        suspend fun updateMatchDataPeriodically() {
+        fun updateMatchDataPeriodically() {
             val periodicWorkRequest = PeriodicWorkRequestBuilder<MatchDataUpdateWorker>(
                 1,
                 TimeUnit.DAYS
@@ -49,10 +48,6 @@ class MatchDataUpdateWorker(
                 .setInputData(
                     Data
                         .Builder()
-                        .putBoolean(
-                            IS_PERIODIC,
-                            true
-                        )
                         .build()
                 )
                 .build()
@@ -64,7 +59,7 @@ class MatchDataUpdateWorker(
             )
         }
 
-        suspend fun updateMatchData(matchRecordID: String) {
+        fun updateMatchData(matchRecordID: String) {
             val oneTimeWorkRequest = OneTimeWorkRequestBuilder<MatchDataUpdateWorker>()
                 .setInputData(
                     Data
@@ -72,10 +67,6 @@ class MatchDataUpdateWorker(
                         .putString(
                             MATCH_RECORD_ID,
                             matchRecordID
-                        )
-                        .putBoolean(
-                            IS_PERIODIC,
-                            false
                         )
                         .build()
                 )
@@ -108,15 +99,7 @@ class MatchDataUpdateWorker(
         inputData
             .getString(MATCH_RECORD_ID)
             ?.let { matchRecordID ->
-                if (inputData.getBoolean(
-                        IS_PERIODIC,
-                        false
-                    )
-                ) {
-                    MatchDataUploadUtil.updateAllMatchData()
-                } else {
-                    MatchDataUploadUtil.updateMatchData(matchRecordID)
-                }
-            } ?: Result.failure()
+                MatchDataUploadUtil.updateMatchData(matchRecordID)
+            } ?: MatchDataUploadUtil.updateAllMatchData()
     }
 }

@@ -5,6 +5,9 @@ import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUt
 
 object MatchDataUploadUtil {
     fun updateAllMatchData(): Result {
+        MatchRecordDataUtil
+            .getInstance()
+            .getAll()
         return Result.success()
     }
 

@@ -6,10 +6,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
-import com.google.firebase.firestore.ServerTimestamp
 import io.github.raghavsatyadev.support.Constants.DB.Tables
 import io.github.raghavsatyadev.support.Constants.FieldKeys
 import kotlinx.parcelize.Parcelize
@@ -118,6 +116,5 @@ data class MatchRecord(
     @get:PropertyName(FieldKeys.SERVER_UPDATE_DATE_TIME)
     @set:PropertyName(FieldKeys.SERVER_UPDATE_DATE_TIME)
     @Contextual
-    @ServerTimestamp
-    var serverUpdateDateTime: Timestamp? = null,
+    var serverUpdateDateTime: Instant = Instant.now(),
 ) : Parcelable
