@@ -23,7 +23,6 @@ plugins {
 
     id("androidx.navigation.safeargs.kotlin")
 }
-
 sonar {
     properties {
         setAndroidVariant("DevDebug")
@@ -48,6 +47,7 @@ android {
     compileSdk = libs.versions.compileSdk
         .get()
         .toInt()
+    buildToolsVersion = libs.versions.buildTools.get()
     defaultConfig {
         applicationId = libs.versions.appIdDev.get()
         minSdk = libs.versions.minSdk
@@ -116,13 +116,13 @@ android {
                 mappingFileUploadEnabled = false
             }
         }
+        kotlin {
+            jvmToolchain(21)
+        }
         compileOptions {
             isCoreLibraryDesugaringEnabled = true
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
         }
         kotlinOptions {
-            jvmTarget = "17"
             freeCompilerArgs += "-Xjvm-default=all"
         }
         buildFeatures {

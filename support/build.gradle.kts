@@ -24,6 +24,7 @@ val props = readProperties(file("../secret.properties"))
 android {
     namespace = libs.versions.supportId.get()
     compileSdk = libs.versions.compileSdk.get().toInt()
+    buildToolsVersion = libs.versions.buildTools.get()
 
     room {
         schemaDirectory("$projectDir/schemas")
@@ -90,13 +91,13 @@ android {
             isMinifyEnabled = false
             resValue("string", "app_name", libs.versions.debugAppName.get())
         }
+        kotlin {
+            jvmToolchain(21)
+        }
         compileOptions {
             isCoreLibraryDesugaringEnabled = true
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
         }
         kotlinOptions {
-            jvmTarget = "17"
             freeCompilerArgs += "-Xjvm-default=all"
         }
         buildFeatures {
