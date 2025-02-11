@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.parcelize)
 
-    id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.safe.args)
 
     alias(libs.plugins.room)
 }
