@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scuc.ui.login
+package io.github.raghavsatyadev.scus.ui.login
 
 import androidx.lifecycle.viewModelScope
 import io.github.raghavsatyadev.support.AppLog

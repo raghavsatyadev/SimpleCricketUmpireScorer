@@ -1,3 +1,3 @@
 # Software Versions:
 
-Android Studio Meerkat | 2024.3.1 Canary 3
+Android Studio Meerkat Feature Drop | 2024.3.2 Canary 5

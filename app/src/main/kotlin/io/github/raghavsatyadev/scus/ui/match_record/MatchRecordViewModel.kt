@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scuc.ui.match_record
+package io.github.raghavsatyadev.scus.ui.match_record
 
 import androidx.lifecycle.viewModelScope
 import io.github.raghavsatyadev.support.core.CoreViewModel

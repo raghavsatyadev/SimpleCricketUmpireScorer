@@ -164,5 +164,33 @@
             app:layout_constraintTop_toBottomOf="@id/txt_match_location"
             tools:text="23-11-2024 9:55 AM - 23-11-2024 11:55 PM"
             />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_copy"
+            style="@style/Widget.Material3.Button.IconButton.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/copy_match_record"
+            app:icon="@drawable/ic_copy"
+            app:layout_constraintEnd_toStartOf="@+id/btn_delete"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_match_duration"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete"
+            style="@style/Widget.Material3.Button.IconButton.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/delete_match_record"
+            app:icon="@drawable/ic_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_copy"
+            app:layout_constraintTop_toBottomOf="@id/txt_match_duration"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -6,7 +6,7 @@ object Constants {
     }
 
     object DB {
-        const val NAME: String = "SCUC"
+        const val NAME: String = "SCUS"
         const val VERSION = 1
 
         object Tables {
@@ -32,6 +32,9 @@ object Constants {
         const val MATCH_SHARED_USER_IDS = "match_shared_user_ids"
         const val LOCAL_UPDATE_DATE_TIME = "local_update_date_time"
         const val SERVER_UPDATE_DATE_TIME = "server_update_date_time"
+        const val RUNS = "runs"
+        const val WICKETS = "wickets"
+        const val BALLS = "balls"
         // endregion
 
         const val TEAM_NAME = "team_name"

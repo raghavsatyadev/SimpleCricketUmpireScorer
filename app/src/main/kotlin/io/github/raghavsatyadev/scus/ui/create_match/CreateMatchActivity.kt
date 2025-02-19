@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scuc.ui.create_match
+package io.github.raghavsatyadev.scus.ui.create_match
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -9,10 +9,10 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import io.github.raghavsatyadev.scuc.BuildConfig
-import io.github.raghavsatyadev.scuc.R
-import io.github.raghavsatyadev.scuc.databinding.ActivityCreateMatchBinding
-import io.github.raghavsatyadev.scuc.ui.match_record.MatchRecordActivity
+import io.github.raghavsatyadev.scus.BuildConfig
+import io.github.raghavsatyadev.scus.R
+import io.github.raghavsatyadev.scus.databinding.ActivityCreateMatchBinding
+import io.github.raghavsatyadev.scus.ui.match_record.MatchRecordActivity
 import io.github.raghavsatyadev.support.core.CoreActivity
 import io.github.raghavsatyadev.support.extensions.DateExtensions.formatDateToMillis
 import io.github.raghavsatyadev.support.extensions.DateExtensions.formatMillisToDate
@@ -55,6 +55,13 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
 
         listenForStates()
 
+        binding.edMatchDateTime.setText(
+            Instant
+                .now()
+                .toEpochMilli()
+                .formatMillisToDate()
+        )
+
         // TODO: remove this thing
         if (BuildConfig.DEBUG) {
             setDebugValues()
@@ -62,13 +69,6 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
     }
 
     private fun setDebugValues() {
-        binding.edMatchDateTime.setText(
-            Instant
-                .now()
-                .toEpochMilli()
-                .formatMillisToDate()
-                .toString()
-        )
         binding.edTeam1Name.setText("Team 1")
         binding.edTeam2Name.setText("Team 2")
         binding.edMatchLocation.setText("Location")

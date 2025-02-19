@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scuc.ui.dashboard
+package io.github.raghavsatyadev.scus.ui.dashboard
 
 import android.content.Context
 import android.content.Intent
@@ -6,18 +6,22 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import io.github.raghavsatyadev.scuc.databinding.ActivityDashboardBinding
-import io.github.raghavsatyadev.scuc.ui.create_match.CreateMatchActivity
-import io.github.raghavsatyadev.scuc.ui.login.LoginActivity
-import io.github.raghavsatyadev.scuc.ui.match_complete.MatchCompleteActivity
-import io.github.raghavsatyadev.scuc.ui.match_record.MatchRecordActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import io.github.raghavsatyadev.scus.R
+import io.github.raghavsatyadev.scus.databinding.ActivityDashboardBinding
+import io.github.raghavsatyadev.scus.ui.create_match.CreateMatchActivity
+import io.github.raghavsatyadev.scus.ui.login.LoginActivity
+import io.github.raghavsatyadev.scus.ui.match_complete.MatchCompleteActivity
+import io.github.raghavsatyadev.scus.ui.match_record.MatchRecordActivity
 import io.github.raghavsatyadev.support.core.CoreActivity
+import io.github.raghavsatyadev.support.extensions.ErrorShowExtensions.errorDialog
 import io.github.raghavsatyadev.support.extensions.activity_result.ActivityResultExtensions.registerActivityForResult
 import io.github.raghavsatyadev.support.extensions.activity_result.ResultType
 import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.loadAds
 import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.showInterstitialAd
 import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.list.CustomClickListener
+import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.isMatchCompleted
 import io.github.raghavsatyadev.support.models.essential.Resource
 import kotlinx.coroutines.flow.collectLatest
@@ -38,7 +42,7 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
         ).apply { putExtras(bundle) }
     }
 
-    val launcher = registerActivityForResult { resultType, _ ->
+    private val launcher = registerActivityForResult { resultType, _ ->
         if (resultType == ResultType.OK) {
             loadUI()
         } else {
@@ -111,27 +115,76 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
                     startActivity(CreateMatchActivity.getIntentObject(this))
                 }
             }
-            adapter.itemClickListener = CustomClickListener(onClick = { position, _, _ ->
+            adapter.itemClickListener = CustomClickListener(onClick = { position, view, _ ->
                 val record = adapter.getItem(position)
-                if (record.isMatchCompleted()) {
-                    startActivity(
-                        MatchCompleteActivity.getIntentObject(
-                            this,
-                            record.matchRecordId
-                        )
-                    )
-                } else {
-                    startActivity(
-                        MatchRecordActivity.getIntentObject(
-                            this,
-                            record
-                        )
-                    )
+                when (view?.id) {
+                    R.id.btn_copy -> {
+                        launch {
+                            viewModel.copyMatchRecord(record)
+                            viewModel
+                                .copyMatchRecordEvent()
+                                .collectLatest {
+                                    when (it.status) {
+                                        Resource.Status.SUCCESS -> {
+                                            hideProgressBar()
+                                        }
+
+                                        Resource.Status.ERROR -> {
+                                            hideProgressBar()
+                                            it.error?.exception?.message?.let { message -> errorDialog(message) }
+                                        }
+
+                                        Resource.Status.LOADING -> {
+                                            showProgressBar()
+                                        }
+
+                                        else -> {
+
+                                        }
+                                    }
+                                }
+                        }
+                    }
+
+                    R.id.btn_delete -> {
+                        showDeleteDialog(record)
+                    }
+
+                    else -> {
+                        if (record.isMatchCompleted()) {
+                            startActivity(
+                                MatchCompleteActivity.getIntentObject(
+                                    this,
+                                    record.matchRecordId
+                                )
+                            )
+                        } else {
+                            startActivity(
+                                MatchRecordActivity.getIntentObject(
+                                    this,
+                                    record
+                                )
+                            )
+                        }
+                    }
                 }
             })
         } else {
             binding.btnAddMatch.setOnClickListener(null)
         }
+    }
+
+    private fun showDeleteDialog(record: MatchRecord) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.delete_match_record))
+            .setMessage(getString(R.string.delete_match_record_message))
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                launch {
+                    viewModel.deleteMatchRecord(record)
+                }
+            }
+            .setNegativeButton(getString(R.string.no)) { _, _ -> }
+            .show()
     }
 }
 

@@ -4,6 +4,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.memoryCacheSettings
@@ -22,6 +23,7 @@ import io.github.raghavsatyadev.support.extensions.serializer.SerializationExten
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUtil
+import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.toMap
 import io.github.raghavsatyadev.support.preferences.AppPrefsUtil
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -96,9 +98,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
                 with(matchRecordTask) {
                     await()
                     if (isSuccessful) {
-                        val records = result.documents.map {
-                            it.toDataObject<MatchRecord>()
-                        }
+                        val records = result.toDataObjects<MatchRecord>()
                         MatchRecordDataUtil
                             .getInstance()
                             .upsert(records)
@@ -190,7 +190,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
     // endregion
 
     // region MatchRecord
-    suspend fun setMatchRecord(matchRecord: MatchRecord): MatchRecord {
+    suspend fun createMatchRecord(matchRecord: MatchRecord): MatchRecord {
         val document = db
             .collection(FirebaseConstants.Collections.MATCH_RECORD)
             .document()
@@ -233,9 +233,89 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
             }
         }
     }
-    // endregion
+
+    suspend fun updateMatchRecords(matchRecords: List<MatchRecord>): Boolean {
+        val task = db.runTransaction {
+            matchRecords.forEach { record ->
+                val document = db
+                    .collection(FirebaseConstants.Collections.MATCH_RECORD)
+                    .document(record.matchRecordId)
+                it[document] = record
+                it.update(
+                    document,
+                    record.toMap()
+                )
+            }
+        }
+        with(task) {
+            await()
+            if (!isSuccessful) {
+                throw exception ?: Exception("Unknown Exception")
+            }
+            return true
+        }
+    }
+
+    suspend fun updateMatchRecord(matchRecord: MatchRecord): Boolean {
+        val document = db
+            .collection(FirebaseConstants.Collections.MATCH_RECORD)
+            .document()
+        matchRecord.matchRecordId = document.id
+        val task = document.update(
+            SERVER_UPDATE_DATE_TIME,
+            FieldValue.serverTimestamp()
+        )
+
+        with(task) {
+            await()
+            if (!isSuccessful) {
+                throw exception ?: Exception("Unknown Exception")
+            } else {
+                val readTask = document.get()
+                readTask.await()
+                if (readTask.isSuccessful) {
+                    try {
+                        val record: MatchRecord = readTask.result.toDataObject<MatchRecord>()
+                        MatchRecordDataUtil
+                            .getInstance()
+                            .updateServerTime(
+                                record.matchRecordId,
+                                record.serverUpdateDateTime
+                            )
+                        return true
+                    } catch (e: Exception) {
+                        AppLog.loge(
+                            false,
+                            kotlinFileName,
+                            "setMatchRecord",
+                            e,
+                            Exception()
+                        )
+                        throw e
+                    }
+                }
+                throw Exception("Unknown Exception")
+            }
+        }
+    }
+
+    suspend fun deleteMatchRecord(matchRecordId: String): Boolean {
+        val task = db
+            .collection(FirebaseConstants.Collections.MATCH_RECORD)
+            .document(matchRecordId)
+            .delete()
+        with(task) {
+            await()
+            return isSuccessful
+        }
+    }
+// endregion
 
     private inline fun <reified T> DocumentSnapshot.toDataObject(): T = data
         .toJsonString()
         .toKotlinObject()
+
+    private inline fun <reified T> QuerySnapshot.toDataObjects(): List<T> = documents.map {
+        it.toDataObject()
+    }
 }

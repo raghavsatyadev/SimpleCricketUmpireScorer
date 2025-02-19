@@ -16,6 +16,7 @@ import com.google.firebase.FirebaseApp
 import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.BuildConfig
 import io.github.raghavsatyadev.support.R
+import io.github.raghavsatyadev.support.background.MatchDataUpdateWorker
 import io.github.raghavsatyadev.support.database.RoomDBUtil
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
 import io.github.raghavsatyadev.support.google.FireStoreUtil
@@ -65,6 +66,12 @@ class CoreApp : Application(), CoroutineScope {
         RoomDBUtil.getDatabase()
         KtorUtil.httpClient
         setupCoil()
+
+        setupWorker()
+    }
+
+    private fun setupWorker() {
+        MatchDataUpdateWorker.updateMatchDataPeriodically()
     }
 
     private fun setupCoil() {

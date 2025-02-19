@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scuc.ui.match_complete
+package io.github.raghavsatyadev.scus.ui.match_complete
 
 import io.github.raghavsatyadev.support.core.CoreViewModel
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord

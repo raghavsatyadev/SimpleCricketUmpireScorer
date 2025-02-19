@@ -5,6 +5,11 @@
     <string name="lost">Lost</string>
     <string name="draw">Draw</string>
     <string name="in_progress">In Progress</string>
+    <string name="delete_match_record">Delete Match Record</string>
+    <string name="copy_match_record">Copy Match Record</string>
+    <string name="delete_match_record_message">Are you sure you want to delete this record?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <!-- Create Match -->
     <string name="create_match_title">Create Match</string>
@@ -49,7 +54,8 @@
 
     <!-- Match Complete -->
     <string name="match_complete_title">Match Details</string>
-    <string name="reset_match_message">Do you want to reset just this inning or the full match?</string>
+    <string name="reset_full_match_message">Do you want to reset just this inning or the full match?</string>
+    <string name="reset_inning_message">Do you want to reset this inning?</string>
     <string name="reset_inning">Inning</string>
     <string name="cancel">Cancel</string>
     <string name="reset_full">Match</string>

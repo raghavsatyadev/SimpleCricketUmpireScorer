@@ -1,6 +1,7 @@
 package io.github.raghavsatyadev.support.models.db.match_record
 
 import androidx.room.Dao
+import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
@@ -10,6 +11,7 @@ import io.github.raghavsatyadev.support.database.BaseDao
 import io.github.raghavsatyadev.support.database.BaseDataUtil
 import io.github.raghavsatyadev.support.database.RoomDBUtil
 import kotlinx.coroutines.flow.Flow
+import java.time.Instant
 
 class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchRecordDao>() {
     companion object {
@@ -45,13 +47,18 @@ class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchR
         return getDao().getCountLive(SimpleSQLiteQuery(buildGetCountQuery()))
     }
 
-    fun getItemLive(id: String): Flow<MatchRecord> {
-        return getDao().getItemLive(SimpleSQLiteQuery(buildGetItemQuery(id.toString())))
+    fun updateServerTime(
+        id: String,
+        time: Instant,
+    ) {
+        return getDao().updateServerTime(
+            id,
+            time.toEpochMilli(),
+        )
     }
 
-    override fun update(record: MatchRecord): Int {
-        // record.localUpdateDateTime = Instant.now()
-        return super.update(record)
+    fun getItemLive(id: String): Flow<MatchRecord> {
+        return getDao().getItemLive(SimpleSQLiteQuery(buildGetItemQuery(id)))
     }
 
     @Dao
@@ -64,5 +71,11 @@ class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchR
 
         @RawQuery(observedEntities = [MatchRecord::class])
         fun getItemLive(query: SupportSQLiteQuery): Flow<MatchRecord>
+
+        @Query("UPDATE ${Tables.MATCH_RECORD_TABLE} SET ${FieldKeys.SERVER_UPDATE_DATE_TIME} = :time WHERE ${FieldKeys.MATCH_RECORD_ID} = :id")
+        fun updateServerTime(
+            id: String,
+            time: Long,
+        )
     }
 }

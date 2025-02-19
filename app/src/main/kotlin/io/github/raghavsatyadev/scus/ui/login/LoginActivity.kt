@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scuc.ui.login
+package io.github.raghavsatyadev.scus.ui.login
 
 import android.content.Context
 import android.content.Intent
@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import io.github.raghavsatyadev.scuc.databinding.ActivityLoginBinding
+import io.github.raghavsatyadev.scus.databinding.ActivityLoginBinding
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.core.CoreActivity
 import io.github.raghavsatyadev.support.extensions.AppExtensions.getAlreadyLoggedInText
@@ -90,7 +90,7 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.dialog_already_logged_in_title)
             .setMessage(getAlreadyLoggedInText())
-            .setPositiveButton(io.github.raghavsatyadev.scuc.R.string.force_login) { dialog, _ ->
+            .setPositiveButton(io.github.raghavsatyadev.scus.R.string.force_login) { dialog, _ ->
                 lifecycleScope.launch {
                     withContext(mainDispatcher) {
                         dialog.dismiss()
@@ -98,7 +98,7 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
                     viewModel.updateUserTokens()
                 }
             }
-            .setNegativeButton(io.github.raghavsatyadev.scuc.R.string.logout) { dialog, which ->
+            .setNegativeButton(io.github.raghavsatyadev.scus.R.string.logout) { dialog, which ->
                 lifecycleScope.launch {
                     viewModel.signOut(signInUtil)
                     withContext(mainDispatcher) {

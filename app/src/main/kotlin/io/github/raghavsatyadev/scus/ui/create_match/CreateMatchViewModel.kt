@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scuc.ui.create_match
+package io.github.raghavsatyadev.scus.ui.create_match
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
@@ -102,7 +102,7 @@ class CreateMatchViewModel : CoreViewModel() {
                     )
                     FireStoreUtil
                         .getInstance()
-                        .setMatchRecord(matchRecord)
+                        .createMatchRecord(matchRecord)
 
                     createMatchRecordEvent.emit(Resource.success(matchRecord))
                 } catch (e: Exception) {

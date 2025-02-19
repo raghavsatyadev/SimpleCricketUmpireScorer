@@ -1,18 +1,19 @@
 package io.github.raghavsatyadev.support.models.db.match_record
 
+import io.github.raghavsatyadev.support.Constants.FieldKeys
 import io.github.raghavsatyadev.support.extensions.DateExtensions.formatMillisToDate
 import io.github.raghavsatyadev.support.models.BasicMatchUIDetails
 import java.util.Locale
 
 object MatchRecordExtensions {
-    fun MatchRecord.getWickets(shouldPrepareTeam1Details: Boolean) =
+    private fun MatchRecord.getWickets(shouldPrepareTeam1Details: Boolean) =
         if (shouldPrepareTeam1Details) {
             team1Detail.wickets
         } else {
             team2Detail.wickets
         }
 
-    fun MatchRecord.getCRR(shouldPrepareTeam1Details: Boolean): String {
+    private fun MatchRecord.getCRR(shouldPrepareTeam1Details: Boolean): String {
         val runs = if (shouldPrepareTeam1Details) {
             team1Detail.runs
         } else {
@@ -95,7 +96,7 @@ object MatchRecordExtensions {
      * @param currentBattingTeamBalls
      * @return required run and balls in format of Runs (Balls)
      */
-    fun MatchRecord.getRequiredRunsBalls(
+    private fun MatchRecord.getRequiredRunsBalls(
         currentBattingTeamRuns: Int,
         otherTeamRuns: Int,
         currentBattingTeamBalls: Int,
@@ -146,11 +147,12 @@ object MatchRecordExtensions {
         )
     }
 
-    fun MatchRecord.getRuns(shouldPrepareTeam1Details: Boolean) = if (shouldPrepareTeam1Details) {
-        team1Detail.runs
-    } else {
-        team2Detail.runs
-    }
+    private fun MatchRecord.getRuns(shouldPrepareTeam1Details: Boolean) =
+        if (shouldPrepareTeam1Details) {
+            team1Detail.runs
+        } else {
+            team2Detail.runs
+        }
 
     fun MatchRecord.getTeam1FormattedScore() =
         "${getRuns(true)}-${getWickets(true)} (${formatToOvers(getBalls(true))})"
@@ -158,20 +160,21 @@ object MatchRecordExtensions {
     fun MatchRecord.getTeam2FormattedScore() =
         "${getRuns(false)}-${getWickets(false)} (${formatToOvers(getBalls(false))})"
 
-    fun formatCurrentRunsAndWickets(
+    private fun formatCurrentRunsAndWickets(
         runs: Int,
         wickets: Int,
     ) = "$runs-$wickets"
 
-    fun formatToOvers(balls: Int): String {
+    private fun formatToOvers(balls: Int): String {
         return "${balls / 6}.${balls % 6}"
     }
 
-    fun MatchRecord.getBalls(shouldPrepareTeam1Details: Boolean) = if (shouldPrepareTeam1Details) {
-        team1Detail.balls
-    } else {
-        team2Detail.balls
-    }
+    private fun MatchRecord.getBalls(shouldPrepareTeam1Details: Boolean) =
+        if (shouldPrepareTeam1Details) {
+            team1Detail.balls
+        } else {
+            team2Detail.balls
+        }
 
     /**
      * Takes into account following things
@@ -200,5 +203,29 @@ object MatchRecordExtensions {
         val matchStartTime = startDateTime.formatMillisToDate()
         val matchTimings = matchStartTime + matchEndTimeString
         return matchTimings
+    }
+
+    fun MatchRecord.toMap(): Map<String, Any?> {
+        return mapOf(
+            FieldKeys.START_DATE_TIME to startDateTime,
+            FieldKeys.END_DATE_TIME to endDateTime,
+            FieldKeys.TEAM_1 to team1Detail.toMap(),
+            FieldKeys.TEAM_2 to team2Detail.toMap(),
+            FieldKeys.BALLS_PER_INNING to ballsPerInning,
+            FieldKeys.DID_TEAM_1_WON_TOSS to didTeam1WonToss,
+            FieldKeys.IS_TEAM_1_BATTING_FIRST to isTeam1BattingFirst,
+            FieldKeys.IS_FIRST_INNING_COMPLETE to isFirstInningComplete,
+            FieldKeys.RRR_AT_SECOND_INNING_START to rrrAtSecondInningStart,
+            FieldKeys.STATUS to status,
+        )
+    }
+
+    private fun TeamDetail.toMap(): Map<String, Any?> {
+        return mapOf(
+            FieldKeys.TEAM_NAME to teamName,
+            FieldKeys.RUNS to runs,
+            FieldKeys.WICKETS to wickets,
+            FieldKeys.BALLS to balls,
+        )
     }
 }

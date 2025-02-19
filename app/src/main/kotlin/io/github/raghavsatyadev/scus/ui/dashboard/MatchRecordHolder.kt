@@ -1,7 +1,7 @@
-package io.github.raghavsatyadev.scuc.ui.dashboard
+package io.github.raghavsatyadev.scus.ui.dashboard
 
 import android.annotation.SuppressLint
-import io.github.raghavsatyadev.scuc.databinding.ItemMatchRecordBinding
+import io.github.raghavsatyadev.scus.databinding.ItemMatchRecordBinding
 import io.github.raghavsatyadev.support.extensions.ViewExtensions.gone
 import io.github.raghavsatyadev.support.extensions.ViewExtensions.visible
 import io.github.raghavsatyadev.support.list.CustomClickListener
@@ -52,6 +52,25 @@ class MatchRecordHolder(
                 drawColor,
                 inProgressColor
             )
+        }
+    }
+
+    init {
+        with(binding) {
+            btnCopy.setOnClickListener {
+                itemClickListener?.onItemClick(
+                    layoutPosition,
+                    btnCopy,
+                    false
+                )
+            }
+            btnDelete.setOnClickListener {
+                itemClickListener?.onItemClick(
+                    layoutPosition,
+                    btnDelete,
+                    false
+                )
+            }
         }
     }
 

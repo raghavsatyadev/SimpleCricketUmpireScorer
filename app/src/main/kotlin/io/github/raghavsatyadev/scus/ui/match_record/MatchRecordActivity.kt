@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scuc.ui.match_record
+package io.github.raghavsatyadev.scus.ui.match_record
 
 import android.content.Context
 import android.content.Intent
@@ -6,10 +6,10 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import io.github.raghavsatyadev.scuc.R
-import io.github.raghavsatyadev.scuc.databinding.ActivityMatchRecordBinding
-import io.github.raghavsatyadev.scuc.databinding.DialogEditTotalOversBinding
-import io.github.raghavsatyadev.scuc.ui.match_complete.MatchCompleteActivity
+import io.github.raghavsatyadev.scus.R
+import io.github.raghavsatyadev.scus.databinding.ActivityMatchRecordBinding
+import io.github.raghavsatyadev.scus.databinding.DialogEditTotalOversBinding
+import io.github.raghavsatyadev.scus.ui.match_complete.MatchCompleteActivity
 import io.github.raghavsatyadev.support.core.CoreActivity
 import io.github.raghavsatyadev.support.extensions.MenuExtensions.setupOptionsMenus
 import io.github.raghavsatyadev.support.extensions.OrientationExtensions.enableFullScreen
@@ -22,6 +22,7 @@ import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtens
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.toBasicMatchUIDetails
 import io.github.raghavsatyadev.support.models.essential.Resource
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -71,22 +72,41 @@ class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
     }
 
     private fun showResetDialog(): Boolean {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.reset_match)
-            .setMessage(R.string.reset_match_message)
-            .setPositiveButton(R.string.reset_inning) { _, _ ->
-                viewModel.reset(matchRecordID)
+        launch {
+            val uiDetails = viewModel
+                .getMatchRecordEvent()
+                .first().data
+
+            uiDetails?.let {
+
+                MaterialAlertDialogBuilder(this@MatchRecordActivity)
+                    .setTitle(R.string.reset_match)
+                    .setMessage(
+                        if (it.isFirstInningComplete) {
+                            R.string.reset_full_match_message
+                        } else {
+                            R.string.reset_inning_message
+                        }
+                    )
+                    .setPositiveButton(R.string.reset_inning) { _, _ ->
+                        viewModel.reset(matchRecordID)
+                    }
+                    .setNeutralButton(R.string.cancel) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .apply {
+                        if (it.isFirstInningComplete) {
+                            setNegativeButton(R.string.reset_full) { _, _ ->
+                                viewModel.reset(
+                                    matchRecordID,
+                                    true
+                                )
+                            }
+                        }
+                    }
+                    .show()
             }
-            .setNeutralButton(R.string.cancel) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setNegativeButton(R.string.reset_full) { _, _ ->
-                viewModel.reset(
-                    matchRecordID,
-                    true
-                )
-            }
-            .show()
+        }
         return true
     }
 

@@ -1,31 +1,31 @@
 [versions]
 
 # App Name
-debugAppName = "SCUC"
-betaAppName = "SCUC Beta"
-releaseAppName = "SCUC"
+debugAppName = "SCUS"
+betaAppName = "SCUS Beta"
+releaseAppName = "SCUS"
 
 # Build Variables
-apkName = "SCUC"
+apkName = "SCUS"
 
 # Package Names
-nameSpace = "io.github.raghavsatyadev.scuc"
-appIdDev = "io.github.raghavsatyadev.scuc"
-appIdProd = "io.github.raghavsatyadev.scuc"
+nameSpace = "io.github.raghavsatyadev.scus"
+appIdDev = "io.github.raghavsatyadev.scus"
+appIdProd = "io.github.raghavsatyadev.scus"
 supportId = "io.github.raghavsatyadev.support"
 
 # SDK Versions
 targetSdk = "35"
-minSdk = "24"
+minSdk = "26"
 compileSdk = "35"
-buildTools = "36.0.0 rc4"
+buildTools = "36.0.0 rc5"
 
 # App Version Codes
 versionCode = "1"
 versionName = "0.0.1"
 
 # Plugin Versions
-agp = "8.10.0-alpha04"
+agp = "8.10.0-alpha05"
 kotlin = "2.1.20-Beta2"
 com-google-devtools-ksp = "2.1.20-Beta2-1.0.29"
 com-google-gms = "4.4.2"
@@ -50,27 +50,27 @@ firebase-crashlytics-ktx = "19.4.0"
 firebase-firestore = "25.1.2"
 firebase-gradle = "3.0.3"
 firebase-messaging-ktx = "24.1.0"
-fragment = "1.8.5"
+fragment = "1.8.6"
 google-id = "1.1.1"
 junit = "4.13.2"
 junit-jupiter = "5.11.4"
 ktor = "3.0.3"
-lifecycle = "2.9.0-alpha09"
+lifecycle = "2.9.0-alpha10"
 lottie = "6.6.2"
 material = "1.13.0-alpha10"
 multidex = "2.0.1"
-navigation = "2.9.0-alpha05"
+navigation = "2.9.0-alpha06"
 permissionx = "1.8.1"
 play-services-ads = "23.6.0"
 play-services-auth = "21.3.0"
 recyclerview = "1.4.0"
-room = "2.7.0-alpha13"
+room = "2.7.0-beta01"
 rules = "1.6.1"
 runner = "1.6.2"
 serialization = "1.8.0"
 sonarqube = "6.0.1.5171"
 splashscreen = "1.2.0-alpha02"
-swiperefreshlayout = "1.2.0-alpha01"
+swiperefreshlayout = "1.2.0-beta01"
 work-manager = "2.10.0"
 
 [libraries]

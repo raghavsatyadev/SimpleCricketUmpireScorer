@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scuc.ui.match_complete
+package io.github.raghavsatyadev.scus.ui.match_complete
 
 import android.content.Context
 import android.content.Intent
@@ -6,8 +6,8 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButtonToggleGroup
-import io.github.raghavsatyadev.scuc.R
-import io.github.raghavsatyadev.scuc.databinding.ActivityMatchCompleteBinding
+import io.github.raghavsatyadev.scus.R
+import io.github.raghavsatyadev.scus.databinding.ActivityMatchCompleteBinding
 import io.github.raghavsatyadev.support.core.CoreActivity
 import io.github.raghavsatyadev.support.extensions.ViewExtensions.gone
 import io.github.raghavsatyadev.support.extensions.ViewExtensions.visible

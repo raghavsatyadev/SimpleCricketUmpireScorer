@@ -29,7 +29,7 @@ class MatchDataUpdateWorker(
         private const val MATCH_RECORD_ID = "matchRecordID"
 
         private val manager by lazy {
-            WorkManager.Companion.getInstance(CoreApp.Companion.instance)
+            WorkManager.Companion.getInstance(CoreApp.instance)
         }
         private val oneTimeWorkStatus by lazy {
             manager.getWorkInfosForUniqueWorkFlow(UNIQUE_WORK_NAME)
