@@ -1,7 +1,6 @@
 package io.github.raghavsatyadev.support.extensions.serializer
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
@@ -10,6 +9,7 @@ import kotlinx.serialization.modules.contextual
 object SerializationExtensions {
     @OptIn(ExperimentalSerializationApi::class)
     val kotlinJsonSerializer = Json {
+        ignoreUnknownKeys = true
         serializersModule = SerializersModule {
             contextual(ExceptionSerializer)
             contextual(DynamicLookupSerializer)

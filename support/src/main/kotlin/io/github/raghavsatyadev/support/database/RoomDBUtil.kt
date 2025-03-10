@@ -1,6 +1,7 @@
 package io.github.raghavsatyadev.support.database
 
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.room.RoomDatabase.Callback
 import io.github.raghavsatyadev.support.Constants
 import io.github.raghavsatyadev.support.core.CoreApp
@@ -21,6 +22,7 @@ object RoomDBUtil {
                 )
                 .allowMainThreadQueries()
                 .addMigrations(*MigrationUtil.migrations)
+                .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
                 .fallbackToDestructiveMigration(true)
                 .addCallback(object : Callback() {})
                 .build()

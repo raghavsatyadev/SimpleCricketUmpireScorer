@@ -17,9 +17,12 @@ import io.github.raghavsatyadev.support.core.CoreActivity
 import io.github.raghavsatyadev.support.extensions.DateExtensions.formatDateToMillis
 import io.github.raghavsatyadev.support.extensions.DateExtensions.formatMillisToDate
 import io.github.raghavsatyadev.support.extensions.ErrorShowExtensions.errorDialog
+import io.github.raghavsatyadev.support.extensions.ParcelSerialExtensions.getParcelExtra
 import io.github.raghavsatyadev.support.extensions.ViewExtensions.isEditable
 import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.loadAds
 import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
+import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
+import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.getOvers
 import io.github.raghavsatyadev.support.models.essential.Resource
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -29,8 +32,10 @@ import java.util.Calendar
 class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
     private val viewModel: CreateMatchViewModel by viewModels()
     private var currentUserId: String? = null
+    private var matchRecord: MatchRecord? = null
 
     companion object {
+        const val MATCH_RECORD = "match_record"
         fun getIntentObject(
             context: Context,
             bundle: Bundle = Bundle.EMPTY,
@@ -62,17 +67,38 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
                 .formatMillisToDate()
         )
 
-        // TODO: remove this thing
-        if (BuildConfig.DEBUG) {
-            setDebugValues()
+        matchRecord = intent?.getParcelExtra(
+            MATCH_RECORD,
+            MatchRecord::class
+        )
+
+        if (matchRecord != null) {
+            setCopiedValues(
+                matchRecord!!.team1Detail.teamName,
+                matchRecord!!.team2Detail.teamName,
+                matchRecord!!.location,
+                matchRecord!!.getOvers()
+            )
+        } else if (BuildConfig.DEBUG) {
+            setCopiedValues(
+                "Team 1",
+                "Team 2",
+                "KwikBox",
+                "10"
+            )
         }
     }
 
-    private fun setDebugValues() {
-        binding.edTeam1Name.setText("Team 1")
-        binding.edTeam2Name.setText("Team 2")
-        binding.edMatchLocation.setText("Location")
-        binding.edInningOver.setText("20")
+    private fun setCopiedValues(
+        team1Name: String,
+        team2Name: String,
+        location: String,
+        over: String,
+    ) {
+        binding.edTeam1Name.setText(team1Name)
+        binding.edTeam2Name.setText(team2Name)
+        binding.edMatchLocation.setText(location)
+        binding.edInningOver.setText(over)
     }
 
     private fun listenForStates() {

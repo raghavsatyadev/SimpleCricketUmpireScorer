@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Date
 
 class CreateMatchViewModel : CoreViewModel() {
     private var createMatchRecordEvent: MutableStateFlow<Resource<MatchRecord>> =
@@ -98,6 +99,8 @@ class CreateMatchViewModel : CoreViewModel() {
                         team2Detail = TeamDetail(teamName = team2Name),
                         didTeam1WonToss = didTeam1WinToss,
                         isTeam1BattingFirst = batFirstTeam1,
+                        localUpdateDateTime = Date(),
+                        serverUpdateDateTime = Date(),
                         matchAdminID = currentUserId,
                     )
                     FireStoreUtil

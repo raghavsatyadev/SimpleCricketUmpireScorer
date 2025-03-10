@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.RawQuery
 import androidx.room.Update
-import androidx.room.Upsert
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 
@@ -27,12 +26,6 @@ interface BaseDao<T> {
 
     @Update
     fun update(t: List<T>): Int
-
-    @Upsert
-    fun upsert(t: T)
-
-    @Upsert
-    fun upsert(t: List<T>)
 
     @Delete
     fun delete(t: T): Int

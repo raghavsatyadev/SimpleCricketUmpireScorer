@@ -14,7 +14,7 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.Instant
+import java.util.Date
 
 @Keep
 @Parcelize
@@ -25,7 +25,7 @@ data class MatchRecord(
     @ColumnInfo(FieldKeys.MATCH_RECORD_ID)
     @get:PropertyName(FieldKeys.MATCH_RECORD_ID)
     @set:PropertyName(FieldKeys.MATCH_RECORD_ID)
-    @PrimaryKey()
+    @PrimaryKey
     var matchRecordId: String = "",
 
     @SerialName(FieldKeys.START_DATE_TIME)
@@ -109,12 +109,12 @@ data class MatchRecord(
     @ColumnInfo(FieldKeys.LOCAL_UPDATE_DATE_TIME)
     @get:Exclude
     @Contextual
-    var localUpdateDateTime: Instant = Instant.now(),
+    var localUpdateDateTime: Date? = null,
 
     @SerialName(FieldKeys.SERVER_UPDATE_DATE_TIME)
     @ColumnInfo(FieldKeys.SERVER_UPDATE_DATE_TIME)
     @get:PropertyName(FieldKeys.SERVER_UPDATE_DATE_TIME)
     @set:PropertyName(FieldKeys.SERVER_UPDATE_DATE_TIME)
     @Contextual
-    var serverUpdateDateTime: Instant = Instant.now(),
+    var serverUpdateDateTime: Date? = null,
 ) : Parcelable

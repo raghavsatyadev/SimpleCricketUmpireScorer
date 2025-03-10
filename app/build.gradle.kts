@@ -47,6 +47,7 @@ android {
     compileSdk = libs.versions.compileSdk
         .get()
         .toInt()
+    // compileSdkPreview = libs.versions.compileSdkPreview.get()
     buildToolsVersion = libs.versions.buildTools.get()
     defaultConfig {
         applicationId = libs.versions.appIdDev.get()
@@ -56,6 +57,7 @@ android {
         targetSdk = libs.versions.targetSdk
             .get()
             .toInt()
+        // targetSdkPreview = libs.versions.targetSdkPreview.get()
         versionCode = libs.versions.versionCode
             .get()
             .toInt()

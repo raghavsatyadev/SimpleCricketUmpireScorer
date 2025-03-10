@@ -41,14 +41,6 @@ abstract class BaseDataUtil<T, D : BaseDao<T>> {
         return getDao().update(ts)
     }
 
-    open fun upsert(t: T) {
-        return getDao().upsert(t)
-    }
-
-    open fun upsert(t: List<T>) {
-        return getDao().upsert(t)
-    }
-
     open fun delete(id: Long): Int {
         return getDao().delete(
             SimpleSQLiteQuery("DELETE FROM `${getTableName()}` WHERE `${getPrimaryKey()}` = `$id`")

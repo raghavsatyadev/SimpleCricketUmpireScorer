@@ -14,18 +14,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.Instant
 
 class DashboardViewModel : CoreViewModel() {
     private var getMatchRecordsEvent: MutableStateFlow<Resource<List<MatchRecord>>> =
         MutableStateFlow(Resource.empty())
 
     fun getMatchRecordsEvent() = getMatchRecordsEvent.asSharedFlow()
-
-    private var copyMatchRecordEvent: MutableStateFlow<Resource<MatchRecord>> =
-        MutableStateFlow(Resource.empty())
-
-    fun copyMatchRecordEvent() = copyMatchRecordEvent.asSharedFlow()
 
     fun loadMatchRecords() {
         viewModelScope.launch {
@@ -39,41 +33,6 @@ class DashboardViewModel : CoreViewModel() {
                         }
                 } catch (e: Exception) {
                     getMatchRecordsEvent.emit(
-                        Resource.error(
-                            CustomError(
-                                ErrorCode.UNKNOWN_ERROR,
-                                e
-                            )
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-    fun copyMatchRecord(record: MatchRecord) {
-        viewModelScope.launch {
-            copyMatchRecordEvent.emit(Resource.loading())
-            withContext(ioDispatcher) {
-                var matchRecord = MatchRecord(
-                    location = record.location,
-                    startDateTime = Instant
-                        .now()
-                        .toEpochMilli(),
-                    ballsPerInning = record.ballsPerInning,
-                    team1Detail = record.team1Detail,
-                    team2Detail = record.team2Detail,
-                    didTeam1WonToss = record.didTeam1WonToss,
-                    isTeam1BattingFirst = record.isTeam1BattingFirst,
-                    matchAdminID = record.matchAdminID,
-                )
-                try {
-                    matchRecord = FireStoreUtil
-                        .getInstance()
-                        .createMatchRecord(matchRecord)
-                    copyMatchRecordEvent.emit(Resource.success(matchRecord))
-                } catch (e: Exception) {
-                    copyMatchRecordEvent.emit(
                         Resource.error(
                             CustomError(
                                 ErrorCode.UNKNOWN_ERROR,

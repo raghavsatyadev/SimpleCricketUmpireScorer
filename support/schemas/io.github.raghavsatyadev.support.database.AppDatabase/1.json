@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "bcf2a2aa4e0df6c816b3b8cc45b32b70",
+    "identityHash": "8b7bae1ee81c644f4e568a5de42d729e",
     "entities": [
       {
         "tableName": "match_record",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`match_record_id` TEXT NOT NULL, `start_date_time` INTEGER NOT NULL, `end_date_time` INTEGER NOT NULL, `balls_per_inning` INTEGER NOT NULL, `did_team_1_won_toss` INTEGER NOT NULL, `is_team_1_batting_first` INTEGER NOT NULL, `is_first_inning_complete` INTEGER NOT NULL, `rrr_at_second_inning_start` TEXT NOT NULL, `status` TEXT NOT NULL, `location` TEXT NOT NULL, `match_admin_id` TEXT NOT NULL, `match_shared_user_ids` TEXT NOT NULL, `local_update_date_time` INTEGER NOT NULL, `server_update_date_time` INTEGER NOT NULL, `team_1_team_name` TEXT NOT NULL, `team_1_runs` INTEGER NOT NULL, `team_1_wickets` INTEGER NOT NULL, `team_1_balls` INTEGER NOT NULL, `team_2_team_name` TEXT NOT NULL, `team_2_runs` INTEGER NOT NULL, `team_2_wickets` INTEGER NOT NULL, `team_2_balls` INTEGER NOT NULL, PRIMARY KEY(`match_record_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`match_record_id` TEXT NOT NULL, `start_date_time` INTEGER NOT NULL, `end_date_time` INTEGER NOT NULL, `balls_per_inning` INTEGER NOT NULL, `did_team_1_won_toss` INTEGER NOT NULL, `is_team_1_batting_first` INTEGER NOT NULL, `is_first_inning_complete` INTEGER NOT NULL, `rrr_at_second_inning_start` TEXT NOT NULL, `status` TEXT NOT NULL, `location` TEXT NOT NULL, `match_admin_id` TEXT NOT NULL, `match_shared_user_ids` TEXT NOT NULL, `local_update_date_time` INTEGER, `server_update_date_time` INTEGER, `team_1_team_name` TEXT NOT NULL, `team_1_runs` INTEGER NOT NULL, `team_1_wickets` INTEGER NOT NULL, `team_1_balls` INTEGER NOT NULL, `team_2_team_name` TEXT NOT NULL, `team_2_runs` INTEGER NOT NULL, `team_2_wickets` INTEGER NOT NULL, `team_2_balls` INTEGER NOT NULL, PRIMARY KEY(`match_record_id`))",
         "fields": [
           {
             "fieldPath": "matchRecordId",
@@ -83,14 +83,12 @@
           {
             "fieldPath": "localUpdateDateTime",
             "columnName": "local_update_date_time",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "serverUpdateDateTime",
             "columnName": "server_update_date_time",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "team1Detail.teamName",
@@ -151,7 +149,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bcf2a2aa4e0df6c816b3b8cc45b32b70')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8b7bae1ee81c644f4e568a5de42d729e')"
     ]
   }
 }

@@ -111,7 +111,8 @@ object InstantSerializer : KSerializer<Instant> {
     }
 
     override fun deserialize(decoder: Decoder): Instant {
-        return Instant.ofEpochSecond(decoder.decodeLong())
+        val decodeLong = decoder.decodeLong()
+        return Instant.ofEpochMilli(decodeLong)
     }
 }
 

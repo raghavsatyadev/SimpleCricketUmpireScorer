@@ -214,6 +214,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
                 if (readTask.isSuccessful) {
                     try {
                         val record: MatchRecord = readTask.result.toDataObject<MatchRecord>()
+                        record.localUpdateDateTime = record.serverUpdateDateTime
                         MatchRecordDataUtil
                             .getInstance()
                             .insertIgnore(record)
@@ -280,7 +281,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
                             .getInstance()
                             .updateServerTime(
                                 record.matchRecordId,
-                                record.serverUpdateDateTime
+                                record.serverUpdateDateTime!!
                             )
                         return true
                     } catch (e: Exception) {

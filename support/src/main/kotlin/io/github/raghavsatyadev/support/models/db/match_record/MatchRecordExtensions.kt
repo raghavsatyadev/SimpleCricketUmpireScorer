@@ -169,6 +169,10 @@ object MatchRecordExtensions {
         return "${balls / 6}.${balls % 6}"
     }
 
+    fun MatchRecord.getOvers(): String {
+        return "${ballsPerInning / 6}"
+    }
+
     private fun MatchRecord.getBalls(shouldPrepareTeam1Details: Boolean) =
         if (shouldPrepareTeam1Details) {
             team1Detail.balls

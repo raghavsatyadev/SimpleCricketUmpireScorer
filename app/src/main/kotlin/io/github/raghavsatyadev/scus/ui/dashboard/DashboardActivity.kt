@@ -14,7 +14,6 @@ import io.github.raghavsatyadev.scus.ui.login.LoginActivity
 import io.github.raghavsatyadev.scus.ui.match_complete.MatchCompleteActivity
 import io.github.raghavsatyadev.scus.ui.match_record.MatchRecordActivity
 import io.github.raghavsatyadev.support.core.CoreActivity
-import io.github.raghavsatyadev.support.extensions.ErrorShowExtensions.errorDialog
 import io.github.raghavsatyadev.support.extensions.activity_result.ActivityResultExtensions.registerActivityForResult
 import io.github.raghavsatyadev.support.extensions.activity_result.ResultType
 import io.github.raghavsatyadev.support.extensions.ads.AdExtensions.loadAds
@@ -27,6 +26,8 @@ import io.github.raghavsatyadev.support.models.essential.Resource
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.Instant
+import java.util.Date
 
 class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
     private val viewModel: DashboardViewModel by viewModels()
@@ -120,29 +121,30 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
                 when (view?.id) {
                     R.id.btn_copy -> {
                         launch {
-                            viewModel.copyMatchRecord(record)
-                            viewModel
-                                .copyMatchRecordEvent()
-                                .collectLatest {
-                                    when (it.status) {
-                                        Resource.Status.SUCCESS -> {
-                                            hideProgressBar()
-                                        }
-
-                                        Resource.Status.ERROR -> {
-                                            hideProgressBar()
-                                            it.error?.exception?.message?.let { message -> errorDialog(message) }
-                                        }
-
-                                        Resource.Status.LOADING -> {
-                                            showProgressBar()
-                                        }
-
-                                        else -> {
-
-                                        }
-                                    }
-                                }
+                            val matchRecord = MatchRecord(
+                                location = record.location,
+                                startDateTime = Instant
+                                    .now()
+                                    .toEpochMilli(),
+                                ballsPerInning = record.ballsPerInning,
+                                team1Detail = record.team1Detail,
+                                team2Detail = record.team2Detail,
+                                didTeam1WonToss = record.didTeam1WonToss,
+                                isTeam1BattingFirst = record.isTeam1BattingFirst,
+                                localUpdateDateTime = Date(),
+                                serverUpdateDateTime = Date(),
+                                matchAdminID = record.matchAdminID,
+                            )
+                            startActivity(
+                                CreateMatchActivity.getIntentObject(
+                                    this@DashboardActivity,
+                                    Bundle().apply {
+                                        putParcelable(
+                                            CreateMatchActivity.MATCH_RECORD,
+                                            matchRecord
+                                        )
+                                    })
+                            )
                         }
                     }
 

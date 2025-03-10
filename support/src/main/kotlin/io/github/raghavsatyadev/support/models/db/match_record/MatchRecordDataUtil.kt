@@ -11,7 +11,7 @@ import io.github.raghavsatyadev.support.database.BaseDao
 import io.github.raghavsatyadev.support.database.BaseDataUtil
 import io.github.raghavsatyadev.support.database.RoomDBUtil
 import kotlinx.coroutines.flow.Flow
-import java.time.Instant
+import java.util.Date
 
 class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchRecordDao>() {
     companion object {
@@ -47,13 +47,40 @@ class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchR
         return getDao().getCountLive(SimpleSQLiteQuery(buildGetCountQuery()))
     }
 
+    override fun update(t: MatchRecord): Int {
+        t.localUpdateDateTime = Date()
+        val update = super.update(t)
+        val (matchRecordId, startDateTime, endDateTime, team1Detail, team2Detail, ballsPerInning, didTeam1WonToss, isTeam1BattingFirst, isFirstInningComplete, rrrAtSecondInningStart, status, location, matchAdminID, matchSharedUserIDs, localUpdateDateTime, serverUpdateDateTime) = getItem(t.matchRecordId)
+
+        return update
+    }
+
+    fun upsert(allNewRecords: List<MatchRecord>) {
+        val now = Date()
+
+        val allOldRecords = getAll()
+
+        val (presentRecords, newRecords) = allNewRecords.partition { newRecord ->
+            newRecord.localUpdateDateTime = now
+            val foundRecord = allOldRecords.find {
+                newRecord.matchRecordId == it.matchRecordId
+            }
+            foundRecord?.let {
+                newRecord.serverUpdateDateTime!! > foundRecord.localUpdateDateTime!!
+            } ?: false
+        }
+
+        insertIgnore(newRecords)
+        update(presentRecords)
+    }
+
     fun updateServerTime(
         id: String,
-        time: Instant,
+        time: Date,
     ) {
         return getDao().updateServerTime(
             id,
-            time.toEpochMilli(),
+            time.time,
         )
     }
 
