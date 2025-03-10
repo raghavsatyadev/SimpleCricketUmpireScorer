@@ -103,7 +103,6 @@ object MatchRecordExtensions {
     ): String {
         val runsRequired = otherTeamRuns + 1 - currentBattingTeamRuns
         val ballsRemaining = ballsPerInning - currentBattingTeamBalls
-
         return "$runsRequired ($ballsRemaining)"
     }
 
