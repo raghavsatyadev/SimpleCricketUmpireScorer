@@ -27,5 +27,4 @@ data class User(
     @set:PropertyName(FieldKeys.LOGIN_TOKEN)
     @ColumnInfo(FieldKeys.LOGIN_TOKEN)
     var loginToken: String? = null,
-
 ) : Parcelable

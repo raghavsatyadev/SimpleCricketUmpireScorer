@@ -1,7 +1,5 @@
 package io.github.raghavsatyadev.support.extensions.activity_result
 
-import io.github.raghavsatyadev.support.extensions.activity_result.ResultType.entries
-
 
 enum class ResultType(val resultIndex: Int) {
     CANCELED(0),

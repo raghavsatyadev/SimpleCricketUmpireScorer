@@ -49,10 +49,7 @@ class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchR
 
     override fun update(t: MatchRecord): Int {
         t.localUpdateDateTime = Date()
-        val update = super.update(t)
-        val (matchRecordId, startDateTime, endDateTime, team1Detail, team2Detail, ballsPerInning, didTeam1WonToss, isTeam1BattingFirst, isFirstInningComplete, rrrAtSecondInningStart, status, location, matchAdminID, matchSharedUserIDs, localUpdateDateTime, serverUpdateDateTime) = getItem(t.matchRecordId)
-
-        return update
+        return super.update(t)
     }
 
     fun upsert(allNewRecords: List<MatchRecord>) {
@@ -67,7 +64,7 @@ class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchR
             }
             foundRecord?.let {
                 newRecord.serverUpdateDateTime!! > foundRecord.localUpdateDateTime!!
-            } ?: false
+            } == true
         }
 
         insertIgnore(newRecords)
