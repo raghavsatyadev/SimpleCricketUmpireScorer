@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:keepScreenOn="true"
     tools:context=".ui.match_record.MatchRecordActivity"
     >
 
@@ -163,6 +164,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:contentDescription="@string/edit_total_overs"
                 app:icon="@drawable/ic_edit"
                 app:iconSize="30dp"
                 app:layout_constraintBottom_toBottomOf="@id/txt_overs"
