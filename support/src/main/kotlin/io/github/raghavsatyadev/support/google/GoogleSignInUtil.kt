@@ -25,7 +25,7 @@ class GoogleSignInUtil(private val activity: Activity) {
     private val credentialRequest: GetCredentialRequest
 
     init {
-        val serverClientId = CoreApp.Companion.instance.getString(R.string.google_web_client_id)
+        val serverClientId = CoreApp.instance.getString(R.string.google_web_client_id)
 
         val googleIdOption = GetGoogleIdOption
             .Builder()
