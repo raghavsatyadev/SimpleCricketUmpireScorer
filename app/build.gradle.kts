@@ -204,7 +204,7 @@ fun moveAAB(
                         .walkTopDown()
                         .find { it.name.endsWith(".aab") }
                     print("AAB Location: ${aabFile?.absolutePath ?: "EMPTY"}")
-                    from(aabFile)
+                    from(aabFile!!)
                     into(buildOutputDirectory)
                     rename { "$outputFullName.aab" }
                 }
