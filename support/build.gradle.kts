@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.parcelize)
 
+    alias(libs.plugins.compose.compiler)
+
     alias(libs.plugins.safe.args)
 
     alias(libs.plugins.room)
@@ -105,6 +107,7 @@ android {
             viewBinding = true
             buildConfig = true
             resValues = true
+            compose = true
         }
         flavorDimensions.add("isPlayStoreVersion")
         productFlavors {
@@ -140,6 +143,9 @@ android {
 dependencies {
     // Kotlin
     implementation(libs.bundles.kotlin)
+
+    // Compose
+    implementation(libs.bundles.compose)
 
     // Android
     implementation(libs.bundles.androidx)
@@ -179,4 +185,6 @@ dependencies {
 
     implementation(libs.androidx.multidex)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    debugImplementation(libs.bundles.debug)
 }
