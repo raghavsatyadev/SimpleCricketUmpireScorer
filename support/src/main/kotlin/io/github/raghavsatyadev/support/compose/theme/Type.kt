@@ -6,30 +6,23 @@ import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import io.github.raghavsatyadev.support.R
 
-val provider = GoogleFont.Provider(
+val provider =
+    GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
-    certificates = R.array.com_google_android_gms_fonts_certs
-)
-
-val bodyFontFamily = FontFamily(
-    Font(
-        googleFont = GoogleFont("Poppins"),
-        fontProvider = provider,
+        certificates = R.array.com_google_android_gms_fonts_certs,
     )
-)
 
-val displayFontFamily = FontFamily(
-    Font(
-        googleFont = GoogleFont("Poppins"),
-        fontProvider = provider,
-    )
-)
+val bodyFontFamily = FontFamily(Font(googleFont = GoogleFont("Poppins"), fontProvider = provider))
+
+val displayFontFamily =
+    FontFamily(Font(googleFont = GoogleFont("Poppins"), fontProvider = provider))
 
 // Default Material 3 typography values
 val baseline = Typography()
 
-val AppTypography = Typography(
+val AppTypography =
+    Typography(
     displayLarge = baseline.displayLarge.copy(fontFamily = displayFontFamily),
     displayMedium = baseline.displayMedium.copy(fontFamily = displayFontFamily),
     displaySmall = baseline.displaySmall.copy(fontFamily = displayFontFamily),
@@ -45,5 +38,4 @@ val AppTypography = Typography(
     labelLarge = baseline.labelLarge.copy(fontFamily = bodyFontFamily),
     labelMedium = baseline.labelMedium.copy(fontFamily = bodyFontFamily),
     labelSmall = baseline.labelSmall.copy(fontFamily = bodyFontFamily),
-)
-
+    )
