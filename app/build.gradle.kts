@@ -21,6 +21,8 @@ plugins {
 
     alias(libs.plugins.compose.compiler)
 
+    alias(libs.plugins.hilt)
+
     alias(libs.plugins.crashlytics)
 
     alias(libs.plugins.safe.args)
@@ -336,13 +338,14 @@ dependencies {
     // Ktor
     implementation(libs.bundles.ktor)
 
-    // Room
-    implementation(libs.room)
-    implementation(libs.room.runtime)
-    ksp(libs.room.compiler)
+    // Hilt
+    implementation(libs.bundles.hilt)
 
-    // WorkManager
-    implementation(libs.androidx.work.runtime)
+    // Room
+    implementation(libs.bundles.room)
+
+    // KSP
+    ksp(libs.bundles.ksp)
 
     // Test
     testImplementation(libs.bundles.test)
@@ -351,7 +354,6 @@ dependencies {
     // Others
     implementation(libs.bundles.other)
 
-    implementation(libs.androidx.multidex)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     debugImplementation(libs.bundles.debug)
