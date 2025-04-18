@@ -10,8 +10,6 @@ object KotlinExtensions {
     }
 
     fun <T> Stream<T>.toArrayList(): ArrayList<T> {
-        return collect(Collectors.toCollection {
-            ArrayList()
-        })
+        return collect(Collectors.toCollection { ArrayList() })
     }
 }

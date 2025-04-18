@@ -10,18 +10,14 @@ import androidx.viewbinding.ViewBinding
 import io.github.raghavsatyadev.support.core.CoreActivity
 import io.github.raghavsatyadev.support.core.CoreFragment
 
-@Suppress(
-    "MemberVisibilityCanBePrivate",
-    "unused"
-)
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 object MenuExtensions {
     fun <T : ViewBinding> CoreFragment<T>.invalidateOptionsMenu() {
         menuHost.invalidateMenu()
     }
 
     fun <T : ViewBinding> CoreFragment<T>.setupOptionsMenus(
-        @MenuRes
-        menuRes: Array<Int>,
+        @MenuRes menuRes: Array<Int>,
         menuPrepareListener: ((Menu) -> Unit)? = null,
         onMenuItemClickListener: (MenuItem) -> Boolean,
     ) {
@@ -29,16 +25,8 @@ object MenuExtensions {
 
         menuHost.addMenuProvider(
             object : MenuProvider {
-                override fun onCreateMenu(
-                    menu: Menu,
-                    menuInflater: MenuInflater,
-                ) {
-                    menuRes.forEach {
-                        menuInflater.inflate(
-                            it,
-                            menu
-                        )
-                    }
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuRes.forEach { menuInflater.inflate(it, menu) }
                 }
 
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -51,41 +39,31 @@ object MenuExtensions {
                 }
             },
             viewLifecycleOwner,
-            State.STARTED
+            State.STARTED,
         )
     }
 
     fun <T : ViewBinding> CoreFragment<T>.setupOptionsMenus(
-        @MenuRes
-        menuRes: Int,
+        @MenuRes menuRes: Int,
         menuPrepareListener: ((Menu) -> Unit)? = null,
         onMenuItemClickListener: (MenuItem) -> Boolean,
     ) {
         setupOptionsMenus(
             arrayOf(menuRes),
             onMenuItemClickListener = onMenuItemClickListener,
-            menuPrepareListener = menuPrepareListener
+            menuPrepareListener = menuPrepareListener,
         )
     }
 
     fun <T : ViewBinding> CoreActivity<T>.setupOptionsMenus(
-        @MenuRes
-        menuRes: Array<Int>,
+        @MenuRes menuRes: Array<Int>,
         menuPrepareListener: ((Menu) -> Unit)? = null,
         onMenuItemClickListener: (MenuItem) -> Boolean,
     ) {
         addMenuProvider(
             object : MenuProvider {
-                override fun onCreateMenu(
-                    menu: Menu,
-                    menuInflater: MenuInflater,
-                ) {
-                    menuRes.forEach {
-                        menuInflater.inflate(
-                            it,
-                            menu
-                        )
-                    }
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuRes.forEach { menuInflater.inflate(it, menu) }
                 }
 
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -98,20 +76,15 @@ object MenuExtensions {
                 }
             },
             this,
-            State.STARTED
+            State.STARTED,
         )
     }
 
     fun <T : ViewBinding> CoreActivity<T>.setupOptionsMenus(
-        @MenuRes
-        menuRes: Int,
+        @MenuRes menuRes: Int,
         menuPrepareListener: ((Menu) -> Unit)? = null,
         onMenuItemClickListener: (MenuItem) -> Boolean,
     ) {
-        setupOptionsMenus(
-            arrayOf(menuRes),
-            menuPrepareListener,
-            onMenuItemClickListener
-        )
+        setupOptionsMenus(arrayOf(menuRes), menuPrepareListener, onMenuItemClickListener)
     }
 }

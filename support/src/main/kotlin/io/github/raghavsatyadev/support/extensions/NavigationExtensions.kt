@@ -20,16 +20,9 @@ import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.core.CoreActivity
 import io.github.raghavsatyadev.support.core.CoreFragment
 
-@Suppress(
-    "unused",
-    "MemberVisibilityCanBePrivate"
-)
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object NavigationExtensions {
-    private fun getAnimationNavOption() = navOptions {
-        anim {
-            getNavigationAnimationBuilder()
-        }
-    }
+    private fun getAnimationNavOption() = navOptions { anim { getNavigationAnimationBuilder() } }
 
     private fun getNavigationAnimationBuilder() {
         AnimBuilder().apply {
@@ -41,52 +34,24 @@ object NavigationExtensions {
     }
 
     fun NavController.navigateWithAnimation(
-        @IdRes
-        resId: Int,
+        @IdRes resId: Int,
         args: Bundle? = null,
         navOptions: NavOptions? = null,
         navExtras: Navigator.Extras? = null,
     ) {
-        navigate(
-            resId,
-            args,
-            navOptions ?: getAnimationNavOption(),
-            navExtras
-        )
+        navigate(resId, args, navOptions ?: getAnimationNavOption(), navExtras)
     }
 
-    fun NavController.navigateAction(
-        action: NavAction,
-        bundle: Bundle? = null,
-    ) {
-        navigateWithAnimation(
-            action.destinationId,
-            bundle,
-            action.navOptions
-        )
+    fun NavController.navigateAction(action: NavAction, bundle: Bundle? = null) {
+        navigateWithAnimation(action.destinationId, bundle, action.navOptions)
     }
 
-    fun NavController.navigateInitial(
-        @IdRes
-        destinationId: Int,
-        bundle: Bundle? = null,
-    ) {
-        val navOptions = navOptions {
-            popUpTo(0) {
-                inclusive = true
-            }
-        }
-        navigateWithAnimation(
-            destinationId,
-            bundle,
-            navOptions
-        )
+    fun NavController.navigateInitial(@IdRes destinationId: Int, bundle: Bundle? = null) {
+        val navOptions = navOptions { popUpTo(0) { inclusive = true } }
+        navigateWithAnimation(destinationId, bundle, navOptions)
     }
 
-    fun <V : ViewBinding> CoreFragment<V>.navigateToFragmentId(
-        @IdRes
-        id: Int,
-    ) {
+    fun <V : ViewBinding> CoreFragment<V>.navigateToFragmentId(@IdRes id: Int) {
 
         if (getNavController().currentDestination?.id == currentNavID) {
             getNavController().navigate(id)
@@ -107,25 +72,15 @@ object NavigationExtensions {
 
     fun Fragment.getNavController() = NavHostFragment.findNavController(this)
 
-    fun AppCompatActivity.findActivityNavController(
-        @IdRes
-        navHostContainerID: Int,
-    ) = (supportFragmentManager.findFragmentById(
-        navHostContainerID
-    ) as NavHostFragment).navController
+    fun AppCompatActivity.findActivityNavController(@IdRes navHostContainerID: Int) =
+        (supportFragmentManager.findFragmentById(navHostContainerID) as NavHostFragment).navController
 
     fun AppCompatActivity.setupAppBarConfiguration(
         navGraph: NavGraph,
         navController: NavController,
     ): AppBarConfiguration {
-        val appBarConfiguration = AppBarConfiguration
-            .Builder(navGraph)
-            .build()
-        NavigationUI.setupActionBarWithNavController(
-            this,
-            navController,
-            appBarConfiguration
-        )
+        val appBarConfiguration = AppBarConfiguration.Builder(navGraph).build()
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         return appBarConfiguration
     }
 }

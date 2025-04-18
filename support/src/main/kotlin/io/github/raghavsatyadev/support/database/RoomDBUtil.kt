@@ -14,25 +14,19 @@ object RoomDBUtil {
     @Synchronized
     fun getDatabase(): AppDatabase {
         if (database == null) {
-            database = Room
-                .databaseBuilder(
-                    CoreApp.instance,
-                    AppDatabase::class.java,
-                    Constants.DB.NAME
-                )
-                .allowMainThreadQueries()
-                .addMigrations(*MigrationUtil.migrations)
-                .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
-                .fallbackToDestructiveMigration(true)
-                .addCallback(object : Callback() {})
-                .build()
+            database =
+                Room.databaseBuilder(CoreApp.instance, AppDatabase::class.java, Constants.DB.NAME)
+                    .allowMainThreadQueries()
+                    .addMigrations(*MigrationUtil.migrations)
+                    .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
+                    .fallbackToDestructiveMigration(true)
+                    .addCallback(object : Callback() {})
+                    .build()
         }
         return database!!
     }
 
     fun deleteAll() {
-        CoreApp.instance.launch {
-            getDatabase().clearAllTables()
-        }
+        CoreApp.instance.launch { getDatabase().clearAllTables() }
     }
 }

@@ -5,10 +5,7 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import io.github.raghavsatyadev.support.extensions.ErrorShowExtensions.snackBar
 
-enum class ErrorCode(
-    @StringRes
-    val warning: Int?,
-) {
+enum class ErrorCode(@StringRes val warning: Int?) {
     UNKNOWN_ERROR(null),
     AUTH_FAILED(null),
 }

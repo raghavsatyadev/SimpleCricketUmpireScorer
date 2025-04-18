@@ -21,7 +21,8 @@ object OrientationExtensions {
      */
     fun Activity.lockOrientation(setPortrait: Boolean = true) {
         requestedOrientation =
-            if (setPortrait) ActivityInfo.SCREEN_ORIENTATION_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            if (setPortrait) ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            else ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
     }
 
     /** Sets orientation to [ActivityInfo.SCREEN_ORIENTATION_SENSOR] */
@@ -40,15 +41,9 @@ object OrientationExtensions {
     }
 
     fun Activity.enableFullScreen() {
-        WindowCompat.setDecorFitsSystemWindows(
-            window,
-            false
-        )
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val controllerCompat = WindowInsetsControllerCompat(
-            window,
-            window.decorView
-        )
+        val controllerCompat = WindowInsetsControllerCompat(window, window.decorView)
 
         controllerCompat.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -63,10 +58,7 @@ object OrientationExtensions {
     }
 
     fun Activity.disableFullScreen() {
-        val controllerCompat = WindowInsetsControllerCompat(
-            window,
-            window.decorView
-        )
+        val controllerCompat = WindowInsetsControllerCompat(window, window.decorView)
 
         controllerCompat.show(WindowInsetsCompat.Type.systemBars())
     }

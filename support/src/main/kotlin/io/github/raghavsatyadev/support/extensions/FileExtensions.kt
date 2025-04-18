@@ -22,12 +22,13 @@ object FileExtensions {
         val extension: String?
         val uri = Uri.parse(absolutePath)
         val scheme = uri.scheme
-        extension = if (scheme != null && scheme == ContentResolver.SCHEME_CONTENT) {
-            val mime = MimeTypeMap.getSingleton()
-            mime.getExtensionFromMimeType(CoreApp.instance.contentResolver.getType(uri))
-        } else {
-            MimeTypeMap.getFileExtensionFromUrl(absolutePath)
-        }
+        extension =
+            if (scheme != null && scheme == ContentResolver.SCHEME_CONTENT) {
+                val mime = MimeTypeMap.getSingleton()
+                mime.getExtensionFromMimeType(CoreApp.instance.contentResolver.getType(uri))
+            } else {
+                MimeTypeMap.getFileExtensionFromUrl(absolutePath)
+            }
         return extension
     }
 

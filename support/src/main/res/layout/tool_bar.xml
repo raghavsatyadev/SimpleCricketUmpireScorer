@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.appbar.AppBarLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/app_bar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:backgroundTint="?colorPrimary"
-    android:fitsSystemWindows="true"
-    >
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/tool_bar"
@@ -22,6 +20,5 @@
         app:titleCentered="true"
         app:titleTextAppearance="@style/TextAppearance.Material3.HeadlineSmall"
         app:titleTextColor="?colorSurface"
-        tools:title="@string/app_name"
-        />
+        tools:title="@string/app_name" />
 </com.google.android.material.appbar.AppBarLayout>

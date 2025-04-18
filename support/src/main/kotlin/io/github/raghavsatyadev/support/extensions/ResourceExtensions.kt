@@ -19,153 +19,79 @@ import java.util.Locale
 
 @Suppress("MemberVisibilityCanBePrivate")
 object ResourceExtensions {
-    fun getString(
-        format: String,
-        vararg formatArgs: Any?,
-    ): String {
-        return String.format(
-            Locale.getDefault(),
-            format,
-            *formatArgs
-        )
+    fun getString(format: String, vararg formatArgs: Any?): String {
+        return String.format(Locale.getDefault(), format, *formatArgs)
     }
 
-    fun Context.getConDimen(
-        @DimenRes
-        dimenId: Int,
-    ): Float {
+    fun Context.getConDimen(@DimenRes dimenId: Int): Float {
         return resources.getDimension(dimenId)
     }
 
-    fun Fragment.getConDimen(
-        @DimenRes
-        dimenId: Int,
-    ): Float {
+    fun Fragment.getConDimen(@DimenRes dimenId: Int): Float {
         return requireContext().getConDimen(dimenId)
     }
 
-    fun Context.getConInt(
-        @IntegerRes
-        intRes: Int,
-    ): Int {
+    fun Context.getConInt(@IntegerRes intRes: Int): Int {
         return resources.getInteger(intRes)
     }
 
-    fun Fragment.getConInt(
-        @IntegerRes
-        intRes: Int,
-    ): Int {
+    fun Fragment.getConInt(@IntegerRes intRes: Int): Int {
         return requireContext().getConInt(intRes)
     }
 
-    fun Context.getConDrawable(
-        @DrawableRes
-        drawableId: Int?,
-    ): Drawable? {
+    fun Context.getConDrawable(@DrawableRes drawableId: Int?): Drawable? {
         if (drawableId == null) return null
-        return ContextCompat.getDrawable(
-            this,
-            drawableId
-        )
+        return ContextCompat.getDrawable(this, drawableId)
     }
 
-    fun Fragment.getConDrawable(
-        @DrawableRes
-        drawableId: Int?,
-    ): Drawable? {
+    fun Fragment.getConDrawable(@DrawableRes drawableId: Int?): Drawable? {
         if (drawableId == null) return null
         return requireContext().getConDrawable(drawableId)
     }
 
     @ColorInt
-    fun Context.getConColor(
-        @ColorRes
-        colorId: Int,
-    ): Int {
-        return ContextCompat.getColor(
-            this,
-            colorId
-        )
+    fun Context.getConColor(@ColorRes colorId: Int): Int {
+        return ContextCompat.getColor(this, colorId)
     }
 
     @ColorInt
-    fun Fragment.getConColor(
-        @ColorRes
-        colorId: Int,
-    ): Int {
+    fun Fragment.getConColor(@ColorRes colorId: Int): Int {
         return requireContext().getConColor(colorId)
     }
 
     @ColorInt
-    fun Context.getAttrColor(
-        @AttrRes
-        attrID: Int,
-    ): Int {
+    fun Context.getAttrColor(@AttrRes attrID: Int): Int {
         return Color.parseColor(getAttrColorString(attrID))
     }
 
     @ColorInt
-    fun Fragment.getAttrColor(
-        @AttrRes
-        attrID: Int,
-    ): Int {
+    fun Fragment.getAttrColor(@AttrRes attrID: Int): Int {
         return requireContext().getAttrColor(attrID)
     }
 
-    fun Context.getAttrColorStringWithoutHash(
-        @AttrRes
-        attrID: Int,
-    ): String {
-        return getAttributeValue(
-            attrID,
-            "%06X"
-        )
+    fun Context.getAttrColorStringWithoutHash(@AttrRes attrID: Int): String {
+        return getAttributeValue(attrID, "%06X")
     }
 
-    fun Fragment.getAttrColorStringWithoutHash(
-        @AttrRes
-        attrID: Int,
-    ): String {
+    fun Fragment.getAttrColorStringWithoutHash(@AttrRes attrID: Int): String {
         return requireContext().getAttrColorStringWithoutHash(attrID)
     }
 
-    fun Context.getAttributeValue(
-        attrID: Int,
-        format: String,
-    ): String {
+    fun Context.getAttributeValue(attrID: Int, format: String): String {
         val outValue = TypedValue()
-        theme.resolveAttribute(
-            attrID,
-            outValue,
-            true
-        )
+        theme.resolveAttribute(attrID, outValue, true)
         return format.format(0xFFFFFF and outValue.data)
     }
 
-    fun Fragment.getAttributeValue(
-        attrID: Int,
-        format: String,
-    ): String {
-        return requireContext().getAttributeValue(
-            attrID,
-            format
-        )
+    fun Fragment.getAttributeValue(attrID: Int, format: String): String {
+        return requireContext().getAttributeValue(attrID, format)
     }
 
-    fun Context.getAttrColorString(
-        @AttrRes
-        attrID: Int,
-    ): String {
-        return getAttributeValue(
-            attrID,
-            "#%06X"
-        )
+    fun Context.getAttrColorString(@AttrRes attrID: Int): String {
+        return getAttributeValue(attrID, "#%06X")
     }
 
-    fun Fragment.getAttrColorString(
-        @AttrRes
-        attrID: Int,
-    ): String {
+    fun Fragment.getAttrColorString(@AttrRes attrID: Int): String {
         return requireContext().getAttrColorString(attrID)
     }
 
@@ -173,7 +99,7 @@ object ResourceExtensions {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp.toFloat(),
-            resources.displayMetrics
+            resources.displayMetrics,
         )
     }
 

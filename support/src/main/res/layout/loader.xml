@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/box_progress_bar"
@@ -10,8 +9,7 @@
     android:gravity="center"
     android:translationZ="50dp"
     android:visibility="gone"
-    tools:visibility="gone"
-    >
+    tools:visibility="gone">
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progress_bar"
@@ -25,6 +23,5 @@
         app:hideAnimationBehavior="outward"
         app:indicatorColor="?colorPrimary"
         app:indicatorDirectionCircular="clockwise"
-        app:showAnimationBehavior="inward"
-        />
+        app:showAnimationBehavior="inward" />
 </RelativeLayout>

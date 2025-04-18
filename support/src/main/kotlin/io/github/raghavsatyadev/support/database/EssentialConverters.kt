@@ -69,6 +69,7 @@ class EssentialConverters {
     fun toStringList(s: String?): List<String> {
         return s?.toKotlinObject<ArrayList<String>>() ?: ArrayList()
     }
+
     // endregion
 
     // region App Specific Converters

@@ -1,6 +1,5 @@
 package io.github.raghavsatyadev.support.extensions.activity_result
 
-
 enum class ResultType(val resultIndex: Int) {
     CANCELED(0),
     OK(-1),
@@ -11,6 +10,5 @@ enum class ResultType(val resultIndex: Int) {
             for (resultType in entries) if (resultType.resultIndex == resultIndex) return resultType
             return CANCELED
         }
-
     }
 }

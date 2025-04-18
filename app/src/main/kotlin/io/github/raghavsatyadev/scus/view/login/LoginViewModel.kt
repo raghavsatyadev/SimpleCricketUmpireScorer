@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scus.ui.login
+package io.github.raghavsatyadev.scus.view.login
 
 import androidx.lifecycle.viewModelScope
 import io.github.raghavsatyadev.support.AppLog
@@ -23,24 +23,14 @@ class LoginViewModel : CoreViewModel() {
 
     fun getLoginEvent() = loginEvent.asSharedFlow()
 
-    fun signInWithGoogle(
-        signInUtil: GoogleSignInUtil,
-    ) {
+    fun signInWithGoogle(signInUtil: GoogleSignInUtil) {
         viewModelScope.launch {
             loginEvent.emit(Resource.loading())
             withContext(ioDispatcher) {
                 signInUtil.startSignIn(
-                    onSuccess = { idToken ->
-                        signInWithFirebaseAuth(idToken)
-                    },
+                    onSuccess = { idToken -> signInWithFirebaseAuth(idToken) },
                     onFailure = { exception ->
-                        AppLog.loge(
-                            false,
-                            kotlinFileName,
-                            "signIn",
-                            exception,
-                            Exception()
-                        )
+                        AppLog.loge(false, kotlinFileName, "signIn", exception, Exception())
                         viewModelScope.launch {
                             loginEvent.emit(
                                 Resource.error(
@@ -51,7 +41,8 @@ class LoginViewModel : CoreViewModel() {
                                 )
                             )
                         }
-                    })
+                    },
+                )
             }
         }
     }
@@ -59,29 +50,14 @@ class LoginViewModel : CoreViewModel() {
     fun signInWithFirebaseAuth(idToken: String) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val signInWithGoogle = FirebaseAuthUtil
-                    .getInstance()
-                    .signInWithGoogle(idToken)
+                val signInWithGoogle = FirebaseAuthUtil.getInstance().signInWithGoogle(idToken)
                 val user = signInWithGoogle.first
                 if (user != null) {
                     try {
                         loginWithFirestore(user)
                     } catch (e: Exception) {
-                        AppLog.loge(
-                            false,
-                            kotlinFileName,
-                            "signIn",
-                            e,
-                            Exception()
-                        )
-                        loginEvent.emit(
-                            Resource.error(
-                                CustomError(
-                                    ErrorCode.AUTH_FAILED,
-                                    e
-                                )
-                            )
-                        )
+                        AppLog.loge(false, kotlinFileName, "signIn", e, Exception())
+                        loginEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
                     }
                 } else if (signInWithGoogle.second != null) {
                     loginEvent.emit(Resource.error(signInWithGoogle.second!!))
@@ -96,10 +72,7 @@ class LoginViewModel : CoreViewModel() {
     suspend fun loginWithFirestore(user: User) {
         with(FireStoreUtil.getInstance()) {
             try {
-                val validateLoginToken = validateLoginToken(
-                    this,
-                    user
-                )
+                val validateLoginToken = validateLoginToken(this, user)
                 if (!validateLoginToken) {
                     return
                 }
@@ -116,16 +89,13 @@ class LoginViewModel : CoreViewModel() {
     }
 
     @Throws(Exception::class)
-    suspend fun validateLoginToken(
-        util: FireStoreUtil,
-        user: User,
-    ): Boolean {
+    suspend fun validateLoginToken(util: FireStoreUtil, user: User): Boolean {
         var remoteUser: User? = null
         try {
             remoteUser = util.getUser(user.userID)
         } catch (_: Exception) {
-
         }
+
         if (remoteUser == null) {
             try {
                 util.setUser(user)
@@ -156,36 +126,19 @@ class LoginViewModel : CoreViewModel() {
                     storeUtil.initialize()
                     loginEvent.emit(Resource.success(LoginState.SUCCESS))
                 } catch (e: Exception) {
-                    AppLog.loge(
-                        false,
-                        kotlinFileName,
-                        "updateUserTokens",
-                        e,
-                        Exception()
-                    )
-                    loginEvent.emit(
-                        Resource.error(
-                            CustomError(
-                                ErrorCode.AUTH_FAILED,
-                                e
-                            )
-                        )
-                    )
+                    AppLog.loge(false, kotlinFileName, "updateUserTokens", e, Exception())
+                    loginEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
                 }
             }
         }
     }
 
     fun signOut(signInUtil: GoogleSignInUtil) {
-        viewModelScope.launch {
-            withContext(ioDispatcher) {
-                AppExtensions.signOut()
-            }
-        }
+        viewModelScope.launch { withContext(ioDispatcher) { AppExtensions.signOut() } }
     }
 }
 
 enum class LoginState {
     SUCCESS,
-    USER_ALREADY_LOGGED_IN
+    USER_ALREADY_LOGGED_IN,
 }

@@ -14,25 +14,23 @@ object MatchRecordExtensions {
         }
 
     private fun MatchRecord.getCRR(shouldPrepareTeam1Details: Boolean): String {
-        val runs = if (shouldPrepareTeam1Details) {
-            team1Detail.runs
-        } else {
-            team2Detail.runs
-        }
-        val balls = if (shouldPrepareTeam1Details) {
-            team1Detail.balls
-        } else {
-            team2Detail.balls
-        }
+        val runs =
+            if (shouldPrepareTeam1Details) {
+                team1Detail.runs
+            } else {
+                team2Detail.runs
+            }
+        val balls =
+            if (shouldPrepareTeam1Details) {
+                team1Detail.balls
+            } else {
+                team2Detail.balls
+            }
         return if (balls == 0) {
             "N/A"
         } else {
             val crr = runs * 6.0 / balls
-            String.format(
-                Locale.getDefault(),
-                "%.2f",
-                crr
-            )
+            String.format(Locale.getDefault(), "%.2f", crr)
         }
     }
 
@@ -43,11 +41,7 @@ object MatchRecordExtensions {
         val currentBalls = getBalls(shouldPrepareTeam1Details)
         val otherTeamRuns = getRuns(!shouldPrepareTeam1Details)
 
-        return getRRR(
-            currentRuns,
-            otherTeamRuns,
-            currentBalls,
-        )
+        return getRRR(currentRuns, otherTeamRuns, currentBalls)
     }
 
     /**
@@ -81,11 +75,7 @@ object MatchRecordExtensions {
         val rrr = (runsRequired.toDouble() * 6) / ballsRemaining
 
         // Format the result to 2 decimal places
-        return String.format(
-            Locale.getDefault(),
-            "%.2f",
-            rrr
-        )
+        return String.format(Locale.getDefault(), "%.2f", rrr)
     }
 
     /**
@@ -112,30 +102,20 @@ object MatchRecordExtensions {
         val currentRuns = getRuns(shouldPrepareTeam1Details)
         val currentWickets = getWickets(shouldPrepareTeam1Details)
         val currentBalls = getBalls(shouldPrepareTeam1Details)
-        val currentRunsAndWickets = formatCurrentRunsAndWickets(
-            currentRuns,
-            currentWickets
-        )
+        val currentRunsAndWickets = formatCurrentRunsAndWickets(currentRuns, currentWickets)
         val currentOvers = "${formatToOvers(currentBalls)} / ${formatToOvers(ballsPerInning)}"
         val currentCRR = getCRR(shouldPrepareTeam1Details)
         val otherTeamRuns = getRuns(!shouldPrepareTeam1Details)
-        val currentRRR = getRRR(
-            currentRuns,
-            otherTeamRuns,
-            currentBalls,
-        )
-        val requiredRunsBalls = getRequiredRunsBalls(
-            currentRuns,
-            otherTeamRuns,
-            currentBalls,
-        )
+        val currentRRR = getRRR(currentRuns, otherTeamRuns, currentBalls)
+        val requiredRunsBalls = getRequiredRunsBalls(currentRuns, otherTeamRuns, currentBalls)
 
         return BasicMatchUIDetails(
-            currentTeamName = if (shouldPrepareTeam1Details) {
-                team1Detail.teamName
-            } else {
-                team2Detail.teamName
-            },
+            currentTeamName =
+                if (shouldPrepareTeam1Details) {
+                    team1Detail.teamName
+                } else {
+                    team2Detail.teamName
+                },
             currentRunsAndWickets = currentRunsAndWickets,
             currentOvers = currentOvers,
             currentCRR = currentCRR,
@@ -159,10 +139,7 @@ object MatchRecordExtensions {
     fun MatchRecord.getTeam2FormattedScore() =
         "${getRuns(false)}-${getWickets(false)} (${formatToOvers(getBalls(false))})"
 
-    private fun formatCurrentRunsAndWickets(
-        runs: Int,
-        wickets: Int,
-    ) = "$runs-$wickets"
+    private fun formatCurrentRunsAndWickets(runs: Int, wickets: Int) = "$runs-$wickets"
 
     private fun formatToOvers(balls: Int): String {
         return "${balls / 6}.${balls % 6}"
@@ -184,11 +161,12 @@ object MatchRecordExtensions {
      * - [MatchRecord.isTeam1BattingFirst] if team 1 took first batting or not
      * - [MatchRecord.isFirstInningComplete] if first inning is complete or not
      */
-    fun MatchRecord.isTeam1CurrentlyBatting() = when {
-        isTeam1BattingFirst && !isFirstInningComplete -> true
-        !isTeam1BattingFirst && !isFirstInningComplete -> false
-        isTeam1BattingFirst -> false
-        else -> true
+    fun MatchRecord.isTeam1CurrentlyBatting() =
+        when {
+            isTeam1BattingFirst && !isFirstInningComplete -> true
+            !isTeam1BattingFirst && !isFirstInningComplete -> false
+            isTeam1BattingFirst -> false
+            else -> true
     }
 
     fun MatchRecord.isMatchCompleted() =
@@ -198,11 +176,12 @@ object MatchRecordExtensions {
         !(matchStatus == MatchStatus.NOT_STARTED || matchStatus == MatchStatus.IN_PROGRESS)
 
     fun MatchRecord.getMatchTimings(): String {
-        val matchEndTimeString = if (isMatchCompleted()) {
-            " - ${endDateTime.formatMillisToDate()}"
-        } else {
-            ""
-        }
+        val matchEndTimeString =
+            if (isMatchCompleted()) {
+                " - ${endDateTime.formatMillisToDate()}"
+            } else {
+                ""
+            }
         val matchStartTime = startDateTime.formatMillisToDate()
         val matchTimings = matchStartTime + matchEndTimeString
         return matchTimings

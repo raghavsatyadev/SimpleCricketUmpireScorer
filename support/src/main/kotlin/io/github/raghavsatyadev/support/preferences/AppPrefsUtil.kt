@@ -19,10 +19,7 @@ object AppPrefsUtil {
     }
 
     suspend fun saveFCMToken(token: String) {
-        CoreApp.instance.savePref(
-            TOKEN,
-            token
-        )
+        CoreApp.instance.savePref(TOKEN, token)
     }
 
     fun getFCMToken(): Flow<String?> {
@@ -30,35 +27,19 @@ object AppPrefsUtil {
     }
 
     suspend fun setFCMTopics(fcmTopics: ArrayList<String>) {
-        CoreApp.instance.savePref(
-            TOPICS,
-            fcmTopics.toJsonString()
-        )
+        CoreApp.instance.savePref(TOPICS, fcmTopics.toJsonString())
     }
 
     fun getFCMTopics(): Flow<ArrayList<String>> {
-        return CoreApp.instance
-            .getPrefs(
-                TOPICS,
-                "[]"
-            )
-            .map {
-                it.toKotlinObject()
-            }
+        return CoreApp.instance.getPrefs(TOPICS, "[]").map { it.toKotlinObject() }
     }
 
     suspend fun setNotificationEnableStatus(isNotificationEnabled: Boolean) {
-        CoreApp.instance.savePref(
-            NOTIFICATION_ENABLED,
-            isNotificationEnabled
-        )
+        CoreApp.instance.savePref(NOTIFICATION_ENABLED, isNotificationEnabled)
     }
 
     fun isNotificationEnabled(): Flow<Boolean> {
-        return CoreApp.instance.getPrefs(
-            NOTIFICATION_ENABLED,
-            true
-        )
+        return CoreApp.instance.getPrefs(NOTIFICATION_ENABLED, true)
     }
 
     fun getUserToken(): Flow<String?> {
@@ -66,10 +47,7 @@ object AppPrefsUtil {
     }
 
     suspend fun saveUserToken(token: String) {
-        CoreApp.instance.savePref(
-            USER_TOKEN,
-            token
-        )
+        CoreApp.instance.savePref(USER_TOKEN, token)
     }
 
     object Keys {

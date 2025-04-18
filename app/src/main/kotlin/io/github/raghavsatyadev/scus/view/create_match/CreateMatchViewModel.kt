@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scus.ui.create_match
+package io.github.raghavsatyadev.scus.view.create_match
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
@@ -91,36 +91,29 @@ class CreateMatchViewModel : CoreViewModel() {
             withContext(ioDispatcher) {
                 createMatchRecordEvent.emit(Resource.loading())
                 try {
-                    val matchRecord = MatchRecord(
-                        location = matchLocation,
-                        startDateTime = matchDateTime,
-                        ballsPerInning = inningOvers.toInt() * 6,
-                        team1Detail = TeamDetail(teamName = team1Name),
-                        team2Detail = TeamDetail(teamName = team2Name),
-                        didTeam1WonToss = didTeam1WinToss,
-                        isTeam1BattingFirst = batFirstTeam1,
-                        localUpdateDateTime = Date(),
-                        serverUpdateDateTime = Date(),
-                        matchAdminID = currentUserId,
-                    )
-                    FireStoreUtil
-                        .getInstance()
-                        .createMatchRecord(matchRecord)
+                    val matchRecord =
+                        MatchRecord(
+                            location = matchLocation,
+                            startDateTime = matchDateTime,
+                            ballsPerInning = inningOvers.toInt() * 6,
+                            team1Detail = TeamDetail(teamName = team1Name),
+                            team2Detail = TeamDetail(teamName = team2Name),
+                            didTeam1WonToss = didTeam1WinToss,
+                            isTeam1BattingFirst = batFirstTeam1,
+                            localUpdateDateTime = Date(),
+                            serverUpdateDateTime = Date(),
+                            matchAdminID = currentUserId,
+                        )
+                    FireStoreUtil.getInstance().createMatchRecord(matchRecord)
 
                     createMatchRecordEvent.emit(Resource.success(matchRecord))
                 } catch (e: Exception) {
-                    AppLog.loge(
-                        false,
-                        kotlinFileName,
-                        "createMatch",
-                        e,
-                        Exception()
-                    )
+                    AppLog.loge(false, kotlinFileName, "createMatch", e, Exception())
                     createMatchRecordEvent.emit(
                         Resource.error(
                             CustomError(
                                 ErrorCode.UNKNOWN_ERROR,
-                                Exception(context.getString(R.string.warning_unknown_error))
+                                Exception(context.getString(R.string.warning_unknown_error)),
                             )
                         )
                     )

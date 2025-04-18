@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scus.ui.match_record
+package io.github.raghavsatyadev.scus.view.match_record
 
 import androidx.lifecycle.viewModelScope
 import io.github.raghavsatyadev.support.core.CoreViewModel
@@ -28,30 +28,22 @@ class MatchRecordViewModel : CoreViewModel() {
         viewModelScope.launch {
             withContext(ioDispatcher) {
                 record.status = MatchStatus.IN_PROGRESS
-                MatchRecordDataUtil
-                    .getInstance()
-                    .update(record)
-                MatchRecordDataUtil
-                    .getInstance()
-                    .getItemLive(record.matchRecordId)
+                MatchRecordDataUtil.getInstance().update(record)
+                MatchRecordDataUtil.getInstance().getItemLive(record.matchRecordId)
                     .collectLatest { value ->
                         matchRecordEvent.emit(Resource.success(value.toBasicMatchUIDetails()))
                     }
             }
         }
     }
+
     // endregion
 
     // region Updating Match Record
-    fun reset(
-        matchRecordID: String,
-        resetFull: Boolean = false,
-    ): Boolean {
+    fun reset(matchRecordID: String, resetFull: Boolean = false): Boolean {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val matchRecord = MatchRecordDataUtil
-                    .getInstance()
-                    .getItem(matchRecordID)
+                val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
                 if (resetFull) {
                     matchRecord.team1Detail.runs = 0
                     matchRecord.team1Detail.wickets = 0
@@ -71,36 +63,36 @@ class MatchRecordViewModel : CoreViewModel() {
                         matchRecord.team2Detail.balls = 0
                     }
                 }
-                MatchRecordDataUtil
-                    .getInstance()
-                    .update(matchRecord)
+                MatchRecordDataUtil.getInstance().update(matchRecord)
             }
         }
         return true
     }
 
-    fun setRun(
-        matchRecordID: String,
-        runCount: Int,
-        increase: Boolean = true,
-    ) {
+    fun setRun(matchRecordID: String, runCount: Int, increase: Boolean = true) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val matchRecord = MatchRecordDataUtil
-                    .getInstance()
-                    .getItem(matchRecordID)
+                val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
                 val team1CurrentlyBatting = matchRecord.isTeam1CurrentlyBatting()
                 if (increase) {
                     val firstInningComplete = matchRecord.isFirstInningComplete
                     if (team1CurrentlyBatting) {
-                        // handle 2nd batting team's total runs not getting more than 1st batting team's runs +1 = winning run and +7 = no ball run + a six (6)
-                        if (firstInningComplete && matchRecord.team1Detail.runs + runCount > matchRecord.team2Detail.runs + 8) {
+                        // handle 2nd batting team's total runs not getting more than 1st batting team's runs +1
+                        // = winning run and +7 = no ball run + a six (6)
+                        if (
+                            firstInningComplete &&
+                            matchRecord.team1Detail.runs + runCount > matchRecord.team2Detail.runs + 8
+                        ) {
                             return@withContext
                         }
                         matchRecord.team1Detail.runs += runCount
                     } else {
-                        // handle 2nd batting team's total runs not getting more than 1st batting team's runs +1 = winning run and +7 = no ball run + a six (6)
-                        if (firstInningComplete && matchRecord.team2Detail.runs + runCount > matchRecord.team1Detail.runs + 8) {
+                        // handle 2nd batting team's total runs not getting more than 1st batting team's runs +1
+                        // = winning run and +7 = no ball run + a six (6)
+                        if (
+                            firstInningComplete &&
+                            matchRecord.team2Detail.runs + runCount > matchRecord.team1Detail.runs + 8
+                        ) {
                             return@withContext
                         }
                         matchRecord.team2Detail.runs += runCount
@@ -120,22 +112,15 @@ class MatchRecordViewModel : CoreViewModel() {
                         matchRecord.team2Detail.runs -= runCount
                     }
                 }
-                MatchRecordDataUtil
-                    .getInstance()
-                    .update(matchRecord)
+                MatchRecordDataUtil.getInstance().update(matchRecord)
             }
         }
     }
 
-    fun setWicket(
-        matchRecordID: String,
-        increase: Boolean = true,
-    ) {
+    fun setWicket(matchRecordID: String, increase: Boolean = true) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val matchRecord = MatchRecordDataUtil
-                    .getInstance()
-                    .getItem(matchRecordID)
+                val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
                 val team1CurrentlyBatting = matchRecord.isTeam1CurrentlyBatting()
                 if (increase) {
                     if (team1CurrentlyBatting) {
@@ -158,23 +143,15 @@ class MatchRecordViewModel : CoreViewModel() {
                         matchRecord.team2Detail.wickets--
                     }
                 }
-                MatchRecordDataUtil
-                    .getInstance()
-                    .update(matchRecord)
+                MatchRecordDataUtil.getInstance().update(matchRecord)
             }
         }
     }
 
-    fun setBall(
-        matchRecordID: String,
-        ballCount: Int,
-        increase: Boolean = true,
-    ) {
+    fun setBall(matchRecordID: String, ballCount: Int, increase: Boolean = true) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val matchRecord = MatchRecordDataUtil
-                    .getInstance()
-                    .getItem(matchRecordID)
+                val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
                 val team1CurrentlyBatting = matchRecord.isTeam1CurrentlyBatting()
                 if (increase) {
                     if (team1CurrentlyBatting) {
@@ -205,9 +182,7 @@ class MatchRecordViewModel : CoreViewModel() {
                         matchRecord.team2Detail.balls -= ballCount
                     }
                 }
-                MatchRecordDataUtil
-                    .getInstance()
-                    .update(matchRecord)
+                MatchRecordDataUtil.getInstance().update(matchRecord)
             }
         }
     }
@@ -215,14 +190,10 @@ class MatchRecordViewModel : CoreViewModel() {
     fun endInning(matchRecordID: String) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val matchRecord = MatchRecordDataUtil
-                    .getInstance()
-                    .getItem(matchRecordID)
+                val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
                 matchRecord.isFirstInningComplete = true
                 matchRecord.rrrAtSecondInningStart = matchRecord.getRRR()
-                MatchRecordDataUtil
-                    .getInstance()
-                    .update(matchRecord)
+                MatchRecordDataUtil.getInstance().update(matchRecord)
             }
         }
     }
@@ -230,40 +201,29 @@ class MatchRecordViewModel : CoreViewModel() {
     fun endMatch(matchRecordID: String) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val matchRecord = MatchRecordDataUtil
-                    .getInstance()
-                    .getItem(matchRecordID)
+                val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
                 when {
-                    matchRecord.team1Detail.runs == matchRecord.team2Detail.runs -> matchRecord.status =
-                        MatchStatus.DRAW
+                    matchRecord.team1Detail.runs == matchRecord.team2Detail.runs ->
+                        matchRecord.status = MatchStatus.DRAW
 
-                    matchRecord.team1Detail.runs > matchRecord.team2Detail.runs -> matchRecord.status =
-                        MatchStatus.TEAM_1_WON
+                    matchRecord.team1Detail.runs > matchRecord.team2Detail.runs ->
+                        matchRecord.status = MatchStatus.TEAM_1_WON
 
-                    matchRecord.team1Detail.runs < matchRecord.team2Detail.runs -> matchRecord.status =
-                        MatchStatus.TEAM_2_WON
+                    matchRecord.team1Detail.runs < matchRecord.team2Detail.runs ->
+                        matchRecord.status = MatchStatus.TEAM_2_WON
                 }
                 matchRecord.endDateTime = System.currentTimeMillis()
-                MatchRecordDataUtil
-                    .getInstance()
-                    .update(matchRecord)
+                MatchRecordDataUtil.getInstance().update(matchRecord)
             }
         }
     }
 
-    fun editTotalOvers(
-        matchRecordID: String,
-        editedOvers: Int,
-    ) {
+    fun editTotalOvers(matchRecordID: String, editedOvers: Int) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val matchRecord = MatchRecordDataUtil
-                    .getInstance()
-                    .getItem(matchRecordID)
+                val matchRecord = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
                 matchRecord.ballsPerInning = editedOvers * 6
-                MatchRecordDataUtil
-                    .getInstance()
-                    .update(matchRecord)
+                MatchRecordDataUtil.getInstance().update(matchRecord)
             }
         }
     }

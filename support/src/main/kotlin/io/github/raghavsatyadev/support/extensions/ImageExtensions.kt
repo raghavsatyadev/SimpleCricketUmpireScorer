@@ -27,15 +27,16 @@ object ImageExtensions {
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
     ) {
-        val pair = getImageLoaderBuilder(
-            url = url,
-            placeHolderImage = placeHolder,
-            errorImage = error,
-            crossFade = crossFade,
-            cacheAllowed = cacheAllowed,
-            errorListener = errorListener,
-            listener = listener
-        )
+        val pair =
+            getImageLoaderBuilder(
+                url = url,
+                placeHolderImage = placeHolder,
+                errorImage = error,
+                crossFade = crossFade,
+                cacheAllowed = cacheAllowed,
+                errorListener = errorListener,
+                listener = listener,
+            )
 
         pair.first.enqueue(pair.second.build())
     }
@@ -52,51 +53,37 @@ object ImageExtensions {
         this.let {
             val imageLoader = context.imageLoader
 
-            val builder = with(ImageRequest.Builder(context)) {
-                data(url)
-                target(it)
-                placeHolderImage?.let { placeholder(placeHolderImage).fallback(placeHolderImage) }
-                errorImage?.let { error(errorImage) }
-                if (!cacheAllowed) memoryCachePolicy(CachePolicy.DISABLED)
-                listener(object : ImageRequest.Listener {
-                    override fun onError(
-                        request: ImageRequest,
-                        result: ErrorResult,
-                    ) {
-                        super.onError(
-                            request,
-                            result
-                        )
-                        errorListener?.invoke(result.throwable)
-                    }
+            val builder =
+                with(ImageRequest.Builder(context)) {
+                    data(url)
+                    target(it)
+                    placeHolderImage?.let { placeholder(placeHolderImage).fallback(placeHolderImage) }
+                    errorImage?.let { error(errorImage) }
+                    if (!cacheAllowed) memoryCachePolicy(CachePolicy.DISABLED)
+                    listener(
+                        object : ImageRequest.Listener {
+                            override fun onError(request: ImageRequest, result: ErrorResult) {
+                                super.onError(request, result)
+                                errorListener?.invoke(result.throwable)
+                            }
 
-                    override fun onSuccess(
-                        request: ImageRequest,
-                        result: SuccessResult,
-                    ) {
-                        super.onSuccess(
-                            request,
-                            result
-                        )
-                        listener?.invoke()
-                    }
-                })
-                crossfade(crossFade)
-            }
+                            override fun onSuccess(request: ImageRequest, result: SuccessResult) {
+                                super.onSuccess(request, result)
+                                listener?.invoke()
+                            }
+                        }
+                    )
+                    crossfade(crossFade)
+                }
 
-            return Pair(
-                imageLoader,
-                builder
-            )
+            return Pair(imageLoader, builder)
         }
     }
 
     fun ImageView.loadImage(
         url: String?,
-        @DrawableRes
-        placeHolderRes: Int? = null,
-        @DrawableRes
-        errorRes: Int? = null,
+        @DrawableRes placeHolderRes: Int? = null,
+        @DrawableRes errorRes: Int? = null,
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
     ) {
@@ -105,15 +92,14 @@ object ImageExtensions {
             placeHolder = context.getConDrawable(placeHolderRes),
             error = context.getConDrawable(errorRes),
             listener = listener,
-            errorListener = errorListener
+            errorListener = errorListener,
         )
     }
 
     fun ImageView.loadImage(
         url: String?,
         placeHolder: Drawable? = null,
-        @DrawableRes
-        errorRes: Int? = null,
+        @DrawableRes errorRes: Int? = null,
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
     ) {
@@ -122,14 +108,13 @@ object ImageExtensions {
             placeHolder = placeHolder,
             error = context.getConDrawable(errorRes),
             listener = listener,
-            errorListener = errorListener
+            errorListener = errorListener,
         )
     }
 
     fun ImageView.loadImage(
         url: String?,
-        @DrawableRes
-        placeHolderRes: Int? = null,
+        @DrawableRes placeHolderRes: Int? = null,
         error: Drawable? = null,
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
@@ -139,13 +124,12 @@ object ImageExtensions {
             placeHolder = context.getConDrawable(placeHolderRes),
             error = error,
             listener = listener,
-            errorListener = errorListener
+            errorListener = errorListener,
         )
     }
 
     fun ImageView.loadImage(
-        @StringRes
-        urlRes: Int,
+        @StringRes urlRes: Int,
         placeHolder: Drawable? = null,
         error: Drawable? = null,
         listener: (() -> Unit)? = null,
@@ -161,12 +145,9 @@ object ImageExtensions {
     }
 
     fun ImageView.loadImage(
-        @StringRes
-        urlRes: Int,
-        @DrawableRes
-        placeHolderRes: Int? = null,
-        @DrawableRes
-        errorRes: Int? = null,
+        @StringRes urlRes: Int,
+        @DrawableRes placeHolderRes: Int? = null,
+        @DrawableRes errorRes: Int? = null,
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
     ) {
@@ -175,16 +156,14 @@ object ImageExtensions {
             placeHolder = context.getConDrawable(placeHolderRes),
             error = context.getConDrawable(errorRes),
             listener = listener,
-            errorListener = errorListener
+            errorListener = errorListener,
         )
     }
 
     fun ImageView.loadImage(
-        @StringRes
-        urlRes: Int,
+        @StringRes urlRes: Int,
         placeHolder: Drawable? = null,
-        @DrawableRes
-        errorRes: Int? = null,
+        @DrawableRes errorRes: Int? = null,
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
     ) {
@@ -193,15 +172,13 @@ object ImageExtensions {
             placeHolder = placeHolder,
             error = context.getConDrawable(errorRes),
             listener = listener,
-            errorListener = errorListener
+            errorListener = errorListener,
         )
     }
 
     fun ImageView.loadImage(
-        @StringRes
-        urlRes: Int,
-        @DrawableRes
-        placeHolderRes: Int? = null,
+        @StringRes urlRes: Int,
+        @DrawableRes placeHolderRes: Int? = null,
         error: Drawable? = null,
         listener: (() -> Unit)? = null,
         errorListener: ((Throwable) -> Unit)? = null,
@@ -211,7 +188,7 @@ object ImageExtensions {
             placeHolder = context.getConDrawable(placeHolderRes),
             error = error,
             listener = listener,
-            errorListener = errorListener
+            errorListener = errorListener,
         )
     }
 }

@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.create_match.CreateMatchActivity"
-    >
+    tools:context=".view.create_match.CreateMatchActivity">
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/tool_bar"
-        />
+        layout="@layout/tool_bar" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
@@ -20,14 +17,12 @@
         app:layout_constraintBottom_toTopOf="@id/ad_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        >
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="15dp"
-            >
+            android:padding="15dp">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/box_match_date_time"
@@ -36,15 +31,13 @@
                 android:hint="@string/match_date_time"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                >
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/ed_match_date_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="datetime"
-                    />
+                    android:inputType="datetime" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -55,15 +48,13 @@
                 android:hint="@string/team_1_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/box_match_date_time"
-                >
+                app:layout_constraintTop_toBottomOf="@id/box_match_date_time">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/ed_team_1_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    />
+                    android:inputType="textPersonName" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,15 +65,13 @@
                 android:hint="@string/team_2_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/box_team_1_name"
-                >
+                app:layout_constraintTop_toBottomOf="@id/box_team_1_name">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/ed_team_2_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    />
+                    android:inputType="textPersonName" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,15 +82,13 @@
                 android:hint="@string/overs_per_inning"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/box_team_2_name"
-                >
+                app:layout_constraintTop_toBottomOf="@id/box_team_2_name">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/ed_inning_over"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
-                    />
+                    android:inputType="number" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -115,8 +102,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/box_inning_over"
-                />
+                app:layout_constraintTop_toBottomOf="@id/box_inning_over" />
 
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/toggle_toss"
@@ -128,24 +114,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/label_toss"
                 app:selectionRequired="true"
-                app:singleSelection="true"
-                >
+                app:singleSelection="true">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_toss_team_1"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/team_1"
-                    />
+                    android:text="@string/team_1" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_toss_team_2"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/team_2"
-                    />
+                    android:text="@string/team_2" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <com.google.android.material.textview.MaterialTextView
@@ -158,8 +141,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/toggle_toss"
-                />
+                app:layout_constraintTop_toBottomOf="@id/toggle_toss" />
 
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/toggle_bat_first"
@@ -171,24 +153,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/label_bat_first"
                 app:selectionRequired="true"
-                app:singleSelection="true"
-                >
+                app:singleSelection="true">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_bat_first_team_1"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/team_1"
-                    />
+                    android:text="@string/team_1" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_bat_first_team_2"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/team_2"
-                    />
+                    android:text="@string/team_2" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -199,15 +178,13 @@
                 android:hint="@string/match_location"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/toggle_bat_first"
-                >
+                app:layout_constraintTop_toBottomOf="@id/toggle_bat_first">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/ed_match_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPostalAddress"
-                    />
+                    android:inputType="textPostalAddress" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -220,8 +197,7 @@
                 android:text="@string/save"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/box_match_location"
-                />
+                app:layout_constraintTop_toBottomOf="@id/box_match_location" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -231,11 +207,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <include
         android:id="@+id/loader"
-        layout="@layout/loader"
-        />
+        layout="@layout/loader" />
 </androidx.constraintlayout.widget.ConstraintLayout>

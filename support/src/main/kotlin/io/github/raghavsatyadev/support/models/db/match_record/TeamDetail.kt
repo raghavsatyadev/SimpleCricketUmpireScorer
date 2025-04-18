@@ -27,19 +27,16 @@ data class TeamDetail(
     @get:PropertyName(Constants.FieldKeys.TEAM_NAME)
     @set:PropertyName(Constants.FieldKeys.TEAM_NAME)
     var teamName: String,
-
     @SerialName(Constants.FieldKeys.RUNS)
     @ColumnInfo(Constants.FieldKeys.RUNS)
     @get:PropertyName(Constants.FieldKeys.RUNS)
     @set:PropertyName(Constants.FieldKeys.RUNS)
     var runs: Int = 0,
-
     @SerialName(Constants.FieldKeys.WICKETS)
     @ColumnInfo(Constants.FieldKeys.WICKETS)
     @get:PropertyName(Constants.FieldKeys.WICKETS)
     @set:PropertyName(Constants.FieldKeys.WICKETS)
     var wickets: Int = 0,
-
     @SerialName(Constants.FieldKeys.BALLS)
     @ColumnInfo(Constants.FieldKeys.BALLS)
     @get:PropertyName(Constants.FieldKeys.BALLS)

@@ -16,10 +16,7 @@ import java.io.UnsupportedEncodingException
 import java.net.URLConnection
 import java.net.URLEncoder
 
-@Suppress(
-    "unused",
-    "MemberVisibilityCanBePrivate"
-)
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object ImplicitIntentExtensions {
     fun Context.openDialer(number: String) {
         val intent = Intent(Intent.ACTION_DIAL)
@@ -32,109 +29,54 @@ object ImplicitIntentExtensions {
     }
 
     fun Context.emailTo(emailID: String?) {
-        val emailIntent = Intent(
-            Intent.ACTION_SENDTO,
-            Uri.fromParts(
-                "mailto",
-                emailID,
-                null
-            )
-        )
-        startActivity(
-            Intent.createChooser(
-                emailIntent,
-                "Send email..."
-            )
-        )
+        val emailIntent = Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", emailID, null))
+        startActivity(Intent.createChooser(emailIntent, "Send email..."))
     }
 
-    fun Context.emailTo(
-        emailID: String,
-        subject: String?,
-        mailContent: String?,
-    ) {
+    fun Context.emailTo(emailID: String, subject: String?, mailContent: String?) {
         val emailIntent = Intent(Intent.ACTION_SENDTO)
-        emailIntent.putExtra(
-            Intent.EXTRA_EMAIL,
-            arrayOf(emailID)
-        )
-        emailIntent.putExtra(
-            Intent.EXTRA_SUBJECT,
-            subject
-        )
-        emailIntent.putExtra(
-            Intent.EXTRA_TEXT,
-            mailContent
-        )
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(emailID))
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
+        emailIntent.putExtra(Intent.EXTRA_TEXT, mailContent)
         emailIntent.data = Uri.parse("mailto:")
-        startActivity(
-            Intent.createChooser(
-                emailIntent,
-                "Send email..."
-            )
-        )
+        startActivity(Intent.createChooser(emailIntent, "Send email..."))
     }
 
-    fun Context.copyToClipboard(
-        label: String? = null,
-        data: String?,
-    ) {
+    fun Context.copyToClipboard(label: String? = null, data: String?) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText(
-            label ?: getString(R.string.app_name),
-            data
-        )
+        val clip = ClipData.newPlainText(label ?: getString(R.string.app_name), data)
         clipboard.setPrimaryClip(clip)
     }
 
-    fun Fragment.copyToClipboard(
-        label: String? = null,
-        data: String?,
-    ) {
-        requireContext().copyToClipboard(
-            label,
-            data
-        )
+    fun Fragment.copyToClipboard(label: String? = null, data: String?) {
+        requireContext().copyToClipboard(label, data)
     }
 
     fun Context.openGoogleMaps(keyword: String?) {
         try {
-            val mapString = "https://www.google.com/maps/search/?api=1&query=" + URLEncoder.encode(
-                keyword,
-                "utf-8"
-            )
+            val mapString =
+                "https://www.google.com/maps/search/?api=1&query=" + URLEncoder.encode(
+                    keyword,
+                    "utf-8"
+                )
             openBrowser(mapString)
         } catch (e: UnsupportedEncodingException) {
-            AppLog.loge(
-                false,
-                kotlinFileName,
-                "openGoogleMaps",
-                e,
-                Exception()
-            )
+            AppLog.loge(false, kotlinFileName, "openGoogleMaps", e, Exception())
         }
     }
 
     fun getBrowserIntent(url: String?): Intent {
-        return Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse(url)
-        )
+        return Intent(Intent.ACTION_VIEW, Uri.parse(url))
     }
 
     fun Context.openBrowser(url: String?) {
-        val browserIntent = Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse(url)
-        )
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(browserIntent)
     }
 
     fun Context.openPlayStore(id: String = packageName) {
         val url = getPlayStoreLink(id)
-        val intent = getBrowserIntent(url).apply {
-            setPackage("com.android.vending")
-        }
+        val intent = getBrowserIntent(url).apply { setPackage("com.android.vending") }
         startActivity(intent)
     }
 
@@ -147,27 +89,13 @@ object ImplicitIntentExtensions {
     }
 
     fun Context.openWhatsapp(phoneNumberWithCountryCode: String) {
-        val phoneNumber = phoneNumberWithCountryCode
-            .replace(
-                "\\+".toRegex(),
-                ""
-            )
-            .replace(
-                " ".toRegex(),
-                ""
-            )
-            .replace(
-                "\\.".toRegex(),
-                ""
-            )
-            .replace(
-                "\\(".toRegex(),
-                ""
-            )
-            .replace(
-                "\\)".toRegex(),
-                ""
-            )
+        val phoneNumber =
+            phoneNumberWithCountryCode
+                .replace("\\+".toRegex(), "")
+                .replace(" ".toRegex(), "")
+                .replace("\\.".toRegex(), "")
+                .replace("\\(".toRegex(), "")
+                .replace("\\)".toRegex(), "")
         openBrowser("https://api.whatsapp.com/send?phone=$phoneNumber")
     }
 
@@ -176,8 +104,7 @@ object ImplicitIntentExtensions {
     }
 
     fun Context.shareFile(file: File) {
-        ShareCompat
-            .IntentBuilder(this)
+        ShareCompat.IntentBuilder(this)
             .setStream(file.getUriForFile(this))
             .setType(URLConnection.guessContentTypeFromName(file.name))
             .createChooserIntent()
@@ -186,8 +113,7 @@ object ImplicitIntentExtensions {
     }
 
     fun File.shareFile(context: Context) {
-        ShareCompat
-            .IntentBuilder(context)
+        ShareCompat.IntentBuilder(context)
             .setStream(getUriForFile(context))
             .setType(URLConnection.guessContentTypeFromName(name))
             .createChooserIntent()
@@ -198,10 +124,7 @@ object ImplicitIntentExtensions {
     fun Context.shareText(content: String?) {
         val sendIntent = Intent()
         sendIntent.action = Intent.ACTION_SEND
-        sendIntent.putExtra(
-            Intent.EXTRA_TEXT,
-            content
-        )
+        sendIntent.putExtra(Intent.EXTRA_TEXT, content)
         sendIntent.type = "text/plain"
         startActivity(sendIntent)
     }

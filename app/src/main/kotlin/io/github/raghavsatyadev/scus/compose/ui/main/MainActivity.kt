@@ -11,10 +11,10 @@ import io.github.raghavsatyadev.support.compose.theme.AppTheme
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
-        enableEdgeToEdge()
-        super.onCreate(savedInstanceState)
-        setContent { AppTheme { MainScreen() } }
-    }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    installSplashScreen()
+    enableEdgeToEdge()
+    super.onCreate(savedInstanceState)
+    setContent { AppTheme { MainScreen() } }
+  }
 }

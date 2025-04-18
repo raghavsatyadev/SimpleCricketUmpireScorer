@@ -5,5 +5,5 @@ enum class MatchStatus {
     TEAM_2_WON,
     DRAW,
     IN_PROGRESS,
-    NOT_STARTED
+    NOT_STARTED,
 }

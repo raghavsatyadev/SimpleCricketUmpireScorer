@@ -13,24 +13,14 @@ import io.github.raghavsatyadev.support.BuildConfig
 import io.github.raghavsatyadev.support.R
 
 object AdUtil {
-    fun loadBannerAd(
-        activity: Activity,
-        adContainerView: AdView,
-    ) {
+    fun loadBannerAd(activity: Activity, adContainerView: AdView) {
         val adView = AdView(activity)
-        adView.setAdSize(
-            getAdSize(
-                activity,
-                adContainerView
-            )
-        )
+        adView.setAdSize(getAdSize(activity, adContainerView))
         adView.adUnitId = getBannerAdID(activity)
         adContainerView.removeAllViews()
         adContainerView.addView(adView)
 
-        val adRequest: AdRequest = AdRequest
-            .Builder()
-            .build()
+        val adRequest: AdRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
     }
 
@@ -44,13 +34,9 @@ object AdUtil {
         )
     }
 
-    private fun getAdSize(
-        activity: Activity,
-        adContainerView: AdView,
-    ): AdSize {
-        val defaultDisplay = DisplayManagerCompat
-            .getInstance(activity)
-            .getDisplay(Display.DEFAULT_DISPLAY)
+    private fun getAdSize(activity: Activity, adContainerView: AdView): AdSize {
+        val defaultDisplay =
+            DisplayManagerCompat.getInstance(activity).getDisplay(Display.DEFAULT_DISPLAY)
         val metrics = activity.createDisplayContext(defaultDisplay!!).resources.displayMetrics
 
         val density = metrics.density
@@ -63,20 +49,11 @@ object AdUtil {
         }
 
         val adWidth = (adWidthPixels / density).toInt()
-        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-            activity,
-            adWidth
-        )
+        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, adWidth)
     }
 
-
-    fun loadInterstitialAd(
-        activity: Activity,
-        listener: ((InterstitialAd?) -> Unit),
-    ) {
-        val adRequest = AdRequest
-            .Builder()
-            .build()
+    fun loadInterstitialAd(activity: Activity, listener: ((InterstitialAd?) -> Unit)) {
+        val adRequest = AdRequest.Builder().build()
 
         InterstitialAd.load(
             activity,
@@ -91,9 +68,9 @@ object AdUtil {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                     listener(null)
                 }
-            })
+            },
+        )
     }
-
 
     private fun getInterstitialAdID(activity: Activity): String {
         return activity.getString(

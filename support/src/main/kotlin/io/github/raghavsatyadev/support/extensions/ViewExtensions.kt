@@ -25,10 +25,7 @@ object ViewExtensions {
     fun View.hideKeyBoard() {
         val inputManager =
             context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow(
-            windowToken,
-            0
-        )
+        inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
 
     var EditText.isEditable

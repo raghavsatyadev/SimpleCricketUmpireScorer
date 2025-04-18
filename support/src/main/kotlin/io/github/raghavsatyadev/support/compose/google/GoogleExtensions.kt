@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.support.google
+package io.github.raghavsatyadev.support.compose.google
 
 import android.app.Activity
 import android.content.Context

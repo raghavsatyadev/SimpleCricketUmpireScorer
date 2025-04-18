@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scus.ui.dashboard
+package io.github.raghavsatyadev.scus.view.dashboard
 
 import androidx.lifecycle.viewModelScope
 import io.github.raghavsatyadev.support.Constants.FieldKeys
@@ -25,12 +25,9 @@ class DashboardViewModel : CoreViewModel() {
         viewModelScope.launch {
             withContext(ioDispatcher) {
                 try {
-                    MatchRecordDataUtil
-                        .getInstance()
+                    MatchRecordDataUtil.getInstance()
                         .getAllLive("`${FieldKeys.START_DATE_TIME}` DESC")
-                        .collectLatest {
-                            getMatchRecordsEvent.emit(Resource.success(it))
-                        }
+                        .collectLatest { getMatchRecordsEvent.emit(Resource.success(it)) }
                 } catch (e: Exception) {
                     getMatchRecordsEvent.emit(
                         Resource.error(
@@ -48,13 +45,9 @@ class DashboardViewModel : CoreViewModel() {
     fun deleteMatchRecord(record: MatchRecord) {
         viewModelScope.launch {
             withContext(ioDispatcher) {
-                val isDeleted = FireStoreUtil
-                    .getInstance()
-                    .deleteMatchRecord(record.matchRecordId)
+                val isDeleted = FireStoreUtil.getInstance().deleteMatchRecord(record.matchRecordId)
                 if (isDeleted) {
-                    MatchRecordDataUtil
-                        .getInstance()
-                        .delete(record)
+                    MatchRecordDataUtil.getInstance().delete(record)
                 }
             }
         }
