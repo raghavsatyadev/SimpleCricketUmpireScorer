@@ -10,17 +10,14 @@ import io.github.raghavsatyadev.support.AppLog.LogLevel.I
 import io.github.raghavsatyadev.support.AppLog.LogLevel.V
 import io.github.raghavsatyadev.support.AppLog.LogLevel.W
 
-@Suppress(
-    "MemberVisibilityCanBePrivate",
-    "unused"
-)
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 object AppLog {
     enum class LogLevel(var displayName: String) {
         D("Debug"),
         V("Verbose"),
         E("Error"),
         I("Info"),
-        W("Warn")
+        W("Warn"),
     }
 
     private val isDebug = BuildConfig.DEBUG
@@ -38,60 +35,29 @@ object AppLog {
         val newMessage = message ?: ""
 
         if (!isDebug) {
-            logReleaseException(
-                isLocal,
-                throwable
-            )
-        } else when (logLevel) {
-            D -> Log.d(
-                newTag,
-                newMessage
-            )
+            logReleaseException(isLocal, throwable)
+        } else
+            when (logLevel) {
+                D -> Log.d(newTag, newMessage)
 
-            V -> Log.v(
-                newTag,
-                newMessage
-            )
+                V -> Log.v(newTag, newMessage)
 
-            E -> Log.e(
-                newTag,
-                newMessage,
-                throwable
-            )
+                E -> Log.e(newTag, newMessage, throwable)
 
-            I -> Log.i(
-                newTag,
-                newMessage
-            )
+                I -> Log.i(newTag, newMessage)
 
-            W -> Log.w(
-                newTag,
-                newMessage,
-                throwable
-            )
-        }
+                W -> Log.w(newTag, newMessage, throwable)
+            }
     }
 
-    private fun logReleaseException(
-        isLocal: Boolean,
-        throwable: Throwable? = null,
-    ) {
+    private fun logReleaseException(isLocal: Boolean, throwable: Throwable? = null) {
         if (!isLocal) {
             throwable?.let { Firebase.crashlytics.recordException(it) }
         }
     }
 
-    private fun getFormattedLog(
-        logLevel: LogLevel,
-        tag: String,
-        message: String,
-    ): String {
-        return String.format(
-            "%s %s %s",
-            logLevel.displayName,
-            tag,
-            message
-        )
+    private fun getFormattedLog(logLevel: LogLevel, tag: String, message: String): String {
+        return String.format("%s %s %s", logLevel.displayName, tag, message)
     }
 
     fun <T> loge(
@@ -101,16 +67,9 @@ object AppLog {
         message: T?,
         loggerHelperException: Throwable,
     ) {
-        val fileMethodNameFormat = getFileMethodNameFormat(
-            fileName,
-            methodName,
-            loggerHelperException
-        )
-        log(
-            E,
-            isLocal,
-            TAG,
-            fileMethodNameFormat + message?.let { message })
+        val fileMethodNameFormat =
+            getFileMethodNameFormat(fileName, methodName, loggerHelperException)
+        log(E, isLocal, TAG, fileMethodNameFormat + message?.let { message })
     }
 
     fun loge(
@@ -120,21 +79,12 @@ object AppLog {
         throwable: Throwable?,
         loggerHelperException: Throwable,
     ) {
-        val fileMethodNameFormat = getFileMethodNameFormat(
-            fileName,
-            methodName,
-            loggerHelperException
-        )
+        val fileMethodNameFormat =
+            getFileMethodNameFormat(fileName, methodName, loggerHelperException)
 
         val exceptionMessage = if (throwable?.message != null) throwable.localizedMessage else ""
 
-        log(
-            E,
-            isLocal,
-            TAG,
-            fileMethodNameFormat + exceptionMessage,
-            throwable
-        )
+        log(E, isLocal, TAG, fileMethodNameFormat + exceptionMessage, throwable)
     }
 
     fun loge(
@@ -144,31 +94,23 @@ object AppLog {
         exception: Exception?,
         loggerHelperException: Throwable,
     ) {
-        val fileMethodNameFormat = getFileMethodNameFormat(
-            fileName,
-            methodName,
-            loggerHelperException
-        )
+        val fileMethodNameFormat =
+            getFileMethodNameFormat(fileName, methodName, loggerHelperException)
 
-        val exceptionMessage = when {
-            exception != null -> {
-                when {
-                    exception.localizedMessage != null -> exception.localizedMessage
-                    exception.cause != null -> exception.cause
-                    else -> exception.stackTrace
+        val exceptionMessage =
+            when {
+                exception != null -> {
+                    when {
+                        exception.localizedMessage != null -> exception.localizedMessage
+                        exception.cause != null -> exception.cause
+                        else -> exception.stackTrace
+                    }
                 }
+
+                else -> ""
             }
 
-            else -> ""
-        }
-
-        log(
-            E,
-            isLocal,
-            TAG,
-            fileMethodNameFormat + exceptionMessage,
-            exception
-        )
+        log(E, isLocal, TAG, fileMethodNameFormat + exceptionMessage, exception)
     }
 
     fun logMethod(
@@ -181,10 +123,7 @@ object AppLog {
             E,
             isLocal,
             TAG,
-            getFileLineNumber(
-                fileName,
-                loggerHelperException
-            ) + " : " + methodName
+            getFileLineNumber(fileName, loggerHelperException) + " : " + methodName
         )
     }
 
@@ -193,16 +132,10 @@ object AppLog {
         methodName: String,
         loggerHelperException: Throwable,
     ): String {
-        return getFileLineNumber(
-            fileName,
-            loggerHelperException
-        ) + " : " + methodName + " : "
+        return getFileLineNumber(fileName, loggerHelperException) + " : " + methodName + " : "
     }
 
-    private fun getFileLineNumber(
-        fileName: String,
-        loggerHelperException: Throwable,
-    ): String {
+    private fun getFileLineNumber(fileName: String, loggerHelperException: Throwable): String {
         val stack: StackTraceElement? = getStackElement(loggerHelperException)
         return if (stack != null) "($fileName:${stack.lineNumber})" else ""
     }
@@ -216,9 +149,6 @@ object AppLog {
         val stackTraceElement = getStackElement(throwable)
         val className = stackTraceElement?.className
         val pos = className?.lastIndexOf('.')
-        return if (pos != null) className.substring(
-            0,
-            pos
-        ) else ""
+        return if (pos != null) className.substring(0, pos) else ""
     }
 }

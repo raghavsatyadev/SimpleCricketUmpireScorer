@@ -15,13 +15,11 @@ import kotlinx.serialization.Serializable
 data class User(
     var name: String,
     var email: String,
-
     @SerialName(FieldKeys.USER_ID)
     @get:PropertyName(FieldKeys.USER_ID)
     @set:PropertyName(FieldKeys.USER_ID)
     @ColumnInfo(FieldKeys.USER_ID)
     var userID: String,
-
     @SerialName(FieldKeys.LOGIN_TOKEN)
     @get:PropertyName(FieldKeys.LOGIN_TOKEN)
     @set:PropertyName(FieldKeys.LOGIN_TOKEN)

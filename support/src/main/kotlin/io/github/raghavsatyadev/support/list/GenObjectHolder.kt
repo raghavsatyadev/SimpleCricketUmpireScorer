@@ -8,19 +8,8 @@ abstract class GenObjectHolder<Model, Binding : ViewBinding>(
     var listener: CustomClickListener? = null,
 ) : RecyclerView.ViewHolder(binding.root) {
     init {
-        binding.root.setOnClickListener {
-            listener?.onItemClick(
-                layoutPosition,
-                it,
-                false
-            )
-        }
+        binding.root.setOnClickListener { listener?.onItemClick(layoutPosition, it, false) }
     }
 
-    abstract fun bind(
-        model: Model,
-        itemViewType: Int,
-        position: Int,
-        itemCount: Int,
-    )
+    abstract fun bind(model: Model, itemViewType: Int, position: Int, itemCount: Int)
 }

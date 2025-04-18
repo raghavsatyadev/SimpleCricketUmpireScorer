@@ -1,4 +1,7 @@
 <resources>
+    <!-- Login -->
+    <string name="background">Background</string>
+
     <!-- Dashboard -->
     <string name="add_match">Add Match</string>
     <string name="won">Won</string>

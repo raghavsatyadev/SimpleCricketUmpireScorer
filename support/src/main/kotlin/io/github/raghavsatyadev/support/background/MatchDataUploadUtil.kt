@@ -8,53 +8,33 @@ import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUt
 
 object MatchDataUploadUtil {
     suspend fun updateAllMatchData(): Result {
-        val matchRecords = MatchRecordDataUtil
-            .getInstance()
-            .getAll()
+        val matchRecords = MatchRecordDataUtil.getInstance().getAll()
 
         try {
-            val isSuccessful = FireStoreUtil
-                .getInstance()
-                .updateMatchRecords(matchRecords)
+            val isSuccessful = FireStoreUtil.getInstance().updateMatchRecords(matchRecords)
             return if (isSuccessful) {
                 Result.success()
             } else {
                 Result.failure()
             }
         } catch (e: Exception) {
-            AppLog.loge(
-                false,
-                kotlinFileName,
-                "updateAllMatchData",
-                e,
-                Exception()
-            )
+            AppLog.loge(false, kotlinFileName, "updateAllMatchData", e, Exception())
             return Result.failure()
         }
     }
 
     suspend fun updateMatchData(matchRecordID: String): Result {
-        val item = MatchRecordDataUtil
-            .getInstance()
-            .getItem(matchRecordID)
+        val item = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
 
         try {
-            val isSuccessful = FireStoreUtil
-                .getInstance()
-                .updateMatchRecord(item)
+            val isSuccessful = FireStoreUtil.getInstance().updateMatchRecord(item)
             return if (isSuccessful) {
                 Result.success()
             } else {
                 Result.failure()
             }
         } catch (e: Exception) {
-            AppLog.loge(
-                false,
-                kotlinFileName,
-                "updateMatchData",
-                e,
-                Exception()
-            )
+            AppLog.loge(false, kotlinFileName, "updateMatchData", e, Exception())
             return Result.failure()
         }
     }

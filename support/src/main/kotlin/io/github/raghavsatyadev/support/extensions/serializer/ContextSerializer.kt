@@ -18,153 +18,103 @@ import java.time.Instant
 import java.util.Date
 
 object ExceptionSerializer : KSerializer<Exception> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-        "Exception",
-        PrimitiveKind.STRING
-    )
+  override val descriptor: SerialDescriptor =
+    PrimitiveSerialDescriptor("Exception", PrimitiveKind.STRING)
 
-    override fun serialize(
-        encoder: Encoder,
-        value: Exception,
-    ) {
-        encoder.encodeString(value.toString())
-    }
+  override fun serialize(encoder: Encoder, value: Exception) {
+    encoder.encodeString(value.toString())
+  }
 
-    override fun deserialize(decoder: Decoder): Exception {
-        return Exception(decoder.decodeString())
-    }
+  override fun deserialize(decoder: Decoder): Exception {
+    return Exception(decoder.decodeString())
+  }
 }
 
 @ExperimentalSerializationApi
 object DynamicLookupSerializer : KSerializer<Any> {
-    override val descriptor: SerialDescriptor = ContextualSerializer(
-        Any::class,
-        null,
-        emptyArray()
-    ).descriptor
+  override val descriptor: SerialDescriptor =
+    ContextualSerializer(Any::class, null, emptyArray()).descriptor
 
-    @OptIn(InternalSerializationApi::class)
-    override fun serialize(
-        encoder: Encoder,
-        value: Any,
-    ) {
-        val actualSerializer =
-            encoder.serializersModule.getContextual(value::class) ?: value::class.serializer()
-        encoder.encodeSerializableValue(
-            actualSerializer as KSerializer<Any>,
-            value
-        )
-    }
+  @OptIn(InternalSerializationApi::class)
+  override fun serialize(encoder: Encoder, value: Any) {
+    val actualSerializer =
+      encoder.serializersModule.getContextual(value::class) ?: value::class.serializer()
+    encoder.encodeSerializableValue(actualSerializer as KSerializer<Any>, value)
+  }
 
-    override fun deserialize(decoder: Decoder): Any {
-        error("Unsupported")
-    }
+  override fun deserialize(decoder: Decoder): Any {
+    error("Unsupported")
+  }
 }
 
 object TimeStampSerializer : KSerializer<Timestamp> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-        "Timestamp",
-        PrimitiveKind.LONG
-    )
+  override val descriptor: SerialDescriptor =
+    PrimitiveSerialDescriptor("Timestamp", PrimitiveKind.LONG)
 
-    override fun serialize(
-        encoder: Encoder,
-        value: Timestamp,
-    ) {
-        encoder.encodeLong(value.seconds.times(1000))
-    }
+  override fun serialize(encoder: Encoder, value: Timestamp) {
+    encoder.encodeLong(value.seconds.times(1000))
+  }
 
-    override fun deserialize(decoder: Decoder): Timestamp {
-        return Timestamp(Instant.ofEpochSecond(decoder.decodeLong() / 1000))
-    }
+  override fun deserialize(decoder: Decoder): Timestamp {
+    return Timestamp(Instant.ofEpochSecond(decoder.decodeLong() / 1000))
+  }
 }
 
 object DateSerializer : KSerializer<Date> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-        "Date",
-        PrimitiveKind.LONG
-    )
+  override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Date", PrimitiveKind.LONG)
 
-    override fun serialize(
-        encoder: Encoder,
-        value: Date,
-    ) {
-        encoder.encodeLong(value.time)
-    }
+  override fun serialize(encoder: Encoder, value: Date) {
+    encoder.encodeLong(value.time)
+  }
 
-    override fun deserialize(decoder: Decoder): Date {
-        return Date(decoder.decodeLong())
-    }
+  override fun deserialize(decoder: Decoder): Date {
+    return Date(decoder.decodeLong())
+  }
 }
 
 object InstantSerializer : KSerializer<Instant> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-        "Instant",
-        PrimitiveKind.LONG
-    )
+  override val descriptor: SerialDescriptor =
+    PrimitiveSerialDescriptor("Instant", PrimitiveKind.LONG)
 
-    override fun serialize(
-        encoder: Encoder,
-        value: Instant,
-    ) {
-        encoder.encodeLong(value.toEpochMilli())
-    }
+  override fun serialize(encoder: Encoder, value: Instant) {
+    encoder.encodeLong(value.toEpochMilli())
+  }
 
-    override fun deserialize(decoder: Decoder): Instant {
-        val decodeLong = decoder.decodeLong()
-        return Instant.ofEpochMilli(decodeLong)
-    }
+  override fun deserialize(decoder: Decoder): Instant {
+    val decodeLong = decoder.decodeLong()
+    return Instant.ofEpochMilli(decodeLong)
+  }
 }
 
 @OptIn(ExperimentalSerializationApi::class)
 object HashMapSerializer : KSerializer<HashMap<String, Any>> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-        "new.HashMap",
-        PrimitiveKind.STRING
+  override val descriptor: SerialDescriptor =
+    PrimitiveSerialDescriptor("new.HashMap", PrimitiveKind.STRING)
+
+  override fun serialize(encoder: Encoder, value: HashMap<String, Any>) {
+    encoder.encodeSerializableValue(
+      MapSerializer(String.serializer(), DynamicLookupSerializer),
+      value,
     )
+  }
 
-    override fun serialize(
-        encoder: Encoder,
-        value: HashMap<String, Any>,
-    ) {
-        encoder.encodeSerializableValue(
-            MapSerializer(
-                String.serializer(),
-                DynamicLookupSerializer
-            ),
-            value
-        )
-    }
-
-    override fun deserialize(decoder: Decoder): HashMap<String, Any> {
-        error("Unsupported")
-    }
+  override fun deserialize(decoder: Decoder): HashMap<String, Any> {
+    error("Unsupported")
+  }
 }
 
 @OptIn(ExperimentalSerializationApi::class)
 object ArrayListSerializer : KSerializer<ArrayList<Any>> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
-        "new.ArrayList",
-        PrimitiveKind.STRING
-    )
+  override val descriptor: SerialDescriptor =
+    PrimitiveSerialDescriptor("new.ArrayList", PrimitiveKind.STRING)
 
-    override fun serialize(
-        encoder: Encoder,
-        value: ArrayList<Any>,
-    ) {
-        encoder.encodeSerializableValue(
-            ListSerializer(DynamicLookupSerializer),
-            value
-        )
-    }
+  override fun serialize(encoder: Encoder, value: ArrayList<Any>) {
+    encoder.encodeSerializableValue(ListSerializer(DynamicLookupSerializer), value)
+  }
 
-    override fun deserialize(decoder: Decoder): ArrayList<Any> {
-        decoder
-            .decodeSerializableValue(
-                ListSerializer(DynamicLookupSerializer)
-            )
-            .let {
-                return ArrayList(it)
-            }
+  override fun deserialize(decoder: Decoder): ArrayList<Any> {
+    decoder.decodeSerializableValue(ListSerializer(DynamicLookupSerializer)).let {
+      return ArrayList(it)
     }
+  }
 }

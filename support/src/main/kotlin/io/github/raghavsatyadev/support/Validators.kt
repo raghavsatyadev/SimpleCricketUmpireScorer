@@ -7,15 +7,11 @@ import java.util.regex.Pattern
 
 object Validators {
     fun isValidEmail(email: String): Boolean {
-        return !TextUtils.isEmpty(email) && PatternsCompat.EMAIL_ADDRESS
-            .matcher(email)
-            .matches()
+        return !TextUtils.isEmpty(email) && PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()
     }
 
     fun isValidMobile(phone: String): Boolean {
-        return !TextUtils.isEmpty(phone) && Patterns.PHONE
-            .matcher(phone)
-            .matches()
+        return !TextUtils.isEmpty(phone) && Patterns.PHONE.matcher(phone).matches()
     }
 
     /**
@@ -27,11 +23,7 @@ object Validators {
      */
     fun isValidPassword(password: String?): Boolean {
         val passwordPattern = "^(?=.*\\d)(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$"
-        return !TextUtils.isEmpty(password) && Pattern
-            .compile(passwordPattern)
-            .matcher(password?.trim()!!)
-            .matches()
-
+        return !TextUtils.isEmpty(password) &&
+                Pattern.compile(passwordPattern).matcher(password?.trim()!!).matches()
     }
-
 }

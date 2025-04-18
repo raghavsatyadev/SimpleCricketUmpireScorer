@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.support.google
+package io.github.raghavsatyadev.support.compose.google
 
 import android.app.Activity
 import androidx.credentials.CredentialManager
@@ -13,13 +13,14 @@ import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.core.CoreApp
 import io.github.raghavsatyadev.support.extensions.AppExtensions.generateRandomNonce
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
+import javax.inject.Inject
 
 /**
  * Utility class to facilitate Google Sign-In using Credential Manager.
  *
  * @property activity The activity context used for initiating sign-in.
  */
-class GoogleSignInUtil(private val activity: Activity) {
+class GoogleSignInUtil @Inject constructor(private val activity: Activity) {
     // Initialize Credential Manager
     private val credentialManager: CredentialManager = CredentialManager.create(activity)
     private val credentialRequest: GetCredentialRequest

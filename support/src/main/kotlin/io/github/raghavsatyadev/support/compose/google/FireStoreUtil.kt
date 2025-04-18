@@ -1,15 +1,15 @@
-package io.github.raghavsatyadev.support.google
+package io.github.raghavsatyadev.support.compose.google
 
+import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.firestoreSettings
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.memoryCacheSettings
-import com.google.firebase.firestore.ktx.persistentCacheSettings
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.memoryCacheSettings
+import com.google.firebase.firestore.persistentCacheSettings
 import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.Constants.FieldKeys
 import io.github.raghavsatyadev.support.Constants.FieldKeys.SERVER_UPDATE_DATE_TIME
@@ -27,27 +27,14 @@ import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUt
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.toMap
 import io.github.raghavsatyadev.support.preferences.AppPrefsUtil
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
-    companion object {
-        @Volatile
-        private var instance: FireStoreUtil? = null
-
-        @Synchronized
-        fun create(firebaseApp: FirebaseApp) {
-            FireStoreUtil(firebaseApp).also { instance = it }
-            CoreApp.instance.launch { getInstance().initialize(true) }
-        }
-
-        @Synchronized
-        fun getInstance(): FireStoreUtil {
-            return instance
-                ?: throw IllegalStateException("Initialize in Application class using create()")
-        }
-    }
-
+@Singleton
+class FireStoreUtil
+@Inject
+constructor(private val firebaseApp: FirebaseApp, private val authUtil: FirebaseAuthUtil) {
     private val db by lazy {
         Firebase.firestore(firebaseApp).apply {
             val settings = firestoreSettings {
@@ -55,14 +42,13 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
                 setLocalCacheSettings(persistentCacheSettings {})
             }
             firestoreSettings = settings
-            persistentCacheIndexManager?.apply { enableIndexAutoCreation() }
-                ?: println("indexManager is null")
+            persistentCacheIndexManager?.enableIndexAutoCreation()
         }
     }
 
     suspend fun initialize(checkUserToken: Boolean = false) {
         try {
-            val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
+            val currentUserId = authUtil.currentUserId
             if (currentUserId != null) {
                 if (checkUserToken) {
                     val user = getUser(currentUserId)
@@ -118,7 +104,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
 
     @Throws(Exception::class)
     suspend fun updateUserLoginTokens(): Boolean {
-        val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
+        val currentUserId = authUtil.currentUserId
         currentUserId?.let {
             val generateRandomNonce = AppExtensions.generateRandomNonce()
             val task =
@@ -136,7 +122,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
 
     @Throws(Exception::class)
     suspend fun signOutUser(): Boolean {
-        val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
+        val currentUserId = authUtil.currentUserId
         currentUserId?.let {
             val task =
                 db

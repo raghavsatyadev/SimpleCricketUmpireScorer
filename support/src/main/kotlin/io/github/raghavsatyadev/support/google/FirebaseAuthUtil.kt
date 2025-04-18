@@ -28,9 +28,8 @@ class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp)
 
         @Synchronized
         fun getInstance(): FirebaseAuthUtil {
-            return instance ?: throw IllegalStateException(
-                "Initialize in Application class using create()"
-            )
+            return instance
+                ?: throw IllegalStateException("Initialize in Application class using create()")
         }
     }
 
@@ -42,13 +41,10 @@ class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp)
      * @return The currently signed-in [User], or null if no user is signed in.
      */
     val currentUser: User?
-        get() = auth.currentUser?.let {
-            User(
-                name = it.displayName ?: "",
-                email = it.email ?: "",
-                userID = it.uid
-            )
-        }
+        get() =
+            auth.currentUser?.let {
+                User(name = it.displayName ?: "", email = it.email ?: "", userID = it.uid)
+            }
 
     fun isLoggedIn(): Boolean {
         return auth.currentUser != null
@@ -75,62 +71,31 @@ class FirebaseAuthUtil private constructor(private val firebaseApp: FirebaseApp)
      *    any occurred.
      */
     suspend fun signInWithGoogle(idToken: String): Pair<User?, CustomError?> {
-        val credential = GoogleAuthProvider.getCredential(
-            idToken,
-            null
-        )
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
         return try {
-            val authResult = auth
-                .signInWithCredential(credential)
-                .await()
+            val authResult = auth.signInWithCredential(credential).await()
             val firebaseUser = authResult.user
             if (firebaseUser != null) {
-                val user = User(
-                    name = firebaseUser.displayName ?: "",
-                    email = firebaseUser.email ?: "",
-                    userID = firebaseUser.uid
-                )
+                val user =
+                    User(
+                        name = firebaseUser.displayName ?: "",
+                        email = firebaseUser.email ?: "",
+                        userID = firebaseUser.uid,
+                    )
                 try {
                     user to null
                 } catch (e: Exception) {
-                    AppLog.loge(
-                        false,
-                        kotlinFileName,
-                        "signInWithGoogle",
-                        e,
-                        Exception()
-                    )
-                    null to CustomError(
-                        ErrorCode.AUTH_FAILED,
-                        e
-                    )
+                    AppLog.loge(false, kotlinFileName, "signInWithGoogle", e, Exception())
+                    null to CustomError(ErrorCode.AUTH_FAILED, e)
                 }
             } else {
                 val e = Exception("Firebase user is null")
-                AppLog.loge(
-                    false,
-                    kotlinFileName,
-                    "signInWithGoogle",
-                    e,
-                    Exception()
-                )
-                null to CustomError(
-                    ErrorCode.AUTH_FAILED,
-                    e
-                )
+                AppLog.loge(false, kotlinFileName, "signInWithGoogle", e, Exception())
+                null to CustomError(ErrorCode.AUTH_FAILED, e)
             }
         } catch (e: Exception) {
-            AppLog.loge(
-                false,
-                kotlinFileName,
-                "signInWithGoogle",
-                e,
-                Exception()
-            )
-            null to CustomError(
-                ErrorCode.AUTH_FAILED,
-                e
-            )
+            AppLog.loge(false, kotlinFileName, "signInWithGoogle", e, Exception())
+            null to CustomError(ErrorCode.AUTH_FAILED, e)
         }
     }
 

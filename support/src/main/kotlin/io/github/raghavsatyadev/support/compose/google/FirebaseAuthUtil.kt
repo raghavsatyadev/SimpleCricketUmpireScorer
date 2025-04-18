@@ -24,6 +24,14 @@ class FirebaseAuthUtil @Inject constructor(private val firebaseApp: FirebaseApp)
                 User(name = it.displayName.orEmpty(), email = it.email.orEmpty(), userID = it.uid)
             }
 
+    /**
+     * Retrieves the unique identifier of the currently signed-in user.
+     *
+     * @return The user ID, or null if no user is signed in.
+     */
+    val currentUserId: String?
+        get() = auth.currentUser?.uid
+
     fun isLoggedIn(): Boolean {
         val user = auth.currentUser
         return user != null

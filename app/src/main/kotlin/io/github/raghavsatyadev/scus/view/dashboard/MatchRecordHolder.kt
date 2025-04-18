@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scus.ui.dashboard
+package io.github.raghavsatyadev.scus.view.dashboard
 
 import android.annotation.SuppressLint
 import io.github.raghavsatyadev.scus.databinding.ItemMatchRecordBinding
@@ -23,10 +23,7 @@ class MatchRecordHolder(
     private val winColor: Int,
     private val drawColor: Int,
     private val inProgressColor: Int,
-) : GenObjectHolder<MatchRecord, ItemMatchRecordBinding>(
-    binding,
-    itemClickListener
-) {
+) : GenObjectHolder<MatchRecord, ItemMatchRecordBinding>(binding, itemClickListener) {
     companion object {
         fun getInstance(
             binding: ItemMatchRecordBinding,
@@ -50,7 +47,7 @@ class MatchRecordHolder(
                 lostColor,
                 winColor,
                 drawColor,
-                inProgressColor
+                inProgressColor,
             )
         }
     }
@@ -65,22 +62,13 @@ class MatchRecordHolder(
                 )
             }
             btnDelete.setOnClickListener {
-                itemClickListener?.onItemClick(
-                    layoutPosition,
-                    btnDelete,
-                    false
-                )
+                itemClickListener?.onItemClick(layoutPosition, btnDelete, false)
             }
         }
     }
 
     @SuppressLint("SetTextI18n")
-    override fun bind(
-        model: MatchRecord,
-        itemViewType: Int,
-        position: Int,
-        itemCount: Int,
-    ) {
+    override fun bind(model: MatchRecord, itemViewType: Int, position: Int, itemCount: Int) {
         with(binding) {
             with(model) {
                 txtTeam1Name.text = team1Detail.teamName

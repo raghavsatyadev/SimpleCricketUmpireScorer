@@ -4,7 +4,7 @@ import androidx.annotation.Keep
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import kotlinx.serialization.Serializable
 
-object MainRoutes {
+object AppRoutes {
     @Keep
     @Serializable
     data object DashboardScreen

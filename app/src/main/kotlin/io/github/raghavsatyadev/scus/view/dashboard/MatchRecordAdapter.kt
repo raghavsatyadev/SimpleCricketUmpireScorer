@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scus.ui.dashboard
+package io.github.raghavsatyadev.scus.view.dashboard
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -27,11 +27,7 @@ class MatchRecordAdapter(context: Context) :
         from: LayoutInflater,
     ): MatchRecordHolder {
         return MatchRecordHolder.getInstance(
-            ItemMatchRecordBinding.inflate(
-                from,
-                parent,
-                false
-            ),
+            ItemMatchRecordBinding.inflate(from, parent, false),
             itemClickListener,
             won,
             lost,
@@ -40,7 +36,7 @@ class MatchRecordAdapter(context: Context) :
             lostColor,
             winColor,
             drawColor,
-            inProgressColor
+            inProgressColor,
         )
     }
 }

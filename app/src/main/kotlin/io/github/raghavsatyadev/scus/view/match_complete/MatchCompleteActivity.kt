@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scus.ui.match_complete
+package io.github.raghavsatyadev.scus.view.match_complete
 
 import android.content.Context
 import android.content.Intent
@@ -22,18 +22,11 @@ import kotlinx.coroutines.withContext
 class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
     companion object {
         private const val MATCH_RECORD_ID = "match_record_id"
-        fun getIntentObject(
-            context: Context,
-            matchRecordID: String,
-        ): Intent = Intent(
-            context,
-            MatchCompleteActivity::class.java
-        ).apply {
-            putExtra(
-                MATCH_RECORD_ID,
-                matchRecordID
-            )
-        }
+
+        fun getIntentObject(context: Context, matchRecordID: String): Intent =
+            Intent(context, MatchCompleteActivity::class.java).apply {
+                putExtra(MATCH_RECORD_ID, matchRecordID)
+            }
     }
 
     private val viewModel: MatchCompleteViewModel by viewModels()
@@ -41,24 +34,25 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
     private lateinit var matchRecord: MatchRecord
     private lateinit var basicDetailsTeam1: BasicMatchUIDetails
     private lateinit var basicDetailsTeam2: BasicMatchUIDetails
-    private val buttonCheckedListener = object : MaterialButtonToggleGroup.OnButtonCheckedListener {
-        override fun onButtonChecked(
-            group: MaterialButtonToggleGroup?,
-            checkedId: Int,
-            isChecked: Boolean,
-        ) {
-            if (isChecked) {
-                when (checkedId) {
-                    binding.btnMatchDetailTeam1.id -> {
-                        loadTeamDetails(true)
-                    }
+    private val buttonCheckedListener =
+        object : MaterialButtonToggleGroup.OnButtonCheckedListener {
+            override fun onButtonChecked(
+                group: MaterialButtonToggleGroup?,
+                checkedId: Int,
+                isChecked: Boolean,
+            ) {
+                if (isChecked) {
+                    when (checkedId) {
+                        binding.btnMatchDetailTeam1.id -> {
+                            loadTeamDetails(true)
+                        }
 
-                    binding.btnMatchDetailTeam2.id -> {
-                        loadTeamDetails(false)
+                        binding.btnMatchDetailTeam2.id -> {
+                            loadTeamDetails(false)
+                        }
                     }
                 }
             }
-        }
     }
 
     private fun loadTeamDetails(loadTeam1Details: Boolean) {
@@ -69,14 +63,10 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
                 (loadTeam1Details && !isBattingFirst) || (!loadTeam1Details && isBattingFirst)
 
             if (showRequiredScore) {
-                binding.txtRrr.text = getString(
-                    R.string.rrr_at_start,
-                    matchRecord.rrrAtSecondInningStart
-                )
-                binding.txtRequiredRunsBalls.text = getString(
-                    R.string.required_runs_balls_at_end,
-                    requiredRunsBalls
-                )
+                binding.txtRrr.text =
+                    getString(R.string.rrr_at_start, matchRecord.rrrAtSecondInningStart)
+                binding.txtRequiredRunsBalls.text =
+                    getString(R.string.required_runs_balls_at_end, requiredRunsBalls)
                 binding.groupRequiredScore.visible()
             } else {
                 binding.groupRequiredScore.gone()
@@ -85,10 +75,7 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
             binding.txtTeamName.text = currentTeamName
             binding.txtRunsWickets.text = currentRunsAndWickets
             binding.txtOvers.text = currentOvers
-            binding.txtCrr.text = getString(
-                R.string.crr,
-                currentCRR
-            )
+            binding.txtCrr.text = getString(R.string.crr, currentCRR)
         }
     }
 
@@ -105,9 +92,7 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
                 matchRecord = viewModel.getMatchRecord(matchRecordId)
                 basicDetailsTeam1 = matchRecord.toBasicMatchUIDetails(true)
                 basicDetailsTeam2 = matchRecord.toBasicMatchUIDetails(false)
-                withContext(mainDispatcher) {
-                    loadWinningTeamDetails()
-                }
+                withContext(mainDispatcher) { loadWinningTeamDetails() }
             }
         }
     }

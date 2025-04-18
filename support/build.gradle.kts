@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.parcelize)
 
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose.plugin)
 
     alias(libs.plugins.hilt)
 
@@ -17,11 +17,8 @@ plugins {
     alias(libs.plugins.room)
 }
 
-fun readProperties(propertiesFile: File) = Properties().apply {
-    propertiesFile.inputStream().use { fis ->
-        load(fis)
-    }
-}
+fun readProperties(propertiesFile: File) =
+    Properties().apply { propertiesFile.inputStream().use { fis -> load(fis) } }
 
 val props = readProperties(file("../secret.properties"))
 
@@ -48,9 +45,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles.add(file("consumer-rules.pro"))
 
-        sourceSets {
-            getByName("androidTest").assets.srcDirs(files("$projectDir/schemas"))
-        }
+        sourceSets { getByName("androidTest").assets.srcDirs(files("$projectDir/schemas")) }
 
         ndk { abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a")) }
 
@@ -96,14 +91,11 @@ android {
             isMinifyEnabled = false
             resValue("string", "app_name", libs.versions.debugAppName.get())
         }
-        kotlin {
-            jvmToolchain(21)
-        }
-        compileOptions {
-            isCoreLibraryDesugaringEnabled = true
-        }
+        kotlin { jvmToolchain(21) }
+        compileOptions { isCoreLibraryDesugaringEnabled = true }
         kotlinOptions {
-            freeCompilerArgs += "-Xjvm-default=all"
+            freeCompilerArgs =
+                listOf("-Xjvm-default=all", "-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
         }
         buildFeatures {
             viewBinding = true
@@ -113,15 +105,14 @@ android {
         }
         flavorDimensions.add("isPlayStoreVersion")
         productFlavors {
-            create("Prod") {
-            }
-            create("Dev") {
-            }
+            create("Prod") {}
+            create("Dev") {}
         }
         androidComponents.beforeVariants { variant ->
             val names = variant.flavorName
 
-            if ((names == "Dev" && variant.buildType == "release") ||
+            if (
+                (names == "Dev" && variant.buildType == "release") ||
                 (names == "Prod" && (variant.buildType != "release"))
             ) {
                 variant.enable = false
@@ -134,7 +125,7 @@ android {
                         "lib/*/libc++_shared.so",
                         "lib/*/libgnustl_shared.so",
                         "lib/*/libyuv.so",
-                        "lib/*/libopenh264.so"
+                        "lib/*/libopenh264.so",
                     )
                 )
             }

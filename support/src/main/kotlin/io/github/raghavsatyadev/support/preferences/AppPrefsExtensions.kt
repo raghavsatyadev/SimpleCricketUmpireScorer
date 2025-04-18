@@ -24,10 +24,7 @@ object AppPrefsExtensions {
 
     val Context.dataStore: DataStore<Preferences> by preferencesDataStore(APP_PREFS_NAME)
 
-    suspend inline fun <T> Context.savePref(
-        key: String,
-        value: T,
-    ) {
+    suspend inline fun <T> Context.savePref(key: String, value: T) {
         dataStore.edit {
             when (value) {
                 is Boolean -> it[booleanPreferencesKey(key)] = value
@@ -64,20 +61,11 @@ object AppPrefsExtensions {
         }
     }
 
-    inline fun <reified T> Context.getPrefs(
-        key: String,
-        defaultValue: T,
-    ): Flow<T> {
-        return dataStore.data.map {
-            (it[getKey<T>(key)] ?: defaultValue) as T
-        }
+    inline fun <reified T> Context.getPrefs(key: String, defaultValue: T): Flow<T> {
+        return dataStore.data.map { (it[getKey<T>(key)] ?: defaultValue) as T }
     }
 
-    inline fun <reified T> Context.getPrefs(
-        key: String,
-    ): Flow<T?> {
-        return dataStore.data.map {
-            (it[getKey<T>(key)]) as T?
-        }
+    inline fun <reified T> Context.getPrefs(key: String): Flow<T?> {
+        return dataStore.data.map { (it[getKey<T>(key)]) as T? }
     }
 }

@@ -6,11 +6,8 @@ import io.github.raghavsatyadev.support.core.CoreViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class DashboardScreenViewModel
-@Inject
-constructor(
-    private val authUtil: FirebaseAuthUtil
-) : CoreViewModel() {
+class DashboardScreenViewModel @Inject constructor(private val authUtil: FirebaseAuthUtil) :
+    CoreViewModel() {
     fun isLoggedIn(): Boolean {
         return authUtil.isLoggedIn()
     }

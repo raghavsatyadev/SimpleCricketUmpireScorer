@@ -1,7 +1,4 @@
-@file:Suppress(
-    "MemberVisibilityCanBePrivate",
-    "unused"
-)
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
 package io.github.raghavsatyadev.support.extensions.ads
 
@@ -27,22 +24,21 @@ object AdExtensions {
             return
         }
         interstitialAd?.let {
-            it.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    onAdClosed()
-                    super.onAdDismissedFullScreenContent()
-                }
+            it.fullScreenContentCallback =
+                object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        onAdClosed()
+                        super.onAdDismissedFullScreenContent()
+                    }
 
-                override fun onAdFailedToShowFullScreenContent(p0: AdError) {
-                    onAdClosed()
-                    super.onAdFailedToShowFullScreenContent(p0)
+                    override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+                        onAdClosed()
+                        super.onAdFailedToShowFullScreenContent(p0)
+                    }
                 }
-            }
             it.show(this)
             loadInterstitialAd()
-        } ?: {
-            loadInterstitialAd()
-        }
+        } ?: { loadInterstitialAd() }
     }
 
     fun ComponentActivity.loadAds(adView: AdView) {
@@ -53,9 +49,7 @@ object AdExtensions {
     fun ComponentActivity.loadInterstitialAd() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                AdUtil.loadInterstitialAd(this@loadInterstitialAd) {
-                    interstitialAd = it
-                }
+                AdUtil.loadInterstitialAd(this@loadInterstitialAd) { interstitialAd = it }
             }
         }
     }
@@ -70,6 +64,7 @@ object AdExtensions {
             }
         }
     }
+
     // endregion
 
     // region Fragment

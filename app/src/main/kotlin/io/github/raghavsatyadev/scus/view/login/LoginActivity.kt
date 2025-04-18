@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scus.ui.login
+package io.github.raghavsatyadev.scus.view.login
 
 import android.content.Context
 import android.content.Intent
@@ -22,15 +22,9 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
     private lateinit var signInUtil: GoogleSignInUtil
 
     companion object {
-        fun getIntentObject(
-            context: Context,
-            bundle: Bundle = Bundle.EMPTY,
-        ): Intent = Intent(
-            context,
-            LoginActivity::class.java
-        ).apply { putExtras(bundle) }
+        fun getIntentObject(context: Context, bundle: Bundle = Bundle.EMPTY): Intent =
+            Intent(context, LoginActivity::class.java).apply { putExtras(bundle) }
     }
-
 
     override fun createReference(savedInstanceState: Bundle?) {
         signInUtil = GoogleSignInUtil(this)
@@ -39,50 +33,48 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
     private fun startSignIn() {
         lifecycleScope.launch {
             viewModel.signInWithGoogle(signInUtil)
-            viewModel
-                .getLoginEvent()
-                .collectLatest { value ->
-                    withContext(mainDispatcher) {
-                        when (value.status) {
-                            Resource.Status.LOADING -> {
-                                showProgressBar()
-                            }
+            viewModel.getLoginEvent().collectLatest { value ->
+                withContext(mainDispatcher) {
+                    when (value.status) {
+                        Resource.Status.LOADING -> {
+                            showProgressBar()
+                        }
 
-                            Resource.Status.SUCCESS -> {
-                                hideProgressBar()
-                                when (value.data) {
-                                    LoginState.SUCCESS -> {
-                                        setResult(RESULT_OK)
-                                        finish()
-                                    }
-
-                                    LoginState.USER_ALREADY_LOGGED_IN -> {
-                                        showUserAlreadyLoggedInDialog()
-                                    }
-
-                                    else -> {
-                                        errorDialog(R.string.warning_unknown_error)
-                                        setResult(RESULT_CANCELED)
-                                        finish()
-                                    }
+                        Resource.Status.SUCCESS -> {
+                            hideProgressBar()
+                            when (value.data) {
+                                LoginState.SUCCESS -> {
+                                    setResult(RESULT_OK)
+                                    finish()
                                 }
-                            }
 
-                            Resource.Status.ERROR -> {
-                                hideProgressBar()
-                                val errorDialog = errorDialog(R.string.warning_unknown_error)
-                                errorDialog?.setOnDismissListener { _ ->
+                                LoginState.USER_ALREADY_LOGGED_IN -> {
+                                    showUserAlreadyLoggedInDialog()
+                                }
+
+                                else -> {
+                                    errorDialog(R.string.warning_unknown_error)
                                     setResult(RESULT_CANCELED)
                                     finish()
                                 }
                             }
+                        }
 
-                            Resource.Status.EMPTY -> {
-                                hideProgressBar()
+                        Resource.Status.ERROR -> {
+                            hideProgressBar()
+                            val errorDialog = errorDialog(R.string.warning_unknown_error)
+                            errorDialog?.setOnDismissListener { _ ->
+                                setResult(RESULT_CANCELED)
+                                finish()
                             }
+                        }
+
+                        Resource.Status.EMPTY -> {
+                            hideProgressBar()
                         }
                     }
                 }
+            }
         }
     }
 
@@ -92,9 +84,7 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
             .setMessage(getAlreadyLoggedInText())
             .setPositiveButton(io.github.raghavsatyadev.scus.R.string.force_login) { dialog, _ ->
                 lifecycleScope.launch {
-                    withContext(mainDispatcher) {
-                        dialog.dismiss()
-                    }
+                    withContext(mainDispatcher) { dialog.dismiss() }
                     viewModel.updateUserTokens()
                 }
             }
@@ -118,9 +108,7 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
 
     override fun setListeners(isEnabled: Boolean) {
         if (isEnabled) {
-            binding.btnGoogleLogin.setOnClickListener {
-                startSignIn()
-            }
+            binding.btnGoogleLogin.setOnClickListener { startSignIn() }
         } else {
             binding.btnGoogleLogin.setOnClickListener(null)
         }
