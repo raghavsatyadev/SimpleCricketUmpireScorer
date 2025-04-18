@@ -29,9 +29,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
 
     if (isLoading) {
       Box(
-        modifier = Modifier
-          .fillMaxSize()
-          .background(Color.Black.copy(alpha = 0.3f)),
+        modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.3f)),
         contentAlignment = Alignment.Center,
       ) {
         CircularProgressIndicator()

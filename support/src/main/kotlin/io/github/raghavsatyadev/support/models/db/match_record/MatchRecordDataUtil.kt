@@ -15,8 +15,7 @@ import java.util.Date
 
 class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchRecordDao>() {
   companion object {
-    @Volatile
-    private var instance: MatchRecordDataUtil? = null
+    @Volatile private var instance: MatchRecordDataUtil? = null
 
     @Synchronized
     fun getInstance(): MatchRecordDataUtil {
@@ -60,7 +59,7 @@ class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchR
         newRecord.localUpdateDateTime = now
         val foundRecord = allOldRecords.find { newRecord.matchRecordId == it.matchRecordId }
         foundRecord?.let { newRecord.serverUpdateDateTime!! > foundRecord.localUpdateDateTime!! } ==
-                true
+          true
       }
 
     insertIgnore(newRecords)

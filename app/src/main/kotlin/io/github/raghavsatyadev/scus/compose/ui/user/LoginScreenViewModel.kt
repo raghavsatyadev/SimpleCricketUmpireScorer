@@ -87,8 +87,7 @@ constructor(
     var remoteUser: User? = null
     try {
       remoteUser = util.getUser(user.userID)
-    } catch (_: Exception) {
-    }
+    } catch (_: Exception) {}
     return if (remoteUser == null) {
       try {
         util.setUser(user)

@@ -32,10 +32,10 @@ class MigrationTest {
     // Open latest version of the database. Room will validate the schema
     // once all migrations execute.
     Room.databaseBuilder(
-      InstrumentationRegistry.getInstrumentation().targetContext,
-      AppDatabase::class.java,
-      testDB,
-    )
+        InstrumentationRegistry.getInstrumentation().targetContext,
+        AppDatabase::class.java,
+        testDB,
+      )
       .addMigrations(*allMigrations)
       .build()
       .apply { openHelper.writableDatabase.close() }

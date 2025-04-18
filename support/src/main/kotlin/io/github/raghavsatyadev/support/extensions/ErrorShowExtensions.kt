@@ -11,50 +11,49 @@ import com.google.android.material.snackbar.Snackbar
 import io.github.raghavsatyadev.support.R
 
 object ErrorShowExtensions {
-    // region SnackBar
-    fun Fragment.snackBar(message: String) {
-        Snackbar.make(requireContext(), requireView(), message, Snackbar.LENGTH_LONG).show()
-    }
+  // region SnackBar
+  fun Fragment.snackBar(message: String) {
+    Snackbar.make(requireContext(), requireView(), message, Snackbar.LENGTH_LONG).show()
+  }
 
-    fun ComponentActivity.snackBar(message: String) {
-        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show()
-    }
+  fun ComponentActivity.snackBar(message: String) {
+    Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show()
+  }
 
-    fun Fragment.snackBar(@StringRes message: Int) {
-        Snackbar.make(requireContext(), requireView(), getString(message), Snackbar.LENGTH_LONG)
-            .show()
-    }
+  fun Fragment.snackBar(@StringRes message: Int) {
+    Snackbar.make(requireContext(), requireView(), getString(message), Snackbar.LENGTH_LONG).show()
+  }
 
-    fun ComponentActivity.snackBar(@StringRes message: Int) {
-        Snackbar.make(findViewById(android.R.id.content), getString(message), Snackbar.LENGTH_LONG)
-            .show()
-    }
+  fun ComponentActivity.snackBar(@StringRes message: Int) {
+    Snackbar.make(findViewById(android.R.id.content), getString(message), Snackbar.LENGTH_LONG)
+      .show()
+  }
 
-    // endregion
+  // endregion
 
-    // region Error Dialog
-    fun Fragment.errorDialog(message: String): AlertDialog? {
-        return requireContext().errorDialogPrivate(message)
-    }
+  // region Error Dialog
+  fun Fragment.errorDialog(message: String): AlertDialog? {
+    return requireContext().errorDialogPrivate(message)
+  }
 
-    private fun Context.errorDialogPrivate(message: String): AlertDialog? {
-        return MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.error)
-            .setMessage(message)
-            .setNegativeButton(R.string.okay) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-            .show()
-    }
+  private fun Context.errorDialogPrivate(message: String): AlertDialog? {
+    return MaterialAlertDialogBuilder(this)
+      .setTitle(R.string.error)
+      .setMessage(message)
+      .setNegativeButton(R.string.okay) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+      .show()
+  }
 
-    fun Fragment.errorDialog(@StringRes message: Int): AlertDialog? {
-        return requireContext().errorDialogPrivate(getString(message))
-    }
+  fun Fragment.errorDialog(@StringRes message: Int): AlertDialog? {
+    return requireContext().errorDialogPrivate(getString(message))
+  }
 
-    fun ComponentActivity.errorDialog(message: String): AlertDialog? {
-        return errorDialogPrivate(message)
-    }
+  fun ComponentActivity.errorDialog(message: String): AlertDialog? {
+    return errorDialogPrivate(message)
+  }
 
-    fun ComponentActivity.errorDialog(@StringRes message: Int): AlertDialog? {
-        return errorDialogPrivate(getString(message))
-    }
-    // endregion
+  fun ComponentActivity.errorDialog(@StringRes message: Int): AlertDialog? {
+    return errorDialogPrivate(getString(message))
+  }
+  // endregion
 }

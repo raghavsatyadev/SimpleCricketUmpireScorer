@@ -18,127 +18,119 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LoginViewModel : CoreViewModel() {
-    private var loginEvent: MutableStateFlow<Resource<LoginState>> =
-        MutableStateFlow(Resource.empty())
+  private var loginEvent: MutableStateFlow<Resource<LoginState>> =
+    MutableStateFlow(Resource.empty())
 
-    fun getLoginEvent() = loginEvent.asSharedFlow()
+  fun getLoginEvent() = loginEvent.asSharedFlow()
 
-    fun signInWithGoogle(signInUtil: GoogleSignInUtil) {
-        viewModelScope.launch {
-            loginEvent.emit(Resource.loading())
-            withContext(ioDispatcher) {
-                signInUtil.startSignIn(
-                    onSuccess = { idToken -> signInWithFirebaseAuth(idToken) },
-                    onFailure = { exception ->
-                        AppLog.loge(false, kotlinFileName, "signIn", exception, Exception())
-                        viewModelScope.launch {
-                            loginEvent.emit(
-                                Resource.error(
-                                    CustomError(
-                                        ErrorCode.AUTH_FAILED,
-                                        exception
-                                    )
-                                )
-                            )
-                        }
-                    },
-                )
+  fun signInWithGoogle(signInUtil: GoogleSignInUtil) {
+    viewModelScope.launch {
+      loginEvent.emit(Resource.loading())
+      withContext(ioDispatcher) {
+        signInUtil.startSignIn(
+          onSuccess = { idToken -> signInWithFirebaseAuth(idToken) },
+          onFailure = { exception ->
+            AppLog.loge(false, kotlinFileName, "signIn", exception, Exception())
+            viewModelScope.launch {
+              loginEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, exception)))
             }
-        }
+          },
+        )
+      }
     }
+  }
 
-    fun signInWithFirebaseAuth(idToken: String) {
-        viewModelScope.launch {
-            withContext(ioDispatcher) {
-                val signInWithGoogle = FirebaseAuthUtil.getInstance().signInWithGoogle(idToken)
-                val user = signInWithGoogle.first
-                if (user != null) {
-                    try {
-                        loginWithFirestore(user)
-                    } catch (e: Exception) {
-                        AppLog.loge(false, kotlinFileName, "signIn", e, Exception())
-                        loginEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
-                    }
-                } else if (signInWithGoogle.second != null) {
-                    loginEvent.emit(Resource.error(signInWithGoogle.second!!))
-                } else {
-                    loginEvent.emit(Resource.error(null))
-                }
-            }
-        }
-    }
-
-    @Throws(Exception::class)
-    suspend fun loginWithFirestore(user: User) {
-        with(FireStoreUtil.getInstance()) {
-            try {
-                val validateLoginToken = validateLoginToken(this, user)
-                if (!validateLoginToken) {
-                    return
-                }
-            } catch (e: Exception) {
-                throw e
-            }
-            try {
-                initialize()
-                loginEvent.emit(Resource.success(LoginState.SUCCESS))
-            } catch (e: Exception) {
-                throw e
-            }
-        }
-    }
-
-    @Throws(Exception::class)
-    suspend fun validateLoginToken(util: FireStoreUtil, user: User): Boolean {
-        var remoteUser: User? = null
-        try {
-            remoteUser = util.getUser(user.userID)
-        } catch (_: Exception) {
-        }
-
-        if (remoteUser == null) {
-            try {
-                util.setUser(user)
-                return true
-            } catch (e: Exception) {
-                throw e
-            }
-        } else if (remoteUser.loginToken.isNullOrEmpty()) {
-            try {
-                util.updateUserLoginTokens()
-                return true
-            } catch (e: Exception) {
-                throw e
-            }
+  fun signInWithFirebaseAuth(idToken: String) {
+    viewModelScope.launch {
+      withContext(ioDispatcher) {
+        val signInWithGoogle = FirebaseAuthUtil.getInstance().signInWithGoogle(idToken)
+        val user = signInWithGoogle.first
+        if (user != null) {
+          try {
+            loginWithFirestore(user)
+          } catch (e: Exception) {
+            AppLog.loge(false, kotlinFileName, "signIn", e, Exception())
+            loginEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
+          }
+        } else if (signInWithGoogle.second != null) {
+          loginEvent.emit(Resource.error(signInWithGoogle.second!!))
         } else {
-            loginEvent.emit(Resource.success(LoginState.USER_ALREADY_LOGGED_IN))
-            return false
+          loginEvent.emit(Resource.error(null))
         }
+      }
     }
+  }
 
-    fun updateUserTokens() {
-        viewModelScope.launch {
-            loginEvent.emit(Resource.loading())
-            withContext(ioDispatcher) {
-                try {
-                    val storeUtil = FireStoreUtil.getInstance()
-                    storeUtil.updateUserLoginTokens()
-                    storeUtil.initialize()
-                    loginEvent.emit(Resource.success(LoginState.SUCCESS))
-                } catch (e: Exception) {
-                    AppLog.loge(false, kotlinFileName, "updateUserTokens", e, Exception())
-                    loginEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
-                }
-            }
+  @Throws(Exception::class)
+  suspend fun loginWithFirestore(user: User) {
+    with(FireStoreUtil.getInstance()) {
+      try {
+        val validateLoginToken = validateLoginToken(this, user)
+        if (!validateLoginToken) {
+          return
         }
+      } catch (e: Exception) {
+        throw e
+      }
+      try {
+        initialize()
+        loginEvent.emit(Resource.success(LoginState.SUCCESS))
+      } catch (e: Exception) {
+        throw e
+      }
     }
+  }
 
-    fun signOut(signInUtil: GoogleSignInUtil) {
-        viewModelScope.launch { withContext(ioDispatcher) { AppExtensions.signOut() } }
+  @Throws(Exception::class)
+  suspend fun validateLoginToken(util: FireStoreUtil, user: User): Boolean {
+    var remoteUser: User? = null
+    try {
+      remoteUser = util.getUser(user.userID)
+    } catch (_: Exception) {}
+
+    if (remoteUser == null) {
+      try {
+        util.setUser(user)
+        return true
+      } catch (e: Exception) {
+        throw e
+      }
+    } else if (remoteUser.loginToken.isNullOrEmpty()) {
+      try {
+        util.updateUserLoginTokens()
+        return true
+      } catch (e: Exception) {
+        throw e
+      }
+    } else {
+      loginEvent.emit(Resource.success(LoginState.USER_ALREADY_LOGGED_IN))
+      return false
     }
+  }
+
+  fun updateUserTokens() {
+    viewModelScope.launch {
+      loginEvent.emit(Resource.loading())
+      withContext(ioDispatcher) {
+        try {
+          val storeUtil = FireStoreUtil.getInstance()
+          storeUtil.updateUserLoginTokens()
+          storeUtil.initialize()
+          loginEvent.emit(Resource.success(LoginState.SUCCESS))
+        } catch (e: Exception) {
+          AppLog.loge(false, kotlinFileName, "updateUserTokens", e, Exception())
+          loginEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
+        }
+      }
+    }
+  }
+
+  fun signOut(signInUtil: GoogleSignInUtil) {
+    viewModelScope.launch { withContext(ioDispatcher) { AppExtensions.signOut() } }
+  }
 }
 
 enum class LoginState {
-    SUCCESS,
-    USER_ALREADY_LOGGED_IN,
+  SUCCESS,
+  USER_ALREADY_LOGGED_IN,
 }

@@ -19,106 +19,106 @@ import kotlinx.coroutines.withContext
 import java.util.Date
 
 class CreateMatchViewModel : CoreViewModel() {
-    private var createMatchRecordEvent: MutableStateFlow<Resource<MatchRecord>> =
-        MutableStateFlow(Resource.empty())
+  private var createMatchRecordEvent: MutableStateFlow<Resource<MatchRecord>> =
+    MutableStateFlow(Resource.empty())
 
-    fun getCreateMatchRecordEvent() = createMatchRecordEvent.asStateFlow()
+  fun getCreateMatchRecordEvent() = createMatchRecordEvent.asStateFlow()
 
-    @Throws(Exception::class)
-    fun validateMatchDetails(
-        context: Context,
-        currentUserId: String?,
-        matchLocation: String,
-        matchDate: String,
-        inningOver: String,
-        team1Name: String,
-        team2Name: String,
-    ): Boolean {
-        when {
-            currentUserId.isNullOrEmpty() -> {
-                throw Exception(context.getString(R.string.warning_please_login))
-            }
+  @Throws(Exception::class)
+  fun validateMatchDetails(
+    context: Context,
+    currentUserId: String?,
+    matchLocation: String,
+    matchDate: String,
+    inningOver: String,
+    team1Name: String,
+    team2Name: String,
+  ): Boolean {
+    when {
+      currentUserId.isNullOrEmpty() -> {
+        throw Exception(context.getString(R.string.warning_please_login))
+      }
 
-            matchLocation.isEmpty() -> {
-                throw Exception(context.getString(R.string.warning_match_location))
-            }
+      matchLocation.isEmpty() -> {
+        throw Exception(context.getString(R.string.warning_match_location))
+      }
 
-            matchDate.isEmpty() -> {
-                throw Exception(context.getString(R.string.warning_match_date_time))
-            }
+      matchDate.isEmpty() -> {
+        throw Exception(context.getString(R.string.warning_match_date_time))
+      }
 
-            inningOver.isEmpty() -> {
-                throw Exception(context.getString(R.string.warning_overs))
-            }
+      inningOver.isEmpty() -> {
+        throw Exception(context.getString(R.string.warning_overs))
+      }
 
-            team1Name.isEmpty() -> {
-                throw Exception(context.getString(R.string.warning_team_1_name))
-            }
+      team1Name.isEmpty() -> {
+        throw Exception(context.getString(R.string.warning_team_1_name))
+      }
 
-            team2Name.isEmpty() -> {
-                throw Exception(context.getString(R.string.warning_team_2_name))
-            }
+      team2Name.isEmpty() -> {
+        throw Exception(context.getString(R.string.warning_team_2_name))
+      }
 
-            else -> {
-                return true
-            }
-        }
+      else -> {
+        return true
+      }
     }
+  }
 
-    /**
-     * Create match
-     *
-     * @param matchLocation
-     * @param matchDateTime in milliseconds
-     * @param inningOvers
-     * @param team1Name
-     * @param team2Name
-     * @param didTeam1WinToss
-     * @param batFirstTeam1
-     */
-    fun createMatch(
-        context: Context,
-        currentUserId: String,
-        matchLocation: String,
-        matchDateTime: Long,
-        inningOvers: String,
-        team1Name: String,
-        team2Name: String,
-        didTeam1WinToss: Boolean,
-        batFirstTeam1: Boolean,
-    ) {
-        viewModelScope.launch {
-            withContext(ioDispatcher) {
-                createMatchRecordEvent.emit(Resource.loading())
-                try {
-                    val matchRecord =
-                        MatchRecord(
-                            location = matchLocation,
-                            startDateTime = matchDateTime,
-                            ballsPerInning = inningOvers.toInt() * 6,
-                            team1Detail = TeamDetail(teamName = team1Name),
-                            team2Detail = TeamDetail(teamName = team2Name),
-                            didTeam1WonToss = didTeam1WinToss,
-                            isTeam1BattingFirst = batFirstTeam1,
-                            localUpdateDateTime = Date(),
-                            serverUpdateDateTime = Date(),
-                            matchAdminID = currentUserId,
-                        )
-                    FireStoreUtil.getInstance().createMatchRecord(matchRecord)
+  /**
+   * Create match
+   *
+   * @param matchLocation
+   * @param matchDateTime in milliseconds
+   * @param inningOvers
+   * @param team1Name
+   * @param team2Name
+   * @param didTeam1WinToss
+   * @param batFirstTeam1
+   */
+  fun createMatch(
+    context: Context,
+    currentUserId: String,
+    matchLocation: String,
+    matchDateTime: Long,
+    inningOvers: String,
+    team1Name: String,
+    team2Name: String,
+    didTeam1WinToss: Boolean,
+    batFirstTeam1: Boolean,
+  ) {
+    viewModelScope.launch {
+      withContext(ioDispatcher) {
+        createMatchRecordEvent.emit(Resource.loading())
+        try {
+          val matchRecord =
+            MatchRecord(
+              location = matchLocation,
+              startDateTime = matchDateTime,
+              ballsPerInning = inningOvers.toInt() * 6,
+              team1Detail = TeamDetail(teamName = team1Name),
+              team2Detail = TeamDetail(teamName = team2Name),
+              didTeam1WonToss = didTeam1WinToss,
+              isTeam1BattingFirst = batFirstTeam1,
+              localUpdateDateTime = Date(),
+              serverUpdateDateTime = Date(),
+              matchAdminID = currentUserId,
+            )
+          FireStoreUtil.getInstance().createMatchRecord(matchRecord)
 
-                    createMatchRecordEvent.emit(Resource.success(matchRecord))
-                } catch (e: Exception) {
-                    AppLog.loge(false, kotlinFileName, "createMatch", e, Exception())
-                    createMatchRecordEvent.emit(
-                        Resource.error(
-                            CustomError(
-                                ErrorCode.UNKNOWN_ERROR,
-                                Exception(context.getString(R.string.warning_unknown_error)),
-                            )
-                        )
-                    )
-                }
-            }
+          createMatchRecordEvent.emit(Resource.success(matchRecord))
+        } catch (e: Exception) {
+          AppLog.loge(false, kotlinFileName, "createMatch", e, Exception())
+          createMatchRecordEvent.emit(
+            Resource.error(
+              CustomError(
+                ErrorCode.UNKNOWN_ERROR,
+                Exception(context.getString(R.string.warning_unknown_error)),
+              )
+            )
+          )
         }
+      }
     }
+  }
 }

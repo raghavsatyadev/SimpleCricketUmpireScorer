@@ -20,52 +20,52 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 object AppPrefsExtensions {
-    private val APP_PREFS_NAME: String = CoreApp.instance.getString(R.string.app_name)
+  private val APP_PREFS_NAME: String = CoreApp.instance.getString(R.string.app_name)
 
-    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(APP_PREFS_NAME)
+  val Context.dataStore: DataStore<Preferences> by preferencesDataStore(APP_PREFS_NAME)
 
-    suspend inline fun <T> Context.savePref(key: String, value: T) {
-        dataStore.edit {
-            when (value) {
-                is Boolean -> it[booleanPreferencesKey(key)] = value
-                is Int -> it[intPreferencesKey(key)] = value
-                is String -> it[stringPreferencesKey(key)] = value
-                is Float -> it[floatPreferencesKey(key)] = value
-                is Double -> it[doublePreferencesKey(key)] = value
-                is Long -> it[longPreferencesKey(key)] = value
-                else -> throw RuntimeException("Attempting to save non-supported preference")
-            }
-        }
+  suspend inline fun <T> Context.savePref(key: String, value: T) {
+    dataStore.edit {
+      when (value) {
+        is Boolean -> it[booleanPreferencesKey(key)] = value
+        is Int -> it[intPreferencesKey(key)] = value
+        is String -> it[stringPreferencesKey(key)] = value
+        is Float -> it[floatPreferencesKey(key)] = value
+        is Double -> it[doublePreferencesKey(key)] = value
+        is Long -> it[longPreferencesKey(key)] = value
+        else -> throw RuntimeException("Attempting to save non-supported preference")
+      }
     }
+  }
 
-    inline fun <reified T> getKey(key: String): Key<*> {
-        return when (T::class) {
-            Boolean::class -> booleanPreferencesKey(key)
-            Int::class -> intPreferencesKey(key)
-            String::class -> stringPreferencesKey(key)
-            Float::class -> floatPreferencesKey(key)
-            Double::class -> doublePreferencesKey(key)
-            Long::class -> longPreferencesKey(key)
-            else -> throw RuntimeException("Attempting to save non-supported preference")
-        }
+  inline fun <reified T> getKey(key: String): Key<*> {
+    return when (T::class) {
+      Boolean::class -> booleanPreferencesKey(key)
+      Int::class -> intPreferencesKey(key)
+      String::class -> stringPreferencesKey(key)
+      Float::class -> floatPreferencesKey(key)
+      Double::class -> doublePreferencesKey(key)
+      Long::class -> longPreferencesKey(key)
+      else -> throw RuntimeException("Attempting to save non-supported preference")
     }
+  }
 
-    suspend fun Context.deleteAllPrefs() {
-        dataStore.edit { it.clear() }
-    }
+  suspend fun Context.deleteAllPrefs() {
+    dataStore.edit { it.clear() }
+  }
 
-    suspend inline fun <reified T> Context.deletePref(key: String) {
-        dataStore.edit {
-            val keyType = getKey<T>(key)
-            it.remove(keyType)
-        }
+  suspend inline fun <reified T> Context.deletePref(key: String) {
+    dataStore.edit {
+      val keyType = getKey<T>(key)
+      it.remove(keyType)
     }
+  }
 
-    inline fun <reified T> Context.getPrefs(key: String, defaultValue: T): Flow<T> {
-        return dataStore.data.map { (it[getKey<T>(key)] ?: defaultValue) as T }
-    }
+  inline fun <reified T> Context.getPrefs(key: String, defaultValue: T): Flow<T> {
+    return dataStore.data.map { (it[getKey<T>(key)] ?: defaultValue) as T }
+  }
 
-    inline fun <reified T> Context.getPrefs(key: String): Flow<T?> {
-        return dataStore.data.map { (it[getKey<T>(key)]) as T? }
-    }
+  inline fun <reified T> Context.getPrefs(key: String): Flow<T?> {
+    return dataStore.data.map { (it[getKey<T>(key)]) as T? }
+  }
 }

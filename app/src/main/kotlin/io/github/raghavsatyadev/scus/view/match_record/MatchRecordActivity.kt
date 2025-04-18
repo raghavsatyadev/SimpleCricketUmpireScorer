@@ -27,185 +27,176 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
-    private val viewModel: MatchRecordViewModel by viewModels()
-    private var matchRecordID = ""
+  private val viewModel: MatchRecordViewModel by viewModels()
+  private var matchRecordID = ""
 
-    companion object {
-        private const val MATCH_RECORD = "match_record"
+  companion object {
+    private const val MATCH_RECORD = "match_record"
 
-        fun getIntentObject(context: Context, record: MatchRecord): Intent =
-            Intent(context, MatchRecordActivity::class.java).apply {
-                putExtra(
-                    MATCH_RECORD,
-                    record
-                )
-            }
-    }
+    fun getIntentObject(context: Context, record: MatchRecord): Intent =
+      Intent(context, MatchRecordActivity::class.java).apply { putExtra(MATCH_RECORD, record) }
+  }
 
-    override fun createReference(savedInstanceState: Bundle?) {
-        enableFullScreen()
+  override fun createReference(savedInstanceState: Bundle?) {
+    enableFullScreen()
 
-        setToolBarTitle(R.string.match_record_title)
+    setToolBarTitle(R.string.match_record_title)
 
-        resolveIntentForMatchRecord(intent)
+    resolveIntentForMatchRecord(intent)
 
-        setupOptionsMenus(
-            R.menu.match_record,
-            onMenuItemClickListener = {
-                when (it.itemId) {
-                    R.id.action_reset -> {
-                        showResetDialog()
-                    }
+    setupOptionsMenus(
+      R.menu.match_record,
+      onMenuItemClickListener = {
+        when (it.itemId) {
+          R.id.action_reset -> {
+            showResetDialog()
+          }
 
-                    else -> return@setupOptionsMenus false
-                }
-            },
-            menuPrepareListener = {},
-        )
-    }
-
-    private fun showResetDialog(): Boolean {
-        launch {
-            val uiDetails = viewModel.getMatchRecordEvent().first().data
-
-            uiDetails?.let {
-                MaterialAlertDialogBuilder(this@MatchRecordActivity)
-                    .setTitle(R.string.reset_match)
-                    .setMessage(
-                        if (it.isFirstInningComplete) {
-                            R.string.reset_full_match_message
-                        } else {
-                            R.string.reset_inning_message
-                        }
-                    )
-                    .setPositiveButton(R.string.reset_inning) { _, _ ->
-                        viewModel.reset(
-                            matchRecordID
-                        )
-                    }
-                    .setNeutralButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
-                    .apply {
-                        if (it.isFirstInningComplete) {
-                            setNegativeButton(R.string.reset_full) { _, _ ->
-                                viewModel.reset(matchRecordID, true)
-                            }
-                        }
-                    }
-                    .show()
-            }
+          else -> return@setupOptionsMenus false
         }
-        return true
-    }
+      },
+      menuPrepareListener = {},
+    )
+  }
 
-    override fun getToolBar() = binding.toolbar
+  private fun showResetDialog(): Boolean {
+    launch {
+      val uiDetails = viewModel.getMatchRecordEvent().first().data
 
-    private fun resolveIntentForMatchRecord(intent: Intent) {
-        val matchRecord = intent.getParcelExtra(MATCH_RECORD, MatchRecord::class)
-        matchRecordID = matchRecord?.matchRecordId ?: ""
-        if (matchRecord != null && matchRecordID != "") {
-            lifecycleScope.launch {
-                showMatchRecord(matchRecord.toBasicMatchUIDetails())
-                withContext(ioDispatcher) {
-                    viewModel.getMatchRecord(matchRecord)
-                    loadMatchRecord()
-                }
+      uiDetails?.let {
+        MaterialAlertDialogBuilder(this@MatchRecordActivity)
+          .setTitle(R.string.reset_match)
+          .setMessage(
+            if (it.isFirstInningComplete) {
+              R.string.reset_full_match_message
+            } else {
+              R.string.reset_inning_message
             }
+          )
+          .setPositiveButton(R.string.reset_inning) { _, _ -> viewModel.reset(matchRecordID) }
+          .setNeutralButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
+          .apply {
+            if (it.isFirstInningComplete) {
+              setNegativeButton(R.string.reset_full) { _, _ ->
+                viewModel.reset(matchRecordID, true)
+              }
+            }
+          }
+          .show()
+      }
+    }
+    return true
+  }
+
+  override fun getToolBar() = binding.toolbar
+
+  private fun resolveIntentForMatchRecord(intent: Intent) {
+    val matchRecord = intent.getParcelExtra(MATCH_RECORD, MatchRecord::class)
+    matchRecordID = matchRecord?.matchRecordId ?: ""
+    if (matchRecord != null && matchRecordID != "") {
+      lifecycleScope.launch {
+        showMatchRecord(matchRecord.toBasicMatchUIDetails())
+        withContext(ioDispatcher) {
+          viewModel.getMatchRecord(matchRecord)
+          loadMatchRecord()
+        }
+      }
+    } else {
+      finish()
+    }
+  }
+
+  private suspend fun loadMatchRecord() {
+    viewModel.getMatchRecordEvent().collectLatest { value ->
+      when (value.status) {
+        Resource.Status.SUCCESS -> {
+          val record = value.data ?: return@collectLatest
+          showMatchRecord(record)
+        }
+
+        else -> {
+          // Handle error
+        }
+      }
+    }
+  }
+
+  private suspend fun showMatchRecord(record: BasicMatchUIDetails) {
+    withContext(mainDispatcher) {
+      with(record) {
+        if (record.isMatchCompleted()) {
+          finish()
+          startMatchCompleteActivity()
         } else {
-            finish()
+          setToolBarTitle("${getString(R.string.team)} $currentTeamName")
+          if (record.isFirstInningComplete) {
+            binding.txtRrr.text = getString(R.string.rrr, currentRRR)
+            binding.txtRequiredRunsBalls.text =
+              getString(R.string.required_runs_balls, requiredRunsBalls)
+            binding.groupSecondInning.visible()
+            binding.groupFirstInning.gone()
+          } else {
+            binding.groupFirstInning.visible()
+            binding.groupSecondInning.gone()
+          }
+
+          binding.txtRunsWickets.text = currentRunsAndWickets
+          binding.txtOvers.text = currentOvers
+          binding.txtCrr.text = getString(R.string.crr, currentCRR)
         }
+      }
     }
+  }
 
-    private suspend fun loadMatchRecord() {
-        viewModel.getMatchRecordEvent().collectLatest { value ->
-            when (value.status) {
-                Resource.Status.SUCCESS -> {
-                    val record = value.data ?: return@collectLatest
-                    showMatchRecord(record)
-                }
+  private fun startMatchCompleteActivity() {
+    startActivity(MatchCompleteActivity.getIntentObject(this, matchRecordID))
+    finish()
+  }
 
-                else -> {
-                    // Handle error
-                }
-            }
-        }
+  override fun createBinding(savedInstanceState: Bundle?) =
+    ActivityMatchRecordBinding.inflate(layoutInflater)
+
+  override fun setListeners(isEnabled: Boolean) {
+    if (isEnabled) {
+      binding.btnAddRun.setOnClickListener { viewModel.setRun(matchRecordID, 1) }
+      binding.btnAddWicket.setOnClickListener { viewModel.setWicket(matchRecordID) }
+      binding.btnAddBall.setOnClickListener { viewModel.setBall(matchRecordID, 1) }
+      binding.btnEndInning.setOnClickListener { viewModel.endInning(matchRecordID) }
+      binding.btnMinusBall.setOnClickListener { viewModel.setBall(matchRecordID, 1, false) }
+      binding.btnMinusWicket.setOnClickListener { viewModel.setWicket(matchRecordID, false) }
+      binding.btnMinusRun.setOnClickListener { viewModel.setRun(matchRecordID, 1, false) }
+      binding.btnEndMatch.setOnClickListener { viewModel.endMatch(matchRecordID) }
+      binding.btnEditOvers.setOnClickListener { showEditOversDialog() }
+    } else {
+      binding.btnAddRun.setOnClickListener(null)
+      binding.btnAddWicket.setOnClickListener(null)
+      binding.btnAddBall.setOnClickListener(null)
+      binding.btnEndInning.setOnClickListener(null)
+      binding.btnMinusBall.setOnClickListener(null)
+      binding.btnMinusWicket.setOnClickListener(null)
+      binding.btnMinusRun.setOnClickListener(null)
+      binding.btnEndMatch.setOnClickListener(null)
+      binding.btnEditOvers.setOnClickListener(null)
     }
+  }
 
-    private suspend fun showMatchRecord(record: BasicMatchUIDetails) {
-        withContext(mainDispatcher) {
-            with(record) {
-                if (record.isMatchCompleted()) {
-                    finish()
-                    startMatchCompleteActivity()
-                } else {
-                    setToolBarTitle("${getString(R.string.team)} $currentTeamName")
-                    if (record.isFirstInningComplete) {
-                        binding.txtRrr.text = getString(R.string.rrr, currentRRR)
-                        binding.txtRequiredRunsBalls.text =
-                            getString(R.string.required_runs_balls, requiredRunsBalls)
-                        binding.groupSecondInning.visible()
-                        binding.groupFirstInning.gone()
-                    } else {
-                        binding.groupFirstInning.visible()
-                        binding.groupSecondInning.gone()
-                    }
+  private fun showEditOversDialog() {
+    // make the binding of dialog view
+    val dialogBinding = DialogEditTotalOversBinding.inflate(layoutInflater)
+    MaterialAlertDialogBuilder(this)
+      .setTitle(R.string.edit_total_overs)
+      .setView(dialogBinding.root)
+      .setPositiveButton(R.string.save) { dialog, _ ->
+        val editedOvers = dialogBinding.edTotalOvers.text.toString().toInt()
+        lifecycleScope.launch { viewModel.editTotalOvers(matchRecordID, editedOvers) }
+        dialog.dismiss()
+      }
+      .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
+      .show()
+    dialogBinding.edTotalOvers.setText(extractTotalOvers(binding.txtOvers.text.toString()))
+  }
 
-                    binding.txtRunsWickets.text = currentRunsAndWickets
-                    binding.txtOvers.text = currentOvers
-                    binding.txtCrr.text = getString(R.string.crr, currentCRR)
-                }
-            }
-        }
-    }
-
-    private fun startMatchCompleteActivity() {
-        startActivity(MatchCompleteActivity.getIntentObject(this, matchRecordID))
-        finish()
-    }
-
-    override fun createBinding(savedInstanceState: Bundle?) =
-        ActivityMatchRecordBinding.inflate(layoutInflater)
-
-    override fun setListeners(isEnabled: Boolean) {
-        if (isEnabled) {
-            binding.btnAddRun.setOnClickListener { viewModel.setRun(matchRecordID, 1) }
-            binding.btnAddWicket.setOnClickListener { viewModel.setWicket(matchRecordID) }
-            binding.btnAddBall.setOnClickListener { viewModel.setBall(matchRecordID, 1) }
-            binding.btnEndInning.setOnClickListener { viewModel.endInning(matchRecordID) }
-            binding.btnMinusBall.setOnClickListener { viewModel.setBall(matchRecordID, 1, false) }
-            binding.btnMinusWicket.setOnClickListener { viewModel.setWicket(matchRecordID, false) }
-            binding.btnMinusRun.setOnClickListener { viewModel.setRun(matchRecordID, 1, false) }
-            binding.btnEndMatch.setOnClickListener { viewModel.endMatch(matchRecordID) }
-            binding.btnEditOvers.setOnClickListener { showEditOversDialog() }
-        } else {
-            binding.btnAddRun.setOnClickListener(null)
-            binding.btnAddWicket.setOnClickListener(null)
-            binding.btnAddBall.setOnClickListener(null)
-            binding.btnEndInning.setOnClickListener(null)
-            binding.btnMinusBall.setOnClickListener(null)
-            binding.btnMinusWicket.setOnClickListener(null)
-            binding.btnMinusRun.setOnClickListener(null)
-            binding.btnEndMatch.setOnClickListener(null)
-            binding.btnEditOvers.setOnClickListener(null)
-        }
-    }
-
-    private fun showEditOversDialog() {
-        // make the binding of dialog view
-        val dialogBinding = DialogEditTotalOversBinding.inflate(layoutInflater)
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.edit_total_overs)
-            .setView(dialogBinding.root)
-            .setPositiveButton(R.string.save) { dialog, _ ->
-                val editedOvers = dialogBinding.edTotalOvers.text.toString().toInt()
-                lifecycleScope.launch { viewModel.editTotalOvers(matchRecordID, editedOvers) }
-                dialog.dismiss()
-            }
-            .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
-            .show()
-        dialogBinding.edTotalOvers.setText(extractTotalOvers(binding.txtOvers.text.toString()))
-    }
-
-    private fun extractTotalOvers(overString: String): String {
-        return overString.split("/")[1].toDouble().toInt().toString()
-    }
+  private fun extractTotalOvers(overString: String): String {
+    return overString.split("/")[1].toDouble().toInt().toString()
+  }
 }

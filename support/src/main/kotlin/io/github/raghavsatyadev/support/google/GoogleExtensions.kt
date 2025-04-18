@@ -8,62 +8,62 @@ import io.github.raghavsatyadev.support.extensions.ImplicitIntentExtensions.open
 import io.github.raghavsatyadev.support.extensions.Randoms
 
 object GoogleExtensions {
-    private const val REQUIRED_PLAY_SERVICES_VERSION: Int = 241427032
+  private const val REQUIRED_PLAY_SERVICES_VERSION: Int = 241427032
 
-    fun Activity.checkPlayServiceAndShowError(): Boolean {
-        val apiAvailability = GoogleApiAvailability.getInstance()
-        val (playServiceStatus, availabilityCode) = checkPlayServiceGetResultCode()
+  fun Activity.checkPlayServiceAndShowError(): Boolean {
+    val apiAvailability = GoogleApiAvailability.getInstance()
+    val (playServiceStatus, availabilityCode) = checkPlayServiceGetResultCode()
 
-        return when (playServiceStatus) {
-            PlayServiceStatus.AVAILABLE -> {
-                true
-            }
+    return when (playServiceStatus) {
+      PlayServiceStatus.AVAILABLE -> {
+        true
+      }
 
-            PlayServiceStatus.UPDATE_REQUIRED -> {
-                openPlayServiceUpdate()
-                finishAffinity()
-                false
-            }
+      PlayServiceStatus.UPDATE_REQUIRED -> {
+        openPlayServiceUpdate()
+        finishAffinity()
+        false
+      }
 
-            else -> {
-                val errorDialog =
-                    apiAvailability.getErrorDialog(this, availabilityCode, Randoms.randomInt())
+      else -> {
+        val errorDialog =
+          apiAvailability.getErrorDialog(this, availabilityCode, Randoms.randomInt())
 
-                if (errorDialog != null) {
-                    errorDialog.setOnDismissListener { finishAffinity() }
-                    errorDialog.show()
-                } else {
-                    finishAffinity()
-                }
-                false
-            }
+        if (errorDialog != null) {
+          errorDialog.setOnDismissListener { finishAffinity() }
+          errorDialog.show()
+        } else {
+          finishAffinity()
         }
+        false
+      }
     }
+  }
 
-    private fun Context.checkPlayServiceGetResultCode(): Pair<PlayServiceStatus, Int> {
-        val apiAvailability = GoogleApiAvailability.getInstance()
-        val isAvailable = apiAvailability.isGooglePlayServicesAvailable(this)
-        val playServicesVersion = apiAvailability.getApkVersion(this)
+  private fun Context.checkPlayServiceGetResultCode(): Pair<PlayServiceStatus, Int> {
+    val apiAvailability = GoogleApiAvailability.getInstance()
+    val isAvailable = apiAvailability.isGooglePlayServicesAvailable(this)
+    val playServicesVersion = apiAvailability.getApkVersion(this)
 
-        return if (isAvailable == ConnectionResult.SUCCESS) {
-            if (playServicesVersion >= REQUIRED_PLAY_SERVICES_VERSION) {
-                PlayServiceStatus.AVAILABLE to ConnectionResult.SUCCESS
-            } else PlayServiceStatus.UPDATE_REQUIRED to ConnectionResult.SUCCESS
-        } else PlayServiceStatus.NOT_AVAILABLE to isAvailable
-    }
+    return if (isAvailable == ConnectionResult.SUCCESS) {
+      if (playServicesVersion >= REQUIRED_PLAY_SERVICES_VERSION) {
+        PlayServiceStatus.AVAILABLE to ConnectionResult.SUCCESS
+      } else PlayServiceStatus.UPDATE_REQUIRED to ConnectionResult.SUCCESS
+    } else PlayServiceStatus.NOT_AVAILABLE to isAvailable
+  }
 
-    enum class PlayServiceStatus {
-        AVAILABLE,
-        NOT_AVAILABLE,
-        UPDATE_REQUIRED,
-    }
+  enum class PlayServiceStatus {
+    AVAILABLE,
+    NOT_AVAILABLE,
+    UPDATE_REQUIRED,
+  }
 
-    fun Context.checkPlayServiceAvailability(): Boolean {
-        val apiAvailability = GoogleApiAvailability.getInstance()
-        val isAvailable = apiAvailability.isGooglePlayServicesAvailable(this)
-        val playServicesVersion = apiAvailability.getApkVersion(this)
+  fun Context.checkPlayServiceAvailability(): Boolean {
+    val apiAvailability = GoogleApiAvailability.getInstance()
+    val isAvailable = apiAvailability.isGooglePlayServicesAvailable(this)
+    val playServicesVersion = apiAvailability.getApkVersion(this)
 
-        return isAvailable == ConnectionResult.SUCCESS &&
-                playServicesVersion >= REQUIRED_PLAY_SERVICES_VERSION
-    }
+    return isAvailable == ConnectionResult.SUCCESS &&
+      playServicesVersion >= REQUIRED_PLAY_SERVICES_VERSION
+  }
 }
