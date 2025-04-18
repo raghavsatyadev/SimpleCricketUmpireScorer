@@ -7,26 +7,26 @@ import kotlinx.serialization.modules.contextual
 
 @Suppress("unused")
 object SerializationExtensions {
-    @OptIn(ExperimentalSerializationApi::class)
-    val kotlinJsonSerializer = Json {
-        ignoreUnknownKeys = true
-        serializersModule = SerializersModule {
-            contextual(ExceptionSerializer)
-            contextual(DynamicLookupSerializer)
-            contextual(TimeStampSerializer)
-            contextual(DateSerializer)
-            contextual(InstantSerializer)
-            contextual(HashMapSerializer)
-            contextual(ArrayListSerializer)
-        }
-        prettyPrint = true
+  @OptIn(ExperimentalSerializationApi::class)
+  val kotlinJsonSerializer = Json {
+    ignoreUnknownKeys = true
+    serializersModule = SerializersModule {
+      contextual(ExceptionSerializer)
+      contextual(DynamicLookupSerializer)
+      contextual(TimeStampSerializer)
+      contextual(DateSerializer)
+      contextual(InstantSerializer)
+      contextual(HashMapSerializer)
+      contextual(ArrayListSerializer)
     }
+    prettyPrint = true
+  }
 
-    inline fun <reified T> String.toKotlinObject(): T {
-        return kotlinJsonSerializer.decodeFromString(this)
-    }
+  inline fun <reified T> String.toKotlinObject(): T {
+    return kotlinJsonSerializer.decodeFromString(this)
+  }
 
-    inline fun <reified T> T.toJsonString(): String {
-        return kotlinJsonSerializer.encodeToString(this)
-    }
+  inline fun <reified T> T.toJsonString(): String {
+    return kotlinJsonSerializer.encodeToString(this)
+  }
 }

@@ -8,19 +8,19 @@ import kotlin.reflect.KClass
 
 @Suppress("unused")
 object ParcelSerialExtensions {
-    @Suppress("DEPRECATION")
-    inline fun <reified T : Parcelable> Intent.getParcelExtra(key: String, kClass: KClass<T>) =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            getParcelableExtra(key, kClass.java)
+  @Suppress("DEPRECATION")
+  inline fun <reified T : Parcelable> Intent.getParcelExtra(key: String, kClass: KClass<T>) =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      getParcelableExtra(key, kClass.java)
     } else {
-            getParcelableExtra(key) as? T
+      getParcelableExtra(key) as? T
     }
 
-    @Suppress("DEPRECATION")
-    inline fun <reified T : Serializable> Intent.getSerialExtra(key: String, kClass: KClass<T>) =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            getSerializableExtra(key, kClass.java)
+  @Suppress("DEPRECATION")
+  inline fun <reified T : Serializable> Intent.getSerialExtra(key: String, kClass: KClass<T>) =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      getSerializableExtra(key, kClass.java)
     } else {
-            getSerializableExtra(key) as? T
+      getSerializableExtra(key) as? T
     }
 }

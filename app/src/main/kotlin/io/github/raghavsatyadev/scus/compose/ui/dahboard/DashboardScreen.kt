@@ -10,14 +10,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun DashboardScreen(
-    viewModel: DashboardScreenViewModel = hiltViewModel(),
-    onNavigateToLogin: () -> Unit,
+  viewModel: DashboardScreenViewModel = hiltViewModel(),
+  onNavigateToLogin: () -> Unit,
 ) {
-    if (!viewModel.isLoggedIn()) {
-        onNavigateToLogin()
-    } else {
-        Scaffold(modifier = Modifier) { innerPadding ->
-            Column(modifier = Modifier.padding(innerPadding)) { Text(text = "Dashboard") }
-        }
+  if (!viewModel.isLoggedIn()) {
+    onNavigateToLogin()
+  } else {
+    Scaffold(modifier = Modifier) { innerPadding ->
+      Column(modifier = Modifier.padding(innerPadding)) { Text(text = "Dashboard") }
     }
+  }
 }

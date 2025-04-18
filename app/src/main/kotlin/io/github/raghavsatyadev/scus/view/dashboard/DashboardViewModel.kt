@@ -16,40 +16,33 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class DashboardViewModel : CoreViewModel() {
-    private var getMatchRecordsEvent: MutableStateFlow<Resource<List<MatchRecord>>> =
-        MutableStateFlow(Resource.empty())
+  private var getMatchRecordsEvent: MutableStateFlow<Resource<List<MatchRecord>>> =
+    MutableStateFlow(Resource.empty())
 
-    fun getMatchRecordsEvent() = getMatchRecordsEvent.asSharedFlow()
+  fun getMatchRecordsEvent() = getMatchRecordsEvent.asSharedFlow()
 
-    fun loadMatchRecords() {
-        viewModelScope.launch {
-            withContext(ioDispatcher) {
-                try {
-                    MatchRecordDataUtil.getInstance()
-                        .getAllLive("`${FieldKeys.START_DATE_TIME}` DESC")
-                        .collectLatest { getMatchRecordsEvent.emit(Resource.success(it)) }
-                } catch (e: Exception) {
-                    getMatchRecordsEvent.emit(
-                        Resource.error(
-                            CustomError(
-                                ErrorCode.UNKNOWN_ERROR,
-                                e
-                            )
-                        )
-                    )
-                }
-            }
+  fun loadMatchRecords() {
+    viewModelScope.launch {
+      withContext(ioDispatcher) {
+        try {
+          MatchRecordDataUtil.getInstance()
+            .getAllLive("`${FieldKeys.START_DATE_TIME}` DESC")
+            .collectLatest { getMatchRecordsEvent.emit(Resource.success(it)) }
+        } catch (e: Exception) {
+          getMatchRecordsEvent.emit(Resource.error(CustomError(ErrorCode.UNKNOWN_ERROR, e)))
         }
+      }
     }
+  }
 
-    fun deleteMatchRecord(record: MatchRecord) {
-        viewModelScope.launch {
-            withContext(ioDispatcher) {
-                val isDeleted = FireStoreUtil.getInstance().deleteMatchRecord(record.matchRecordId)
-                if (isDeleted) {
-                    MatchRecordDataUtil.getInstance().delete(record)
-                }
-            }
+  fun deleteMatchRecord(record: MatchRecord) {
+    viewModelScope.launch {
+      withContext(ioDispatcher) {
+        val isDeleted = FireStoreUtil.getInstance().deleteMatchRecord(record.matchRecordId)
+        if (isDeleted) {
+          MatchRecordDataUtil.getInstance().delete(record)
         }
+      }
     }
+  }
 }

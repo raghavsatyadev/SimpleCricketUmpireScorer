@@ -13,16 +13,16 @@ import kotlinx.serialization.Serializable
 @Parcelize
 @Serializable
 data class User(
-    var name: String,
-    var email: String,
-    @SerialName(FieldKeys.USER_ID)
-    @get:PropertyName(FieldKeys.USER_ID)
-    @set:PropertyName(FieldKeys.USER_ID)
-    @ColumnInfo(FieldKeys.USER_ID)
-    var userID: String,
-    @SerialName(FieldKeys.LOGIN_TOKEN)
-    @get:PropertyName(FieldKeys.LOGIN_TOKEN)
-    @set:PropertyName(FieldKeys.LOGIN_TOKEN)
-    @ColumnInfo(FieldKeys.LOGIN_TOKEN)
-    var loginToken: String? = null,
+  var name: String,
+  var email: String,
+  @SerialName(FieldKeys.USER_ID)
+  @get:PropertyName(FieldKeys.USER_ID)
+  @set:PropertyName(FieldKeys.USER_ID)
+  @ColumnInfo(FieldKeys.USER_ID)
+  var userID: String,
+  @SerialName(FieldKeys.LOGIN_TOKEN)
+  @get:PropertyName(FieldKeys.LOGIN_TOKEN)
+  @set:PropertyName(FieldKeys.LOGIN_TOKEN)
+  @ColumnInfo(FieldKeys.LOGIN_TOKEN)
+  var loginToken: String? = null,
 ) : Parcelable

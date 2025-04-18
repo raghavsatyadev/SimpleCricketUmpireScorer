@@ -14,42 +14,42 @@ import androidx.fragment.app.Fragment
 
 @Suppress("unused")
 object ActivityResultExtensions {
-    fun ComponentActivity.registerActivityForResult(
-        listener: ActivityResultListener
-    ): ActivityResultLauncher<Intent> {
-        return registerForActivityResult(StartActivityForResult()) { result: ActivityResult ->
-            listener.onResult(ResultType.getEnumByResultIndex(result.resultCode), result.data)
-        }
+  fun ComponentActivity.registerActivityForResult(
+    listener: ActivityResultListener
+  ): ActivityResultLauncher<Intent> {
+    return registerForActivityResult(StartActivityForResult()) { result: ActivityResult ->
+      listener.onResult(ResultType.getEnumByResultIndex(result.resultCode), result.data)
     }
+  }
 
-    fun ComponentActivity.registerActivityForResultSender(
-        listener: ActivityResultListener
-    ): ActivityResultLauncher<IntentSenderRequest> {
-        return registerForActivityResult(StartIntentSenderForResult()) { result: ActivityResult ->
-            listener.onResult(ResultType.getEnumByResultIndex(result.resultCode), result.data)
-        }
+  fun ComponentActivity.registerActivityForResultSender(
+    listener: ActivityResultListener
+  ): ActivityResultLauncher<IntentSenderRequest> {
+    return registerForActivityResult(StartIntentSenderForResult()) { result: ActivityResult ->
+      listener.onResult(ResultType.getEnumByResultIndex(result.resultCode), result.data)
     }
+  }
 
-    fun ActivityResultLauncher<IntentSenderRequest>.launchSender(
-        intent: IntentSender,
-        optionsCompat: ActivityOptionsCompat? = null,
-    ) {
-        launch(Builder(intent).build(), optionsCompat)
-    }
+  fun ActivityResultLauncher<IntentSenderRequest>.launchSender(
+    intent: IntentSender,
+    optionsCompat: ActivityOptionsCompat? = null,
+  ) {
+    launch(Builder(intent).build(), optionsCompat)
+  }
 
-    fun Fragment.registerActivityForResult(
-        listener: ActivityResultListener
-    ): ActivityResultLauncher<Intent> {
-        return registerForActivityResult(StartActivityForResult()) { result: ActivityResult ->
-            listener.onResult(ResultType.getEnumByResultIndex(result.resultCode), result.data)
-        }
+  fun Fragment.registerActivityForResult(
+    listener: ActivityResultListener
+  ): ActivityResultLauncher<Intent> {
+    return registerForActivityResult(StartActivityForResult()) { result: ActivityResult ->
+      listener.onResult(ResultType.getEnumByResultIndex(result.resultCode), result.data)
     }
+  }
 
-    fun Fragment.registerActivityForResultSender(
-        listener: ActivityResultListener
-    ): ActivityResultLauncher<IntentSenderRequest> {
-        return registerForActivityResult(StartIntentSenderForResult()) { result: ActivityResult ->
-            listener.onResult(ResultType.getEnumByResultIndex(result.resultCode), result.data)
-        }
+  fun Fragment.registerActivityForResultSender(
+    listener: ActivityResultListener
+  ): ActivityResultLauncher<IntentSenderRequest> {
+    return registerForActivityResult(StartIntentSenderForResult()) { result: ActivityResult ->
+      listener.onResult(ResultType.getEnumByResultIndex(result.resultCode), result.data)
     }
+  }
 }

@@ -31,234 +31,228 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
-    companion object {
-        @Volatile
-        private var instance: FireStoreUtil? = null
+  companion object {
+    @Volatile private var instance: FireStoreUtil? = null
 
-        @Synchronized
-        fun create(firebaseApp: FirebaseApp) {
-            FireStoreUtil(firebaseApp).also { instance = it }
-            CoreApp.instance.launch { getInstance().initialize(true) }
-        }
-
-        @Synchronized
-        fun getInstance(): FireStoreUtil {
-            return instance
-                ?: throw IllegalStateException("Initialize in Application class using create()")
-        }
+    @Synchronized
+    fun create(firebaseApp: FirebaseApp) {
+      FireStoreUtil(firebaseApp).also { instance = it }
+      CoreApp.instance.launch { getInstance().initialize(true) }
     }
 
-    private val db by lazy {
-        Firebase.firestore(firebaseApp).apply {
-            val settings = firestoreSettings {
-                setLocalCacheSettings(memoryCacheSettings {})
-                setLocalCacheSettings(persistentCacheSettings {})
-            }
-            firestoreSettings = settings
-            persistentCacheIndexManager?.apply { enableIndexAutoCreation() }
-                ?: println("indexManager is null")
-        }
+    @Synchronized
+    fun getInstance(): FireStoreUtil {
+      return instance
+        ?: throw IllegalStateException("Initialize in Application class using create()")
     }
+  }
 
-    suspend fun initialize(checkUserToken: Boolean = false) {
-        try {
-            val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
-            if (currentUserId != null) {
-                if (checkUserToken) {
-                    val user = getUser(currentUserId)
-                    val userToken = AppPrefsUtil.getUserToken().firstOrNull()
-                    if (user.loginToken != userToken) {
-                        AppExtensions.signOut()
-                        CoreApp.instance.restartApp()
-                        return
-                    }
-                }
-                val matchRecordTask =
-                    db
-                        .collection(FirebaseConstants.Collections.MATCH_RECORD)
-                        .where(
-                            Filter.or(
-                                Filter.equalTo(FieldKeys.MATCH_ADMIN_ID, currentUserId),
-                                Filter.arrayContains(
-                                    FieldKeys.MATCH_SHARED_USER_IDS,
-                                    currentUserId
-                                ),
-                            )
-                        )
-                        .get()
-                with(matchRecordTask) {
-                    await()
-                    if (isSuccessful) {
-                        val records = result.toDataObjects<MatchRecord>()
-                        MatchRecordDataUtil.getInstance().upsert(records)
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            AppLog.loge(false, kotlinFileName, "initialize", e, Exception())
-        }
+  private val db by lazy {
+    Firebase.firestore(firebaseApp).apply {
+      val settings = firestoreSettings {
+        setLocalCacheSettings(memoryCacheSettings {})
+        setLocalCacheSettings(persistentCacheSettings {})
+      }
+      firestoreSettings = settings
+      persistentCacheIndexManager?.apply { enableIndexAutoCreation() }
+        ?: println("indexManager is null")
     }
+  }
 
-    // region User
-    suspend fun setUser(user: User): User {
-        val generateRandomNonce = AppExtensions.generateRandomNonce()
-        user.loginToken = generateRandomNonce
-        val task = db.collection(FirebaseConstants.Collections.USER).document(user.userID).set(user)
-
-        with(task) {
-            await()
-            if (isSuccessful) {
-                AppPrefsUtil.saveUserToken(generateRandomNonce)
-                return user
-            } else {
-                throw exception ?: Exception("Unknown Exception")
-            }
+  suspend fun initialize(checkUserToken: Boolean = false) {
+    try {
+      val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
+      if (currentUserId != null) {
+        if (checkUserToken) {
+          val user = getUser(currentUserId)
+          val userToken = AppPrefsUtil.getUserToken().firstOrNull()
+          if (user.loginToken != userToken) {
+            AppExtensions.signOut()
+            CoreApp.instance.restartApp()
+            return
+          }
         }
-    }
-
-    @Throws(Exception::class)
-    suspend fun updateUserLoginTokens(): Boolean {
-        val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
-        currentUserId?.let {
-            val generateRandomNonce = AppExtensions.generateRandomNonce()
-            val task =
-                db
-                    .collection(FirebaseConstants.Collections.USER)
-                    .document(it)
-                    .update(FieldKeys.LOGIN_TOKEN, generateRandomNonce)
-            task.await()
-            val successful = task.isSuccessful
-            if (successful) AppPrefsUtil.saveUserToken(generateRandomNonce)
-            return successful
+        val matchRecordTask =
+          db
+            .collection(FirebaseConstants.Collections.MATCH_RECORD)
+            .where(
+              Filter.or(
+                Filter.equalTo(FieldKeys.MATCH_ADMIN_ID, currentUserId),
+                Filter.arrayContains(FieldKeys.MATCH_SHARED_USER_IDS, currentUserId),
+              )
+            )
+            .get()
+        with(matchRecordTask) {
+          await()
+          if (isSuccessful) {
+            val records = result.toDataObjects<MatchRecord>()
+            MatchRecordDataUtil.getInstance().upsert(records)
+          }
         }
-        return false
+      }
+    } catch (e: Exception) {
+      AppLog.loge(false, kotlinFileName, "initialize", e, Exception())
     }
+  }
 
-    @Throws(Exception::class)
-    suspend fun signOutUser(): Boolean {
-        val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
-        currentUserId?.let {
-            val task =
-                db
-                    .collection(FirebaseConstants.Collections.USER)
-                    .document(it)
-                    .update(FieldKeys.LOGIN_TOKEN, null)
-            task.await()
-            return task.isSuccessful
+  // region User
+  suspend fun setUser(user: User): User {
+    val generateRandomNonce = AppExtensions.generateRandomNonce()
+    user.loginToken = generateRandomNonce
+    val task = db.collection(FirebaseConstants.Collections.USER).document(user.userID).set(user)
+
+    with(task) {
+      await()
+      if (isSuccessful) {
+        AppPrefsUtil.saveUserToken(generateRandomNonce)
+        return user
+      } else {
+        throw exception ?: Exception("Unknown Exception")
+      }
+    }
+  }
+
+  @Throws(Exception::class)
+  suspend fun updateUserLoginTokens(): Boolean {
+    val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
+    currentUserId?.let {
+      val generateRandomNonce = AppExtensions.generateRandomNonce()
+      val task =
+        db
+          .collection(FirebaseConstants.Collections.USER)
+          .document(it)
+          .update(FieldKeys.LOGIN_TOKEN, generateRandomNonce)
+      task.await()
+      val successful = task.isSuccessful
+      if (successful) AppPrefsUtil.saveUserToken(generateRandomNonce)
+      return successful
+    }
+    return false
+  }
+
+  @Throws(Exception::class)
+  suspend fun signOutUser(): Boolean {
+    val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
+    currentUserId?.let {
+      val task =
+        db
+          .collection(FirebaseConstants.Collections.USER)
+          .document(it)
+          .update(FieldKeys.LOGIN_TOKEN, null)
+      task.await()
+      return task.isSuccessful
+    }
+    return false
+  }
+
+  suspend fun getUser(id: String): User {
+    val task = db.collection(FirebaseConstants.Collections.USER).document(id).get()
+    with(task) {
+      await()
+      if (isSuccessful) {
+        return result.toDataObject()
+      } else {
+        throw exception ?: Exception("Unknown Exception")
+      }
+    }
+  }
+
+  // endregion
+
+  // region MatchRecord
+  suspend fun createMatchRecord(matchRecord: MatchRecord): MatchRecord {
+    val document = db.collection(FirebaseConstants.Collections.MATCH_RECORD).document()
+    matchRecord.matchRecordId = document.id
+    val task =
+      db.runTransaction {
+        it[document] = matchRecord
+        it.update(document, SERVER_UPDATE_DATE_TIME, FieldValue.serverTimestamp())
+      }
+
+    with(task) {
+      await()
+      if (!isSuccessful) {
+        throw exception ?: Exception("Unknown Exception")
+      } else {
+        val readTask = document.get()
+        readTask.await()
+        if (readTask.isSuccessful) {
+          try {
+            val record: MatchRecord = readTask.result.toDataObject<MatchRecord>()
+            record.localUpdateDateTime = record.serverUpdateDateTime
+            MatchRecordDataUtil.getInstance().insertIgnore(record)
+            return record
+          } catch (e: Exception) {
+            AppLog.loge(false, kotlinFileName, "setMatchRecord", e, Exception())
+            throw e
+          }
         }
-        return false
+        throw Exception("Unknown Exception")
+      }
     }
+  }
 
-    suspend fun getUser(id: String): User {
-        val task = db.collection(FirebaseConstants.Collections.USER).document(id).get()
-        with(task) {
-            await()
-            if (isSuccessful) {
-                return result.toDataObject()
-            } else {
-                throw exception ?: Exception("Unknown Exception")
-            }
+  suspend fun updateMatchRecords(matchRecords: List<MatchRecord>): Boolean {
+    val task =
+      db.runTransaction {
+        matchRecords.forEachParallel { record ->
+          val document =
+            db.collection(FirebaseConstants.Collections.MATCH_RECORD).document(record.matchRecordId)
+          it[document] = record
+          it.update(document, record.toMap())
         }
+      }
+    with(task) {
+      await()
+      if (!isSuccessful) {
+        throw exception ?: Exception("Unknown Exception")
+      }
+      return true
     }
+  }
 
-    // endregion
+  suspend fun updateMatchRecord(matchRecord: MatchRecord): Boolean {
+    val document = db.collection(FirebaseConstants.Collections.MATCH_RECORD).document()
+    matchRecord.matchRecordId = document.id
+    val task = document.update(SERVER_UPDATE_DATE_TIME, FieldValue.serverTimestamp())
 
-    // region MatchRecord
-    suspend fun createMatchRecord(matchRecord: MatchRecord): MatchRecord {
-        val document = db.collection(FirebaseConstants.Collections.MATCH_RECORD).document()
-        matchRecord.matchRecordId = document.id
-        val task =
-            db.runTransaction {
-                it[document] = matchRecord
-                it.update(document, SERVER_UPDATE_DATE_TIME, FieldValue.serverTimestamp())
-            }
-
-        with(task) {
-            await()
-            if (!isSuccessful) {
-                throw exception ?: Exception("Unknown Exception")
-            } else {
-                val readTask = document.get()
-                readTask.await()
-                if (readTask.isSuccessful) {
-                    try {
-                        val record: MatchRecord = readTask.result.toDataObject<MatchRecord>()
-                        record.localUpdateDateTime = record.serverUpdateDateTime
-                        MatchRecordDataUtil.getInstance().insertIgnore(record)
-                        return record
-                    } catch (e: Exception) {
-                        AppLog.loge(false, kotlinFileName, "setMatchRecord", e, Exception())
-                        throw e
-                    }
-                }
-                throw Exception("Unknown Exception")
-            }
-        }
-    }
-
-    suspend fun updateMatchRecords(matchRecords: List<MatchRecord>): Boolean {
-        val task =
-            db.runTransaction {
-                matchRecords.forEachParallel { record ->
-                    val document =
-                        db.collection(FirebaseConstants.Collections.MATCH_RECORD)
-                            .document(record.matchRecordId)
-                    it[document] = record
-                    it.update(document, record.toMap())
-                }
-            }
-        with(task) {
-            await()
-            if (!isSuccessful) {
-                throw exception ?: Exception("Unknown Exception")
-            }
+    with(task) {
+      await()
+      if (!isSuccessful) {
+        throw exception ?: Exception("Unknown Exception")
+      } else {
+        val readTask = document.get()
+        readTask.await()
+        if (readTask.isSuccessful) {
+          try {
+            val record: MatchRecord = readTask.result.toDataObject<MatchRecord>()
+            MatchRecordDataUtil.getInstance()
+              .updateServerTime(record.matchRecordId, record.serverUpdateDateTime!!)
             return true
+          } catch (e: Exception) {
+            AppLog.loge(false, kotlinFileName, "setMatchRecord", e, Exception())
+            throw e
+          }
         }
+        throw Exception("Unknown Exception")
+      }
     }
+  }
 
-    suspend fun updateMatchRecord(matchRecord: MatchRecord): Boolean {
-        val document = db.collection(FirebaseConstants.Collections.MATCH_RECORD).document()
-        matchRecord.matchRecordId = document.id
-        val task = document.update(SERVER_UPDATE_DATE_TIME, FieldValue.serverTimestamp())
-
-        with(task) {
-            await()
-            if (!isSuccessful) {
-                throw exception ?: Exception("Unknown Exception")
-            } else {
-                val readTask = document.get()
-                readTask.await()
-                if (readTask.isSuccessful) {
-                    try {
-                        val record: MatchRecord = readTask.result.toDataObject<MatchRecord>()
-                        MatchRecordDataUtil.getInstance()
-                            .updateServerTime(record.matchRecordId, record.serverUpdateDateTime!!)
-                        return true
-                    } catch (e: Exception) {
-                        AppLog.loge(false, kotlinFileName, "setMatchRecord", e, Exception())
-                        throw e
-                    }
-                }
-                throw Exception("Unknown Exception")
-            }
-        }
+  suspend fun deleteMatchRecord(matchRecordId: String): Boolean {
+    val task =
+      db.collection(FirebaseConstants.Collections.MATCH_RECORD).document(matchRecordId).delete()
+    with(task) {
+      await()
+      return isSuccessful
     }
+  }
 
-    suspend fun deleteMatchRecord(matchRecordId: String): Boolean {
-        val task =
-            db.collection(FirebaseConstants.Collections.MATCH_RECORD).document(matchRecordId)
-                .delete()
-        with(task) {
-            await()
-            return isSuccessful
-        }
-    }
+  // endregion
 
-    // endregion
+  private inline fun <reified T> DocumentSnapshot.toDataObject(): T =
+    data.toJsonString().toKotlinObject()
 
-    private inline fun <reified T> DocumentSnapshot.toDataObject(): T =
-        data.toJsonString().toKotlinObject()
-
-    private inline fun <reified T> QuerySnapshot.toDataObjects(): List<T> =
-        documents.map { it.toDataObject() }
+  private inline fun <reified T> QuerySnapshot.toDataObjects(): List<T> =
+    documents.map { it.toDataObject() }
 }

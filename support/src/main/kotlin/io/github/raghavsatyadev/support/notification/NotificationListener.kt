@@ -109,8 +109,7 @@ class NotificationListener : FirebaseMessagingService(), CoroutineScope {
 
   @Suppress("ControlFlowWithEmptyBody")
   private suspend fun traverseMessage(notificationData: String?) {
-    if (isNotificationEnabled().first()) {
-    }
+    if (isNotificationEnabled().first()) {}
   }
 
   override fun onNewToken(token: String) {

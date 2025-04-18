@@ -20,92 +20,87 @@ import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
  * @property activity The activity context used for initiating sign-in.
  */
 class GoogleSignInUtil(private val activity: Activity) {
-    // Initialize Credential Manager
-    private val credentialManager: CredentialManager = CredentialManager.create(activity)
-    private val credentialRequest: GetCredentialRequest
+  // Initialize Credential Manager
+  private val credentialManager: CredentialManager = CredentialManager.create(activity)
+  private val credentialRequest: GetCredentialRequest
 
-    init {
-        val serverClientId = CoreApp.instance.getString(R.string.google_web_client_id)
+  init {
+    val serverClientId = CoreApp.instance.getString(R.string.google_web_client_id)
 
-        val googleIdOption =
-            GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(serverClientId)
-                .setAutoSelectEnabled(true)
-                .setNonce(generateRandomNonce())
-                .build()
+    val googleIdOption =
+      GetGoogleIdOption.Builder()
+        .setFilterByAuthorizedAccounts(false)
+        .setServerClientId(serverClientId)
+        .setAutoSelectEnabled(true)
+        .setNonce(generateRandomNonce())
+        .build()
 
-        credentialRequest =
-            GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+    credentialRequest = GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+  }
+
+  /**
+   * Initiates the sign-in process.
+   *
+   * @param onSuccess Callback function invoked upon successful sign-in with the obtained ID token.
+   * @param onFailure Callback function invoked upon sign-in failure with the encountered exception.
+   */
+  suspend fun startSignIn(
+    onSuccess: (idToken: String) -> Unit,
+    onFailure: (exception: Exception) -> Unit,
+  ) {
+    try {
+      // Request credentials using Credential Manager
+      val result = credentialManager.getCredential(request = credentialRequest, context = activity)
+      // Handle successful sign-in
+      handleSignInSuccess(result, onSuccess, onFailure)
+    } catch (e: Exception) {
+      // Handle sign-in failure
+      onFailure(e)
     }
+  }
 
-    /**
-     * Initiates the sign-in process.
-     *
-     * @param onSuccess Callback function invoked upon successful sign-in with
-     *    the obtained ID token.
-     * @param onFailure Callback function invoked upon sign-in failure with the
-     *    encountered exception.
-     */
-    suspend fun startSignIn(
-        onSuccess: (idToken: String) -> Unit,
-        onFailure: (exception: Exception) -> Unit,
-    ) {
-        try {
-            // Request credentials using Credential Manager
-            val result =
-                credentialManager.getCredential(request = credentialRequest, context = activity)
-            // Handle successful sign-in
-            handleSignInSuccess(result, onSuccess, onFailure)
-        } catch (e: Exception) {
-            // Handle sign-in failure
+  /**
+   * Handles successful sign-in by processing the obtained credentials.
+   *
+   * @param result The response containing the obtained credential.
+   * @param onSuccess Callback function invoked with the obtained ID token.
+   * @param onFailure Callback function invoked with the encountered exception.
+   */
+  private fun handleSignInSuccess(
+    result: GetCredentialResponse,
+    onSuccess: (idToken: String) -> Unit,
+    onFailure: (exception: Exception) -> Unit,
+  ) {
+    val credential = result.credential
+    when (credential) {
+      is CustomCredential -> {
+        if (credential.type == GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+          try {
+            // Parse the Google ID token credential
+            val googleIdTokenCredential =
+              GoogleIdTokenCredential.Companion.createFrom(credential.data)
+            val idToken = googleIdTokenCredential.idToken
+            // Invoke the success callback with the obtained ID token
+            onSuccess(idToken)
+          } catch (e: GoogleIdTokenParsingException) {
+            // Invoke the failure callback with the parsing exception
+            AppLog.loge(false, kotlinFileName, "handleSignInSuccess", e, Exception())
             onFailure(e)
+          }
+        } else {
+          // Invoke the failure callback with an unexpected credential type exception
+          val e = Exception("Unexpected type of credential")
+          AppLog.loge(false, kotlinFileName, "handleSignInSuccess", e, Exception())
+          onFailure(e)
         }
-    }
+      }
 
-    /**
-     * Handles successful sign-in by processing the obtained credentials.
-     *
-     * @param result The response containing the obtained credential.
-     * @param onSuccess Callback function invoked with the obtained ID token.
-     * @param onFailure Callback function invoked with the encountered
-     *    exception.
-     */
-    private fun handleSignInSuccess(
-        result: GetCredentialResponse,
-        onSuccess: (idToken: String) -> Unit,
-        onFailure: (exception: Exception) -> Unit,
-    ) {
-        val credential = result.credential
-        when (credential) {
-            is CustomCredential -> {
-                if (credential.type == GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                    try {
-                        // Parse the Google ID token credential
-                        val googleIdTokenCredential =
-                            GoogleIdTokenCredential.Companion.createFrom(credential.data)
-                        val idToken = googleIdTokenCredential.idToken
-                        // Invoke the success callback with the obtained ID token
-                        onSuccess(idToken)
-                    } catch (e: GoogleIdTokenParsingException) {
-                        // Invoke the failure callback with the parsing exception
-                        AppLog.loge(false, kotlinFileName, "handleSignInSuccess", e, Exception())
-                        onFailure(e)
-                    }
-                } else {
-                    // Invoke the failure callback with an unexpected credential type exception
-                    val e = Exception("Unexpected type of credential")
-                    AppLog.loge(false, kotlinFileName, "handleSignInSuccess", e, Exception())
-                    onFailure(e)
-                }
-            }
-
-            else -> {
-                // Invoke the failure callback with an unexpected credential type exception
-                val e = Exception("Unexpected type of credential")
-                AppLog.loge(false, kotlinFileName, "handleSignInSuccess", e, Exception())
-                onFailure(e)
-            }
-        }
+      else -> {
+        // Invoke the failure callback with an unexpected credential type exception
+        val e = Exception("Unexpected type of credential")
+        AppLog.loge(false, kotlinFileName, "handleSignInSuccess", e, Exception())
+        onFailure(e)
+      }
     }
+  }
 }

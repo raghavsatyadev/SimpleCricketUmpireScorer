@@ -95,8 +95,7 @@ private fun LoginView(doLogin: () -> Unit) {
           )
         },
         modifier =
-          Modifier
-            .align(alignment = Alignment.BottomCenter)
+          Modifier.align(alignment = Alignment.BottomCenter)
             .padding(bottom = innerPadding.calculateBottomPadding() + 30.dp),
         onClick = { doLogin() },
       )
