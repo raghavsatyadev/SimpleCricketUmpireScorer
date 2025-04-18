@@ -62,7 +62,7 @@ open class CoreApp : Application(), CoroutineScope {
         job = Job()
 
         DynamicColors.applyToActivitiesIfAvailable(this)
-        setupGoogleServices()
+        // setupGoogleServices()
         RoomDBUtil.getDatabase()
         KtorUtil.httpClient
         setupCoil()
