@@ -12,3 +12,12 @@ annotation class LightRealDevicePreview()
   device = "spec:parent=pixel_9_pro,navigation=buttons",
 )
 annotation class DarkRealDevicePreview()
+
+
+@Preview()
+annotation class LightPreview()
+
+@Preview(
+  uiMode = Configuration.UI_MODE_NIGHT_YES ,
+)
+annotation class DarkPreview()

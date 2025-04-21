@@ -8,6 +8,7 @@ import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
 import io.github.raghavsatyadev.support.google.FireStoreUtil
 import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.google.GoogleSignInUtil
+import io.github.raghavsatyadev.support.models.LoginState
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
@@ -128,9 +129,4 @@ class LoginViewModel : CoreViewModel() {
   fun signOut(signInUtil: GoogleSignInUtil) {
     viewModelScope.launch { withContext(ioDispatcher) { AppExtensions.signOut() } }
   }
-}
-
-enum class LoginState {
-  SUCCESS,
-  USER_ALREADY_LOGGED_IN,
 }
