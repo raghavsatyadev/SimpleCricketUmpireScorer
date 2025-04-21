@@ -25,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -44,6 +43,7 @@ import io.github.raghavsatyadev.support.compose.components.LightRealDevicePrevie
 import io.github.raghavsatyadev.support.compose.components.TransparentNavBar
 import io.github.raghavsatyadev.support.compose.google.GoogleSignInUtil
 import io.github.raghavsatyadev.support.extensions.AppExtensions.activity
+import io.github.raghavsatyadev.support.extensions.AppExtensions.context
 import io.github.raghavsatyadev.support.extensions.ImplicitIntentExtensions.openPlayStore
 import io.github.raghavsatyadev.support.google.GoogleExtensions.checkPlayServiceAvailability
 import io.github.raghavsatyadev.support.models.LoginState
@@ -109,13 +109,10 @@ private fun LoginEvent(
 
 @Composable
 private fun CheckPlayService(content: @Composable () -> Unit) {
-  val context = LocalContext.current
-  val isPlayServiceAvailable = context.checkPlayServiceAvailability()
-
-  if (isPlayServiceAvailable) {
-    content.invoke()
+  if (context().checkPlayServiceAvailability()) {
+    content()
   } else {
-    context.openPlayStore("com.google.android.gms")
+    context().openPlayStore("com.google.android.gms")
   }
 }
 
@@ -173,18 +170,16 @@ private fun AlreadyLoggedInText(): AnnotatedString {
   val bulletPoint1 = stringResource(Rs.string.warning_already_logged_in_2)
   val bulletPoint2 = stringResource(Rs.string.warning_already_logged_in_3)
 
-  val annotatedString = buildAnnotatedString {
-    withStyle(style = SpanStyle(fontSize = 16.sp)) { append(title) }
-    append("\n")
+  return buildAnnotatedString {
+    withStyle(style = SpanStyle(fontSize = 16.sp)) { appendLine(title) }
 
     withStyle(style = ParagraphStyle(textIndent = TextIndent(firstLine = 14.sp))) {
-      append("• $bulletPoint1\n")
+      appendLine("• $bulletPoint1")
     }
     withStyle(style = ParagraphStyle(textIndent = TextIndent(firstLine = 16.sp))) {
       append("• $bulletPoint2")
     }
   }
-  return annotatedString
 }
 
 @LightRealDevicePreview()

@@ -15,8 +15,9 @@ import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
 import io.github.raghavsatyadev.support.models.essential.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -28,24 +29,17 @@ constructor(
   private val fireStoreUtil: FireStoreUtil,
   private val uiStateManager: UiStateManager,
 ) : CoreViewModel() {
-  private val _loginEvent = MutableStateFlow<Resource<LoginState>>(Resource.empty())
-  val loginEvent = MutableStateFlow<LoginState?>(null)
-
-  init {
-    viewModelScope.launch {
-      _loginEvent.collectLatest {
-        when (it.status) {
-          Resource.Status.SUCCESS -> {
-            loginEvent.emit(it.data)
-          }
-          Resource.Status.ERROR -> {
-            loginEvent.emit(LoginState.ERROR)
-          }
-          else -> {}
+  private val _loginResourceEvent = MutableStateFlow<Resource<LoginState>>(Resource.empty())
+  val loginEvent =
+    _loginResourceEvent
+      .map { res ->
+        when (res.status) {
+          Resource.Status.SUCCESS -> res.data
+          Resource.Status.ERROR -> LoginState.ERROR
+          else -> null
         }
       }
-    }
-  }
+      .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
   fun signInWithGoogle(googleSignInUtil: GoogleSignInUtil) {
     uiStateManager.withLoader(viewModelScope) {
@@ -54,7 +48,7 @@ constructor(
           onSuccess = { idToken -> signInWithFirebaseAuth(idToken) },
           onFailure = { e ->
             uiStateManager.withLoader(viewModelScope) {
-              _loginEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
+              _loginResourceEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
             }
           },
         )
@@ -70,12 +64,12 @@ constructor(
           try {
             loginWithFirestore(user)
           } catch (e: Exception) {
-            _loginEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
+            _loginResourceEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
           }
         } else if (error != null) {
-          _loginEvent.emit(Resource.error(error))
+          _loginResourceEvent.emit(Resource.error(error))
         } else {
-          _loginEvent.emit(Resource.error(null))
+          _loginResourceEvent.emit(Resource.error(null))
         }
       }
     }
@@ -89,7 +83,7 @@ constructor(
           return
         }
         initialize()
-        _loginEvent.emit(Resource.success(LoginState.SUCCESS))
+        _loginResourceEvent.emit(Resource.success(LoginState.SUCCESS))
       } catch (e: Exception) {
         throw e
       }
@@ -117,21 +111,21 @@ constructor(
         throw e
       }
     } else {
-      _loginEvent.emit(Resource.success(LoginState.USER_ALREADY_LOGGED_IN))
+      _loginResourceEvent.emit(Resource.success(LoginState.USER_ALREADY_LOGGED_IN))
       false
     }
   }
 
   fun updateUserTokens() {
     uiStateManager.withLoader(viewModelScope) {
-      _loginEvent.emit(Resource.loading())
+      _loginResourceEvent.emit(Resource.loading())
       withContext(ioDispatcher) {
         try {
           fireStoreUtil.updateUserLoginTokens()
           fireStoreUtil.initialize()
-          _loginEvent.emit(Resource.success(LoginState.SUCCESS))
+          _loginResourceEvent.emit(Resource.success(LoginState.SUCCESS))
         } catch (e: Exception) {
-          _loginEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
+          _loginResourceEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
         }
       }
     }
