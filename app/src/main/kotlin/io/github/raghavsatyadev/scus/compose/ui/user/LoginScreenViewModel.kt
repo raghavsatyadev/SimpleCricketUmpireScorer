@@ -9,12 +9,14 @@ import io.github.raghavsatyadev.support.compose.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.compose.google.GoogleSignInUtil
 import io.github.raghavsatyadev.support.core.CoreViewModel
 import io.github.raghavsatyadev.support.extensions.AppExtensions
+import io.github.raghavsatyadev.support.models.LoginState
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
 import io.github.raghavsatyadev.support.models.essential.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -27,10 +29,22 @@ constructor(
   private val uiStateManager: UiStateManager,
 ) : CoreViewModel() {
   private val _loginEvent = MutableStateFlow<Resource<LoginState>>(Resource.empty())
-  val loginEvent = _loginEvent.asStateFlow()
+  val loginEvent = MutableStateFlow<LoginState?>(null)
 
-  fun isLoggedIn(): Boolean {
-    return authUtil.isLoggedIn()
+  init {
+    viewModelScope.launch {
+      _loginEvent.collectLatest {
+        when (it.status) {
+          Resource.Status.SUCCESS -> {
+            loginEvent.emit(it.data)
+          }
+          Resource.Status.ERROR -> {
+            loginEvent.emit(LoginState.ERROR)
+          }
+          else -> {}
+        }
+      }
+    }
   }
 
   fun signInWithGoogle(googleSignInUtil: GoogleSignInUtil) {
@@ -128,9 +142,4 @@ constructor(
       withContext(ioDispatcher) { AppExtensions.signOut() }
     }
   }
-}
-
-enum class LoginState {
-  SUCCESS,
-  USER_ALREADY_LOGGED_IN,
 }

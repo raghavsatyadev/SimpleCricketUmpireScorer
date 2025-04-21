@@ -1,5 +1,6 @@
 package io.github.raghavsatyadev.support.extensions
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -13,9 +14,12 @@ import android.text.style.BulletSpan
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.view.View
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.database.RoomDBUtil
 import io.github.raghavsatyadev.support.google.FireStoreUtil
@@ -142,4 +146,10 @@ object AppExtensions {
     RoomDBUtil.deleteAll()
     AppPrefsUtil.clearAppPreferences()
   }
+
+  @Composable fun finishAffinity() = LocalActivity.current?.finishAffinity()
+
+  @Composable fun activity(): Activity? = LocalActivity.current
+
+  @Composable fun context(): Context = LocalContext.current
 }
