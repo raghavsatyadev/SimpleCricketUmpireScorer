@@ -44,7 +44,7 @@ import io.github.raghavsatyadev.support.compose.components.TransparentNavBar
 import io.github.raghavsatyadev.support.compose.google.GoogleSignInUtil
 import io.github.raghavsatyadev.support.extensions.AppExtensions.activity
 import io.github.raghavsatyadev.support.extensions.AppExtensions.context
-import io.github.raghavsatyadev.support.extensions.ImplicitIntentExtensions.openPlayStore
+import io.github.raghavsatyadev.support.extensions.ImplicitIntentExtensions.openPlayServiceUpdate
 import io.github.raghavsatyadev.support.google.GoogleExtensions.checkPlayServiceAvailability
 import io.github.raghavsatyadev.support.models.LoginState
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
@@ -112,7 +112,7 @@ private fun CheckPlayService(content: @Composable () -> Unit) {
   if (context().checkPlayServiceAvailability()) {
     content()
   } else {
-    context().openPlayStore("com.google.android.gms")
+    context().openPlayServiceUpdate()
   }
 }
 
