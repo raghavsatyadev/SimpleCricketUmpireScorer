@@ -1,6 +1,5 @@
 package io.github.raghavsatyadev.scus.compose.ui.user
 
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.raghavsatyadev.support.compose.AppComposeExtensions
 import io.github.raghavsatyadev.support.compose.components.UiStateManager
@@ -12,11 +11,9 @@ import io.github.raghavsatyadev.support.models.LoginState
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
-import io.github.raghavsatyadev.support.models.essential.Resource
+import io.github.raghavsatyadev.support.models.essential.ResourceCompose
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,30 +24,16 @@ constructor(
   private val fireStoreUtil: FireStoreUtil,
   uiStateManager: UiStateManager,
 ) : CoreScreenViewModel(uiStateManager) {
-  private val _loginResourceEvent = MutableStateFlow<Resource<LoginState>>(Resource.empty())
-  val loginEvent =
-    _loginResourceEvent
-      .map { res ->
-        when (res.status) {
-          Resource.Status.SUCCESS -> {
-            res.data
-          }
-          Resource.Status.ERROR -> {
-            LoginState.ERROR
-          }
-          else -> {
-            null
-          }
-        }
-      }
-      .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+  private val _loginResourceEvent =
+    MutableStateFlow<ResourceCompose<LoginState>>(ResourceCompose.empty())
+  val loginEvent = _loginResourceEvent.asStateFlow()
 
   fun signInWithGoogle(googleSignInUtil: GoogleSignInUtil) {
     executeWithLoader {
       googleSignInUtil.startSignIn(
         onSuccess = { idToken -> signInWithFirebaseAuth(idToken) },
         onFailure = { e ->
-          _loginResourceEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
+          _loginResourceEvent.emit(ResourceCompose.error(CustomError(ErrorCode.AUTH_FAILED, e)))
         },
       )
     }
@@ -62,12 +45,12 @@ constructor(
       try {
         loginWithFirestore(user)
       } catch (e: Exception) {
-        _loginResourceEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
+        _loginResourceEvent.emit(ResourceCompose.error(CustomError(ErrorCode.AUTH_FAILED, e)))
       }
     } else if (error != null) {
-      _loginResourceEvent.emit(Resource.error(error))
+      _loginResourceEvent.emit(ResourceCompose.error(error))
     } else {
-      _loginResourceEvent.emit(Resource.error(null))
+      _loginResourceEvent.emit(ResourceCompose.error(null))
     }
   }
 
@@ -80,7 +63,7 @@ constructor(
           return
         }
         initialize()
-        _loginResourceEvent.emit(Resource.success(LoginState.SUCCESS))
+        _loginResourceEvent.emit(ResourceCompose.success(LoginState.SUCCESS))
       } catch (e: Exception) {
         throw e
       }
@@ -110,7 +93,7 @@ constructor(
         true
       }
       else -> {
-        _loginResourceEvent.emit(Resource.success(LoginState.USER_ALREADY_LOGGED_IN))
+        _loginResourceEvent.emit(ResourceCompose.success(LoginState.USER_ALREADY_LOGGED_IN))
         false
       }
     }
@@ -121,9 +104,9 @@ constructor(
       try {
         fireStoreUtil.updateUserLoginTokens()
         fireStoreUtil.initialize()
-        _loginResourceEvent.emit(Resource.success(LoginState.SUCCESS))
+        _loginResourceEvent.emit(ResourceCompose.success(LoginState.SUCCESS))
       } catch (e: Exception) {
-        _loginResourceEvent.emit(Resource.error(CustomError(ErrorCode.AUTH_FAILED, e)))
+        _loginResourceEvent.emit(ResourceCompose.error(CustomError(ErrorCode.AUTH_FAILED, e)))
       }
     }
   }
