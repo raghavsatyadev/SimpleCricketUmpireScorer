@@ -82,6 +82,7 @@ serialization = "1.8.1"
 sonarqube = "6.1.0.5360"
 splashscreen = "1.2.0-beta01"
 swiperefreshlayout = "1.2.0-beta01"
+startup = "1.2.0"
 work-manager = "2.10.0"
 
 [libraries]
@@ -102,6 +103,7 @@ androidx-play-credentials = { module = "androidx.credentials:credentials-play-se
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+androidx-startup = { module = "androidx.startup:startup-runtime", version.ref = "startup" }
 
 material = { module = "com.google.android.material:material", version.ref = "material" }
 
@@ -236,6 +238,7 @@ androidx = [
     "androidx-recyclerview",
     "androidx-splashscreen",
     "androidx-swiperefreshlayout",
+    "androidx-startup",
     "material",
 ]
 coil = [
