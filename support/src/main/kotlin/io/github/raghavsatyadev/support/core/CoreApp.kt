@@ -4,22 +4,14 @@ import android.app.Application
 import android.content.Context
 import android.widget.Toast
 import androidx.multidex.MultiDex
-import coil3.ImageLoader
-import coil3.SingletonImageLoader
-import coil3.disk.DiskCache
-import coil3.disk.directory
-import coil3.memory.MemoryCache
-import coil3.util.DebugLogger
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.color.DynamicColors
 import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.BuildConfig
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.background.MatchDataUpdateWorker
-import io.github.raghavsatyadev.support.database.RoomDBUtil
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
 import io.github.raghavsatyadev.support.google.GoogleExtensions.checkPlayServiceAvailability
-import io.github.raghavsatyadev.support.networking.KtorUtil
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,31 +45,11 @@ open class CoreApp : Application(), CoroutineScope {
     job = Job()
 
     DynamicColors.applyToActivitiesIfAvailable(this)
-    setupGoogleServices()
-    RoomDBUtil.getDatabase()
-    KtorUtil.httpClient
-    setupCoil()
-
     // setupWorker()
   }
 
   private fun setupWorker() {
     MatchDataUpdateWorker.updateMatchDataPeriodically()
-  }
-
-  private fun setupCoil() {
-    SingletonImageLoader.setSafe {
-      ImageLoader.Builder(instance)
-        .memoryCache { MemoryCache.Builder().maxSizePercent(instance, 0.25).build() }
-        .diskCache {
-          DiskCache.Builder()
-            .directory(cacheDir.resolve("image_cache"))
-            .maxSizeBytes(5 * 1024 * 1024)
-            .build()
-        }
-        .logger(DebugLogger())
-        .build()
-    }
   }
 
   private fun setupGoogleServices() {

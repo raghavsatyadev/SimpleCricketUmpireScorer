@@ -1,8 +1,8 @@
 package io.github.raghavsatyadev.support.database
 
+import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.RoomDatabase.Callback
 import io.github.raghavsatyadev.support.Constants
 import io.github.raghavsatyadev.support.core.CoreApp
 import kotlinx.coroutines.launch
@@ -11,21 +11,25 @@ object RoomDBUtil {
   @Volatile private var database: AppDatabase? = null
 
   @Synchronized
-  fun getDatabase(): AppDatabase {
-    if (database == null) {
-      database =
-        Room.databaseBuilder(CoreApp.instance, AppDatabase::class.java, Constants.DB.NAME)
-          .allowMainThreadQueries()
+  fun getDatabase(context: Context): AppDatabase {
+    return database
+      ?: synchronized(this) {
+        Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, Constants.DB.NAME)
           .addMigrations(*MigrationUtil.migrations)
           .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
           .fallbackToDestructiveMigration(true)
-          .addCallback(object : Callback() {})
           .build()
-    }
-    return database!!
+          .also { database = it }
+      }
+  }
+
+  @Synchronized
+  fun getInstance(): AppDatabase {
+    return database
+      ?: throw IllegalStateException("Database not initialized. Call getDatabase(context) first.")
   }
 
   fun deleteAll() {
-    CoreApp.instance.launch { getDatabase().clearAllTables() }
+    CoreApp.instance.launch { getInstance().clearAllTables() }
   }
 }

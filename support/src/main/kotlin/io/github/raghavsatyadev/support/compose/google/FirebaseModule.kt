@@ -12,8 +12,11 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object FirebaseModule {
+
   @Provides
   @Singleton
-  fun provideFirebaseApp(@ApplicationContext context: Context): FirebaseApp =
-    FirebaseApp.initializeApp(context)!!
+  fun provideFirebaseApp(@ApplicationContext context: Context): FirebaseApp {
+    // Return existing or initialize new
+    return FirebaseApp.initializeApp(context)!!
+  }
 }
