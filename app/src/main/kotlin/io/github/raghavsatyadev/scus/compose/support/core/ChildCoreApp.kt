@@ -18,7 +18,7 @@ class ChildCoreApp : CoreApp(), Configuration.Provider {
   @Inject lateinit var workerFactory: HiltWorkerFactory
 
   override val workManagerConfiguration
-      get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
+    get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
 
   private fun setupWorker() {
     val scheduler =
