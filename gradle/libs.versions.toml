@@ -61,9 +61,10 @@ firebase-gradle = "3.0.3"
 firebase-messaging-ktx = "24.1.1"
 fragment = "1.8.6"
 google-id = "1.1.1"
-hilt = "2.56.2"
+dagger-hilt = "2.56.2"
 hilt-navigation = "1.2.0"
-hilt-work = "1.0.0"
+hilt-work = "1.2.0"
+hilt-compiler = "1.2.0"
 junit = "4.13.2"
 junit-jupiter = "5.12.2"
 ktor = "3.1.2"
@@ -143,10 +144,11 @@ navigation-runtime = { module = "androidx.navigation:navigation-runtime-ktx", ve
 navigation-ui = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
 
 # Hilt
-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt" }
 hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation" }
 hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hilt-work" }
-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt-compiler" }
+dagger-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger-hilt" }
 
 #Firebase
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebase-analytics-ktx" }
@@ -213,7 +215,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 compose-plugin = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
 room = { id = "androidx.room", version.ref = "room" }
@@ -309,6 +311,7 @@ room = [
 ksp = [
     "hilt-compiler",
     "room-compiler",
+    "dagger-hilt-compiler",
 ]
 test = [
     "androidx-junit",

@@ -57,6 +57,9 @@
                 android:name="io.github.raghavsatyadev.support.compose.startup.StorageInitializer"
                 android:value="androidx.startup" />
             <meta-data
+                android:name="io.github.raghavsatyadev.support.compose.startup.DependencyGraphInitializer"
+                android:value="androidx.startup" />
+            <meta-data
                 android:name="io.github.raghavsatyadev.support.compose.startup.WorkManagerInitializer"
                 android:value="androidx.startup" />
             <meta-data
