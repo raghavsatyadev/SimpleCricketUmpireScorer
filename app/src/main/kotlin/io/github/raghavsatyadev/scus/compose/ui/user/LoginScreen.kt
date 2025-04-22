@@ -7,7 +7,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -15,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallExtendedFloatingActionButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,25 +25,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.ParagraphStyle
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextIndent
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.raghavsatyadev.scus.R
+import io.github.raghavsatyadev.support.compose.AppComposeExtensions.CheckPlayService
+import io.github.raghavsatyadev.support.compose.AppComposeExtensions.activity
+import io.github.raghavsatyadev.support.compose.components.DarkRealDevicePreview
 import io.github.raghavsatyadev.support.compose.components.ErrorDialog
-import io.github.raghavsatyadev.support.compose.components.LightPreview
 import io.github.raghavsatyadev.support.compose.components.LightRealDevicePreview
 import io.github.raghavsatyadev.support.compose.components.TransparentNavBar
 import io.github.raghavsatyadev.support.compose.google.GoogleSignInUtil
-import io.github.raghavsatyadev.support.extensions.AppExtensions.activity
-import io.github.raghavsatyadev.support.extensions.AppExtensions.context
-import io.github.raghavsatyadev.support.extensions.ImplicitIntentExtensions.openPlayServiceUpdate
-import io.github.raghavsatyadev.support.google.GoogleExtensions.checkPlayServiceAvailability
 import io.github.raghavsatyadev.support.models.LoginState
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
 import io.github.raghavsatyadev.support.R as Rs
@@ -61,59 +50,7 @@ fun LoginScreen(viewModel: LoginScreenViewModel = hiltViewModel(), onLoginSucces
     LoginView(doLogin = { viewModel.signInWithGoogle(googleSignInUtil) })
   }
 
-  LoginEvent(viewModel, onLoginSuccess, activity)
-}
-
-@Composable
-private fun LoginEvent(
-  viewModel: LoginScreenViewModel,
-  onLoginSuccess: () -> Unit,
-  activity: Activity?,
-) {
-  val loginEvent by viewModel.loginEvent.collectAsState()
-  var showUserAlreadyLoggedInDialog by remember { mutableStateOf(true) }
-
-  when (loginEvent) {
-    LoginState.SUCCESS -> {
-      onLoginSuccess()
-    }
-
-    LoginState.ERROR -> {
-      ErrorDialog(
-        errorCode = ErrorCode.UNKNOWN_ERROR,
-        errorMessage = stringResource(Rs.string.warning_unknown_error),
-      ) {
-        activity?.finishAffinity()
-      }
-    }
-
-    LoginState.USER_ALREADY_LOGGED_IN -> {
-      if (showUserAlreadyLoggedInDialog) {
-        UserAlreadyLoggedInDialog(
-          onForceLogin = {
-            viewModel.updateUserTokens()
-            showUserAlreadyLoggedInDialog = false
-          },
-          onSignOut = {
-            viewModel.signOut()
-            activity?.finishAffinity()
-            showUserAlreadyLoggedInDialog = false
-          },
-        )
-      }
-    }
-
-    else -> {}
-  }
-}
-
-@Composable
-private fun CheckPlayService(content: @Composable () -> Unit) {
-  if (context().checkPlayServiceAvailability()) {
-    content()
-  } else {
-    context().openPlayServiceUpdate()
-  }
+  AfterLogin(viewModel, onLoginSuccess, activity)
 }
 
 @Composable
@@ -150,47 +87,52 @@ private fun LoginView(doLogin: () -> Unit) {
 }
 
 @Composable
-private fun UserAlreadyLoggedInDialog(onForceLogin: () -> Unit, onSignOut: () -> Unit) {
-  AlertDialog(
-    confirmButton = {
-      TextButton(onClick = { onForceLogin.invoke() }) { Text(stringResource(R.string.force_login)) }
-    },
-    dismissButton = {
-      TextButton(onClick = { onSignOut.invoke() }) { Text(stringResource(R.string.logout)) }
-    },
-    title = { Text(stringResource(Rs.string.dialog_already_logged_in_title)) },
-    text = { Text(AlreadyLoggedInText()) },
-    onDismissRequest = {},
-  )
-}
+private fun AfterLogin(
+  viewModel: LoginScreenViewModel,
+  onLoginSuccess: () -> Unit,
+  activity: Activity?,
+) {
+  val loginEvent by viewModel.loginEvent.collectAsState()
+  var showUserAlreadyLoggedInDialog by remember { mutableStateOf(true) }
 
-@Composable
-private fun AlreadyLoggedInText(): AnnotatedString {
-  val title = stringResource(Rs.string.warning_already_logged_in_1)
-  val bulletPoint1 = stringResource(Rs.string.warning_already_logged_in_2)
-  val bulletPoint2 = stringResource(Rs.string.warning_already_logged_in_3)
-
-  return buildAnnotatedString {
-    withStyle(style = SpanStyle(fontSize = 16.sp)) { appendLine(title) }
-
-    withStyle(style = ParagraphStyle(textIndent = TextIndent(firstLine = 14.sp))) {
-      appendLine("• $bulletPoint1")
+  when (loginEvent) {
+    LoginState.SUCCESS -> {
+      onLoginSuccess()
     }
-    withStyle(style = ParagraphStyle(textIndent = TextIndent(firstLine = 16.sp))) {
-      append("• $bulletPoint2")
+
+    LoginState.ERROR -> {
+      ErrorDialog(
+        errorCode = ErrorCode.UNKNOWN_ERROR,
+        errorMessage = stringResource(Rs.string.warning_unknown_error),
+      ) {
+        viewModel.signOut { activity?.finishAffinity() }
+      }
     }
+
+    LoginState.USER_ALREADY_LOGGED_IN -> {
+      if (showUserAlreadyLoggedInDialog) {
+        UserAlreadyLoggedInDialog(
+          onForceLogin = {
+            viewModel.updateUserTokens()
+            showUserAlreadyLoggedInDialog = false
+          },
+          onSignOut = {
+            viewModel.signOut {
+              activity?.finishAffinity()
+              showUserAlreadyLoggedInDialog = false
+            }
+          },
+        )
+      }
+    }
+
+    else -> {}
   }
 }
 
-@LightRealDevicePreview()
-// @DarkRealDevicePreview
+@LightRealDevicePreview
+@DarkRealDevicePreview
 @Composable
 private fun PreviewLoginScreen() {
   LoginView(doLogin = {})
-}
-
-@LightPreview
-@Composable
-private fun UserAlreadyLoggedInDialogPreview() {
-  UserAlreadyLoggedInDialog(onForceLogin = {}, onSignOut = {})
 }
