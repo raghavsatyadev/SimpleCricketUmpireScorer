@@ -2,23 +2,18 @@ package io.github.raghavsatyadev.support.core
 
 import android.app.Application
 import android.content.Context
-import android.widget.Toast
 import androidx.multidex.MultiDex
-import com.google.android.gms.ads.MobileAds
 import com.google.android.material.color.DynamicColors
 import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.BuildConfig
-import io.github.raghavsatyadev.support.R
-import io.github.raghavsatyadev.support.background.MatchDataUpdateWorker
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
-import io.github.raghavsatyadev.support.google.GoogleExtensions.checkPlayServiceAvailability
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-open class CoreApp : Application(), CoroutineScope {
+open class CoreApp() : Application(), CoroutineScope {
 
   private lateinit var job: Job
 
@@ -45,19 +40,6 @@ open class CoreApp : Application(), CoroutineScope {
     job = Job()
 
     DynamicColors.applyToActivitiesIfAvailable(this)
-    // setupWorker()
-  }
-
-  private fun setupWorker() {
-    MatchDataUpdateWorker.updateMatchDataPeriodically()
-  }
-
-  private fun setupGoogleServices() {
-    if (checkPlayServiceAvailability()) {
-      MobileAds.initialize(this)
-    } else {
-      Toast.makeText(this, R.string.warning_update_play_service, Toast.LENGTH_SHORT).show()
-    }
   }
 
   override fun attachBaseContext(base: Context?) {

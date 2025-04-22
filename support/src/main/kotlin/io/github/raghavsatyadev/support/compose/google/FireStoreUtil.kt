@@ -23,7 +23,7 @@ import io.github.raghavsatyadev.support.extensions.serializer.SerializationExten
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toKotlinObject
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
-import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUtil
+import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordComposeDataUtil
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.toMap
 import io.github.raghavsatyadev.support.preferences.AppPrefsUtil
 import kotlinx.coroutines.flow.firstOrNull
@@ -34,7 +34,11 @@ import javax.inject.Singleton
 @Singleton
 class FireStoreUtil
 @Inject
-constructor(private val firebaseApp: FirebaseApp, private val authUtil: FirebaseAuthUtil) {
+constructor(
+  private val firebaseApp: FirebaseApp,
+  private val authUtil: FirebaseAuthUtil,
+  private val matchRecordComposeDataUtil: MatchRecordComposeDataUtil,
+) {
   private val db by lazy {
     Firebase.firestore(firebaseApp).apply {
       val settings = firestoreSettings {
@@ -73,7 +77,7 @@ constructor(private val firebaseApp: FirebaseApp, private val authUtil: Firebase
           await()
           if (isSuccessful) {
             val records = result.toDataObjects<MatchRecord>()
-            MatchRecordDataUtil.getInstance().upsert(records)
+            matchRecordComposeDataUtil.upsert(records)
           }
         }
       }
@@ -167,7 +171,7 @@ constructor(private val firebaseApp: FirebaseApp, private val authUtil: Firebase
           try {
             val record: MatchRecord = readTask.result.toDataObject<MatchRecord>()
             record.localUpdateDateTime = record.serverUpdateDateTime
-            MatchRecordDataUtil.getInstance().insertIgnore(record)
+            matchRecordComposeDataUtil.insertIgnore(record)
             return record
           } catch (e: Exception) {
             AppLog.loge(false, kotlinFileName, "setMatchRecord", e, Exception())
@@ -213,7 +217,7 @@ constructor(private val firebaseApp: FirebaseApp, private val authUtil: Firebase
         if (readTask.isSuccessful) {
           try {
             val record: MatchRecord = readTask.result.toDataObject<MatchRecord>()
-            MatchRecordDataUtil.getInstance()
+            matchRecordComposeDataUtil
               .updateServerTime(record.matchRecordId, record.serverUpdateDateTime!!)
             return true
           } catch (e: Exception) {

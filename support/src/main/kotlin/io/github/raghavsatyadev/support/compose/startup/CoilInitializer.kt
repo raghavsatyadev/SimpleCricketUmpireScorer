@@ -11,7 +11,6 @@ import okio.Path.Companion.toOkioPath
 
 class CoilInitializer : Initializer<Unit> {
   override fun create(context: Context) {
-    // exactly your CoreApp.setupCoil() logic, but using context instead of CoreApp.instance
     SingletonImageLoader.setSafe {
       ImageLoader.Builder(context.applicationContext)
         .memoryCache { MemoryCache.Builder().maxSizePercent(context, 0.25).build() }

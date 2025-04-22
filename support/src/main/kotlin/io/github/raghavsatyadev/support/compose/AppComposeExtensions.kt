@@ -43,7 +43,7 @@ object AppComposeExtensions {
   @Composable fun context(): Context = LocalContext.current
 
   @Composable
-   fun CheckPlayService(content: @Composable () -> Unit) {
+  fun CheckPlayService(content: @Composable () -> Unit) {
     if (context().checkPlayServiceAvailability()) {
       content()
     } else {
