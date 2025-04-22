@@ -20,7 +20,7 @@ import io.github.raghavsatyadev.scus.compose.support.routes.appGraph
 fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
 
   val rootNavController = rememberNavController()
-  val isLoading by viewModel.uiStateManager.isLoading.collectAsStateWithLifecycle()
+  val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
   Box(modifier = Modifier.fillMaxSize()) {
     NavHost(rootNavController, startDestination = AppRoutes.DashboardScreen) {

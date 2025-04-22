@@ -46,8 +46,8 @@ class GoogleSignInUtil @Inject constructor(private val activity: Activity) {
    * @param onFailure Callback function invoked upon sign-in failure with the encountered exception.
    */
   suspend fun startSignIn(
-    onSuccess: (idToken: String) -> Unit,
-    onFailure: (exception: Exception) -> Unit,
+    onSuccess: suspend (idToken: String) -> Unit,
+    onFailure: suspend (exception: Exception) -> Unit,
   ) {
     try {
       // Request credentials using Credential Manager
@@ -67,10 +67,10 @@ class GoogleSignInUtil @Inject constructor(private val activity: Activity) {
    * @param onSuccess Callback function invoked with the obtained ID token.
    * @param onFailure Callback function invoked with the encountered exception.
    */
-  private fun handleSignInSuccess(
+  private suspend fun handleSignInSuccess(
     result: GetCredentialResponse,
-    onSuccess: (idToken: String) -> Unit,
-    onFailure: (exception: Exception) -> Unit,
+    onSuccess: suspend (idToken: String) -> Unit,
+    onFailure: suspend (exception: Exception) -> Unit,
   ) {
     val credential = result.credential
     when (credential) {
