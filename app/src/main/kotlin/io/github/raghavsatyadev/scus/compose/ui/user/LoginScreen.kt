@@ -15,7 +15,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallExtendedFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.compose.AppComposeExtensions.CheckPlayService
 import io.github.raghavsatyadev.support.compose.AppComposeExtensions.activity
@@ -36,7 +36,8 @@ import io.github.raghavsatyadev.support.compose.components.LightRealDevicePrevie
 import io.github.raghavsatyadev.support.compose.components.TransparentNavBar
 import io.github.raghavsatyadev.support.compose.google.GoogleSignInUtil
 import io.github.raghavsatyadev.support.models.LoginState
-import io.github.raghavsatyadev.support.models.essential.ErrorCode
+import io.github.raghavsatyadev.support.models.essential.CustomError
+import io.github.raghavsatyadev.support.models.essential.ResourceCompose
 import io.github.raghavsatyadev.support.R as Rs
 
 @Composable
@@ -79,7 +80,7 @@ private fun LoginView(doLogin: () -> Unit) {
         },
         modifier =
           Modifier.align(alignment = Alignment.BottomCenter)
-            .padding(bottom = innerPadding.calculateBottomPadding() + 30.dp),
+            .padding(bottom = innerPadding.calculateBottomPadding() + 40.dp),
         onClick = { doLogin() },
       )
     }
@@ -92,24 +93,13 @@ private fun AfterLogin(
   onLoginSuccess: () -> Unit,
   activity: Activity?,
 ) {
-  val loginEvent by viewModel.loginEvent.collectAsState()
+  val loginEvent by viewModel.loginEvent.collectAsStateWithLifecycle()
   var showUserAlreadyLoggedInDialog by remember { mutableStateOf(true) }
 
-  when (loginEvent) {
-    LoginState.SUCCESS -> {
-      onLoginSuccess()
-    }
-
-    LoginState.ERROR -> {
-      ErrorDialog(
-        errorCode = ErrorCode.UNKNOWN_ERROR,
-        errorMessage = stringResource(Rs.string.warning_unknown_error),
-      ) {
-        viewModel.signOut { activity?.finishAffinity() }
-      }
-    }
-
-    LoginState.USER_ALREADY_LOGGED_IN -> {
+  HandleLoginEvent(
+    loginEvent,
+    onLoginSuccess = { onLoginSuccess() },
+    onAlreadyLogin = {
       if (showUserAlreadyLoggedInDialog) {
         UserAlreadyLoggedInDialog(
           onForceLogin = {
@@ -123,6 +113,42 @@ private fun AfterLogin(
             }
           },
         )
+      }
+    },
+    onError = {
+      it?.let {
+        ErrorDialog(errorCode = it.errorCode, errorMessage = stringResource(it.errorCode.warning)) {
+          viewModel.signOut { activity?.finishAffinity() }
+        }
+      }
+    },
+  )
+}
+
+@Composable
+fun HandleLoginEvent(
+  loginEvent: ResourceCompose<LoginState>,
+  onLoginSuccess: () -> Unit,
+  onAlreadyLogin: @Composable () -> Unit,
+  onError: @Composable (CustomError?) -> Unit,
+) {
+  when (loginEvent.status) {
+    ResourceCompose.Status.ERROR -> {
+      onError(loginEvent.error)
+    }
+
+    ResourceCompose.Status.SUCCESS -> {
+      val loginState = loginEvent.data
+      when (loginState) {
+        LoginState.SUCCESS -> {
+          onLoginSuccess()
+        }
+
+        LoginState.USER_ALREADY_LOGGED_IN -> {
+          onAlreadyLogin()
+        }
+
+        else -> {}
       }
     }
 
