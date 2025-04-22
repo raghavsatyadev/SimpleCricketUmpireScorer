@@ -1,17 +1,25 @@
-package io.github.raghavsatyadev.support.background
+package io.github.raghavsatyadev.support.compose.background
 
 import androidx.work.ListenableWorker.Result
 import io.github.raghavsatyadev.support.AppLog
+import io.github.raghavsatyadev.support.compose.google.FireStoreUtil
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
-import io.github.raghavsatyadev.support.google.FireStoreUtil
-import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUtil
+import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordComposeDataUtil
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object MatchDataUploadUtil {
+@Singleton
+class MatchDataUploadUtil
+@Inject
+constructor(
+  private val fireStoreUtil: FireStoreUtil,
+  private val recordDataUtil: MatchRecordComposeDataUtil,
+) {
   suspend fun updateAllMatchData(): Result {
-    val matchRecords = MatchRecordDataUtil.getInstance().getAll()
+    val matchRecords = recordDataUtil.getAll()
 
     try {
-      val isSuccessful = FireStoreUtil.getInstance().updateMatchRecords(matchRecords)
+      val isSuccessful = fireStoreUtil.updateMatchRecords(matchRecords)
       return if (isSuccessful) {
         Result.success()
       } else {
@@ -24,10 +32,10 @@ object MatchDataUploadUtil {
   }
 
   suspend fun updateMatchData(matchRecordID: String): Result {
-    val item = MatchRecordDataUtil.getInstance().getItem(matchRecordID)
+    val item = recordDataUtil.getItem(matchRecordID)
 
     try {
-      val isSuccessful = FireStoreUtil.getInstance().updateMatchRecord(item)
+      val isSuccessful = fireStoreUtil.updateMatchRecord(item)
       return if (isSuccessful) {
         Result.success()
       } else {

@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.startup.Initializer
 import dagger.hilt.android.EntryPointAccessors
 import io.github.raghavsatyadev.support.compose.networking.KtorEntryPoint
-import io.github.raghavsatyadev.support.compose.storage.StorageInitializer
 
 class KtorInitializer : Initializer<Unit> {
   override fun create(context: Context) {
