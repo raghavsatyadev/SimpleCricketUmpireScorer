@@ -12,7 +12,7 @@ import javax.inject.Inject
 class ChildCoreApp : CoreApp(), Configuration.Provider {
   override fun onCreate() {
     super.onCreate()
-    // setupWorker()
+    setupWorker()
   }
 
   @Inject lateinit var workerFactory: HiltWorkerFactory
