@@ -32,4 +32,6 @@
     <!-- General -->
     <string name="error">Error</string>
     <string name="okay">Okay</string>
+    <string name="back">Back</string>
+
 </resources>
