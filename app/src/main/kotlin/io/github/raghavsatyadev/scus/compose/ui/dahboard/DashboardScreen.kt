@@ -4,11 +4,12 @@ package io.github.raghavsatyadev.scus.compose.ui.dahboard
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -23,11 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.compose.components.ComposeAdView
+import io.github.raghavsatyadev.support.compose.components.LightRealDevicePreview
 
 @Composable
 fun DashboardScreen(
@@ -45,19 +46,15 @@ fun DashboardScreen(
 
 @Composable
 private fun DashboardView(onAddMatchClick: () -> Unit) {
-  Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+  Scaffold { innerPadding ->
     Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
       Column(modifier = Modifier) {
-        LazyColumn(
-          modifier =
-            Modifier.weight(1f).padding(horizontal = 5.dp).padding(top = 5.dp, bottom = 80.dp),
-          contentPadding = PaddingValues(0.dp),
-        ) {
-          // items(matchRecords) { record -> MatchRecordItem(record = record) }
-        }
+        MatchRecordList(Modifier)
         ComposeAdView(modifier = Modifier.fillMaxWidth())
       }
       ExtendedFloatingActionButton(
+        shape = MaterialTheme.shapes.extraLarge,
+        expanded = false,
         onClick = onAddMatchClick,
         text = { Text(stringResource(id = R.string.add_match)) },
         icon = {
@@ -67,14 +64,31 @@ private fun DashboardView(onAddMatchClick: () -> Unit) {
             tint = MaterialTheme.colorScheme.surfaceVariant,
           )
         },
-        modifier = Modifier.align(Alignment.BottomEnd).padding(15.dp),
+        modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
         containerColor = MaterialTheme.colorScheme.primary,
       )
     }
   }
 }
 
-@Preview
+@Composable
+private fun ColumnScope.MatchRecordList(modifier: Modifier) {
+  LazyColumn(
+    userScrollEnabled = true,
+    modifier =
+      modifier
+        .fillMaxWidth()
+        .weight(1f)
+        .padding(horizontal = 4.dp)
+        .padding(top = 4.dp, bottom = 80.dp),
+  ) {
+    items(getSampleRecords()) { record ->
+      MatchRecordItem(matchRecord = record, onCopyClick = {}, onDeleteClick = {})
+    }
+  }
+}
+
+@LightRealDevicePreview
 @Composable
 fun DashboardScreenPreview() {
   DashboardView(onAddMatchClick = {})
