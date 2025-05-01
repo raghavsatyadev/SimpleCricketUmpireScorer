@@ -2,10 +2,8 @@
 
 package io.github.raghavsatyadev.support.compose.components
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -60,9 +58,12 @@ fun AppToolBar(modifier: Modifier = Modifier, title: String, onNavigateBack: (()
 @DarkPreview
 @Composable
 fun AppToolBarPreview() {
-  Column {
-    AppToolBar(title = "SCUS", onNavigateBack = {})
-    Spacer(modifier = Modifier.height(10.dp))
-    AppToolBar(title = "SCUS", onNavigateBack = null)
-  }
+  AppToolBar(title = "SCUS", onNavigateBack = {})
+}
+
+@LightPreview
+@DarkPreview
+@Composable
+fun AppToolBarPreviewWithoutBackButton() {
+  AppToolBar(title = "SCUS", onNavigateBack = null)
 }

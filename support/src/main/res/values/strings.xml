@@ -1,5 +1,4 @@
 <resources>
-    <string name="google_web_client_id" translatable="false">879169414425-9dveggar7h0ljf4v0r2vdqnkm727sget.apps.googleusercontent.com</string>
     <!--Permission Dialog-->
     <string name="permission_positive_button">OK</string>
     <string name="permission_negative_button">Cancel</string>
