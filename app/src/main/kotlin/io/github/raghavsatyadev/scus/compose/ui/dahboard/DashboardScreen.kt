@@ -39,24 +39,32 @@ import io.github.raghavsatyadev.support.compose.components.AdUI
 import io.github.raghavsatyadev.support.compose.components.AppToolBar
 import io.github.raghavsatyadev.support.compose.components.DarkRealDevicePreview
 import io.github.raghavsatyadev.support.compose.components.LightRealDevicePreview
+import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.R as Rs
 
 @Composable
 fun DashboardScreen(
   viewModel: DashboardScreenViewModel = hiltViewModel(),
   onNavigateToLogin: () -> Unit,
+  onMatchClick: (MatchRecord) -> Unit,
 ) {
   val loginState by remember { mutableStateOf(viewModel.isLoggedIn()) }
 
   if (!loginState) {
     onNavigateToLogin()
   } else {
-    DashboardUI(onAddMatchClick = { /*viewModel.addMatch()*/ })
+    DashboardUI(
+      onAddMatchClick = { /*viewModel.addMatch()*/ },
+      onMatchClick = onMatchClick
+    )
   }
 }
 
 @Composable
-private fun DashboardUI(onAddMatchClick: () -> Unit) {
+private fun DashboardUI(
+  onAddMatchClick: () -> Unit,
+  onMatchClick: (MatchRecord) -> Unit,
+) {
   Scaffold(
     topBar = { AppToolBar(title = stringResource(Rs.string.app_name)) },
     floatingActionButton = {
@@ -82,14 +90,16 @@ private fun DashboardUI(onAddMatchClick: () -> Unit) {
         boxAd,
       ) = createRefs()
       MatchRecordList(
-        Modifier.constrainAs(listMatchRecord) {
+        onMatchClick = onMatchClick,
+        modifier = Modifier.constrainAs(listMatchRecord) {
           start.linkTo(parent.start)
           end.linkTo(parent.end)
           top.linkTo(parent.top)
           bottom.linkTo(boxAd.top)
           width = Dimension.fillToConstraints
           height = Dimension.fillToConstraints
-        })
+        },
+      )
       AdUI(
         modifier = Modifier.constrainAs(boxAd) {
           start.linkTo(parent.start)
@@ -104,7 +114,10 @@ private fun DashboardUI(onAddMatchClick: () -> Unit) {
 }
 
 @Composable
-private fun MatchRecordList(modifier: Modifier) {
+private fun MatchRecordList(
+  modifier: Modifier,
+  onMatchClick: (MatchRecord) -> Unit,
+) {
 
   val matchRecordsFlow = remember { getSampleRecords() }
 
@@ -131,6 +144,7 @@ private fun MatchRecordList(modifier: Modifier) {
           properties = properties,
           onCopyClick = {},
           onDeleteClick = {},
+          onMatchClick = onMatchClick,
         )
       }
     }
@@ -179,5 +193,7 @@ data class MatchRecordProperties(
 @DarkRealDevicePreview
 @Composable
 fun DashboardScreenPreview() {
-  DashboardUI(onAddMatchClick = {})
+  DashboardUI(
+    onAddMatchClick = {},
+    onMatchClick = {})
 }

@@ -8,18 +8,26 @@ import io.github.raghavsatyadev.scus.compose.ui.dahboard.DashboardScreen
 import io.github.raghavsatyadev.scus.compose.ui.user.LoginScreen
 
 @Composable
-fun AppNavHost(
-    rootNavController: NavHostController,
-) {
-    NavHost(
-        navController = rootNavController,
-        startDestination = AppRoutes.DashboardScreen
-    ) {
-        composable<AppRoutes.DashboardScreen> { backStackEntry ->
-            DashboardScreen { rootNavController.navigate(AppRoutes.LoginScreen) }
-        }
-        composable<AppRoutes.LoginScreen> { backStackEntry ->
-            LoginScreen { rootNavController.popBackStack() }
-        }
+fun AppNavHost(rootNavController: NavHostController) {
+  NavHost(
+    navController = rootNavController,
+    startDestination = AppRoutes.DashboardScreen
+  ) {
+    composable<AppRoutes.DashboardScreen> { backStackEntry ->
+      DashboardScreen(
+        onNavigateToLogin = { rootNavController.navigate(AppRoutes.LoginScreen) },
+        onMatchClick = { matchRecord ->
+          rootNavController.navigate(
+            AppRoutes.MatchRecordScreen(
+              matchId = matchRecord.matchRecordId,
+              matchRecord = matchRecord,
+            )
+          )
+        },
+      )
     }
+    composable<AppRoutes.LoginScreen> { backStackEntry ->
+      LoginScreen { rootNavController.popBackStack() }
+    }
+  }
 }
