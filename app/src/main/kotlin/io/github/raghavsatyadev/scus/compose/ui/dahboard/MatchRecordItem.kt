@@ -3,6 +3,7 @@
 package io.github.raghavsatyadev.scus.compose.ui.dahboard
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,6 +46,7 @@ fun MatchRecordItemPreview() {
       properties = properties,
       onCopyClick = {},
       onDeleteClick = {},
+      onMatchClick = {},
       modifier = Modifier
         .padding(
           vertical = 8.dp,
@@ -63,11 +65,12 @@ fun MatchRecordItem(
   properties: MatchRecordProperties,
   onCopyClick: (MatchRecord) -> Unit,
   onDeleteClick: (MatchRecord) -> Unit,
+  onMatchClick: (MatchRecord) -> Unit,
 ) {
   ElevatedCard(
     shape = MaterialTheme.shapes.medium,
     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-    modifier = modifier,
+    modifier = modifier.clickable { onMatchClick(matchRecord) },
   ) {
     ConstraintLayout(
       modifier = Modifier
