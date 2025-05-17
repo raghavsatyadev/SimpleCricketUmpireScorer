@@ -11,6 +11,13 @@ class MobileAdsInitializer : Initializer<Unit> {
   override fun create(context: Context) {
     if (context.checkPlayServiceAvailability()) {
       MobileAds.initialize(context)
+        MobileAds.setRequestConfiguration(
+            MobileAds
+                .getRequestConfiguration()
+                .toBuilder()
+                .setTestDeviceIds(listOf("9CC8AD8C783D84C97DF0A252B0F63285"))
+                .build()
+        )
     } else {
       Toast.makeText(context, R.string.warning_update_play_service, Toast.LENGTH_SHORT).show()
     }

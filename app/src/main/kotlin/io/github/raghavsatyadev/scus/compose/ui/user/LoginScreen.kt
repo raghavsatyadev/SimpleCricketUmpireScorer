@@ -1,4 +1,7 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@file:OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3ExpressiveApi::class
+)
 
 package io.github.raghavsatyadev.scus.compose.ui.user
 
@@ -41,124 +44,134 @@ import io.github.raghavsatyadev.support.models.essential.ResourceCompose
 import io.github.raghavsatyadev.support.R as Rs
 
 @Composable
-fun LoginScreen(viewModel: LoginScreenViewModel = hiltViewModel(), onLoginSuccess: () -> Unit) {
+fun LoginScreen(
+    viewModel: LoginScreenViewModel = hiltViewModel(),
+    onLoginSuccess: () -> Unit,
+) {
 
-  val activity = activity()
+    val activity = activity()
 
-  CheckPlayService {
-    val googleSignInUtil = remember { GoogleSignInUtil(activity = activity!!) }
+    CheckPlayService {
+        val googleSignInUtil = remember { GoogleSignInUtil(activity = activity!!) }
 
-    LoginView(doLogin = { viewModel.signInWithGoogle(googleSignInUtil) })
-  }
+        LoginView(doLogin = { viewModel.signInWithGoogle(googleSignInUtil) })
+    }
 
-  AfterLogin(viewModel, onLoginSuccess, activity)
+    AfterLogin(
+        viewModel,
+        onLoginSuccess,
+        activity
+    )
 }
 
 @Composable
 private fun LoginView(doLogin: () -> Unit) {
-  TransparentNavBar()
+    TransparentNavBar()
 
-  Scaffold(modifier = Modifier) { innerPadding ->
-    Box(modifier = Modifier) {
-      Image(
-        contentScale = ContentScale.Crop,
-        modifier = Modifier.fillMaxSize(),
-        painter = painterResource(Rs.drawable.img_background),
-        contentDescription = stringResource(R.string.background),
-      )
-      SmallExtendedFloatingActionButton(
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        containerColor = MaterialTheme.colorScheme.surface,
-        shape = MaterialTheme.shapes.extraLarge,
-        text = { Text(text = stringResource(R.string.google_login)) },
-        icon = {
-          Icon(
-            tint = null,
-            painter = painterResource(R.drawable.ic_google),
-            contentDescription = stringResource(R.string.google_login),
-          )
-        },
-        modifier =
-          Modifier.align(alignment = Alignment.BottomCenter)
-            .padding(bottom = innerPadding.calculateBottomPadding() + 40.dp),
-        onClick = { doLogin() },
-      )
+    Scaffold(modifier = Modifier) { innerPadding ->
+        Box(modifier = Modifier) {
+            Image(
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+                painter = painterResource(Rs.drawable.img_background),
+                contentDescription = stringResource(R.string.background),
+            )
+            SmallExtendedFloatingActionButton(
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                containerColor = MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.extraLarge,
+                text = { Text(text = stringResource(R.string.google_login)) },
+                icon = {
+                    Icon(
+                        tint = null,
+                        painter = painterResource(R.drawable.ic_google),
+                        contentDescription = stringResource(R.string.google_login),
+                    )
+                },
+                modifier = Modifier
+                    .align(alignment = Alignment.BottomCenter)
+                    .padding(bottom = innerPadding.calculateBottomPadding() + 40.dp),
+                onClick = { doLogin() },
+            )
+        }
     }
-  }
 }
 
 @Composable
 private fun AfterLogin(
-  viewModel: LoginScreenViewModel,
-  onLoginSuccess: () -> Unit,
-  activity: Activity?,
+    viewModel: LoginScreenViewModel,
+    onLoginSuccess: () -> Unit,
+    activity: Activity?,
 ) {
-  val loginEvent by viewModel.loginEvent.collectAsStateWithLifecycle()
-  var showUserAlreadyLoggedInDialog by remember { mutableStateOf(true) }
+    val loginEvent by viewModel.loginEvent.collectAsStateWithLifecycle()
+    var showUserAlreadyLoggedInDialog by remember { mutableStateOf(true) }
 
-  HandleLoginEvent(
-    loginEvent,
-    onLoginSuccess = { onLoginSuccess() },
-    onAlreadyLogin = {
-      if (showUserAlreadyLoggedInDialog) {
-        UserAlreadyLoggedInDialog(
-          onForceLogin = {
-            viewModel.updateUserTokens()
-            showUserAlreadyLoggedInDialog = false
-          },
-          onSignOut = {
-            viewModel.signOut {
-              activity?.finishAffinity()
-              showUserAlreadyLoggedInDialog = false
+    HandleLoginEvent(
+        loginEvent,
+        onLoginSuccess = { onLoginSuccess() },
+        onAlreadyLogin = {
+            if (showUserAlreadyLoggedInDialog) {
+                UserAlreadyLoggedInDialog(
+                    onForceLogin = {
+                        viewModel.updateUserTokens()
+                        showUserAlreadyLoggedInDialog = false
+                    },
+                    onSignOut = {
+                        viewModel.signOut {
+                            activity?.finishAffinity()
+                            showUserAlreadyLoggedInDialog = false
+                        }
+                    },
+                )
             }
-          },
-        )
-      }
-    },
-    onError = {
-      it?.let {
-        ErrorDialog(errorCode = it.errorCode, errorMessage = stringResource(it.errorCode.warning)) {
-          viewModel.signOut { activity?.finishAffinity() }
-        }
-      }
-    },
-  )
+        },
+        onError = {
+            it?.let {
+                ErrorDialog(
+                    errorCode = it.errorCode,
+                    errorMessage = stringResource(it.errorCode.warning)
+                ) {
+                    viewModel.signOut { activity?.finishAffinity() }
+                }
+            }
+        },
+    )
 }
 
 @Composable
 fun HandleLoginEvent(
-  loginEvent: ResourceCompose<LoginState>,
-  onLoginSuccess: () -> Unit,
-  onAlreadyLogin: @Composable () -> Unit,
-  onError: @Composable (CustomError?) -> Unit,
+    loginEvent: ResourceCompose<LoginState>,
+    onLoginSuccess: () -> Unit,
+    onAlreadyLogin: @Composable () -> Unit,
+    onError: @Composable (CustomError?) -> Unit,
 ) {
-  when (loginEvent.status) {
-    ResourceCompose.Status.ERROR -> {
-      onError(loginEvent.error)
-    }
-
-    ResourceCompose.Status.SUCCESS -> {
-      val loginState = loginEvent.data
-      when (loginState) {
-        LoginState.SUCCESS -> {
-          onLoginSuccess()
+    when (loginEvent.status) {
+        ResourceCompose.Status.ERROR -> {
+            onError(loginEvent.error)
         }
 
-        LoginState.USER_ALREADY_LOGGED_IN -> {
-          onAlreadyLogin()
+        ResourceCompose.Status.SUCCESS -> {
+            val loginState = loginEvent.data
+            when (loginState) {
+                LoginState.SUCCESS -> {
+                    onLoginSuccess()
+                }
+
+                LoginState.USER_ALREADY_LOGGED_IN -> {
+                    onAlreadyLogin()
+                }
+
+                else -> {}
+            }
         }
 
         else -> {}
-      }
     }
-
-    else -> {}
-  }
 }
 
 @LightRealDevicePreview
 @DarkRealDevicePreview
 @Composable
 private fun PreviewLoginScreen() {
-  LoginView(doLogin = {})
+    LoginView(doLogin = {})
 }

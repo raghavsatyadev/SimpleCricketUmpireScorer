@@ -27,7 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.raghavsatyadev.scus.R
-import io.github.raghavsatyadev.support.compose.components.ComposeAdView
+import io.github.raghavsatyadev.support.compose.components.AdUI
+import io.github.raghavsatyadev.support.compose.components.AppToolBar
 import io.github.raghavsatyadev.support.compose.components.LightRealDevicePreview
 
 @Composable
@@ -40,17 +41,24 @@ fun DashboardScreen(
   if (!loginState) {
     onNavigateToLogin()
   } else {
-    DashboardView(onAddMatchClick = { /*viewModel.addMatch()*/ })
+    DashboardUI(onAddMatchClick = { /*viewModel.addMatch()*/ })
   }
 }
 
 @Composable
-private fun DashboardView(onAddMatchClick: () -> Unit) {
-  Scaffold { innerPadding ->
-    Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+private fun DashboardUI(onAddMatchClick: () -> Unit) {
+  Scaffold(
+    topBar = {
+      AppToolBar(title = stringResource(io.github.raghavsatyadev.support.R.string.app_name))
+    }) { innerPadding ->
+    Box(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPadding)
+    ) {
       Column(modifier = Modifier) {
         MatchRecordList(Modifier)
-        ComposeAdView(modifier = Modifier.fillMaxWidth())
+        AdUI(modifier = Modifier.fillMaxWidth())
       }
       ExtendedFloatingActionButton(
         shape = MaterialTheme.shapes.extraLarge,
@@ -64,7 +72,9 @@ private fun DashboardView(onAddMatchClick: () -> Unit) {
             tint = MaterialTheme.colorScheme.surfaceVariant,
           )
         },
-        modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+        modifier = Modifier
+          .align(Alignment.BottomEnd)
+          .padding(16.dp),
         containerColor = MaterialTheme.colorScheme.primary,
       )
     }
@@ -75,12 +85,11 @@ private fun DashboardView(onAddMatchClick: () -> Unit) {
 private fun ColumnScope.MatchRecordList(modifier: Modifier) {
   LazyColumn(
     userScrollEnabled = true,
-    modifier =
-      modifier
-        .fillMaxWidth()
-        .weight(1f)
-        .padding(horizontal = 4.dp)
-        .padding(top = 4.dp, bottom = 80.dp),
+    modifier = modifier
+      .fillMaxWidth()
+      .weight(1f)
+      .padding(horizontal = 4.dp)
+      .padding(top = 4.dp),
   ) {
     items(getSampleRecords()) { record ->
       MatchRecordItem(matchRecord = record, onCopyClick = {}, onDeleteClick = {})
@@ -91,5 +100,5 @@ private fun ColumnScope.MatchRecordList(modifier: Modifier) {
 @LightRealDevicePreview
 @Composable
 fun DashboardScreenPreview() {
-  DashboardView(onAddMatchClick = {})
+  DashboardUI(onAddMatchClick = {})
 }
