@@ -53,18 +53,11 @@
 
         <item name="fontFamily">@font/app_fonts</item>
         <item name="android:fontFamily">@font/app_fonts</item>
-        <item name="materialCardViewStyle">@style/CardStyleCustom</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
-        <item name="textInputStyle">@style/TextInputLayoutStyle</item>
     </style>
 
     <style name="AppTheme.Merged">
         <item name="fontFamily">@font/app_fonts</item>
         <item name="android:fontFamily">@font/app_fonts</item>
-        <item name="materialCardViewStyle">@style/CardStyleCustom</item>
-        <item name="android:statusBarColor">?colorPrimary</item>
-        <item name="textInputStyle">@style/TextInputLayoutStyle</item>
     </style>
 
     <style name="AppTheme.Merged.Login">

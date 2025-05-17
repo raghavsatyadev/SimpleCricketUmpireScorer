@@ -12,7 +12,7 @@ import io.github.raghavsatyadev.support.BuildConfig
 import io.github.raghavsatyadev.support.R
 
 @Composable
-fun ComposeAdView(modifier: Modifier = Modifier) {
+fun AdUI(modifier: Modifier = Modifier) {
   AndroidView(
     modifier = modifier,
     factory = { context ->

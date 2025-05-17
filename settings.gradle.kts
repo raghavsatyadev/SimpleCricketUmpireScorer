@@ -22,6 +22,6 @@ dependencyResolutionManagement {
 
 rootProject.buildFileName = "project.gradle.kts"
 
-rootProject.name = "SimpleCricketUmpireScorer"
+rootProject.name = "SCUS"
 
 include(":app", ":support")
