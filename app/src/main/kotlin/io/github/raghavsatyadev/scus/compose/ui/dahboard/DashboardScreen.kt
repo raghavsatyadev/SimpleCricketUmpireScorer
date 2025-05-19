@@ -21,6 +21,7 @@ import androidx.compose.material3.MediumFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,9 +54,13 @@ fun DashboardScreen(
   if (!loginState) {
     onNavigateToLogin()
   } else {
+    val matchRecordsFlow by viewModel.matchRecordsFlow.collectAsState()
+    val matchRecords by remember { derivedStateOf { matchRecordsFlow.data ?: emptyList() } }
+
     DashboardUI(
+      matchRecords = matchRecords,
       onAddMatchClick = { /*viewModel.addMatch()*/ },
-      onMatchClick = onMatchClick
+      onMatchClick = onMatchClick,
     )
   }
 }
@@ -64,6 +69,7 @@ fun DashboardScreen(
 private fun DashboardUI(
   onAddMatchClick: () -> Unit,
   onMatchClick: (MatchRecord) -> Unit,
+  matchRecords: List<MatchRecord>,
 ) {
   Scaffold(
     topBar = { AppToolBar(title = stringResource(Rs.string.app_name)) },
@@ -90,6 +96,7 @@ private fun DashboardUI(
         boxAd,
       ) = createRefs()
       MatchRecordList(
+        matchRecords = matchRecords,
         onMatchClick = onMatchClick,
         modifier = Modifier.constrainAs(listMatchRecord) {
           start.linkTo(parent.start)
@@ -117,11 +124,9 @@ private fun DashboardUI(
 private fun MatchRecordList(
   modifier: Modifier,
   onMatchClick: (MatchRecord) -> Unit,
+  matchRecords: List<MatchRecord>,
 ) {
 
-  val matchRecordsFlow = remember { getSampleRecords() }
-
-  val matchRecords by matchRecordsFlow.collectAsState()
   CreateMatchRecordProperties { properties ->
     LazyColumn(
       userScrollEnabled = true,
@@ -194,6 +199,7 @@ data class MatchRecordProperties(
 @Composable
 fun DashboardScreenPreview() {
   DashboardUI(
+    matchRecords = getSampleRecords(),
     onAddMatchClick = {},
     onMatchClick = {})
 }

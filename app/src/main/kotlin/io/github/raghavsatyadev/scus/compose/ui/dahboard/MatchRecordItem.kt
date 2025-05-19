@@ -32,8 +32,6 @@ import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtens
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.getTeam1FormattedScore
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.getTeam2FormattedScore
 import io.github.raghavsatyadev.support.models.db.match_record.MatchStatus
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @LightPreview
 @Composable
@@ -291,6 +289,6 @@ fun getSampleMatchRecord(i: Int): MatchRecord {
     .toKotlinObject()
 }
 
-fun getSampleRecords(): StateFlow<List<MatchRecord>> {
-  return MutableStateFlow(buildList { repeat(10) { add(getSampleMatchRecord(it)) } })
+fun getSampleRecords(): List<MatchRecord> {
+  return buildList { repeat(10) { add(getSampleMatchRecord(it)) } }
 }
