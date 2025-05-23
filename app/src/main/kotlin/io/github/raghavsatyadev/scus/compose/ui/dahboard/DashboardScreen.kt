@@ -1,6 +1,6 @@
 @file:OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class
+  ExperimentalMaterial3Api::class,
+  ExperimentalMaterial3ExpressiveApi::class
 )
 
 package io.github.raghavsatyadev.scus.compose.ui.dahboard
@@ -24,9 +24,7 @@ import androidx.compose.material3.MediumFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -53,8 +51,7 @@ fun DashboardScreen(
   onCopyMatchRecord: (MatchRecord) -> Unit,
 ) {
 
-  val matchRecordsFlow by viewModel.matchRecordsFlow.collectAsState()
-  val matchRecords by remember { derivedStateOf { matchRecordsFlow.data ?: emptyList() } }
+  val matchRecords by viewModel.matchRecordsFlow.collectAsState(initial = emptyList())
 
   DashboardUI(
     matchRecords = matchRecords,
@@ -89,23 +86,23 @@ private fun DashboardUI(
       )
     },
   ) { innerPadding ->
-      ConstraintLayout(
-          modifier = Modifier
-              .fillMaxSize()
-              .padding(innerPadding)
-      ) {
+    ConstraintLayout(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPadding)
+    ) {
       val (
         listMatchRecord,
         boxAd,
       ) = createRefs()
       MatchRecordList(
-          modifier = Modifier.constrainAs(listMatchRecord) {
-              start.linkTo(parent.start)
-              end.linkTo(parent.end)
-              top.linkTo(parent.top)
-              bottom.linkTo(boxAd.top)
-              width = Dimension.fillToConstraints
-              height = Dimension.fillToConstraints
+        modifier = Modifier.constrainAs(listMatchRecord) {
+          start.linkTo(parent.start)
+          end.linkTo(parent.end)
+          top.linkTo(parent.top)
+          bottom.linkTo(boxAd.top)
+          width = Dimension.fillToConstraints
+          height = Dimension.fillToConstraints
           },
         matchRecords = matchRecords,
         onMatchClick = onMatchClick,
@@ -113,12 +110,12 @@ private fun DashboardUI(
         onDeleteMatchRecord = onDeleteMatchRecord,
       )
       AdUI(
-          modifier = Modifier.constrainAs(boxAd) {
-              start.linkTo(parent.start)
-              end.linkTo(parent.end)
-              bottom.linkTo(parent.bottom)
-              width = Dimension.fillToConstraints
-              height = Dimension.wrapContent
+        modifier = Modifier.constrainAs(boxAd) {
+          start.linkTo(parent.start)
+          end.linkTo(parent.end)
+          bottom.linkTo(parent.bottom)
+          width = Dimension.fillToConstraints
+          height = Dimension.wrapContent
           }
       )
     }
@@ -140,18 +137,18 @@ private fun MatchRecordList(
       modifier = modifier,
       contentPadding = PaddingValues(vertical = 8.dp),
     ) {
-        items(
-            matchRecords,
-            key = { it.matchRecordId }) { record ->
+      items(
+        matchRecords,
+        key = { it.matchRecordId }) { record ->
         MatchRecordItem(
-            modifier = Modifier
-                .animateItem()
-                .padding(
-                    vertical = 8.dp,
-                    horizontal = 16.dp
-                )
-                .fillMaxWidth()
-                .wrapContentHeight(),
+          modifier = Modifier
+            .animateItem()
+            .padding(
+              vertical = 8.dp,
+              horizontal = 16.dp
+            )
+            .fillMaxWidth()
+            .wrapContentHeight(),
           matchRecord = record,
           properties = properties,
           onCopyClick = { onCopyMatchRecord(record) },

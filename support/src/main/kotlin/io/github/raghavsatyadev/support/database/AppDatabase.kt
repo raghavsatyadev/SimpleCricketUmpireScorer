@@ -10,5 +10,5 @@ import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUt
 @Database(version = Constants.DB.VERSION, entities = [MatchRecord::class], autoMigrations = [])
 @TypeConverters(EssentialConverters::class)
 abstract class AppDatabase : RoomDatabase() {
-  abstract fun songDetailDao(): MatchRecordDataUtil.MatchRecordDao
+  abstract fun matchRecordDao(): MatchRecordDataUtil.MatchRecordDao
 }

@@ -13,17 +13,19 @@ import javax.inject.Singleton
 class MatchRecordComposeDataUtil @Inject constructor(private val database: AppDatabase) :
   BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchRecordDao>() {
 
-  override fun getDao(): MatchRecordDataUtil.MatchRecordDao = database.songDetailDao()
+  override fun getDao(): MatchRecordDataUtil.MatchRecordDao = database.matchRecordDao()
 
   override fun getTableName(): String = Constants.DB.Tables.MATCH_RECORD_TABLE
 
   override fun getPrimaryKey(): String = Constants.FieldKeys.MATCH_RECORD_ID
 
-  fun getAllLive(sortKey: String = ""): Flow<List<MatchRecord>> =
-    database.songDetailDao().getAllLive(SimpleSQLiteQuery(buildGetAllSortedQuery(sortKey)))
+  fun getAllLive(sortKey: String = ""): Flow<List<MatchRecord>> = database
+    .matchRecordDao()
+    .getAllLive(SimpleSQLiteQuery(buildGetAllSortedQuery(sortKey)))
 
-  fun getCountLive(): Flow<Long> =
-    database.songDetailDao().getCountLive(SimpleSQLiteQuery(buildGetCountQuery()))
+  fun getCountLive(): Flow<Long> = database
+    .matchRecordDao()
+    .getCountLive(SimpleSQLiteQuery(buildGetCountQuery()))
 
   override fun update(t: MatchRecord): Int {
     t.localUpdateDateTime = Date()
@@ -44,9 +46,14 @@ class MatchRecordComposeDataUtil @Inject constructor(private val database: AppDa
     update(present)
   }
 
-  fun updateServerTime(id: String, time: Date) =
-    database.songDetailDao().updateServerTime(id, time.time)
+  fun updateServerTime(id: String, time: Date) = database
+    .matchRecordDao()
+    .updateServerTime(
+      id,
+      time.time
+    )
 
-  fun getItemLive(id: String): Flow<MatchRecord> =
-    database.songDetailDao().getItemLive(SimpleSQLiteQuery(buildGetItemQuery(id)))
+  fun getItemLive(id: String): Flow<MatchRecord> = database
+    .matchRecordDao()
+    .getItemLive(SimpleSQLiteQuery(buildGetItemQuery(id)))
 }
