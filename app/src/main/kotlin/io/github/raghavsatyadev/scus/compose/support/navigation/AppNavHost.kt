@@ -10,11 +10,10 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import io.github.raghavsatyadev.scus.compose.ui.dahboard.DashboardScreen
 import io.github.raghavsatyadev.scus.compose.ui.user.LoginScreen
-import io.github.raghavsatyadev.support.compose.extesions.NavigationExtensions.replaceAll
 
 @Composable
-fun AppNavHost() {
-  val backStack = rememberNavBackStack(AppRoutes.Login)
+fun AppNavHost(isLoggedIn: Boolean) {
+  val backStack = rememberNavBackStack(if (isLoggedIn) AppRoutes.Dashboard else AppRoutes.Login)
 
   NavDisplay(
     backStack = backStack,
@@ -53,7 +52,7 @@ fun AppNavHost() {
           },
         )
       }
-      entry<AppRoutes.Login> { LoginScreen { backStack.replaceAll(AppRoutes.Dashboard) } }
+      entry<AppRoutes.Login> { LoginScreen() }
       entry<AppRoutes.CreateMatch> {}
       entry<AppRoutes.MatchRecord> { key -> }
     },

@@ -26,7 +26,6 @@ constructor(
   uiStateManager: UiStateManager,
 ) : CoreScreenViewModel(uiStateManager) {
   private val _loginResourceEvent = MutableStateFlow<UiState<LoginState>>(UiState.Initial)
-
   @Stable
   val loginEvent = _loginResourceEvent.asStateFlow()
 
@@ -132,10 +131,10 @@ constructor(
     }
   }
 
-  fun signOut(onSuccess: () -> Unit) {
+    fun signOut(onLogout: () -> Unit) {
     executeWithLoader {
       AppComposeExtensions.signOut(fireStoreUtil, authUtil)
-      onSuccess()
+        onLogout() // Trigger navigation to login screen
     }
   }
 

@@ -31,9 +31,9 @@ object AppComposeExtensions {
     if (doSignOutFromFirestore) {
       fireStoreUtil.signOutUser()
     }
-    authUtil.signOut()
     RoomDBUtil.deleteAll()
     AppPrefsUtil.clearAppPreferences()
+      authUtil.signOut()
   }
 
   @Composable fun finishAffinity() = LocalActivity.current?.finishAffinity()
