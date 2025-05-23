@@ -1,6 +1,6 @@
 @file:OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class
+  ExperimentalMaterial3Api::class,
+  ExperimentalMaterial3ExpressiveApi::class
 )
 
 package io.github.raghavsatyadev.scus.compose.ui.dahboard
@@ -23,13 +23,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -51,41 +48,33 @@ import io.github.raghavsatyadev.support.R as Rs
 @Composable
 fun DashboardScreen(
   viewModel: DashboardScreenViewModel = hiltViewModel(),
-  onNavigateToLogin: () -> Unit,
   onMatchClick: (MatchRecord) -> Unit,
   onAddMatchClick: () -> Unit,
-  onCopyMatchRecord: (MatchRecord) -> Unit = {},
+  onCopyMatchRecord: (MatchRecord) -> Unit,
 ) {
-    var loginState by remember { mutableStateOf(viewModel.isLoggedIn()) }
 
-    LaunchedEffect(Unit) { loginState = viewModel.isLoggedIn() }
+  val matchRecordsFlow by viewModel.matchRecordsFlow.collectAsState()
+  val matchRecords by remember { derivedStateOf { matchRecordsFlow.data ?: emptyList() } }
 
-  if (!loginState) {
-    onNavigateToLogin()
-  } else {
-    val matchRecordsFlow by viewModel.matchRecordsFlow.collectAsState()
-    val matchRecords by remember { derivedStateOf { matchRecordsFlow.data ?: emptyList() } }
-
-    DashboardUI(
-      matchRecords = matchRecords,
-        onAddMatchClick = onAddMatchClick,
-      onMatchClick = onMatchClick,
-        onCopyMatchRecord = onCopyMatchRecord,
-        onDeleteMatchRecord = { viewModel.deleteMatchRecord(it) },
-    )
-  }
+  DashboardUI(
+    matchRecords = matchRecords,
+    onAddMatchClick = onAddMatchClick,
+    onMatchClick = onMatchClick,
+    onCopyMatchRecord = onCopyMatchRecord,
+    onDeleteMatchRecord = { viewModel.deleteMatchRecord(it) },
+  )
 }
 
 @Composable
 private fun DashboardUI(
-    matchRecords: List<MatchRecord>,
+  matchRecords: List<MatchRecord>,
   onAddMatchClick: () -> Unit,
   onMatchClick: (MatchRecord) -> Unit,
-    onCopyMatchRecord: (MatchRecord) -> Unit,
-    onDeleteMatchRecord: (MatchRecord) -> Unit,
+  onCopyMatchRecord: (MatchRecord) -> Unit,
+  onDeleteMatchRecord: (MatchRecord) -> Unit,
 ) {
   Scaffold(
-      modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
+    modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
     topBar = { AppToolBar(title = stringResource(Rs.string.app_name)) },
     floatingActionButton = {
       MediumFloatingActionButton(
@@ -100,36 +89,36 @@ private fun DashboardUI(
       )
     },
   ) { innerPadding ->
-      ConstraintLayout(
-          modifier = Modifier
-              .fillMaxSize()
-              .padding(innerPadding)
-      ) {
+    ConstraintLayout(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPadding)
+    ) {
       val (
         listMatchRecord,
         boxAd,
       ) = createRefs()
       MatchRecordList(
-          modifier = Modifier.constrainAs(listMatchRecord) {
-              start.linkTo(parent.start)
-              end.linkTo(parent.end)
-              top.linkTo(parent.top)
-              bottom.linkTo(boxAd.top)
-              width = Dimension.fillToConstraints
-              height = Dimension.fillToConstraints
+        modifier = Modifier.constrainAs(listMatchRecord) {
+          start.linkTo(parent.start)
+          end.linkTo(parent.end)
+          top.linkTo(parent.top)
+          bottom.linkTo(boxAd.top)
+          width = Dimension.fillToConstraints
+          height = Dimension.fillToConstraints
           },
-          matchRecords = matchRecords,
-          onMatchClick = onMatchClick,
-          onCopyMatchRecord = onCopyMatchRecord,
-          onDeleteMatchRecord = onDeleteMatchRecord,
+        matchRecords = matchRecords,
+        onMatchClick = onMatchClick,
+        onCopyMatchRecord = onCopyMatchRecord,
+        onDeleteMatchRecord = onDeleteMatchRecord,
       )
       AdUI(
-          modifier = Modifier.constrainAs(boxAd) {
-              start.linkTo(parent.start)
-              end.linkTo(parent.end)
-              bottom.linkTo(parent.bottom)
-              width = Dimension.fillToConstraints
-              height = Dimension.wrapContent
+        modifier = Modifier.constrainAs(boxAd) {
+          start.linkTo(parent.start)
+          end.linkTo(parent.end)
+          bottom.linkTo(parent.bottom)
+          width = Dimension.fillToConstraints
+          height = Dimension.wrapContent
           }
       )
     }
@@ -151,22 +140,22 @@ private fun MatchRecordList(
       modifier = modifier,
       contentPadding = PaddingValues(vertical = 8.dp),
     ) {
-        items(
-            matchRecords,
-            key = { it.matchRecordId }) { record ->
+      items(
+        matchRecords,
+        key = { it.matchRecordId }) { record ->
         MatchRecordItem(
-            modifier = Modifier
-                .animateItem()
-                .padding(
-                    vertical = 8.dp,
-                    horizontal = 16.dp
-                )
-                .fillMaxWidth()
-                .wrapContentHeight(),
+          modifier = Modifier
+            .animateItem()
+            .padding(
+              vertical = 8.dp,
+              horizontal = 16.dp
+            )
+            .fillMaxWidth()
+            .wrapContentHeight(),
           matchRecord = record,
           properties = properties,
-            onCopyClick = { onCopyMatchRecord(record) },
-            onDeleteClick = { onDeleteMatchRecord(record) },
+          onCopyClick = { onCopyMatchRecord(record) },
+          onDeleteClick = { onDeleteMatchRecord(record) },
           onMatchClick = onMatchClick,
         )
       }
@@ -219,8 +208,8 @@ fun DashboardScreenPreview() {
   DashboardUI(
     matchRecords = getSampleRecords(),
     onAddMatchClick = {},
-      onMatchClick = {},
-      onCopyMatchRecord = {},
-      onDeleteMatchRecord = {},
+    onMatchClick = {},
+    onCopyMatchRecord = {},
+    onDeleteMatchRecord = {},
   )
 }

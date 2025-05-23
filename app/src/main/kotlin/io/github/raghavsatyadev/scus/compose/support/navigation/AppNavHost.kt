@@ -10,63 +10,52 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import io.github.raghavsatyadev.scus.compose.ui.dahboard.DashboardScreen
 import io.github.raghavsatyadev.scus.compose.ui.user.LoginScreen
-import io.github.raghavsatyadev.support.AppLog
+import io.github.raghavsatyadev.support.compose.extesions.NavigationExtensions.replaceAll
 
 @Composable
 fun AppNavHost() {
-    val backStack = rememberNavBackStack(AppRoutes.Dashboard)
+  val backStack = rememberNavBackStack(AppRoutes.Login)
 
-    NavDisplay(
-        backStack = backStack,
-        onBack = { backStack.removeLastOrNull() },
-        transitionSpec = {
-            // Slide in from right when navigating forward
-            slideInHorizontally(initialOffsetX = { it }) togetherWith slideOutHorizontally(targetOffsetX = { -it })
-        },
-        popTransitionSpec = {
-            // Slide in from left when navigating back
-            slideInHorizontally(initialOffsetX = { -it }) togetherWith slideOutHorizontally(targetOffsetX = { it })
-        },
-        predictivePopTransitionSpec = {
-            // Slide in from left when navigating back
-            slideInHorizontally(initialOffsetX = { -it }) togetherWith slideOutHorizontally(targetOffsetX = { it })
-        },
-        entryProvider = entryProvider {
-            entry<AppRoutes.Dashboard> {
-                DashboardScreen(
-                    onNavigateToLogin = { backStack.add(AppRoutes.Login) },
-                    onAddMatchClick = { backStack.add(AppRoutes.CreateMatch()) },
-                    onMatchClick = { matchRecord ->
-                        backStack.add(
-                            AppRoutes.MatchRecord(
-                                matchId = matchRecord.matchRecordId,
-                                matchRecord = matchRecord,
-                            )
-                        )
-                    },
-                )
-            }
-            entry<AppRoutes.Login> {
-                LoginScreen {
-                    AppLog.loge(
-                        true,
-                        "LoginScreen",
-                        "AppNavHost",
-                        "backstack: ${
-                            backStack
-                                .toList()
-                                .joinToString(separator = "-") {
-                                    it.toString()
-                                }
-                        }",
-                        Exception(),
-                    )
-                    backStack.removeLastOrNull()
-                }
-            }
-
-            entry<AppRoutes.CreateMatch> {}
-            entry<AppRoutes.MatchRecord> { key -> }
-        },
-    )
+  NavDisplay(
+    backStack = backStack,
+    onBack = { backStack.removeLastOrNull() },
+    transitionSpec = {
+      // Slide in from right when navigating forward
+      slideInHorizontally(initialOffsetX = { it }) togetherWith slideOutHorizontally(targetOffsetX = { -it })
+    },
+    popTransitionSpec = {
+      // Slide in from left when navigating back
+      slideInHorizontally(initialOffsetX = { -it }) togetherWith slideOutHorizontally(targetOffsetX = { it })
+    },
+    predictivePopTransitionSpec = {
+      // Slide in from left when navigating back
+      slideInHorizontally(initialOffsetX = { -it }) togetherWith slideOutHorizontally(targetOffsetX = { it })
+    },
+    entryProvider = entryProvider {
+      entry<AppRoutes.Dashboard> {
+        DashboardScreen(
+          onAddMatchClick = { backStack.add(AppRoutes.CreateMatch()) },
+          onMatchClick = { matchRecord ->
+            backStack.add(
+              AppRoutes.MatchRecord(
+                matchId = matchRecord.matchRecordId,
+                matchRecord = matchRecord,
+              )
+            )
+          },
+          onCopyMatchRecord = {
+            backStack.add(
+              AppRoutes.MatchRecord(
+                matchId = it.matchRecordId,
+                matchRecord = it
+              )
+            )
+          },
+        )
+      }
+      entry<AppRoutes.Login> { LoginScreen { backStack.replaceAll(AppRoutes.Dashboard) } }
+      entry<AppRoutes.CreateMatch> {}
+      entry<AppRoutes.MatchRecord> { key -> }
+    },
+  )
 }
