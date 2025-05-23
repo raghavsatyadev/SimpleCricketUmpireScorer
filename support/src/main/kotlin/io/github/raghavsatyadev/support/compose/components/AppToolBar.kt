@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.raghavsatyadev.support.compose.theme.AppTheme
 import io.github.raghavsatyadev.support.R as Rs
 
 @Composable
@@ -52,12 +53,21 @@ fun AppToolBar(modifier: Modifier = Modifier, title: String, onNavigateBack: (()
 @DarkPreview
 @Composable
 fun AppToolBarPreview() {
-  AppToolBar(title = "SCUS", onNavigateBack = {})
+  AppTheme {
+    AppToolBar(
+      title = "SCUS",
+      onNavigateBack = {})
+  }
 }
 
 @LightPreview
 @DarkPreview
 @Composable
 fun AppToolBarPreviewWithoutBackButton() {
-  AppToolBar(title = "SCUS", onNavigateBack = null)
+  AppTheme {
+    AppToolBar(
+      title = "SCUS",
+      onNavigateBack = null
+    )
+  }
 }
