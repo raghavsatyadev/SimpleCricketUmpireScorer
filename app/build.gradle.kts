@@ -98,10 +98,6 @@ android {
     }
     kotlin { jvmToolchain(21) }
     compileOptions { isCoreLibraryDesugaringEnabled = true }
-    kotlinOptions {
-      freeCompilerArgs =
-        listOf("-Xjvm-default=all", "-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
-    }
     buildFeatures {
       viewBinding = true
       buildConfig = true
