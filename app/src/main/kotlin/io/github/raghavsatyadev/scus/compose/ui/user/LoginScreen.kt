@@ -18,7 +18,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallExtendedFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -30,24 +29,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.raghavsatyadev.scus.R
-import io.github.raghavsatyadev.support.compose.AppComposeExtensions.CheckPlayService
-import io.github.raghavsatyadev.support.compose.AppComposeExtensions.activity
+import io.github.raghavsatyadev.support.compose.AppHelpers.CheckPlayService
+import io.github.raghavsatyadev.support.compose.AppHelpers.activity
 import io.github.raghavsatyadev.support.compose.components.DarkRealDevicePreview
 import io.github.raghavsatyadev.support.compose.components.ErrorDialog
 import io.github.raghavsatyadev.support.compose.components.LightRealDevicePreview
 import io.github.raghavsatyadev.support.compose.components.TransparentNavBar
 import io.github.raghavsatyadev.support.compose.google.GoogleSignInUtil
-import io.github.raghavsatyadev.support.models.LoginState
 import io.github.raghavsatyadev.support.models.essential.UiState
 import io.github.raghavsatyadev.support.R as Rs
 
 @Composable
-fun LoginScreen(viewModel: LoginScreenViewModel = hiltViewModel()) {
+fun LoginScreen(
+  viewModel: LoginScreenViewModel = hiltViewModel(),
+  onLoginSuccess: () -> Unit,
+) {
   val activity = activity()
 
   HandleLoginEvents(
     viewModel,
-    activity
+    activity,
+    onLoginSuccess = onLoginSuccess
   )
 
   CheckPlayService {
@@ -61,8 +63,9 @@ fun LoginScreen(viewModel: LoginScreenViewModel = hiltViewModel()) {
 private fun HandleLoginEvents(
   viewModel: LoginScreenViewModel,
   activity: Activity?,
+  onLoginSuccess: () -> Unit,
 ) {
-  val loginUiState by viewModel.loginEvent.collectAsState()
+  val loginUiState by viewModel.isUserAlreadyLoggedInEvent.collectAsState()
 
   when (val state = loginUiState) {
     is UiState.Initial -> {}
@@ -79,17 +82,13 @@ private fun HandleLoginEvents(
     }
 
     is UiState.Success -> {
-      when (state.data) {
-        LoginState.SUCCESS -> {
-          LaunchedEffect(state.data) { viewModel.onLoginSuccessEventHandled() }
-        }
-
-        LoginState.USER_ALREADY_LOGGED_IN -> {
-          UserAlreadyLoggedInDialog(
-            onForceLogin = { viewModel.updateUserTokens() },
-            onSignOut = { viewModel.signOut { activity?.finishAffinity() } },
-          )
-        }
+      if (state.data) {
+        UserAlreadyLoggedInDialog(
+          onForceLogin = { viewModel.updateUserTokens() },
+          onSignOut = { viewModel.signOut { activity?.finishAffinity() } },
+        )
+      } else {
+        onLoginSuccess()
       }
     }
   }

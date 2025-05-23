@@ -2,13 +2,13 @@ package io.github.raghavsatyadev.scus.compose.ui.user
 
 import androidx.compose.runtime.Stable
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.raghavsatyadev.support.compose.AppComposeExtensions
+import io.github.raghavsatyadev.support.compose.AppHelpers
 import io.github.raghavsatyadev.support.compose.components.UiStateManager
 import io.github.raghavsatyadev.support.compose.core.CoreScreenViewModel
+import io.github.raghavsatyadev.support.compose.database.RoomDBComposeUtil
 import io.github.raghavsatyadev.support.compose.google.FireStoreUtil
 import io.github.raghavsatyadev.support.compose.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.compose.google.GoogleSignInUtil
-import io.github.raghavsatyadev.support.models.LoginState
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
@@ -23,18 +23,19 @@ class LoginScreenViewModel
 constructor(
   private val authUtil: FirebaseAuthUtil,
   private val fireStoreUtil: FireStoreUtil,
+  private val roomDBUtil: RoomDBComposeUtil,
   uiStateManager: UiStateManager,
 ) : CoreScreenViewModel(uiStateManager) {
-  private val _loginResourceEvent = MutableStateFlow<UiState<LoginState>>(UiState.Initial)
+  private val _isUserAlreadyLoggedInEvent = MutableStateFlow<UiState<Boolean>>(UiState.Initial)
   @Stable
-  val loginEvent = _loginResourceEvent.asStateFlow()
+  val isUserAlreadyLoggedInEvent = _isUserAlreadyLoggedInEvent.asStateFlow()
 
   fun signInWithGoogle(googleSignInUtil: GoogleSignInUtil) {
     executeWithLoader {
       googleSignInUtil.startSignIn(
         onSuccess = { idToken -> signInWithFirebaseAuth(idToken) },
         onFailure = { e ->
-          _loginResourceEvent.emit(
+          _isUserAlreadyLoggedInEvent.emit(
             UiState.Error(
               CustomError(
                 ErrorCode.AUTH_FAILED,
@@ -53,7 +54,7 @@ constructor(
       try {
         loginWithFirestore(user)
       } catch (e: Exception) {
-        _loginResourceEvent.emit(
+        _isUserAlreadyLoggedInEvent.emit(
           UiState.Error(
             CustomError(
               ErrorCode.AUTH_FAILED,
@@ -63,7 +64,7 @@ constructor(
         )
       }
     } else {
-      _loginResourceEvent.emit(UiState.Error(error))
+      _isUserAlreadyLoggedInEvent.emit(UiState.Error(error))
     }
   }
 
@@ -76,7 +77,7 @@ constructor(
           return
         }
         initialize()
-        _loginResourceEvent.emit(UiState.Success(LoginState.SUCCESS))
+        _isUserAlreadyLoggedInEvent.emit(UiState.Success(false))
       } catch (e: Exception) {
         throw e
       }
@@ -106,7 +107,7 @@ constructor(
         true
       }
       else -> {
-        _loginResourceEvent.emit(UiState.Success(LoginState.USER_ALREADY_LOGGED_IN))
+        _isUserAlreadyLoggedInEvent.emit(UiState.Success(true))
         false
       }
     }
@@ -117,9 +118,9 @@ constructor(
       try {
         fireStoreUtil.updateUserLoginTokens()
         fireStoreUtil.initialize()
-        _loginResourceEvent.emit(UiState.Success(LoginState.SUCCESS))
+        _isUserAlreadyLoggedInEvent.emit(UiState.Success(false))
       } catch (e: Exception) {
-        _loginResourceEvent.emit(
+        _isUserAlreadyLoggedInEvent.emit(
           UiState.Error(
             CustomError(
               ErrorCode.AUTH_FAILED,
@@ -131,22 +132,18 @@ constructor(
     }
   }
 
-    fun signOut(onLogout: () -> Unit) {
+  fun signOut(onLogout: () -> Unit) {
     executeWithLoader {
-      AppComposeExtensions.signOut(fireStoreUtil, authUtil)
-        onLogout() // Trigger navigation to login screen
+      AppHelpers.signOut(
+        fireStoreUtil,
+        authUtil,
+        roomDBUtil
+      )
+      onLogout()
     }
   }
 
-  /**
-   * Call this method after the login success event has been handled by the
-   * UI to prevent it from being processed again.
-   */
-  fun onLoginSuccessEventHandled() {
-    if (_loginResourceEvent.value == UiState.Success) {
-      if ((_loginResourceEvent.value as UiState.Success).data == LoginState.SUCCESS) {
-        _loginResourceEvent.value = UiState.Initial
-      }
-    }
+  fun loginEventConsumed() {
+    _isUserAlreadyLoggedInEvent.value = UiState.Initial
   }
 }

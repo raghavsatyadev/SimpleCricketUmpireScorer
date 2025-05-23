@@ -4,16 +4,29 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import io.github.raghavsatyadev.scus.compose.ui.dahboard.DashboardScreen
+import io.github.raghavsatyadev.scus.compose.ui.main.MainViewModel
 import io.github.raghavsatyadev.scus.compose.ui.user.LoginScreen
+import io.github.raghavsatyadev.support.compose.extesions.NavigationExtensions.replaceAll
 
 @Composable
-fun AppNavHost(isLoggedIn: Boolean) {
-  val backStack = rememberNavBackStack(if (isLoggedIn) AppRoutes.Dashboard else AppRoutes.Login)
+fun AppNavHost(viewModel: MainViewModel) {
+  val backStack = rememberNavBackStack(AppRoutes.Login)
+  val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
+  LaunchedEffect(isLoggedIn) {
+    if (isLoggedIn) {
+      backStack.replaceAll(AppRoutes.Dashboard)
+    } else {
+      backStack.replaceAll(AppRoutes.Login)
+    }
+  }
 
   NavDisplay(
     backStack = backStack,
@@ -52,7 +65,8 @@ fun AppNavHost(isLoggedIn: Boolean) {
           },
         )
       }
-      entry<AppRoutes.Login> { LoginScreen() }
+      entry<AppRoutes.Login> { LoginScreen { viewModel.changeLoginState() } }
+
       entry<AppRoutes.CreateMatch> {}
       entry<AppRoutes.MatchRecord> { key -> }
     },
