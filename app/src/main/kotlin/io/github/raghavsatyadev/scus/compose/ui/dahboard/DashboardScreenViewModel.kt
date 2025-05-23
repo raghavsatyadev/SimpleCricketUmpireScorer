@@ -23,4 +23,8 @@ constructor(private val authUtil: FirebaseAuthUtil, uiStateManager: UiStateManag
   fun isLoggedIn(): Boolean {
     return authUtil.isLoggedIn()
   }
+
+  fun deleteMatchRecord(matchRecord: MatchRecord) {
+
+  }
 }

@@ -1,0 +1,31 @@
+package io.github.raghavsatyadev.support.compose.extesions
+
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+
+object NavigationExtensions {
+    fun <T : NavKey> NavBackStack.replaceAll(destination: T) {
+        clear()
+        add(destination)
+    }
+
+    fun <T : NavKey> NavBackStack.replaceAll(destinations: List<T>) {
+        clear()
+        addAll(destinations)
+    }
+
+    fun <T : NavKey> NavBackStack.removeTill(
+        destination: T,
+        inclusive: Boolean = false,
+    ) {
+        val index = indexOf(destination)
+        if (index != -1) {
+            for (i in size - 1 downTo index + 1) {
+                removeAt(i)
+            }
+            if (inclusive) {
+                removeAt(index)
+            }
+        }
+    }
+}

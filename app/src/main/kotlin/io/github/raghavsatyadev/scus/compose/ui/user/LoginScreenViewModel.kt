@@ -1,5 +1,6 @@
 package io.github.raghavsatyadev.scus.compose.ui.user
 
+import androidx.compose.runtime.Stable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.raghavsatyadev.support.compose.AppComposeExtensions
 import io.github.raghavsatyadev.support.compose.components.UiStateManager
@@ -11,7 +12,7 @@ import io.github.raghavsatyadev.support.models.LoginState
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
-import io.github.raghavsatyadev.support.models.essential.ResourceCompose
+import io.github.raghavsatyadev.support.models.essential.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
@@ -24,8 +25,9 @@ constructor(
   private val fireStoreUtil: FireStoreUtil,
   uiStateManager: UiStateManager,
 ) : CoreScreenViewModel(uiStateManager) {
-  private val _loginResourceEvent =
-    MutableStateFlow<ResourceCompose<LoginState>>(ResourceCompose.empty())
+  private val _loginResourceEvent = MutableStateFlow<UiState<LoginState>>(UiState.Initial)
+
+  @Stable
   val loginEvent = _loginResourceEvent.asStateFlow()
 
   fun signInWithGoogle(googleSignInUtil: GoogleSignInUtil) {
@@ -33,7 +35,14 @@ constructor(
       googleSignInUtil.startSignIn(
         onSuccess = { idToken -> signInWithFirebaseAuth(idToken) },
         onFailure = { e ->
-          _loginResourceEvent.emit(ResourceCompose.error(CustomError(ErrorCode.AUTH_FAILED, e)))
+          _loginResourceEvent.emit(
+            UiState.Error(
+              CustomError(
+                ErrorCode.AUTH_FAILED,
+                e
+              )
+            )
+          )
         },
       )
     }
@@ -45,12 +54,17 @@ constructor(
       try {
         loginWithFirestore(user)
       } catch (e: Exception) {
-        _loginResourceEvent.emit(ResourceCompose.error(CustomError(ErrorCode.AUTH_FAILED, e)))
+        _loginResourceEvent.emit(
+          UiState.Error(
+            CustomError(
+              ErrorCode.AUTH_FAILED,
+              e
+            )
+          )
+        )
       }
-    } else if (error != null) {
-      _loginResourceEvent.emit(ResourceCompose.error(error))
     } else {
-      _loginResourceEvent.emit(ResourceCompose.error(null))
+      _loginResourceEvent.emit(UiState.Error(error))
     }
   }
 
@@ -63,7 +77,7 @@ constructor(
           return
         }
         initialize()
-        _loginResourceEvent.emit(ResourceCompose.success(LoginState.SUCCESS))
+        _loginResourceEvent.emit(UiState.Success(LoginState.SUCCESS))
       } catch (e: Exception) {
         throw e
       }
@@ -93,7 +107,7 @@ constructor(
         true
       }
       else -> {
-        _loginResourceEvent.emit(ResourceCompose.success(LoginState.USER_ALREADY_LOGGED_IN))
+        _loginResourceEvent.emit(UiState.Success(LoginState.USER_ALREADY_LOGGED_IN))
         false
       }
     }
@@ -104,9 +118,16 @@ constructor(
       try {
         fireStoreUtil.updateUserLoginTokens()
         fireStoreUtil.initialize()
-        _loginResourceEvent.emit(ResourceCompose.success(LoginState.SUCCESS))
+        _loginResourceEvent.emit(UiState.Success(LoginState.SUCCESS))
       } catch (e: Exception) {
-        _loginResourceEvent.emit(ResourceCompose.error(CustomError(ErrorCode.AUTH_FAILED, e)))
+        _loginResourceEvent.emit(
+          UiState.Error(
+            CustomError(
+              ErrorCode.AUTH_FAILED,
+              e
+            )
+          )
+        )
       }
     }
   }
@@ -115,6 +136,18 @@ constructor(
     executeWithLoader {
       AppComposeExtensions.signOut(fireStoreUtil, authUtil)
       onSuccess()
+    }
+  }
+
+  /**
+   * Call this method after the login success event has been handled by the
+   * UI to prevent it from being processed again.
+   */
+  fun onLoginSuccessEventHandled() {
+    if (_loginResourceEvent.value == UiState.Success) {
+      if ((_loginResourceEvent.value as UiState.Success).data == LoginState.SUCCESS) {
+        _loginResourceEvent.value = UiState.Initial
+      }
     }
   }
 }

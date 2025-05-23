@@ -109,18 +109,19 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
             when (view?.id) {
               R.id.btn_copy -> {
                 launch {
-                  val matchRecord =
-                    MatchRecord(
-                      location = record.location,
-                      startDateTime = Instant.now().toEpochMilli(),
-                      ballsPerInning = record.ballsPerInning,
-                      team1Detail = record.team1Detail,
-                      team2Detail = record.team2Detail,
-                      didTeam1WonToss = record.didTeam1WonToss,
-                      isTeam1BattingFirst = record.isTeam1BattingFirst,
-                      localUpdateDateTime = Date(),
-                      serverUpdateDateTime = Date(),
-                      matchAdminID = record.matchAdminID,
+                  val matchRecord = MatchRecord(
+                    location = record.location,
+                    startDateTime = Instant
+                      .now()
+                      .toEpochMilli(),
+                    ballsPerInning = record.ballsPerInning,
+                    team1Detail = record.team1Detail,
+                    team2Detail = record.team2Detail,
+                    didTeam1WonToss = record.didTeam1WonToss,
+                    isTeam1BattingFirst = record.isTeam1BattingFirst,
+                    localUpdateDateTime = Date(),
+                    serverUpdateDateTime = Date(),
+                    matchAdminID = record.matchAdminID,
                     )
                   startActivity(
                     CreateMatchActivity.getIntentObject(

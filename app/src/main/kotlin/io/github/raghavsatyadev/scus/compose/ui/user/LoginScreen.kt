@@ -1,11 +1,10 @@
 @file:OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class
+  ExperimentalMaterial3Api::class,
+  ExperimentalMaterial3ExpressiveApi::class
 )
 
 package io.github.raghavsatyadev.scus.compose.ui.user
 
-import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,10 +17,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallExtendedFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -29,7 +28,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.compose.AppComposeExtensions.CheckPlayService
 import io.github.raghavsatyadev.support.compose.AppComposeExtensions.activity
@@ -39,139 +37,94 @@ import io.github.raghavsatyadev.support.compose.components.LightRealDevicePrevie
 import io.github.raghavsatyadev.support.compose.components.TransparentNavBar
 import io.github.raghavsatyadev.support.compose.google.GoogleSignInUtil
 import io.github.raghavsatyadev.support.models.LoginState
-import io.github.raghavsatyadev.support.models.essential.CustomError
-import io.github.raghavsatyadev.support.models.essential.ResourceCompose
+import io.github.raghavsatyadev.support.models.essential.UiState
 import io.github.raghavsatyadev.support.R as Rs
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginScreenViewModel = hiltViewModel(),
-    onLoginSuccess: () -> Unit,
+  viewModel: LoginScreenViewModel = hiltViewModel(),
+  onLoginSuccess: () -> Unit,
 ) {
 
-    val activity = activity()
+  val activity = activity()
+  val loginUiState by viewModel.loginEvent.collectAsState()
 
-    CheckPlayService {
-        val googleSignInUtil = remember { GoogleSignInUtil(activity = activity!!) }
+  when (val state = loginUiState) {
+    is UiState.Initial -> {}
 
-        LoginView(doLogin = { viewModel.signInWithGoogle(googleSignInUtil) })
+    is UiState.Error -> {
+      with(state.error) {
+        ErrorDialog(
+          errorCode = errorCode,
+          errorMessage = stringResource(errorCode.warning)
+        ) {
+          viewModel.signOut { activity?.finishAffinity() }
+        }
+      }
     }
 
-    AfterLogin(
-        viewModel,
-        onLoginSuccess,
-        activity
-    )
+    is UiState.Success -> {
+      when (state.data) {
+        LoginState.SUCCESS -> {
+          LaunchedEffect(state.data) {
+            onLoginSuccess()
+            viewModel.onLoginSuccessEventHandled()
+          }
+        }
+
+        LoginState.USER_ALREADY_LOGGED_IN -> {
+          UserAlreadyLoggedInDialog(
+            onForceLogin = { viewModel.updateUserTokens() },
+            onSignOut = { viewModel.signOut { activity?.finishAffinity() } },
+          )
+        }
+      }
+    }
+  }
+
+  CheckPlayService {
+    val googleSignInUtil = remember { GoogleSignInUtil(activity = activity!!) }
+
+    LoginView(doLogin = { viewModel.signInWithGoogle(googleSignInUtil) })
+  }
 }
 
 @Composable
 private fun LoginView(doLogin: () -> Unit) {
-    TransparentNavBar()
+  TransparentNavBar()
 
-    Scaffold(modifier = Modifier) { innerPadding ->
-        Box(modifier = Modifier) {
-            Image(
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-                painter = painterResource(Rs.drawable.img_background),
-                contentDescription = stringResource(R.string.background),
-            )
-            SmallExtendedFloatingActionButton(
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                containerColor = MaterialTheme.colorScheme.surface,
-                shape = MaterialTheme.shapes.extraLarge,
-                text = { Text(text = stringResource(R.string.google_login)) },
-                icon = {
-                    Icon(
-                        tint = null,
-                        painter = painterResource(R.drawable.ic_google),
-                        contentDescription = stringResource(R.string.google_login),
-                    )
-                },
-                modifier = Modifier
-                    .align(alignment = Alignment.BottomCenter)
-                    .padding(bottom = innerPadding.calculateBottomPadding() + 40.dp),
-                onClick = { doLogin() },
-            )
-        }
-    }
-}
-
-@Composable
-private fun AfterLogin(
-    viewModel: LoginScreenViewModel,
-    onLoginSuccess: () -> Unit,
-    activity: Activity?,
-) {
-    val loginEvent by viewModel.loginEvent.collectAsStateWithLifecycle()
-    var showUserAlreadyLoggedInDialog by remember { mutableStateOf(true) }
-
-    HandleLoginEvent(
-        loginEvent,
-        onLoginSuccess = { onLoginSuccess() },
-        onAlreadyLogin = {
-            if (showUserAlreadyLoggedInDialog) {
-                UserAlreadyLoggedInDialog(
-                    onForceLogin = {
-                        viewModel.updateUserTokens()
-                        showUserAlreadyLoggedInDialog = false
-                    },
-                    onSignOut = {
-                        viewModel.signOut {
-                            activity?.finishAffinity()
-                            showUserAlreadyLoggedInDialog = false
-                        }
-                    },
-                )
-            }
+  Scaffold(modifier = Modifier) { innerPadding ->
+    Box(modifier = Modifier) {
+      Image(
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize(),
+        painter = painterResource(Rs.drawable.img_background),
+        contentDescription = stringResource(R.string.background),
+      )
+      SmallExtendedFloatingActionButton(
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        containerColor = MaterialTheme.colorScheme.surface,
+        shape = MaterialTheme.shapes.extraLarge,
+        text = { Text(text = stringResource(R.string.google_login)) },
+        icon = {
+          Icon(
+            tint = null,
+            painter = painterResource(R.drawable.ic_google),
+            contentDescription = stringResource(R.string.google_login),
+          )
         },
-        onError = {
-            it?.let {
-                ErrorDialog(
-                    errorCode = it.errorCode,
-                    errorMessage = stringResource(it.errorCode.warning)
-                ) {
-                    viewModel.signOut { activity?.finishAffinity() }
-                }
-            }
-        },
-    )
-}
-
-@Composable
-fun HandleLoginEvent(
-    loginEvent: ResourceCompose<LoginState>,
-    onLoginSuccess: () -> Unit,
-    onAlreadyLogin: @Composable () -> Unit,
-    onError: @Composable (CustomError?) -> Unit,
-) {
-    when (loginEvent.status) {
-        ResourceCompose.Status.ERROR -> {
-            onError(loginEvent.error)
-        }
-
-        ResourceCompose.Status.SUCCESS -> {
-            val loginState = loginEvent.data
-            when (loginState) {
-                LoginState.SUCCESS -> {
-                    onLoginSuccess()
-                }
-
-                LoginState.USER_ALREADY_LOGGED_IN -> {
-                    onAlreadyLogin()
-                }
-
-                else -> {}
-            }
-        }
-
-        else -> {}
+        modifier = Modifier
+          .align(alignment = Alignment.BottomCenter)
+          .padding(bottom = innerPadding.calculateBottomPadding() + 40.dp),
+        onClick = { doLogin() },
+      )
     }
+  }
 }
 
 @LightRealDevicePreview
 @DarkRealDevicePreview
 @Composable
 private fun PreviewLoginScreen() {
-    LoginView(doLogin = {})
+  LoginView(doLogin = {})
 }
