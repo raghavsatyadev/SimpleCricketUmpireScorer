@@ -10,7 +10,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class StorageComposeUtils @Inject constructor(@ApplicationContext private val context: Context) {
+class StorageComposeUtils
+@Inject constructor(
+  @param:ApplicationContext
+  private val context: Context,
+) {
   fun getAppStorageDir(): File {
     return context.filesDir
   }

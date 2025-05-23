@@ -17,6 +17,8 @@
     <string name="warning_connect_internet">Please connect to internet.</string>
     <string name="warning_update_play_service">Update Play Service and Restart app</string>
     <string name="warning_unknown_error">Unknown Error</string>
+    <string name="warning_network_error">Please connect to a stable internet connection</string>
+    <string name="warning_auth_failed">Authentication failed</string>
     <string name="warning_match_location">Please enter match location</string>
     <string name="warning_match_date_time">Please enter match date &amp; time</string>
     <string name="warning_overs">Please enter overs</string>

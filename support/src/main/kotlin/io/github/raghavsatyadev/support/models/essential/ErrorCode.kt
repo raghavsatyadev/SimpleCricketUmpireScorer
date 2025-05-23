@@ -6,9 +6,13 @@ import androidx.fragment.app.Fragment
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.extensions.ErrorShowExtensions.snackBar
 
-enum class ErrorCode(@StringRes val warning: Int) {
+enum class ErrorCode(
+  @param:StringRes
+  val warning: Int,
+) {
   UNKNOWN_ERROR(R.string.warning_unknown_error),
-  AUTH_FAILED(R.string.warning_unknown_error),
+  NETWORK_ERROR(R.string.warning_network_error),
+  AUTH_FAILED(R.string.warning_auth_failed),
 }
 
 fun CustomError.handleError(activity: ComponentActivity) {

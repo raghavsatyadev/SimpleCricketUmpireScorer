@@ -62,12 +62,7 @@
             <meta-data
                 android:name="io.github.raghavsatyadev.support.compose.startup.WorkManagerInitializer"
                 android:value="androidx.startup" />
-            <meta-data
-                android:name="androidx.work.WorkManagerInitializer"
-                android:value="androidx.startup"
-                tools:node="remove" />
-
         </provider>
-
     </application>
 </manifest>
+

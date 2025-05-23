@@ -38,19 +38,48 @@ class FirebaseAuthUtil @Inject constructor(private val firebaseApp: FirebaseApp)
   }
 
   /** Google‑sign‑in flow */
-  suspend fun signInWithGoogle(idToken: String): Pair<User?, CustomError?> {
+  suspend fun signInWithGoogle(idToken: String): Pair<User?, CustomError> {
     val credential = GoogleAuthProvider.getCredential(idToken, null)
     return try {
       val result = auth.signInWithCredential(credential).await()
-      result.user?.let { User(it.displayName.orEmpty(), it.email.orEmpty(), it.uid) to null }
-        ?: run {
-          val e = Exception("Firebase user was null")
-          AppLog.loge(false, "HiltFirebaseAuthUtil", "signInWithGoogle", e, Exception())
-          null to CustomError(ErrorCode.AUTH_FAILED, e)
-        }
+      val firebaseUser = result.user
+
+      if (firebaseUser != null) {
+        User(
+          name = firebaseUser.displayName.orEmpty(),
+          email = firebaseUser.email.orEmpty(),
+          userID = firebaseUser.uid,
+        ) to CustomError()
+      } else {
+        val exception = Exception("Firebase user was null after sign-in")
+        AppLog.loge(
+          false,
+          "FirebaseAuthUtil",
+          "signInWithGoogle",
+          exception,
+          Exception()
+        )
+        null to CustomError(
+          ErrorCode.AUTH_FAILED,
+          exception
+        )
+      }
     } catch (e: Exception) {
-      AppLog.loge(false, "HiltFirebaseAuthUtil", "signInWithGoogle", e, Exception())
-      null to CustomError(ErrorCode.AUTH_FAILED, e)
+      val errorCode = when (e) {
+        is com.google.firebase.FirebaseNetworkException -> ErrorCode.NETWORK_ERROR
+        else -> ErrorCode.AUTH_FAILED
+      }
+      AppLog.loge(
+        false,
+        "FirebaseAuthUtil",
+        "signInWithGoogle",
+        e,
+        Exception()
+      )
+      null to CustomError(
+        errorCode,
+        e
+      )
     }
   }
 
