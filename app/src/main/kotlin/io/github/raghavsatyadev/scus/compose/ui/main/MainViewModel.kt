@@ -18,7 +18,7 @@ class MainViewModel
   var isLoading = uiStateManager.isLoading
     private set
 
-  private var _isLoggedIn = MutableStateFlow(false)
+  private var _isLoggedIn = MutableStateFlow(authUtil.isLoggedIn.value)
   val isLoggedIn = _isLoggedIn.asStateFlow()
 
   fun changeLoginState() {
