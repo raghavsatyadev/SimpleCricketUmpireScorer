@@ -20,10 +20,6 @@ constructor(private val authUtil: FirebaseAuthUtil, uiStateManager: UiStateManag
 
     val matchRecordsFlow = _matchRecordsFlow.asStateFlow()
 
-  fun isLoggedIn(): Boolean {
-    return authUtil.isLoggedIn()
-  }
-
   fun deleteMatchRecord(matchRecord: MatchRecord) {
 
   }

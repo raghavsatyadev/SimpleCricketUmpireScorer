@@ -5,6 +5,7 @@
 
 package io.github.raghavsatyadev.scus.compose.ui.user
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,12 +42,26 @@ import io.github.raghavsatyadev.support.models.essential.UiState
 import io.github.raghavsatyadev.support.R as Rs
 
 @Composable
-fun LoginScreen(
-  viewModel: LoginScreenViewModel = hiltViewModel(),
-  onLoginSuccess: () -> Unit,
-) {
-
+fun LoginScreen(viewModel: LoginScreenViewModel = hiltViewModel()) {
   val activity = activity()
+
+  HandleLoginEvents(
+    viewModel,
+    activity
+  )
+
+  CheckPlayService {
+    val googleSignInUtil = remember { GoogleSignInUtil(activity = activity!!) }
+
+    LoginView(doLogin = { viewModel.signInWithGoogle(googleSignInUtil) })
+  }
+}
+
+@Composable
+private fun HandleLoginEvents(
+  viewModel: LoginScreenViewModel,
+  activity: Activity?,
+) {
   val loginUiState by viewModel.loginEvent.collectAsState()
 
   when (val state = loginUiState) {
@@ -58,7 +73,7 @@ fun LoginScreen(
           errorCode = errorCode,
           errorMessage = stringResource(errorCode.warning)
         ) {
-          viewModel.signOut { activity?.finishAffinity() }
+          viewModel.signOut {}
         }
       }
     }
@@ -66,10 +81,7 @@ fun LoginScreen(
     is UiState.Success -> {
       when (state.data) {
         LoginState.SUCCESS -> {
-          LaunchedEffect(state.data) {
-            onLoginSuccess()
-            viewModel.onLoginSuccessEventHandled()
-          }
+          LaunchedEffect(state.data) { viewModel.onLoginSuccessEventHandled() }
         }
 
         LoginState.USER_ALREADY_LOGGED_IN -> {
@@ -80,12 +92,6 @@ fun LoginScreen(
         }
       }
     }
-  }
-
-  CheckPlayService {
-    val googleSignInUtil = remember { GoogleSignInUtil(activity = activity!!) }
-
-    LoginView(doLogin = { viewModel.signInWithGoogle(googleSignInUtil) })
   }
 }
 
