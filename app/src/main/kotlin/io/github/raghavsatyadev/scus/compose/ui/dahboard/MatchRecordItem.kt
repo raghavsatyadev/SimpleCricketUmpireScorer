@@ -24,8 +24,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.Visibility
 import io.github.raghavsatyadev.scus.R
+import io.github.raghavsatyadev.support.compose.components.DarkPreview
 import io.github.raghavsatyadev.support.compose.components.LightPreview
+import io.github.raghavsatyadev.support.compose.theme.AppTheme
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toKotlinObject
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.getMatchTimings
@@ -34,25 +37,27 @@ import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtens
 import io.github.raghavsatyadev.support.models.db.match_record.MatchStatus
 
 @LightPreview
+@DarkPreview
 @Composable
 fun MatchRecordItemPreview() {
-
-  val matchRecord = getSampleMatchRecord(1)
-  MatchRecordProperties.CreateMatchRecordProperties { properties ->
-    MatchRecordItem(
-      matchRecord = matchRecord,
-      properties = properties,
-      onCopyClick = {},
-      onDeleteClick = {},
-      onMatchClick = {},
-      modifier = Modifier
-        .padding(
-          vertical = 8.dp,
-          horizontal = 16.dp
-        )
-        .fillMaxWidth()
-        .wrapContentHeight(),
-    )
+  AppTheme {
+    val matchRecord = getSampleMatchRecord(1)
+    MatchRecordProperties.CreateMatchRecordProperties { properties ->
+      MatchRecordItem(
+        matchRecord = matchRecord,
+        properties = properties,
+        onCopyClick = {},
+        onDeleteClick = {},
+        onMatchClick = {},
+        modifier = Modifier
+          .padding(
+            vertical = 8.dp,
+            horizontal = 16.dp
+          )
+          .fillMaxWidth()
+          .wrapContentHeight(),
+      )
+    }
   }
 }
 
@@ -74,7 +79,7 @@ fun MatchRecordItem(
       modifier = Modifier
         .fillMaxWidth()
         .wrapContentHeight()
-        .padding(8.dp)
+        .padding(16.dp)
     ) {
       val midVerticalGuideLine = createGuidelineFromStart(0.5f)
       val (
@@ -140,57 +145,72 @@ fun MatchRecordItem(
       val statusBarrier = createBottomBarrier(
         txtCombinedStatus,
         txtTeam1Status,
+        txtTeam2Status,
+        margin = 8.dp
+      )
+      val teamBarrier = createTopBarrier(
+        txtTeam1Name,
+        txtTeam2Name,
+        txtTeam1Status,
         txtTeam2Status
       )
-
       Spacer(
         modifier = Modifier
           .constrainAs(separatorTeam) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
-            top.linkTo(txtCombinedStatus.bottom)
+            top.linkTo(teamBarrier)
             bottom.linkTo(txtTeam1Score.bottom)
             width = Dimension.value(1.dp)
             height = Dimension.fillToConstraints
           }
           .background(MaterialTheme.colorScheme.outline))
-
-      if (shouldShowCombined) {
-        Text(
-          modifier = Modifier.constrainAs(txtCombinedStatus) {
+      val combineStatusVisibility = if (shouldShowCombined) {
+        Visibility.Visible
+      } else {
+        Visibility.Gone
+      }
+      val separateStatusVisibility = if (shouldShowCombined) {
+        Visibility.Gone
+      } else {
+        Visibility.Visible
+      }
+      Text(
+        modifier = Modifier.constrainAs(txtCombinedStatus) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             top.linkTo(parent.top)
+          visibility = combineStatusVisibility
           },
-          text = combinedStatus,
-          fontWeight = FontWeight.Bold,
-          color = combinedStatusColor,
-          style = MaterialTheme.typography.titleMedium,
-        )
-      } else {
-        Text(
-          text = team1Status,
-          modifier = Modifier.constrainAs(txtTeam1Status) {
+        text = combinedStatus,
+        fontWeight = FontWeight.Bold,
+        color = combinedStatusColor,
+        style = MaterialTheme.typography.titleMedium,
+      )
+      Text(
+        text = team1Status,
+        modifier = Modifier.constrainAs(txtTeam1Status) {
             start.linkTo(parent.start)
             end.linkTo(midVerticalGuideLine)
             top.linkTo(txtCombinedStatus.bottom)
+          visibility = separateStatusVisibility
           },
-          color = team1StatusColor,
-          fontWeight = FontWeight.ExtraBold,
-          style = MaterialTheme.typography.titleMedium,
-        )
-        Text(
-          text = team2Status,
-          modifier = Modifier.constrainAs(txtTeam2Status) {
+        color = team1StatusColor,
+        fontWeight = FontWeight.ExtraBold,
+        style = MaterialTheme.typography.titleMedium,
+      )
+      Text(
+        text = team2Status,
+        modifier = Modifier.constrainAs(txtTeam2Status) {
             end.linkTo(parent.end)
             start.linkTo(midVerticalGuideLine)
             top.linkTo(txtCombinedStatus.bottom)
+          visibility = separateStatusVisibility
           },
-          fontWeight = FontWeight.ExtraBold,
-          color = team2StatusColor,
-          style = MaterialTheme.typography.titleMedium,
-        )
-      }
+        fontWeight = FontWeight.ExtraBold,
+        color = team2StatusColor,
+        style = MaterialTheme.typography.titleMedium,
+      )
 
       Text(
         text = matchRecord.team1Detail.teamName,

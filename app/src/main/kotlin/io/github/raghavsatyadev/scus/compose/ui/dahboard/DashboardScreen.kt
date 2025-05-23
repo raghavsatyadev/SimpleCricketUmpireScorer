@@ -40,6 +40,7 @@ import io.github.raghavsatyadev.support.compose.components.AdUI
 import io.github.raghavsatyadev.support.compose.components.AppToolBar
 import io.github.raghavsatyadev.support.compose.components.DarkRealDevicePreview
 import io.github.raghavsatyadev.support.compose.components.LightRealDevicePreview
+import io.github.raghavsatyadev.support.compose.theme.AppTheme
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.R as Rs
 
@@ -202,11 +203,13 @@ data class MatchRecordProperties(
 @DarkRealDevicePreview
 @Composable
 fun DashboardScreenPreview() {
-  DashboardUI(
-    matchRecords = getSampleRecords(),
-    onAddMatchClick = {},
-    onMatchClick = {},
-    onCopyMatchRecord = {},
-    onDeleteMatchRecord = {},
-  )
+  AppTheme {
+    DashboardUI(
+      matchRecords = getSampleRecords(),
+      onAddMatchClick = {},
+      onMatchClick = {},
+      onCopyMatchRecord = {},
+      onDeleteMatchRecord = {},
+    )
+  }
 }
