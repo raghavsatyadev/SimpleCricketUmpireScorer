@@ -21,23 +21,22 @@ import io.github.raghavsatyadev.scus.compose.support.navigation.AppNavHost
 @Composable
 fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
   val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
-    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.primary)
-    ) {
-        AppNavHost(isLoggedIn)
+  Box(
+    modifier = Modifier
+      .fillMaxSize()
+      .background(color = MaterialTheme.colorScheme.primary)
+  ) {
+    AppNavHost(viewModel)
 
     if (isLoading) {
       Box(
-          modifier = Modifier
-              .fillMaxSize()
-              .background(Color.Black.copy(alpha = 0.3f)),
+        modifier = Modifier
+          .fillMaxSize()
+          .background(Color.Black.copy(alpha = 0.3f)),
         contentAlignment = Alignment.Center,
       ) {
-          ContainedLoadingIndicator(modifier = Modifier.size(80.dp))
+        ContainedLoadingIndicator(modifier = Modifier.size(80.dp))
       }
     }
   }

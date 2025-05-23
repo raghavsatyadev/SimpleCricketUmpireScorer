@@ -18,14 +18,14 @@ import javax.inject.Singleton
 @Singleton
 class FirebaseAuthUtil @Inject constructor(private val firebaseApp: FirebaseApp) {
   private val auth: FirebaseAuth by lazy { Firebase.auth(firebaseApp) }
-    private val _isLoggedIn = MutableStateFlow(auth.currentUser != null)
-    val isLoggedIn = _isLoggedIn.asStateFlow()
+  private val _isLoggedIn = MutableStateFlow(auth.currentUser != null)
+  val isLoggedIn = _isLoggedIn.asStateFlow()
 
-    init {
-        auth.addAuthStateListener { firebaseAuth ->
-            _isLoggedIn.value = firebaseAuth.currentUser != null
-        }
+  init {
+    auth.addAuthStateListener { firebaseAuth ->
+      _isLoggedIn.value = firebaseAuth.currentUser != null
     }
+  }
 
   /** Wraps FirebaseUser into your app’s User model */
   val currentUser: User?
@@ -57,34 +57,34 @@ class FirebaseAuthUtil @Inject constructor(private val firebaseApp: FirebaseApp)
         ) to CustomError()
       } else {
         val exception = Exception("Firebase user was null after sign-in")
-          AppLog.loge(
-              false,
-              "FirebaseAuthUtil",
-              "signInWithGoogle",
-              exception,
-              Exception()
-          )
-          null to CustomError(
-              ErrorCode.AUTH_FAILED,
-              exception
-          )
-      }
-    } catch (e: Exception) {
-        val errorCode = when (e) {
-            is com.google.firebase.FirebaseNetworkException -> ErrorCode.NETWORK_ERROR
-            else -> ErrorCode.AUTH_FAILED
-        }
         AppLog.loge(
-            false,
-            "FirebaseAuthUtil",
-            "signInWithGoogle",
-            e,
-            Exception()
+          false,
+          "FirebaseAuthUtil",
+          "signInWithGoogle",
+          exception,
+          Exception()
         )
         null to CustomError(
-            errorCode,
-            e
+          ErrorCode.AUTH_FAILED,
+          exception
         )
+      }
+    } catch (e: Exception) {
+      val errorCode = when (e) {
+        is com.google.firebase.FirebaseNetworkException -> ErrorCode.NETWORK_ERROR
+        else -> ErrorCode.AUTH_FAILED
+        }
+      AppLog.loge(
+        false,
+        "FirebaseAuthUtil",
+        "signInWithGoogle",
+        e,
+        Exception()
+      )
+      null to CustomError(
+        errorCode,
+        e
+      )
     }
   }
 
