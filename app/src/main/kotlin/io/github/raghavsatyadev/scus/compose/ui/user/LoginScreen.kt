@@ -36,6 +36,7 @@ import io.github.raghavsatyadev.support.compose.components.ErrorDialog
 import io.github.raghavsatyadev.support.compose.components.LightRealDevicePreview
 import io.github.raghavsatyadev.support.compose.components.TransparentNavBar
 import io.github.raghavsatyadev.support.compose.google.GoogleSignInUtil
+import io.github.raghavsatyadev.support.compose.theme.AppTheme
 import io.github.raghavsatyadev.support.models.essential.UiState
 import io.github.raghavsatyadev.support.R as Rs
 
@@ -131,5 +132,5 @@ private fun LoginView(doLogin: () -> Unit) {
 @DarkRealDevicePreview
 @Composable
 private fun PreviewLoginScreen() {
-  LoginView(doLogin = {})
+  AppTheme { LoginView(doLogin = {}) }
 }
