@@ -63,7 +63,7 @@ fun AppToolBarPreview() {
 @LightPreview
 @DarkPreview
 @Composable
-fun AppToolBarPreviewWithoutBackButton() {
+fun AppToolBarWithoutBackButtonPreview() {
   AppTheme {
     AppToolBar(
       title = "SCUS",
