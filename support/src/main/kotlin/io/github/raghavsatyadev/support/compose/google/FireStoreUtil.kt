@@ -217,8 +217,10 @@ constructor(
         if (readTask.isSuccessful) {
           try {
             val record: MatchRecord = readTask.result.toDataObject<MatchRecord>()
-            matchRecordComposeDataUtil
-              .updateServerTime(record.matchRecordId, record.serverUpdateDateTime!!)
+            matchRecordComposeDataUtil.updateServerTime(
+              record.matchRecordId,
+              record.serverUpdateDateTime!!,
+            )
             return true
           } catch (e: Exception) {
             AppLog.loge(false, kotlinFileName, "setMatchRecord", e, Exception())
@@ -235,7 +237,12 @@ constructor(
       db.collection(FirebaseConstants.Collections.MATCH_RECORD).document(matchRecordId).delete()
     with(task) {
       await()
-      return isSuccessful
+      return if (isSuccessful) {
+        matchRecordComposeDataUtil.delete(matchRecordId)
+        true
+      } else {
+        false
+      }
     }
   }
 
