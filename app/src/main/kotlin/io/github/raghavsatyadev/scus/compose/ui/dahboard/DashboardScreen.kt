@@ -3,6 +3,7 @@
 package io.github.raghavsatyadev.scus.compose.ui.dahboard
 
 import androidx.annotation.Keep
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -71,24 +72,9 @@ private fun DashboardUI(
   Scaffold(
     modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
     topBar = { AppToolBar(title = stringResource(Rs.string.app_name)) },
-    floatingActionButton = {
-      MediumFloatingActionButton(
-        shape = MaterialTheme.shapes.extraExtraLarge,
-        onClick = onAddMatchClick,
-        content = {
-          Icon(
-            painter = painterResource(id = R.drawable.ic_add),
-            contentDescription = stringResource(R.string.add_match),
-          )
-        },
-      )
-    },
   ) { innerPadding ->
     ConstraintLayout(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-      val (
-        listMatchRecord,
-        boxAd,
-      ) = createRefs()
+      val (listMatchRecord, boxAd, btnCreateMatch) = createRefs()
       MatchRecordList(
         modifier =
           Modifier.constrainAs(listMatchRecord) {
@@ -104,15 +90,32 @@ private fun DashboardUI(
         onCopyMatchRecord = onCopyMatchRecord,
         onDeleteMatchRecord = onDeleteMatchRecord,
       )
+      MediumFloatingActionButton(
+        modifier =
+          Modifier.constrainAs(btnCreateMatch) {
+              end.linkTo(parent.end, margin = 16.dp)
+              bottom.linkTo(boxAd.top, margin = 16.dp)
+            }
+            .animateContentSize(),
+        shape = MaterialTheme.shapes.extraExtraLarge,
+        onClick = onAddMatchClick,
+        content = {
+          Icon(
+            painter = painterResource(id = R.drawable.ic_add),
+            contentDescription = stringResource(R.string.add_match),
+          )
+        },
+      )
       AdUI(
         modifier =
           Modifier.constrainAs(boxAd) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            bottom.linkTo(parent.bottom)
-            width = Dimension.fillToConstraints
-            height = Dimension.wrapContent
-          }
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+              bottom.linkTo(parent.bottom)
+              width = Dimension.fillToConstraints
+              height = Dimension.wrapContent
+            }
+            .animateContentSize()
       )
     }
   }
