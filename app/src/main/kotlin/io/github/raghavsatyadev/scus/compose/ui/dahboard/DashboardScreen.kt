@@ -93,10 +93,10 @@ private fun DashboardUI(
       MediumFloatingActionButton(
         modifier =
           Modifier.constrainAs(btnCreateMatch) {
-              end.linkTo(parent.end, margin = 16.dp)
-              bottom.linkTo(boxAd.top, margin = 16.dp)
+              end.linkTo(parent.end)
+              bottom.linkTo(boxAd.top)
             }
-            .animateContentSize(),
+            .padding(16.dp),
         shape = MaterialTheme.shapes.extraExtraLarge,
         onClick = onAddMatchClick,
         content = {

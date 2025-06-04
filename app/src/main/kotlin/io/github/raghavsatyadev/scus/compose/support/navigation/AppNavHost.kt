@@ -5,8 +5,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -19,8 +19,10 @@ import io.github.raghavsatyadev.support.compose.extesions.NavigationExtensions.r
 
 @Composable
 fun AppNavHost(viewModel: MainViewModel) {
-  val backStack = rememberNavBackStack(AppRoutes.Login)
-  val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
+  val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+  val startRoute = if (isLoggedIn) AppRoutes.Dashboard else AppRoutes.Login
+  val backStack = rememberNavBackStack(startRoute)
+
   LaunchedEffect(isLoggedIn) {
     if (isLoggedIn) {
       backStack.replaceAll(AppRoutes.Dashboard)
