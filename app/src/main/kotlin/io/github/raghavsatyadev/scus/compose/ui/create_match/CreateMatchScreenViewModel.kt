@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateMatchRecordScreenViewModel
+class CreateMatchScreenViewModel
 @Inject
 constructor(
   private val authUtil: FirebaseAuthUtil,
@@ -23,9 +23,7 @@ constructor(
 ) : CoreScreenViewModel(uiStateManager) {
   val _matchRecordFlow = MutableStateFlow<MatchRecord?>(null)
 
-  init {
-
-  }
+  init {}
 
   fun setMatchRecord(matchRecord: MatchRecord) {
     viewModelScope.launch { _matchRecordFlow.emit(matchRecord) }
@@ -34,4 +32,14 @@ constructor(
   fun resetMatchRecord() {
     viewModelScope.launch { _matchRecordFlow.emit(null) }
   }
+
+  fun saveMatchRecord(
+    matchDateTime: String,
+    team1Name: String,
+    team2Name: String,
+    inningOver: String,
+    selectedIndexToss: Int,
+    selectedIndexBat: Int,
+    matchLocation: String,
+  ) {}
 }
