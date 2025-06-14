@@ -1,8 +1,10 @@
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 
 package io.github.raghavsatyadev.scus.compose.ui.create_match
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
@@ -17,15 +19,24 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDialog
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,13 +54,21 @@ import io.github.raghavsatyadev.support.compose.components.AppToolBar
 import io.github.raghavsatyadev.support.compose.components.DarkPreview
 import io.github.raghavsatyadev.support.compose.components.LightPreview
 import io.github.raghavsatyadev.support.compose.theme.AppTheme
+import io.github.raghavsatyadev.support.extensions.DateExtensions.formatToDateString
+import io.github.raghavsatyadev.support.extensions.DateExtensions.toZoneEpochMillis
+import io.github.raghavsatyadev.support.extensions.DateExtensions.toZoneLocalDate
+import io.github.raghavsatyadev.support.extensions.DateExtensions.toZoneLocalDateTime
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.util.Calendar
 
 @Composable
 fun CreateMatchScreen(
   matchRecord: MatchRecord? = null,
   viewModel: CreateMatchScreenViewModel = hiltViewModel(),
 ) {
+
   LaunchedEffect(matchRecord) {
     if (matchRecord != null) {
       viewModel.setMatchRecord(matchRecord)
@@ -58,35 +77,166 @@ fun CreateMatchScreen(
     }
   }
 
+  var showDateTimeDialogs by remember { mutableStateOf(false) }
+
+  // Use LocalDateTime as the main state
+  var selectedDateTime by remember {
+    mutableStateOf(matchRecord?.startDateTime?.toZoneLocalDateTime() ?: LocalDateTime.now())
+  }
+
+  DateTimePickerDialogUI(
+    selectedDateTime = selectedDateTime,
+    showDatePickerDialog = showDateTimeDialogs,
+    hideDatePickerDialog = { showDateTimeDialogs = false },
+    onDateTimeSelected = {
+      selectedDateTime = it
+      showDateTimeDialogs = false
+    },
+  )
+
   CreateMatchRecordUI(
-    onMatchDateTimeClick = {},
-    onSaveMatchRecord = {
-      matchDateTime,
-      team1Name,
-      team2Name,
-      inningOver,
-      selectedIndexToss,
-      selectedIndexBat,
-      matchLocation ->
+    selectedDateTime = selectedDateTime,
+    onMatchDateTimeClick = { showDateTimeDialogs = true },
+    onSaveMatchRecord = { dateTime, team1, team2, over, toss, bat, location ->
       viewModel.saveMatchRecord(
-        matchDateTime,
-        team1Name,
-        team2Name,
-        inningOver,
-        selectedIndexToss,
-        selectedIndexBat,
-        matchLocation,
+        dateTime.toZoneEpochMillis(),
+        team1,
+        team2,
+        over,
+        toss,
+        bat,
+        location,
       )
     },
   )
 }
 
 @Composable
+private fun DateTimePickerDialogUI(
+  selectedDateTime: LocalDateTime,
+  showDatePickerDialog: Boolean,
+  hideDatePickerDialog: () -> Unit,
+  onDateTimeSelected: (LocalDateTime) -> Unit,
+) {
+  var showDatePickerDialogTemp by remember { mutableStateOf(true) }
+  var showTimePickerDialogTemp by remember { mutableStateOf(false) }
+
+  val datePickerState =
+    rememberDatePickerState(initialSelectedDateMillis = selectedDateTime.toZoneEpochMillis())
+
+  val timePickerState =
+    rememberTimePickerState(
+      initialHour = selectedDateTime.hour,
+      initialMinute = selectedDateTime.minute,
+      is24Hour = false,
+    )
+
+  var pickedDateMillis by remember { mutableStateOf<Long?>(null) }
+
+  if (showDatePickerDialog && showDatePickerDialogTemp) {
+    val confirmEnabled by remember { derivedStateOf { datePickerState.selectedDateMillis != null } }
+
+    DatePickerDialog(
+      onDismissRequest = {
+        hideDatePickerDialog()
+        showTimePickerDialogTemp = false
+        showDatePickerDialogTemp = true
+      },
+      confirmButton = {
+        TextButton(
+          onClick = {
+            pickedDateMillis = datePickerState.selectedDateMillis
+            showDatePickerDialogTemp = false
+            showTimePickerDialogTemp = true
+          },
+          enabled = confirmEnabled,
+        ) {
+          Text(stringResource(R.string.save))
+        }
+      },
+      dismissButton = {
+        TextButton(
+          onClick = {
+            hideDatePickerDialog()
+            showTimePickerDialogTemp = false
+            showDatePickerDialogTemp = true
+          }
+        ) {
+          Text(stringResource(R.string.cancel))
+        }
+      },
+    ) {
+      DatePicker(state = datePickerState, modifier = Modifier.verticalScroll(rememberScrollState()))
+    }
+  }
+  if (showTimePickerDialogTemp && pickedDateMillis != null) {
+    TimePickerDialog(
+      title = { Text(stringResource(R.string.select_time)) },
+      onDismissRequest = {
+        hideDatePickerDialog()
+        showTimePickerDialogTemp = false
+        showDatePickerDialogTemp = true
+      },
+      confirmButton = {
+        TextButton(
+          onClick = {
+            val date = pickedDateMillis?.toZoneLocalDate()
+            val time = LocalTime.of(timePickerState.hour, timePickerState.minute)
+            if (date != null) {
+              onDateTimeSelected(LocalDateTime.of(date, time))
+            }
+            showTimePickerDialogTemp = false
+            showDatePickerDialogTemp = true
+          }
+        ) {
+          Text(stringResource(R.string.save))
+        }
+      },
+      dismissButton = {
+        TextButton(
+          onClick = {
+            hideDatePickerDialog()
+            showTimePickerDialogTemp = false
+            showDatePickerDialogTemp = true
+          }
+        ) {
+          Text(stringResource(R.string.cancel))
+        }
+      },
+    ) {
+      TimePicker(state = timePickerState)
+    }
+  }
+}
+
+@Composable
+fun ClickableReadOnlyOutlinedTextField(
+  value: String,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  labelContent: @Composable () -> Unit,
+) {
+  val interactionSource = remember { MutableInteractionSource() }
+  val isPressed by interactionSource.collectIsPressedAsState()
+  LaunchedEffect(isPressed) { if (isPressed) onClick() }
+
+  OutlinedTextField(
+    value = value,
+    onValueChange = {},
+    readOnly = true,
+    interactionSource = interactionSource,
+    label = labelContent,
+    modifier = modifier.clickable(interactionSource = interactionSource, indication = null) {},
+  )
+}
+
+@Composable
 private fun CreateMatchRecordUI(
+  selectedDateTime: LocalDateTime,
   onMatchDateTimeClick: () -> Unit,
   onSaveMatchRecord:
     (
-      matchDateTime: String,
+      matchDateTime: LocalDateTime,
       team1Name: String,
       team2Name: String,
       inningOver: String,
@@ -95,8 +245,8 @@ private fun CreateMatchRecordUI(
       matchLocation: String,
     ) -> Unit,
 ) {
+  val matchDateTime = remember(selectedDateTime) { selectedDateTime.formatToDateString() }
   val scrollState = rememberScrollState()
-  var matchDateTime by remember { mutableStateOf("") }
   var team1Name by remember { mutableStateOf("") }
   var team2Name by remember { mutableStateOf("") }
   var inningOver by remember { mutableStateOf("") }
@@ -128,20 +278,17 @@ private fun CreateMatchRecordUI(
         saveBtnRef) =
         createRefs()
 
-      OutlinedTextField(
+      ClickableReadOnlyOutlinedTextField(
         value = matchDateTime,
-        singleLine = true,
-        readOnly = true,
-        onValueChange = { matchDateTime = it },
-        label = { Text(stringResource(id = R.string.match_date_time)) },
+        onClick = onMatchDateTimeClick,
         modifier =
           Modifier.constrainAs(dateTimeRef) {
-              top.linkTo(parent.top)
-              start.linkTo(parent.start)
-              end.linkTo(parent.end)
-              width = Dimension.fillToConstraints
-            }
-            .clickable { onMatchDateTimeClick() },
+            top.linkTo(parent.top)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            width = Dimension.fillToConstraints
+          },
+        labelContent = { Text(text = stringResource(id = R.string.match_date_time)) },
       )
 
       OutlinedTextField(
@@ -250,7 +397,7 @@ private fun CreateMatchRecordUI(
       Button(
         onClick = {
           onSaveMatchRecord(
-            matchDateTime,
+            selectedDateTime,
             team1Name,
             team2Name,
             inningOver,
@@ -309,16 +456,9 @@ private fun ToggleButtonGroup(
 fun CreateMatchRecordScreenPreview() {
   AppTheme {
     CreateMatchRecordUI(
+      selectedDateTime = Calendar.getInstance().timeInMillis.toZoneLocalDateTime(),
       onMatchDateTimeClick = {},
-      onSaveMatchRecord = {
-        matchDateTime: String,
-        team1Name: String,
-        team2Name: String,
-        inningOver: String,
-        selectedIndexToss: Int,
-        selectedIndexBat: Int,
-        matchLocation: String ->
-      },
+      onSaveMatchRecord = { _, _, _, _, _, _, _ -> },
     )
   }
 }

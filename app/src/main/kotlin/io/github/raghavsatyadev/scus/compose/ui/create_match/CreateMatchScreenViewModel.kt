@@ -21,9 +21,7 @@ constructor(
   private val fireStoreUtil: FireStoreUtil,
   uiStateManager: UiStateManager,
 ) : CoreScreenViewModel(uiStateManager) {
-  val _matchRecordFlow = MutableStateFlow<MatchRecord?>(null)
-
-  init {}
+  private val _matchRecordFlow = MutableStateFlow<MatchRecord?>(null)
 
   fun setMatchRecord(matchRecord: MatchRecord) {
     viewModelScope.launch { _matchRecordFlow.emit(matchRecord) }
@@ -34,7 +32,7 @@ constructor(
   }
 
   fun saveMatchRecord(
-    matchDateTime: String,
+    matchDateTime: Long,
     team1Name: String,
     team2Name: String,
     inningOver: String,
