@@ -2,6 +2,7 @@
 
 package io.github.raghavsatyadev.scus.compose.ui.create_match
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonGroupDefaults
@@ -31,20 +33,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.compose.components.AppToolBar
-import io.github.raghavsatyadev.support.compose.components.DarkRealDevicePreview
-import io.github.raghavsatyadev.support.compose.components.LightRealDevicePreview
+import io.github.raghavsatyadev.support.compose.components.DarkPreview
+import io.github.raghavsatyadev.support.compose.components.LightPreview
+import io.github.raghavsatyadev.support.compose.theme.AppTheme
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 
 @Composable
-fun CreateMatchRecordScreen(
+fun CreateMatchScreen(
   matchRecord: MatchRecord? = null,
-  viewModel: CreateMatchRecordScreenViewModel = hiltViewModel(),
+  viewModel: CreateMatchScreenViewModel = hiltViewModel(),
 ) {
   LaunchedEffect(matchRecord) {
     if (matchRecord != null) {
@@ -53,18 +57,51 @@ fun CreateMatchRecordScreen(
       viewModel.resetMatchRecord()
     }
   }
-  CreateMatchRecordUI()
+
+  CreateMatchRecordUI(
+    onMatchDateTimeClick = {},
+    onSaveMatchRecord = {
+      matchDateTime,
+      team1Name,
+      team2Name,
+      inningOver,
+      selectedIndexToss,
+      selectedIndexBat,
+      matchLocation ->
+      viewModel.saveMatchRecord(
+        matchDateTime,
+        team1Name,
+        team2Name,
+        inningOver,
+        selectedIndexToss,
+        selectedIndexBat,
+        matchLocation,
+      )
+    },
+  )
 }
 
 @Composable
-private fun CreateMatchRecordUI() {
+private fun CreateMatchRecordUI(
+  onMatchDateTimeClick: () -> Unit,
+  onSaveMatchRecord:
+    (
+      matchDateTime: String,
+      team1Name: String,
+      team2Name: String,
+      inningOver: String,
+      selectedIndexToss: Int,
+      selectedIndexBat: Int,
+      matchLocation: String,
+    ) -> Unit,
+) {
   val scrollState = rememberScrollState()
   var matchDateTime by remember { mutableStateOf("") }
   var team1Name by remember { mutableStateOf("") }
   var team2Name by remember { mutableStateOf("") }
   var inningOver by remember { mutableStateOf("") }
   var matchLocation by remember { mutableStateOf("") }
-    val team1Label = stringResource(id = R.string.team_1)
+  val team1Label = stringResource(id = R.string.team_1)
   val team2Label = stringResource(id = R.string.team_2)
   val options = listOf(team1Label, team2Label)
   var selectedIndexToss by remember { mutableIntStateOf(0) }
@@ -93,20 +130,24 @@ private fun CreateMatchRecordUI() {
 
       OutlinedTextField(
         value = matchDateTime,
+        singleLine = true,
+        readOnly = true,
         onValueChange = { matchDateTime = it },
         label = { Text(stringResource(id = R.string.match_date_time)) },
         modifier =
           Modifier.constrainAs(dateTimeRef) {
-            top.linkTo(parent.top)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            width = Dimension.fillToConstraints
-          },
+              top.linkTo(parent.top)
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+              width = Dimension.fillToConstraints
+            }
+            .clickable { onMatchDateTimeClick() },
       )
 
       OutlinedTextField(
         value = team1Name,
         onValueChange = { team1Name = it },
+        singleLine = true,
         label = { Text(stringResource(id = R.string.team_1_name)) },
         modifier =
           Modifier.constrainAs(team1Ref) {
@@ -120,6 +161,7 @@ private fun CreateMatchRecordUI() {
       OutlinedTextField(
         value = team2Name,
         onValueChange = { team2Name = it },
+        singleLine = true,
         label = { Text(stringResource(id = R.string.team_2_name)) },
         modifier =
           Modifier.constrainAs(team2Ref) {
@@ -131,6 +173,7 @@ private fun CreateMatchRecordUI() {
       )
 
       OutlinedTextField(
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         value = inningOver,
         onValueChange = { inningOver = it },
         label = { Text(stringResource(id = R.string.overs_per_inning)) },
@@ -205,7 +248,17 @@ private fun CreateMatchRecordUI() {
       )
 
       Button(
-        onClick = { /* Save action */ },
+        onClick = {
+          onSaveMatchRecord(
+            matchDateTime,
+            team1Name,
+            team2Name,
+            inningOver,
+            selectedIndexToss,
+            selectedIndexBat,
+            matchLocation,
+          )
+        },
         modifier =
           Modifier.constrainAs(saveBtnRef) {
             top.linkTo(locationRef.bottom, margin = 10.dp)
@@ -250,9 +303,22 @@ private fun ToggleButtonGroup(
   }
 }
 
-@DarkRealDevicePreview
-@LightRealDevicePreview
+@LightPreview
+@DarkPreview
 @Composable
 fun CreateMatchRecordScreenPreview() {
-  CreateMatchRecordUI()
+  AppTheme {
+    CreateMatchRecordUI(
+      onMatchDateTimeClick = {},
+      onSaveMatchRecord = {
+        matchDateTime: String,
+        team1Name: String,
+        team2Name: String,
+        inningOver: String,
+        selectedIndexToss: Int,
+        selectedIndexBat: Int,
+        matchLocation: String ->
+      },
+    )
+  }
 }
