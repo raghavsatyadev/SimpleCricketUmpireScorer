@@ -26,6 +26,7 @@
     <string name="which_team_bats_first">Which team bats first?</string>
     <string name="match_location">Match Location</string>
     <string name="save">Save</string>
+    <string name="select_time">Select Time</string>
 
     <!-- Match Record -->
     <string name="match_record_title">Match Record</string>
