@@ -12,7 +12,11 @@ import coil3.memory.MemoryCache
 import coil3.util.DebugLogger
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.color.DynamicColors
+import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.appCheck
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.BuildConfig
 import io.github.raghavsatyadev.support.R
@@ -103,6 +107,13 @@ class CoreApp : Application(), CoroutineScope {
         if (checkPlayServiceAvailability()) {
             MobileAds.initialize(this)
             val firebaseApp = FirebaseApp.initializeApp(this)
+            Firebase.appCheck.installAppCheckProviderFactory(
+                if (!BuildConfig.DEBUG) {
+                    DebugAppCheckProviderFactory.getInstance()
+                } else {
+                    PlayIntegrityAppCheckProviderFactory.getInstance()
+                },
+            )
             firebaseApp?.let {
                 FirebaseAuthUtil.create(it)
                 FireStoreUtil.create(it)
