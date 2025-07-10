@@ -98,9 +98,7 @@ android {
         compileOptions {
             isCoreLibraryDesugaringEnabled = true
         }
-        kotlinOptions {
-            freeCompilerArgs += "-Xjvm-default=all"
-        }
+
         buildFeatures {
             viewBinding = true
             buildConfig = true
