@@ -23,16 +23,12 @@ class LoginViewModel : CoreViewModel() {
 
     fun getLoginEvent() = loginEvent.asSharedFlow()
 
-    fun signInWithGoogle(
-        signInUtil: GoogleSignInUtil,
-    ) {
+    fun signInWithGoogle(signInUtil: GoogleSignInUtil) {
         viewModelScope.launch {
             loginEvent.emit(Resource.loading())
             withContext(ioDispatcher) {
                 signInUtil.startSignIn(
-                    onSuccess = { idToken ->
-                        signInWithFirebaseAuth(idToken)
-                    },
+                    onSuccess = { idToken -> signInWithFirebaseAuth(idToken) },
                     onFailure = { exception ->
                         AppLog.loge(
                             false,
@@ -51,7 +47,8 @@ class LoginViewModel : CoreViewModel() {
                                 )
                             )
                         }
-                    })
+                    },
+                )
             }
         }
     }
@@ -124,8 +121,8 @@ class LoginViewModel : CoreViewModel() {
         try {
             remoteUser = util.getUser(user.userID)
         } catch (_: Exception) {
-
         }
+
         if (remoteUser == null) {
             try {
                 util.setUser(user)
@@ -177,15 +174,11 @@ class LoginViewModel : CoreViewModel() {
     }
 
     fun signOut(signInUtil: GoogleSignInUtil) {
-        viewModelScope.launch {
-            withContext(ioDispatcher) {
-                AppExtensions.signOut()
-            }
-        }
+        viewModelScope.launch { withContext(ioDispatcher) { AppExtensions.signOut() } }
     }
 }
 
 enum class LoginState {
     SUCCESS,
-    USER_ALREADY_LOGGED_IN
+    USER_ALREADY_LOGGED_IN,
 }

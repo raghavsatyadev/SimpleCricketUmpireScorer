@@ -94,9 +94,7 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
                                     adapter.replaceAll(it.data)
                                 }
 
-                                else -> {
-
-                                }
+                                else -> {}
                             }
                         }
                     }
@@ -112,65 +110,65 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
     override fun setListeners(isEnabled: Boolean) {
         if (isEnabled) {
             binding.btnAddMatch.setOnClickListener {
-                showInterstitialAd {
-                    startActivity(CreateMatchActivity.getIntentObject(this))
-                }
+                showInterstitialAd { startActivity(CreateMatchActivity.getIntentObject(this)) }
             }
-            adapter.itemClickListener = CustomClickListener(onClick = { position, view, _ ->
-                val record = adapter.getItem(position)
-                when (view?.id) {
-                    R.id.btn_copy -> {
-                        launch {
-                            val matchRecord = MatchRecord(
-                                location = record.location,
-                                startDateTime = Instant
-                                    .now()
-                                    .toEpochMilli(),
-                                ballsPerInning = record.ballsPerInning,
-                                team1Detail = record.team1Detail,
-                                team2Detail = record.team2Detail,
-                                didTeam1WonToss = record.didTeam1WonToss,
-                                isTeam1BattingFirst = record.isTeam1BattingFirst,
-                                localUpdateDateTime = Date(),
-                                serverUpdateDateTime = Date(),
-                                matchAdminID = record.matchAdminID,
-                            )
-                            startActivity(
-                                CreateMatchActivity.getIntentObject(
-                                    this@DashboardActivity,
-                                    Bundle().apply {
-                                        putParcelable(
-                                            CreateMatchActivity.MATCH_RECORD,
-                                            matchRecord
-                                        )
-                                    })
-                            )
+            adapter.itemClickListener = CustomClickListener(
+                onClick = { position, view, _ ->
+                    val record = adapter.getItem(position)
+                    when (view?.id) {
+                        R.id.btn_copy -> {
+                            launch {
+                                val matchRecord = MatchRecord(
+                                    location = record.location,
+                                    startDateTime = Instant
+                                        .now()
+                                        .toEpochMilli(),
+                                    ballsPerInning = record.ballsPerInning,
+                                    team1Detail = record.team1Detail,
+                                    team2Detail = record.team2Detail,
+                                    didTeam1WonToss = record.didTeam1WonToss,
+                                    isTeam1BattingFirst = record.isTeam1BattingFirst,
+                                    localUpdateDateTime = Date(),
+                                    serverUpdateDateTime = Date(),
+                                    matchAdminID = record.matchAdminID,
+                                )
+                                startActivity(
+                                    CreateMatchActivity.getIntentObject(
+                                        this@DashboardActivity,
+                                        Bundle().apply {
+                                            putParcelable(
+                                                CreateMatchActivity.MATCH_RECORD,
+                                                matchRecord
+                                            )
+                                        },
+                                    )
+                                )
+                            }
+                        }
+
+                        R.id.btn_delete -> {
+                            showDeleteDialog(record)
+                        }
+
+                        else -> {
+                            if (record.isMatchCompleted()) {
+                                startActivity(
+                                    MatchCompleteActivity.getIntentObject(
+                                        this,
+                                        record.matchRecordId
+                                    )
+                                )
+                            } else {
+                                startActivity(
+                                    MatchRecordActivity.getIntentObject(
+                                        this,
+                                        record
+                                    )
+                                )
+                            }
                         }
                     }
-
-                    R.id.btn_delete -> {
-                        showDeleteDialog(record)
-                    }
-
-                    else -> {
-                        if (record.isMatchCompleted()) {
-                            startActivity(
-                                MatchCompleteActivity.getIntentObject(
-                                    this,
-                                    record.matchRecordId
-                                )
-                            )
-                        } else {
-                            startActivity(
-                                MatchRecordActivity.getIntentObject(
-                                    this,
-                                    record
-                                )
-                            )
-                        }
-                    }
-                }
-            })
+                })
         } else {
             binding.btnAddMatch.setOnClickListener(null)
         }
@@ -181,12 +179,9 @@ class DashboardActivity : CoreActivity<ActivityDashboardBinding>() {
             .setTitle(getString(R.string.delete_match_record))
             .setMessage(getString(R.string.delete_match_record_message))
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
-                launch {
-                    viewModel.deleteMatchRecord(record)
-                }
+                launch { viewModel.deleteMatchRecord(record) }
             }
             .setNegativeButton(getString(R.string.no)) { _, _ -> }
             .show()
     }
 }
-

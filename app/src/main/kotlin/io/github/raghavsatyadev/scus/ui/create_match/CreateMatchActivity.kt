@@ -36,6 +36,7 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
 
     companion object {
         const val MATCH_RECORD = "match_record"
+
         fun getIntentObject(
             context: Context,
             bundle: Bundle = Bundle.EMPTY,
@@ -77,7 +78,7 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
                 matchRecord!!.team1Detail.teamName,
                 matchRecord!!.team2Detail.teamName,
                 matchRecord!!.location,
-                matchRecord!!.getOvers()
+                matchRecord!!.getOvers(),
             )
         } else if (BuildConfig.DEBUG) {
             setCopiedValues(
@@ -164,13 +165,13 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
                     },
                     calendar[Calendar.HOUR_OF_DAY],
                     calendar[Calendar.MINUTE],
-                    false // Set to false to use 12-hour view
+                    false, // Set to false to use 12-hour view
                 )
                 timePickerDialog.show()
             },
             calendar[Calendar.YEAR],
             calendar[Calendar.MONTH],
-            calendar[Calendar.DAY_OF_MONTH]
+            calendar[Calendar.DAY_OF_MONTH],
         )
         datePickerDialog.show()
     }
@@ -180,9 +181,7 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
 
     override fun setListeners(isEnabled: Boolean) {
         if (isEnabled) {
-            binding.btnSave.setOnClickListener {
-                startValidation()
-            }
+            binding.btnSave.setOnClickListener { startValidation() }
             binding.edMatchDateTime.setOnClickListener {
                 showDateTimePicker(binding.edMatchDateTime.text.toString())
             }
@@ -215,7 +214,7 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
                 matchDateTime,
                 inningOvers,
                 team1Name,
-                team2Name
+                team2Name,
             )
         } catch (e: Exception) {
             errorDialog(e.message.toString())
@@ -229,7 +228,7 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
                 team1Name,
                 team2Name,
                 didTeam1WinToss,
-                batFirstTeam1
+                batFirstTeam1,
             )
         }
     }
@@ -254,7 +253,7 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
                 team1Name,
                 team2Name,
                 didTeam1WinToss,
-                batFirstTeam1
+                batFirstTeam1,
             )
         }
     }

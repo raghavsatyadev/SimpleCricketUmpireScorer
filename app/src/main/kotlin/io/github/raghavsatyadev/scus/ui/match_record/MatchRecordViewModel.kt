@@ -40,6 +40,7 @@ class MatchRecordViewModel : CoreViewModel() {
             }
         }
     }
+
     // endregion
 
     // region Updating Match Record
@@ -93,13 +94,15 @@ class MatchRecordViewModel : CoreViewModel() {
                 if (increase) {
                     val firstInningComplete = matchRecord.isFirstInningComplete
                     if (team1CurrentlyBatting) {
-                        // handle 2nd batting team's total runs not getting more than 1st batting team's runs +1 = winning run and +7 = no ball run + a six (6)
+                        // handle 2nd batting team's total runs not getting more than 1st batting team's runs +1
+                        // = winning run and +7 = no ball run + a six (6)
                         if (firstInningComplete && matchRecord.team1Detail.runs + runCount > matchRecord.team2Detail.runs + 8) {
                             return@withContext
                         }
                         matchRecord.team1Detail.runs += runCount
                     } else {
-                        // handle 2nd batting team's total runs not getting more than 1st batting team's runs +1 = winning run and +7 = no ball run + a six (6)
+                        // handle 2nd batting team's total runs not getting more than 1st batting team's runs +1
+                        // = winning run and +7 = no ball run + a six (6)
                         if (firstInningComplete && matchRecord.team2Detail.runs + runCount > matchRecord.team1Detail.runs + 8) {
                             return@withContext
                         }

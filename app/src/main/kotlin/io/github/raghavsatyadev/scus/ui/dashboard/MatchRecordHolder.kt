@@ -50,7 +50,7 @@ class MatchRecordHolder(
                 lostColor,
                 winColor,
                 drawColor,
-                inProgressColor
+                inProgressColor,
             )
         }
     }

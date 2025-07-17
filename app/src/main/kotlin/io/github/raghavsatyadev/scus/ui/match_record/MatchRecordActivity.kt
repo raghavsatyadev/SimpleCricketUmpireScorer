@@ -47,7 +47,6 @@ class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
         }
     }
 
-
     override fun createReference(savedInstanceState: Bundle?) {
         enableFullScreen()
 
@@ -66,9 +65,8 @@ class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
                     else -> return@setupOptionsMenus false
                 }
             },
-            menuPrepareListener = {
-
-            })
+            menuPrepareListener = {},
+        )
     }
 
     private fun showResetDialog(): Boolean {
@@ -78,7 +76,6 @@ class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
                 .first().data
 
             uiDetails?.let {
-
                 MaterialAlertDialogBuilder(this@MatchRecordActivity)
                     .setTitle(R.string.reset_match)
                     .setMessage(
@@ -88,12 +85,8 @@ class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
                             R.string.reset_inning_message
                         }
                     )
-                    .setPositiveButton(R.string.reset_inning) { _, _ ->
-                        viewModel.reset(matchRecordID)
-                    }
-                    .setNeutralButton(R.string.cancel) { dialog, _ ->
-                        dialog.dismiss()
-                    }
+                    .setPositiveButton(R.string.reset_inning) { _, _ -> viewModel.reset(matchRecordID) }
+                    .setNeutralButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
                     .apply {
                         if (it.isFirstInningComplete) {
                             setNegativeButton(R.string.reset_full) { _, _ ->
@@ -204,18 +197,14 @@ class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
                     1
                 )
             }
-            binding.btnAddWicket.setOnClickListener {
-                viewModel.setWicket(matchRecordID)
-            }
+            binding.btnAddWicket.setOnClickListener { viewModel.setWicket(matchRecordID) }
             binding.btnAddBall.setOnClickListener {
                 viewModel.setBall(
                     matchRecordID,
                     1
                 )
             }
-            binding.btnEndInning.setOnClickListener {
-                viewModel.endInning(matchRecordID)
-            }
+            binding.btnEndInning.setOnClickListener { viewModel.endInning(matchRecordID) }
             binding.btnMinusBall.setOnClickListener {
                 viewModel.setBall(
                     matchRecordID,
@@ -236,12 +225,8 @@ class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
                     false
                 )
             }
-            binding.btnEndMatch.setOnClickListener {
-                viewModel.endMatch(matchRecordID)
-            }
-            binding.btnEditOvers.setOnClickListener {
-                showEditOversDialog()
-            }
+            binding.btnEndMatch.setOnClickListener { viewModel.endMatch(matchRecordID) }
+            binding.btnEditOvers.setOnClickListener { showEditOversDialog() }
         } else {
             binding.btnAddRun.setOnClickListener(null)
             binding.btnAddWicket.setOnClickListener(null)
@@ -272,11 +257,8 @@ class MatchRecordActivity : CoreActivity<ActivityMatchRecordBinding>() {
                     )
                 }
                 dialog.dismiss()
-
             }
-            .setNegativeButton(R.string.cancel) { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
             .show()
         dialogBinding.edTotalOvers.setText(extractTotalOvers(binding.txtOvers.text.toString()))
     }

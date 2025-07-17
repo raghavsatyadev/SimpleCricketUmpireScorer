@@ -28,9 +28,7 @@ class DashboardViewModel : CoreViewModel() {
                     MatchRecordDataUtil
                         .getInstance()
                         .getAllLive("`${FieldKeys.START_DATE_TIME}` DESC")
-                        .collectLatest {
-                            getMatchRecordsEvent.emit(Resource.success(it))
-                        }
+                        .collectLatest { getMatchRecordsEvent.emit(Resource.success(it)) }
                 } catch (e: Exception) {
                     getMatchRecordsEvent.emit(
                         Resource.error(

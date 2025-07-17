@@ -31,7 +31,6 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
         ).apply { putExtras(bundle) }
     }
 
-
     override fun createReference(savedInstanceState: Bundle?) {
         signInUtil = GoogleSignInUtil(this)
     }
@@ -92,9 +91,7 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
             .setMessage(getAlreadyLoggedInText())
             .setPositiveButton(io.github.raghavsatyadev.scus.R.string.force_login) { dialog, _ ->
                 lifecycleScope.launch {
-                    withContext(mainDispatcher) {
-                        dialog.dismiss()
-                    }
+                    withContext(mainDispatcher) { dialog.dismiss() }
                     viewModel.updateUserTokens()
                 }
             }
@@ -118,9 +115,7 @@ class LoginActivity : CoreActivity<ActivityLoginBinding>() {
 
     override fun setListeners(isEnabled: Boolean) {
         if (isEnabled) {
-            binding.btnGoogleLogin.setOnClickListener {
-                startSignIn()
-            }
+            binding.btnGoogleLogin.setOnClickListener { startSignIn() }
         } else {
             binding.btnGoogleLogin.setOnClickListener(null)
         }

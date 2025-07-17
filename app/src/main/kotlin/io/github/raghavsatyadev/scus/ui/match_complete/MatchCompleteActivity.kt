@@ -22,6 +22,7 @@ import kotlinx.coroutines.withContext
 class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
     companion object {
         private const val MATCH_RECORD_ID = "match_record_id"
+
         fun getIntentObject(
             context: Context,
             matchRecordID: String,
@@ -105,9 +106,7 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
                 matchRecord = viewModel.getMatchRecord(matchRecordId)
                 basicDetailsTeam1 = matchRecord.toBasicMatchUIDetails(true)
                 basicDetailsTeam2 = matchRecord.toBasicMatchUIDetails(false)
-                withContext(mainDispatcher) {
-                    loadWinningTeamDetails()
-                }
+                withContext(mainDispatcher) { loadWinningTeamDetails() }
             }
         }
     }

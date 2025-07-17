@@ -14,16 +14,20 @@ plugins {
 }
 
 fun readProperties(propertiesFile: File) = Properties().apply {
-    propertiesFile.inputStream().use { fis ->
-        load(fis)
-    }
+    propertiesFile
+        .inputStream()
+        .use { fis ->
+            load(fis)
+        }
 }
 
 val props = readProperties(file("../secret.properties"))
 
 android {
     namespace = libs.versions.supportId.get()
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk = libs.versions.compileSdk
+        .get()
+        .toInt()
     // compileSdkPreview = libs.versions.compileSdkPreview.get()
     buildToolsVersion = libs.versions.buildTools.get()
 
@@ -33,12 +37,20 @@ android {
         // generateKotlin("true")
     }
     ksp {
-        arg("room.incremental", "true")
-        arg("room.generateKotlin", "true")
+        arg(
+            "room.incremental",
+            "true"
+        )
+        arg(
+            "room.generateKotlin",
+            "true"
+        )
     }
 
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
+        minSdk = libs.versions.minSdk
+            .get()
+            .toInt()
         multiDexEnabled = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -48,18 +60,34 @@ android {
             getByName("androidTest").assets.srcDirs(files("$projectDir/schemas"))
         }
 
-        ndk { abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a")) }
+        ndk {
+            abiFilters.addAll(
+                listOf(
+                    "armeabi-v7a",
+                    "arm64-v8a"
+                )
+            )
+        }
 
         props.entries.forEach { (key, value) ->
             val keyString = key.toString()
             if (keyString.startsWith("res_")) {
-                resValue("string", keyString.replace("res_", ""), value.toString())
+                resValue(
+                    "string",
+                    keyString.replace(
+                        "res_",
+                        ""
+                    ),
+                    value.toString()
+                )
             }
         }
     }
     signingConfigs {
         create("release") {
-            props.getProperty("storeFile")?.let { storeFile = file(it) }
+            props
+                .getProperty("storeFile")
+                ?.let { storeFile = file(it) }
             storePassword = props.getProperty("storePassword")
             keyAlias = props.getProperty("keyAlias")
             keyPassword = props.getProperty("keyPassword")
@@ -74,7 +102,11 @@ android {
                     file("proguard-rules.pro")
                 )
             )
-            resValue("string", "app_name", libs.versions.betaAppName.get())
+            resValue(
+                "string",
+                "app_name",
+                libs.versions.betaAppName.get()
+            )
             signingConfig = signingConfigs.getByName("release")
         }
         getByName("release") {
@@ -85,12 +117,20 @@ android {
                     file("proguard-rules.pro")
                 )
             )
-            resValue("string", "app_name", libs.versions.releaseAppName.get())
+            resValue(
+                "string",
+                "app_name",
+                libs.versions.releaseAppName.get()
+            )
             signingConfig = signingConfigs.getByName("release")
         }
         getByName("debug") {
             isMinifyEnabled = false
-            resValue("string", "app_name", libs.versions.debugAppName.get())
+            resValue(
+                "string",
+                "app_name",
+                libs.versions.debugAppName.get()
+            )
         }
         kotlin {
             jvmToolchain(21)
@@ -106,17 +146,13 @@ android {
         }
         flavorDimensions.add("isPlayStoreVersion")
         productFlavors {
-            create("Prod") {
-            }
-            create("Dev") {
-            }
+            create("Prod") {}
+            create("Dev") {}
         }
         androidComponents.beforeVariants { variant ->
             val names = variant.flavorName
 
-            if ((names == "Dev" && variant.buildType == "release") ||
-                (names == "Prod" && (variant.buildType != "release"))
-            ) {
+            if ((names == "Dev" && variant.buildType == "release") || (names == "Prod" && (variant.buildType != "release"))) {
                 variant.enable = false
             }
         }

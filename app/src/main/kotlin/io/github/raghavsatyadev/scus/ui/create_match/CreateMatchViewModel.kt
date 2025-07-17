@@ -120,7 +120,7 @@ class CreateMatchViewModel : CoreViewModel() {
                         Resource.error(
                             CustomError(
                                 ErrorCode.UNKNOWN_ERROR,
-                                Exception(context.getString(R.string.warning_unknown_error))
+                                Exception(context.getString(R.string.warning_unknown_error)),
                             )
                         )
                     )
