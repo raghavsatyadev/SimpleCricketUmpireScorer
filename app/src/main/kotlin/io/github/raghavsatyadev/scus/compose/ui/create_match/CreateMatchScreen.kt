@@ -48,7 +48,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.compose.components.AppToolBar
 import io.github.raghavsatyadev.support.compose.components.DarkPreview
@@ -65,8 +65,8 @@ import java.util.Calendar
 
 @Composable
 fun CreateMatchScreen(
-  matchRecord: MatchRecord? = null,
-  viewModel: CreateMatchScreenViewModel = hiltViewModel(),
+    matchRecord: MatchRecord? = null,
+    viewModel: CreateMatchScreenViewModel = hiltViewModel(),
 ) {
 
   LaunchedEffect(matchRecord) {
