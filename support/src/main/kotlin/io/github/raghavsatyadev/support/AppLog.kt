@@ -2,8 +2,8 @@ package io.github.raghavsatyadev.support
 
 import android.text.TextUtils
 import android.util.Log
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import io.github.raghavsatyadev.support.AppLog.LogLevel.D
 import io.github.raghavsatyadev.support.AppLog.LogLevel.E
 import io.github.raghavsatyadev.support.AppLog.LogLevel.I

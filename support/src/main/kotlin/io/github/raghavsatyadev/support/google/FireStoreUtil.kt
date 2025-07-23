@@ -1,15 +1,15 @@
 package io.github.raghavsatyadev.support.google
 
+import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.firestoreSettings
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.memoryCacheSettings
-import com.google.firebase.firestore.ktx.persistentCacheSettings
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.memoryCacheSettings
+import com.google.firebase.firestore.persistentCacheSettings
 import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.Constants.FieldKeys
 import io.github.raghavsatyadev.support.Constants.FieldKeys.SERVER_UPDATE_DATE_TIME
@@ -48,7 +48,8 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
   }
 
   private val db by lazy {
-    Firebase.firestore(firebaseApp).apply {
+    Firebase
+      .firestore(firebaseApp).apply {
       val settings = firestoreSettings {
         setLocalCacheSettings(memoryCacheSettings {})
         setLocalCacheSettings(persistentCacheSettings {})
