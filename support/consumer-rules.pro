@@ -61,7 +61,6 @@
 -keep class android.support.v8.renderscript.** { *; }
 
 #Crashlytics
--keepattributes SourceFile,LineNumberTable        # Keep file names and line numbers.
 -keep public class * extends java.lang.Exception  # Optional: Keep custom exceptions.
 
 #GSON
@@ -87,8 +86,6 @@
 -keepattributes InnerClasses
 -keepattributes Deprecated
 -keepattributes EnclosingMethod
--keepattributes *Annotation*
--keepattributes SourceFile,LineNumberTable
 # Retain generic type information for use by reflection by converters and adapters.
 -keepattributes Signature
 # Retain declared checked exceptions for use by a Proxy instance.
@@ -114,8 +111,6 @@
 -keep @kotlinx.serialization.Serializable class ** { *; }
 
 # Keep the generated serializers
--keep class kotlinx.serialization.internal.** { *; }
--keep class kotlinx.serialization.json.** { *; }
 -keepnames class kotlinx.serialization.** { *; }
 
 # Prevent obfuscation of enum values
@@ -128,4 +123,3 @@
 }
 
 # Keep all kotlinx serialization-related classes and methods
--keep class kotlinx.serialization.** { *; }

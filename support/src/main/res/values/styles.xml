@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="ButtonEntry" parent="Widget.Material3.Button">
         <item name="fontFamily">@font/montserrat_bold</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:paddingVertical" tools:targetApi="o">15dp</item>
+        <item name="android:paddingVertical">15dp</item>
         <item name="cornerRadius">@dimen/button_radius</item>
     </style>
 
     <style name="ButtonMerged" parent="Widget.Material3.Button">
         <item name="fontFamily">@font/montserrat_bold</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:paddingVertical" tools:targetApi="o">15dp</item>
+        <item name="android:paddingVertical">15dp</item>
     </style>
 
     <style name="ButtonMergedTextOnly" parent="ThemeOverlay.Material3.Button.TextButton">
         <item name="fontFamily">@font/montserrat_bold</item>
-        <item name="android:paddingVertical" tools:targetApi="o">5dp</item>
+        <item name="android:paddingVertical">5dp</item>
         <item name="cornerRadius">@dimen/button_radius</item>
     </style>
 

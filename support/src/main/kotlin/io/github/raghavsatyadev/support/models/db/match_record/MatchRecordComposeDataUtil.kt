@@ -19,13 +19,11 @@ class MatchRecordComposeDataUtil @Inject constructor(private val database: AppDa
 
   override fun getPrimaryKey(): String = Constants.FieldKeys.MATCH_RECORD_ID
 
-  fun getAllLive(sortKey: String = ""): Flow<List<MatchRecord>> = database
-    .matchRecordDao()
-    .getAllLive(SimpleSQLiteQuery(buildGetAllSortedQuery(sortKey)))
+  fun getAllLive(sortKey: String = ""): Flow<List<MatchRecord>> =
+    database.matchRecordDao().getAllLive(SimpleSQLiteQuery(buildGetAllSortedQuery(sortKey)))
 
-  fun getCountLive(): Flow<Long> = database
-    .matchRecordDao()
-    .getCountLive(SimpleSQLiteQuery(buildGetCountQuery()))
+  fun getCountLive(): Flow<Long> =
+    database.matchRecordDao().getCountLive(SimpleSQLiteQuery(buildGetCountQuery()))
 
   override fun update(t: MatchRecord): Int {
     t.localUpdateDateTime = Date()
@@ -46,14 +44,9 @@ class MatchRecordComposeDataUtil @Inject constructor(private val database: AppDa
     update(present)
   }
 
-  fun updateServerTime(id: String, time: Date) = database
-    .matchRecordDao()
-    .updateServerTime(
-      id,
-      time.time
-    )
+  fun updateServerTime(id: String, time: Date) =
+    database.matchRecordDao().updateServerTime(id, time.time)
 
-  fun getItemLive(id: String): Flow<MatchRecord> = database
-    .matchRecordDao()
-    .getItemLive(SimpleSQLiteQuery(buildGetItemQuery(id)))
+  fun getItemLive(id: String): Flow<MatchRecord> =
+    database.matchRecordDao().getItemLive(SimpleSQLiteQuery(buildGetItemQuery(id)))
 }

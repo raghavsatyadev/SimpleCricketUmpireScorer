@@ -49,7 +49,7 @@ android {
 
     ndk { abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a")) }
 
-    props.entries.forEach { (key, value) ->
+    for ((key, value) in props.entries) {
       val keyString = key.toString()
       if (keyString.startsWith("res_")) {
         resValue("string", keyString.replace("res_", ""), value.toString())

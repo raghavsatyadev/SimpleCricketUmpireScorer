@@ -65,8 +65,8 @@ import java.util.Calendar
 
 @Composable
 fun CreateMatchScreen(
-    matchRecord: MatchRecord? = null,
-    viewModel: CreateMatchScreenViewModel = hiltViewModel(),
+  matchRecord: MatchRecord? = null,
+  viewModel: CreateMatchScreenViewModel = hiltViewModel(),
 ) {
 
   LaunchedEffect(matchRecord) {

@@ -48,8 +48,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
   }
 
   private val db by lazy {
-    Firebase
-      .firestore(firebaseApp).apply {
+    Firebase.firestore(firebaseApp).apply {
       val settings = firestoreSettings {
         setLocalCacheSettings(memoryCacheSettings {})
         setLocalCacheSettings(persistentCacheSettings {})

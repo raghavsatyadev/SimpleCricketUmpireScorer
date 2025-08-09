@@ -7,5 +7,5 @@ import dagger.hilt.components.SingletonComponent
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface StorageEntryPoint {
-    fun storageUtil(): StorageComposeUtils
+  fun storageUtil(): StorageComposeUtils
 }

@@ -53,21 +53,12 @@ fun AppToolBar(modifier: Modifier = Modifier, title: String, onNavigateBack: (()
 @DarkPreview
 @Composable
 fun AppToolBarPreview() {
-  AppTheme {
-    AppToolBar(
-      title = "SCUS",
-      onNavigateBack = {})
-  }
+  AppTheme { AppToolBar(title = "SCUS", onNavigateBack = {}) }
 }
 
 @LightPreview
 @DarkPreview
 @Composable
 fun AppToolBarWithoutBackButtonPreview() {
-  AppTheme {
-    AppToolBar(
-      title = "SCUS",
-      onNavigateBack = null
-    )
-  }
+  AppTheme { AppToolBar(title = "SCUS", onNavigateBack = null) }
 }

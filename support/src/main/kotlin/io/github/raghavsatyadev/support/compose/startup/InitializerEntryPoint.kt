@@ -7,18 +7,16 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 
 @EntryPoint
-@InstallIn(SingletonComponent::class) //<-- installing in the ApplicationComponent !!
+@InstallIn(SingletonComponent::class) // <-- installing in the ApplicationComponent !!
 interface InitializerEntryPoint {
 
-    companion object {
-        //a helper method to resolve the InitializerEntryPoint from the context
-        fun resolve(context: Context): InitializerEntryPoint {
-            val appContext = context.applicationContext ?: throw IllegalStateException()
-            return EntryPointAccessors.fromApplication(
-                appContext,
-                InitializerEntryPoint::class.java
-            )
-        }
+  companion object {
+    // a helper method to resolve the InitializerEntryPoint from the context
+    fun resolve(context: Context): InitializerEntryPoint {
+      val appContext = context.applicationContext ?: throw IllegalStateException()
+      return EntryPointAccessors.fromApplication(appContext, InitializerEntryPoint::class.java)
     }
-    fun inject(initializer: WorkManagerInitializer)
+  }
+
+  fun inject(initializer: WorkManagerInitializer)
 }

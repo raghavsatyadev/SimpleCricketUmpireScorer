@@ -57,34 +57,17 @@ class FirebaseAuthUtil @Inject constructor(private val firebaseApp: FirebaseApp)
         ) to CustomError()
       } else {
         val exception = Exception("Firebase user was null after sign-in")
-        AppLog.loge(
-          false,
-          "FirebaseAuthUtil",
-          "signInWithGoogle",
-          exception,
-          Exception()
-        )
-        null to CustomError(
-          ErrorCode.AUTH_FAILED,
-          exception
-        )
+        AppLog.loge(false, "FirebaseAuthUtil", "signInWithGoogle", exception, Exception())
+        null to CustomError(ErrorCode.AUTH_FAILED, exception)
       }
     } catch (e: Exception) {
-      val errorCode = when (e) {
-        is com.google.firebase.FirebaseNetworkException -> ErrorCode.NETWORK_ERROR
-        else -> ErrorCode.AUTH_FAILED
+      val errorCode =
+        when (e) {
+          is com.google.firebase.FirebaseNetworkException -> ErrorCode.NETWORK_ERROR
+          else -> ErrorCode.AUTH_FAILED
         }
-      AppLog.loge(
-        false,
-        "FirebaseAuthUtil",
-        "signInWithGoogle",
-        e,
-        Exception()
-      )
-      null to CustomError(
-        errorCode,
-        e
-      )
+      AppLog.loge(false, "FirebaseAuthUtil", "signInWithGoogle", e, Exception())
+      null to CustomError(errorCode, e)
     }
   }
 

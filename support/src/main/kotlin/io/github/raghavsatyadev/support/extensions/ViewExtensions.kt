@@ -21,7 +21,7 @@ object ViewExtensions {
   }
 
   fun View.invisible() {
-      if (isInvisible) return
+    if (isInvisible) return
     visibility = View.INVISIBLE
   }
 
