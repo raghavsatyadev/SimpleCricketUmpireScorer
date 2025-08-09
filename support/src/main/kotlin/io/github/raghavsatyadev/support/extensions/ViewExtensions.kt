@@ -4,21 +4,24 @@ import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 
 @Suppress("unused")
 object ViewExtensions {
   fun View.gone() {
-    if (visibility == View.GONE) return
+    if (isGone) return
     visibility = View.GONE
   }
 
   fun View.visible() {
-    if (visibility == View.VISIBLE) return
+    if (isVisible) return
     visibility = View.VISIBLE
   }
 
   fun View.invisible() {
-    if (visibility == View.INVISIBLE) return
+      if (isInvisible) return
     visibility = View.INVISIBLE
   }
 

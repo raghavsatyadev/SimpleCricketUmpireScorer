@@ -4,7 +4,6 @@ package io.github.raghavsatyadev.support.extensions
 
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import androidx.annotation.AttrRes
@@ -14,6 +13,7 @@ import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.IntegerRes
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import java.util.Locale
 
@@ -61,7 +61,7 @@ object ResourceExtensions {
 
   @ColorInt
   fun Context.getAttrColor(@AttrRes attrID: Int): Int {
-    return Color.parseColor(getAttrColorString(attrID))
+    return getAttrColorString(attrID).toColorInt()
   }
 
   @ColorInt

@@ -6,13 +6,14 @@ import android.net.Uri
 import android.text.TextUtils
 import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import io.github.raghavsatyadev.support.core.CoreApp
 import java.io.File
 
 @Suppress("MemberVisibilityCanBePrivate")
 object FileExtensions {
   fun File.getMimeType(): String? {
-    val type: String? = CoreApp.instance.contentResolver.getType(Uri.parse(this.absolutePath))
+    val type: String? = CoreApp.instance.contentResolver.getType(absolutePath.toUri())
     if (!TextUtils.isEmpty(type)) return type
     val mime = MimeTypeMap.getSingleton()
     return mime.getMimeTypeFromExtension(getFileExtension())

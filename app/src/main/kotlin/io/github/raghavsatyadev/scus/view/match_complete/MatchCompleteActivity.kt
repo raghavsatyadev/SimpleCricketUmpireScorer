@@ -34,26 +34,19 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
   private lateinit var matchRecord: MatchRecord
   private lateinit var basicDetailsTeam1: BasicMatchUIDetails
   private lateinit var basicDetailsTeam2: BasicMatchUIDetails
-  private val buttonCheckedListener =
-    object : MaterialButtonToggleGroup.OnButtonCheckedListener {
-      override fun onButtonChecked(
-        group: MaterialButtonToggleGroup?,
-        checkedId: Int,
-        isChecked: Boolean,
-      ) {
-        if (isChecked) {
-          when (checkedId) {
-            binding.btnMatchDetailTeam1.id -> {
-              loadTeamDetails(true)
-            }
+  private val buttonCheckedListener = MaterialButtonToggleGroup.OnButtonCheckedListener { group, checkedId, isChecked ->
+    if (isChecked) {
+      when (checkedId) {
+        binding.btnMatchDetailTeam1.id -> {
+          loadTeamDetails(true)
+        }
 
-            binding.btnMatchDetailTeam2.id -> {
-              loadTeamDetails(false)
-            }
-          }
+        binding.btnMatchDetailTeam2.id -> {
+          loadTeamDetails(false)
         }
       }
     }
+  }
 
   private fun loadTeamDetails(loadTeam1Details: Boolean) {
     val details = if (loadTeam1Details) basicDetailsTeam1 else basicDetailsTeam2

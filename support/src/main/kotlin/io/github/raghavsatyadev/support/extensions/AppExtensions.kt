@@ -97,7 +97,7 @@ object AppExtensions {
 
   fun generateRandomNonce(): String {
     val rawNonce = UUID.randomUUID().toString()
-    val bytes = rawNonce.toString().toByteArray()
+    val bytes = rawNonce.toByteArray()
     val md = MessageDigest.getInstance("SHA-256")
     val digest = md.digest(bytes)
     val hashedNonce = digest.fold("") { str, it -> str + "%02x".format(it) }
