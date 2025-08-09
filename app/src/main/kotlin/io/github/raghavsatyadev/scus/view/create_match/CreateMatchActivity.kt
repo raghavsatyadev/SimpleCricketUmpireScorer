@@ -181,8 +181,8 @@ class CreateMatchActivity : CoreActivity<ActivityCreateMatchBinding>() {
     val team2Name = binding.edTeam2Name.text.toString()
 
     var isMatchDetailsValid = false
-    var didTeam1WinToss = binding.btnTossTeam1.id == binding.toggleToss.checkedButtonId
-    var batFirstTeam1 = binding.btnBatFirstTeam1.id == binding.toggleBatFirst.checkedButtonId
+    val didTeam1WinToss = binding.btnTossTeam1.id == binding.toggleToss.checkedButtonId
+    val batFirstTeam1 = binding.btnBatFirstTeam1.id == binding.toggleBatFirst.checkedButtonId
 
     try {
       isMatchDetailsValid =

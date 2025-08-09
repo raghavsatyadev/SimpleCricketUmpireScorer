@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.app.ShareCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.R
@@ -20,7 +21,7 @@ import java.net.URLEncoder
 object ImplicitIntentExtensions {
   fun Context.openDialer(number: String) {
     val intent = Intent(Intent.ACTION_DIAL)
-    intent.data = Uri.parse("tel:$number")
+    intent.data = "tel:$number".toUri()
     startActivity(intent)
   }
 
@@ -38,7 +39,7 @@ object ImplicitIntentExtensions {
     emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(emailID))
     emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
     emailIntent.putExtra(Intent.EXTRA_TEXT, mailContent)
-    emailIntent.data = Uri.parse("mailto:")
+    emailIntent.data = "mailto:".toUri()
     startActivity(Intent.createChooser(emailIntent, "Send email..."))
   }
 
@@ -62,12 +63,14 @@ object ImplicitIntentExtensions {
     }
   }
 
-  fun getBrowserIntent(url: String?): Intent {
-    return Intent(Intent.ACTION_VIEW, Uri.parse(url))
+  fun getBrowserIntent(url: String): Intent {
+    return Intent(Intent.ACTION_VIEW,
+        url.toUri())
   }
 
-  fun Context.openBrowser(url: String?) {
-    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+  fun Context.openBrowser(url: String) {
+    val browserIntent = Intent(Intent.ACTION_VIEW,
+        url.toUri())
     startActivity(browserIntent)
   }
 

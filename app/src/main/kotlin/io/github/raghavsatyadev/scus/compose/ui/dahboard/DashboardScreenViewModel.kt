@@ -14,7 +14,7 @@ class DashboardScreenViewModel
 @Inject
 constructor(
   private val authUtil: FirebaseAuthUtil,
-  private val matchRecordComposeDataUtil: MatchRecordComposeDataUtil,
+  matchRecordComposeDataUtil: MatchRecordComposeDataUtil,
   private val fireStoreUtil: FireStoreUtil,
   uiStateManager: UiStateManager,
 ) : CoreScreenViewModel(uiStateManager) {
