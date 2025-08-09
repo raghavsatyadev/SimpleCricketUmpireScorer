@@ -41,9 +41,5 @@ fun UserAlreadyLoggedInDialog(onForceLogin: () -> Unit, onSignOut: () -> Unit) {
 @LightPreview
 @Composable
 private fun UserAlreadyLoggedInDialogPreview() {
-  AppTheme {
-    UserAlreadyLoggedInDialog(
-      onForceLogin = {},
-      onSignOut = {})
-  }
+  AppTheme { UserAlreadyLoggedInDialog(onForceLogin = {}, onSignOut = {}) }
 }

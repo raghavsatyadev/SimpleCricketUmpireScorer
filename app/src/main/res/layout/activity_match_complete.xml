@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.match_complete.MatchCompleteActivity">
+    tools:context=".view.match_complete.MatchCompleteActivity"
+    >
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/tool_bar" />
+        layout="@layout/tool_bar"
+        />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
@@ -17,12 +20,14 @@
         app:layout_constraintBottom_toTopOf="@id/ad_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="15dp">
+            android:padding="15dp"
+            >
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txt_team_name"
@@ -35,7 +40,8 @@
                 app:layout_constraintBottom_toTopOf="@id/txt_required_runs_balls"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="Team Sunrise" />
+                tools:text="Team Sunrise"
+                />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/group_required_score"
@@ -43,7 +49,8 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 app:constraint_referenced_ids="txt_required_runs_balls,space_rr,txt_rrr"
-                tools:visibility="visible" />
+                tools:visibility="visible"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txt_required_runs_balls"
@@ -55,7 +62,8 @@
                 app:layout_constraintBottom_toTopOf="@id/space_rr"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="Required\n67 (18)" />
+                tools:text="Required\n67 (18)"
+                />
 
             <View
                 android:id="@+id/space_rr"
@@ -66,7 +74,8 @@
                 android:background="?colorAccent"
                 app:layout_constraintBottom_toTopOf="@id/txt_rrr"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txt_rrr"
@@ -77,7 +86,8 @@
                 app:layout_constraintBottom_toTopOf="@id/txt_crr"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="RRR at start: 6.7" />
+                tools:text="RRR at start: 6.7"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txt_crr"
@@ -88,7 +98,8 @@
                 app:layout_constraintBottom_toTopOf="@id/space_runs_wickets"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="CRR: 6.7" />
+                tools:text="CRR: 6.7"
+                />
 
             <View
                 android:id="@+id/space_runs_wickets"
@@ -99,7 +110,8 @@
                 android:background="?colorAccent"
                 app:layout_constraintBottom_toTopOf="@id/txt_runs_wickets"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txt_runs_wickets"
@@ -111,7 +123,8 @@
                 app:layout_constraintBottom_toTopOf="@id/txt_overs"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="500-5" />
+                tools:text="500-5"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txt_overs"
@@ -122,7 +135,8 @@
                 app:layout_constraintBottom_toTopOf="@id/toggle_match_detail"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="50.5 / 60" />
+                tools:text="50.5 / 60"
+                />
 
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/toggle_match_detail"
@@ -133,21 +147,24 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:selectionRequired="true"
-                app:singleSelection="true">
+                app:singleSelection="true"
+                >
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_match_detail_team_1"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/team_1" />
+                    android:text="@string/team_1"
+                    />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_match_detail_team_2"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/team_2" />
+                    android:text="@string/team_2"
+                    />
             </com.google.android.material.button.MaterialButtonToggleGroup>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
@@ -158,9 +175,11 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <include
         android:id="@+id/loader"
-        layout="@layout/loader" />
+        layout="@layout/loader"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -49,13 +49,8 @@ fun MatchRecordItemPreview() {
         onCopyClick = {},
         onDeleteClick = {},
         onMatchClick = {},
-        modifier = Modifier
-          .padding(
-            vertical = 8.dp,
-            horizontal = 16.dp
-          )
-          .fillMaxWidth()
-          .wrapContentHeight(),
+        modifier =
+          Modifier.padding(vertical = 8.dp, horizontal = 16.dp).fillMaxWidth().wrapContentHeight(),
       )
     }
   }
@@ -75,12 +70,7 @@ fun MatchRecordItem(
     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     modifier = modifier.clickable { onMatchClick(matchRecord) },
   ) {
-    ConstraintLayout(
-      modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(16.dp)
-    ) {
+    ConstraintLayout(modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(16.dp)) {
       val midVerticalGuideLine = createGuidelineFromStart(0.5f)
       val (
         txtCombinedStatus,
@@ -97,10 +87,7 @@ fun MatchRecordItem(
         separatorTeam,
       ) = createRefs()
 
-      createHorizontalChain(
-        btnCopy,
-        btnDelete
-      )
+      createHorizontalChain(btnCopy, btnDelete)
 
       val team1Score = matchRecord.getTeam1FormattedScore()
       val team2Score = matchRecord.getTeam2FormattedScore()
@@ -142,45 +129,40 @@ fun MatchRecordItem(
         }
       }
 
-      val statusBarrier = createBottomBarrier(
-        txtCombinedStatus,
-        txtTeam1Status,
-        txtTeam2Status,
-        margin = 8.dp
-      )
-      val teamBarrier = createTopBarrier(
-        txtTeam1Name,
-        txtTeam2Name,
-        txtTeam1Status,
-        txtTeam2Status
-      )
+      val statusBarrier =
+        createBottomBarrier(txtCombinedStatus, txtTeam1Status, txtTeam2Status, margin = 8.dp)
+      val teamBarrier = createTopBarrier(txtTeam1Name, txtTeam2Name, txtTeam1Status, txtTeam2Status)
       Spacer(
-        modifier = Modifier
-          .constrainAs(separatorTeam) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            top.linkTo(teamBarrier)
-            bottom.linkTo(txtTeam1Score.bottom)
-            width = Dimension.value(1.dp)
-            height = Dimension.fillToConstraints
-          }
-          .background(MaterialTheme.colorScheme.outline))
-      val combineStatusVisibility = if (shouldShowCombined) {
-        Visibility.Visible
-      } else {
-        Visibility.Gone
-      }
-      val separateStatusVisibility = if (shouldShowCombined) {
-        Visibility.Gone
-      } else {
-        Visibility.Visible
-      }
+        modifier =
+          Modifier.constrainAs(separatorTeam) {
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+              top.linkTo(teamBarrier)
+              bottom.linkTo(txtTeam1Score.bottom)
+              width = Dimension.value(1.dp)
+              height = Dimension.fillToConstraints
+            }
+            .background(MaterialTheme.colorScheme.outline)
+      )
+      val combineStatusVisibility =
+        if (shouldShowCombined) {
+          Visibility.Visible
+        } else {
+          Visibility.Gone
+        }
+      val separateStatusVisibility =
+        if (shouldShowCombined) {
+          Visibility.Gone
+        } else {
+          Visibility.Visible
+        }
       Text(
-        modifier = Modifier.constrainAs(txtCombinedStatus) {
+        modifier =
+          Modifier.constrainAs(txtCombinedStatus) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             top.linkTo(parent.top)
-          visibility = combineStatusVisibility
+            visibility = combineStatusVisibility
           },
         text = combinedStatus,
         fontWeight = FontWeight.Bold,
@@ -189,11 +171,12 @@ fun MatchRecordItem(
       )
       Text(
         text = team1Status,
-        modifier = Modifier.constrainAs(txtTeam1Status) {
+        modifier =
+          Modifier.constrainAs(txtTeam1Status) {
             start.linkTo(parent.start)
             end.linkTo(midVerticalGuideLine)
             top.linkTo(txtCombinedStatus.bottom)
-          visibility = separateStatusVisibility
+            visibility = separateStatusVisibility
           },
         color = team1StatusColor,
         fontWeight = FontWeight.ExtraBold,
@@ -201,11 +184,12 @@ fun MatchRecordItem(
       )
       Text(
         text = team2Status,
-        modifier = Modifier.constrainAs(txtTeam2Status) {
+        modifier =
+          Modifier.constrainAs(txtTeam2Status) {
             end.linkTo(parent.end)
             start.linkTo(midVerticalGuideLine)
             top.linkTo(txtCombinedStatus.bottom)
-          visibility = separateStatusVisibility
+            visibility = separateStatusVisibility
           },
         fontWeight = FontWeight.ExtraBold,
         color = team2StatusColor,
@@ -214,70 +198,68 @@ fun MatchRecordItem(
 
       Text(
         text = matchRecord.team1Detail.teamName,
-        modifier = Modifier.constrainAs(txtTeam1Name) {
-          start.linkTo(parent.start)
-          end.linkTo(midVerticalGuideLine)
-          top.linkTo(statusBarrier)
-        },
+        modifier =
+          Modifier.constrainAs(txtTeam1Name) {
+            start.linkTo(parent.start)
+            end.linkTo(midVerticalGuideLine)
+            top.linkTo(statusBarrier)
+          },
         fontWeight = FontWeight.ExtraBold,
         style = MaterialTheme.typography.labelLarge,
       )
       Text(
         text = matchRecord.team2Detail.teamName,
-        modifier = Modifier.constrainAs(txtTeam2Name) {
-          start.linkTo(midVerticalGuideLine)
-          end.linkTo(parent.end)
-          top.linkTo(statusBarrier)
-        },
+        modifier =
+          Modifier.constrainAs(txtTeam2Name) {
+            start.linkTo(midVerticalGuideLine)
+            end.linkTo(parent.end)
+            top.linkTo(statusBarrier)
+          },
         fontWeight = FontWeight.ExtraBold,
         style = MaterialTheme.typography.labelLarge,
       )
       Text(
         text = team1Score,
         style = MaterialTheme.typography.bodyMedium,
-        modifier = Modifier.constrainAs(txtTeam1Score) {
-          start.linkTo(parent.start)
-          end.linkTo(midVerticalGuideLine)
-          top.linkTo(txtTeam1Name.bottom)
-        },
+        modifier =
+          Modifier.constrainAs(txtTeam1Score) {
+            start.linkTo(parent.start)
+            end.linkTo(midVerticalGuideLine)
+            top.linkTo(txtTeam1Name.bottom)
+          },
       )
       Text(
         text = team2Score,
         style = MaterialTheme.typography.bodyMedium,
-        modifier = Modifier.constrainAs(txtTeam2Score) {
-          start.linkTo(midVerticalGuideLine)
-          end.linkTo(parent.end)
-          top.linkTo(txtTeam2Name.bottom)
-        },
+        modifier =
+          Modifier.constrainAs(txtTeam2Score) {
+            start.linkTo(midVerticalGuideLine)
+            end.linkTo(parent.end)
+            top.linkTo(txtTeam2Name.bottom)
+          },
       )
       Text(
         text = matchRecord.location,
         style = MaterialTheme.typography.bodyMedium,
         fontWeight = FontWeight.ExtraBold,
-        modifier = Modifier.constrainAs(txtMatchLocation) {
-          start.linkTo(parent.start)
-          top.linkTo(
-            txtTeam1Score.bottom,
-            10.dp
-          )
-        },
+        modifier =
+          Modifier.constrainAs(txtMatchLocation) {
+            start.linkTo(parent.start)
+            top.linkTo(txtTeam1Score.bottom, 10.dp)
+          },
       )
       Text(
         text = matchRecord.getMatchTimings(),
         style = MaterialTheme.typography.bodyMedium,
-        modifier = Modifier.constrainAs(txtMatchDuration) {
-          start.linkTo(parent.start)
-          top.linkTo(txtMatchLocation.bottom)
-        },
+        modifier =
+          Modifier.constrainAs(txtMatchDuration) {
+            start.linkTo(parent.start)
+            top.linkTo(txtMatchLocation.bottom)
+          },
       )
       OutlinedIconButton(
         onClick = { onCopyClick(matchRecord) },
-        modifier = Modifier.constrainAs(btnCopy) {
-          top.linkTo(
-            txtMatchDuration.bottom,
-            10.dp
-          )
-        },
+        modifier = Modifier.constrainAs(btnCopy) { top.linkTo(txtMatchDuration.bottom, 10.dp) },
       ) {
         Icon(
           tint = MaterialTheme.colorScheme.primary,
@@ -287,12 +269,7 @@ fun MatchRecordItem(
       }
       OutlinedIconButton(
         onClick = { onDeleteClick(matchRecord) },
-        modifier = Modifier.constrainAs(btnDelete) {
-          top.linkTo(
-            txtMatchDuration.bottom,
-            10.dp
-          )
-        },
+        modifier = Modifier.constrainAs(btnDelete) { top.linkTo(txtMatchDuration.bottom, 10.dp) },
       ) {
         Icon(
           tint = MaterialTheme.colorScheme.primary,

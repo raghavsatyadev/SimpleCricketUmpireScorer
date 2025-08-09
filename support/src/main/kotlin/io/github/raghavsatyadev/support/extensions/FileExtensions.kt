@@ -21,7 +21,7 @@ object FileExtensions {
 
   fun File.getFileExtension(): String? {
     val extension: String?
-    val uri = Uri.parse(absolutePath)
+    val uri = absolutePath.toUri()
     val scheme = uri.scheme
     extension =
       if (scheme != null && scheme == ContentResolver.SCHEME_CONTENT) {

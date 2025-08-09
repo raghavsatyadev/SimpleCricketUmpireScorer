@@ -1,7 +1,4 @@
-@file:OptIn(
-  ExperimentalMaterial3Api::class,
-  ExperimentalMaterial3ExpressiveApi::class
-)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 
 package io.github.raghavsatyadev.scus.compose.ui.user
 
@@ -41,17 +38,10 @@ import io.github.raghavsatyadev.support.models.essential.UiState
 import io.github.raghavsatyadev.support.R as Rs
 
 @Composable
-fun LoginScreen(
-  viewModel: LoginScreenViewModel = hiltViewModel(),
-  onLoginSuccess: () -> Unit,
-) {
+fun LoginScreen(viewModel: LoginScreenViewModel = hiltViewModel(), onLoginSuccess: () -> Unit) {
   val activity = activity()
 
-  HandleLoginEvents(
-    viewModel,
-    activity,
-    onLoginSuccess = onLoginSuccess
-  )
+  HandleLoginEvents(viewModel, activity, onLoginSuccess = onLoginSuccess)
 
   CheckPlayService {
     val googleSignInUtil = remember { GoogleSignInUtil(activity = activity!!) }
@@ -73,10 +63,7 @@ private fun HandleLoginEvents(
 
     is UiState.Error -> {
       with(state.error) {
-        ErrorDialog(
-          errorCode = errorCode,
-          errorMessage = stringResource(errorCode.warning)
-        ) {
+        ErrorDialog(errorCode = errorCode, errorMessage = stringResource(errorCode.warning)) {
           viewModel.signOut {}
         }
       }
@@ -119,9 +106,9 @@ private fun LoginView(doLogin: () -> Unit) {
             contentDescription = stringResource(R.string.google_login),
           )
         },
-        modifier = Modifier
-          .align(alignment = Alignment.BottomCenter)
-          .padding(bottom = innerPadding.calculateBottomPadding() + 40.dp),
+        modifier =
+          Modifier.align(alignment = Alignment.BottomCenter)
+            .padding(bottom = innerPadding.calculateBottomPadding() + 40.dp),
         onClick = { doLogin() },
       )
     }

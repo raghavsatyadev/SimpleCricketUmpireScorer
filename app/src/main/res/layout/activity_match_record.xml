@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true"
-    tools:context=".view.match_record.MatchRecordActivity">
+    tools:context=".view.match_record.MatchRecordActivity"
+    >
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/tool_bar" />
+        layout="@layout/tool_bar"
+        />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
@@ -20,18 +23,21 @@
         app:layout_constraintBottom_toTopOf="@id/ad_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            >
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/group_first_inning"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="visible"
-                app:constraint_referenced_ids="btn_end_inning,btn_edit_overs" />
+                app:constraint_referenced_ids="btn_end_inning,btn_edit_overs"
+                />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_end_inning"
@@ -42,7 +48,8 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/txt_required_runs_balls"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_end_match"
@@ -53,7 +60,8 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/txt_required_runs_balls"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/group_second_inning"
@@ -61,7 +69,8 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 app:constraint_referenced_ids="txt_required_runs_balls,space_rr,txt_rrr,btn_end_match"
-                tools:visibility="visible" />
+                tools:visibility="visible"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txt_required_runs_balls"
@@ -73,7 +82,8 @@
                 app:layout_constraintBottom_toTopOf="@id/space_rr"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="Required\n67 (18)" />
+                tools:text="Required\n67 (18)"
+                />
 
             <View
                 android:id="@+id/space_rr"
@@ -84,7 +94,8 @@
                 android:background="?colorAccent"
                 app:layout_constraintBottom_toTopOf="@id/txt_crr"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txt_crr"
@@ -95,7 +106,8 @@
                 app:layout_constraintBottom_toTopOf="@id/space_runs_wickets"
                 app:layout_constraintEnd_toStartOf="@+id/txt_rrr"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="CRR: 6.7" />
+                tools:text="CRR: 6.7"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txt_rrr"
@@ -106,7 +118,8 @@
                 app:layout_constraintBottom_toTopOf="@id/space_runs_wickets"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/txt_crr"
-                tools:text="RRR: 6.7" />
+                tools:text="RRR: 6.7"
+                />
 
             <View
                 android:id="@+id/space_runs_wickets"
@@ -117,7 +130,8 @@
                 android:background="?colorAccent"
                 app:layout_constraintBottom_toTopOf="@id/txt_runs_wickets"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txt_runs_wickets"
@@ -129,7 +143,8 @@
                 app:layout_constraintBottom_toTopOf="@id/txt_overs"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="500-5" />
+                tools:text="500-5"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txt_overs"
@@ -140,7 +155,8 @@
                 app:layout_constraintBottom_toTopOf="@id/btn_minus_wicket"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="50.5 / 60" />
+                tools:text="50.5 / 60"
+                />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_edit_overs"
@@ -153,7 +169,8 @@
                 app:iconSize="30dp"
                 app:layout_constraintBottom_toBottomOf="@id/txt_overs"
                 app:layout_constraintStart_toEndOf="@id/txt_overs"
-                app:layout_constraintTop_toTopOf="@id/txt_overs" />
+                app:layout_constraintTop_toTopOf="@id/txt_overs"
+                />
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/btn_minus_wicket"
@@ -169,7 +186,8 @@
                 app:layout_constraintBottom_toTopOf="@id/space_minus_top"
                 app:layout_constraintDimensionRatio="h,1:1"
                 app:layout_constraintEnd_toEndOf="@id/btn_add_ball"
-                app:layout_constraintStart_toStartOf="@id/btn_add_ball" />
+                app:layout_constraintStart_toStartOf="@id/btn_add_ball"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
@@ -180,7 +198,8 @@
                 app:layout_constraintBottom_toBottomOf="@id/btn_minus_wicket"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/btn_minus_wicket" />
+                app:layout_constraintTop_toTopOf="@id/btn_minus_wicket"
+                />
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/btn_add_wicket"
@@ -196,7 +215,8 @@
                 app:layout_constraintBottom_toTopOf="@id/space_minus_top"
                 app:layout_constraintDimensionRatio="h,1:1"
                 app:layout_constraintEnd_toEndOf="@id/btn_add_run"
-                app:layout_constraintStart_toStartOf="@id/btn_add_run" />
+                app:layout_constraintStart_toStartOf="@id/btn_add_run"
+                />
 
             <View
                 android:id="@+id/space_minus_top"
@@ -207,7 +227,8 @@
                 android:background="?colorAccent"
                 app:layout_constraintBottom_toTopOf="@id/btn_minus_ball"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                />
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/btn_minus_ball"
@@ -223,7 +244,8 @@
                 app:layout_constraintBottom_toTopOf="@id/label_overs"
                 app:layout_constraintDimensionRatio="h,1:1"
                 app:layout_constraintEnd_toEndOf="@id/btn_add_ball"
-                app:layout_constraintStart_toStartOf="@id/btn_add_ball" />
+                app:layout_constraintStart_toStartOf="@id/btn_add_ball"
+                />
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/btn_minus_run"
@@ -239,7 +261,8 @@
                 app:layout_constraintBottom_toTopOf="@id/label_runs"
                 app:layout_constraintDimensionRatio="h,1:1"
                 app:layout_constraintEnd_toEndOf="@id/btn_add_run"
-                app:layout_constraintStart_toStartOf="@id/btn_add_run" />
+                app:layout_constraintStart_toStartOf="@id/btn_add_run"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/label_overs"
@@ -250,7 +273,8 @@
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                 app:layout_constraintBottom_toTopOf="@id/guideline_add_buttons"
                 app:layout_constraintEnd_toEndOf="@id/btn_add_ball"
-                app:layout_constraintStart_toStartOf="@id/btn_add_ball" />
+                app:layout_constraintStart_toStartOf="@id/btn_add_ball"
+                />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/label_runs"
@@ -261,14 +285,16 @@
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                 app:layout_constraintBottom_toTopOf="@id/guideline_add_buttons"
                 app:layout_constraintEnd_toEndOf="@id/btn_add_run"
-                app:layout_constraintStart_toStartOf="@id/btn_add_run" />
+                app:layout_constraintStart_toStartOf="@id/btn_add_run"
+                />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline_add_buttons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent=".80" />
+                app:layout_constraintGuide_percent=".80"
+                />
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/btn_add_ball"
@@ -286,7 +312,8 @@
                 app:layout_constraintEnd_toStartOf="@+id/btn_add_run"
                 app:layout_constraintHorizontal_chainStyle="spread"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/guideline_add_buttons" />
+                app:layout_constraintTop_toBottomOf="@id/guideline_add_buttons"
+                />
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/btn_add_run"
@@ -302,7 +329,8 @@
                 app:layout_constraintDimensionRatio="h,1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/btn_add_ball"
-                app:layout_constraintTop_toBottomOf="@id/guideline_add_buttons" />
+                app:layout_constraintTop_toBottomOf="@id/guideline_add_buttons"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
@@ -314,9 +342,11 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <include
         android:id="@+id/loader"
-        layout="@layout/loader" />
+        layout="@layout/loader"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

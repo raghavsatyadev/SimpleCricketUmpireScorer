@@ -47,10 +47,7 @@ object AppHelpers {
     }
   }
 
-  fun createdBulletedPointText(
-    title: String,
-    bulletPoints: List<String>,
-  ): AnnotatedString {
+  fun createdBulletedPointText(title: String, bulletPoints: List<String>): AnnotatedString {
     return buildAnnotatedString {
       withStyle(style = SpanStyle(fontSize = 16.sp)) { appendLine(title) }
 

@@ -10,10 +10,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel
-@Inject constructor(
-  uiStateManager: UiStateManager,
-  private val authUtil: FirebaseAuthUtil,
-) :
+@Inject
+constructor(uiStateManager: UiStateManager, private val authUtil: FirebaseAuthUtil) :
   CoreScreenViewModel(uiStateManager) {
   var isLoading = uiStateManager.isLoading
     private set

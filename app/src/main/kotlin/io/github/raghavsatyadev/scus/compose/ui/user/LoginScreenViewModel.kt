@@ -27,22 +27,14 @@ constructor(
   uiStateManager: UiStateManager,
 ) : CoreScreenViewModel(uiStateManager) {
   private val _isUserAlreadyLoggedInEvent = MutableStateFlow<UiState<Boolean>>(UiState.Initial)
-  @Stable
-  val isUserAlreadyLoggedInEvent = _isUserAlreadyLoggedInEvent.asStateFlow()
+  @Stable val isUserAlreadyLoggedInEvent = _isUserAlreadyLoggedInEvent.asStateFlow()
 
   fun signInWithGoogle(googleSignInUtil: GoogleSignInUtil) {
     executeWithLoader {
       googleSignInUtil.startSignIn(
         onSuccess = { idToken -> signInWithFirebaseAuth(idToken) },
         onFailure = { e ->
-          _isUserAlreadyLoggedInEvent.emit(
-            UiState.Error(
-              CustomError(
-                ErrorCode.AUTH_FAILED,
-                e
-              )
-            )
-          )
+          _isUserAlreadyLoggedInEvent.emit(UiState.Error(CustomError(ErrorCode.AUTH_FAILED, e)))
         },
       )
     }
@@ -54,14 +46,7 @@ constructor(
       try {
         loginWithFirestore(user)
       } catch (e: Exception) {
-        _isUserAlreadyLoggedInEvent.emit(
-          UiState.Error(
-            CustomError(
-              ErrorCode.AUTH_FAILED,
-              e
-            )
-          )
-        )
+        _isUserAlreadyLoggedInEvent.emit(UiState.Error(CustomError(ErrorCode.AUTH_FAILED, e)))
       }
     } else {
       _isUserAlreadyLoggedInEvent.emit(UiState.Error(error))
@@ -120,25 +105,14 @@ constructor(
         fireStoreUtil.initialize()
         _isUserAlreadyLoggedInEvent.emit(UiState.Success(false))
       } catch (e: Exception) {
-        _isUserAlreadyLoggedInEvent.emit(
-          UiState.Error(
-            CustomError(
-              ErrorCode.AUTH_FAILED,
-              e
-            )
-          )
-        )
+        _isUserAlreadyLoggedInEvent.emit(UiState.Error(CustomError(ErrorCode.AUTH_FAILED, e)))
       }
     }
   }
 
   fun signOut(onLogout: () -> Unit) {
     executeWithLoader {
-      AppHelpers.signOut(
-        fireStoreUtil,
-        authUtil,
-        roomDBUtil
-      )
+      AppHelpers.signOut(fireStoreUtil, authUtil, roomDBUtil)
       onLogout()
     }
   }

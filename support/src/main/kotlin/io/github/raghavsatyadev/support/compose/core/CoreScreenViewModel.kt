@@ -20,7 +20,7 @@ abstract class CoreScreenViewModel(protected val uiStateManager: UiStateManager)
     viewModelScope.launch {
       uiStateManager.showLoader()
       try {
-          withContext(ioDispatcher) { block() }
+        withContext(ioDispatcher) { block() }
       } finally {
         uiStateManager.hideLoader()
       }

@@ -64,13 +64,11 @@ object ImplicitIntentExtensions {
   }
 
   fun getBrowserIntent(url: String): Intent {
-    return Intent(Intent.ACTION_VIEW,
-        url.toUri())
+    return Intent(Intent.ACTION_VIEW, url.toUri())
   }
 
   fun Context.openBrowser(url: String) {
-    val browserIntent = Intent(Intent.ACTION_VIEW,
-        url.toUri())
+    val browserIntent = Intent(Intent.ACTION_VIEW, url.toUri())
     startActivity(browserIntent)
   }
 

@@ -11,10 +11,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.text.TextUtils
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
@@ -58,10 +55,8 @@ object NotificationUtils {
 
     val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
-    if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      channelIdChanged =
-        getNotificationChannelID(notificationManager, channelIdChanged, defaultSoundUri)
-    }
+    channelIdChanged =
+      getNotificationChannelID(notificationManager, channelIdChanged, defaultSoundUri)
 
     val builder: NotificationCompat.Builder =
       getNotificationBuilder(
@@ -87,7 +82,6 @@ object NotificationUtils {
     return NotificationManagerCompat.from(this!!)
   }
 
-  @RequiresApi(api = VERSION_CODES.O)
   fun Context.getNotificationChannelID(
     notificationManager: NotificationManagerCompat,
     channelId: String?,
@@ -101,7 +95,6 @@ object NotificationUtils {
     return id
   }
 
-  @RequiresApi(api = VERSION_CODES.O)
   fun Context.createNotificationChannel(
     id: String?,
     defaultSoundUri: Uri,
@@ -173,10 +166,7 @@ object NotificationUtils {
   }
 
   private fun Drawable.toBitmap(): Bitmap {
-    val bmp = createBitmap(
-        this.intrinsicWidth,
-        this.intrinsicHeight
-    )
+    val bmp = createBitmap(this.intrinsicWidth, this.intrinsicHeight)
     val canvas = Canvas(bmp)
     setBounds(0, 0, canvas.width, canvas.height)
     draw(canvas)

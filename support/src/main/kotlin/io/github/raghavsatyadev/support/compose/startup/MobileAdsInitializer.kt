@@ -11,16 +11,15 @@ import io.github.raghavsatyadev.support.google.GoogleExtensions.checkPlayService
 class MobileAdsInitializer : Initializer<Unit> {
   override fun create(context: Context) {
     if (context.checkPlayServiceAvailability()) {
-        if (BuildConfig.DEBUG) {
+      if (BuildConfig.DEBUG) {
         MobileAds.setRequestConfiguration(
-            MobileAds
-                .getRequestConfiguration()
-                .toBuilder()
-                .setTestDeviceIds(listOf("9CC8AD8C783D84C97DF0A252B0F63285"))
-                .build()
+          MobileAds.getRequestConfiguration()
+            .toBuilder()
+            .setTestDeviceIds(listOf("9CC8AD8C783D84C97DF0A252B0F63285"))
+            .build()
         )
-        }
-        MobileAds.initialize(context)
+      }
+      MobileAds.initialize(context)
     } else {
       Toast.makeText(context, R.string.warning_update_play_service, Toast.LENGTH_SHORT).show()
     }

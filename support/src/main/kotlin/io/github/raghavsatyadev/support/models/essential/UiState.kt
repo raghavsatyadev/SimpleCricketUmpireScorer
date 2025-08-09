@@ -7,18 +7,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class UiState<out T> {
 
-    @Keep
-    @Serializable
-    data class Success<out T>(val data: T) : UiState<T>()
+  @Keep @Serializable data class Success<out T>(val data: T) : UiState<T>()
 
-    @Keep
-    @Serializable
-    data class Error(
-        val error: CustomError,
-        val code: Int = 400,
-    ) : UiState<Nothing>()
+  @Keep
+  @Serializable
+  data class Error(val error: CustomError, val code: Int = 400) : UiState<Nothing>()
 
-    @Keep
-    @Serializable
-    data object Initial : UiState<Nothing>()
+  @Keep @Serializable data object Initial : UiState<Nothing>()
 }
