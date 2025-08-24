@@ -111,12 +111,21 @@ private fun MatchCompleteUI(
                   top.linkTo(txtRequired.bottom, margin = 8.dp)
                 },
             )
+            Text(
+              text = stringResource(R.string.crr, d.currentCRR),
+              modifier =
+                Modifier.constrainAs(txtCrr) {
+                  end.linkTo(parent.end)
+                  top.linkTo(txtRequired.bottom, margin = 8.dp)
+                },
+            )
           } else {
             Text(
               text = stringResource(R.string.crr, d.currentCRR),
               modifier =
                 Modifier.constrainAs(txtCrr) {
                   start.linkTo(parent.start)
+                  end.linkTo(parent.end)
                   top.linkTo(txtTeam.bottom, margin = 16.dp)
                 },
             )
@@ -137,6 +146,7 @@ private fun MatchCompleteUI(
             Modifier.constrainAs(txtOvers) {
               top.linkTo(txtRuns.bottom, margin = 8.dp)
               start.linkTo(parent.start)
+              end.linkTo(parent.end)
             },
         )
       }
