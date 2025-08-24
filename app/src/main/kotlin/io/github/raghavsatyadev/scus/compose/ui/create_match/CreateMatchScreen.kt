@@ -322,7 +322,7 @@ private fun CreateMatchRecordUI(
       OutlinedTextField(
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         value = inningOver,
-        onValueChange = { inningOver = it },
+        onValueChange = { newText -> inningOver = newText.filter { it.isDigit() } },
         label = { Text(stringResource(id = R.string.overs_per_inning)) },
         modifier =
           Modifier.constrainAs(overRef) {
