@@ -26,6 +26,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
 import io.github.raghavsatyadev.scus.R
+import io.github.raghavsatyadev.scus.compose.support.models.MatchRecordProperties
 import io.github.raghavsatyadev.support.compose.components.DarkPreview
 import io.github.raghavsatyadev.support.compose.components.LightPreview
 import io.github.raghavsatyadev.support.compose.theme.AppTheme
