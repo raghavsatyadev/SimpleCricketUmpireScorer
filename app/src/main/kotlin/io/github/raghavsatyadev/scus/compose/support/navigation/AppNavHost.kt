@@ -66,7 +66,12 @@ fun AppNavHost(viewModel: MainViewModel) {
           )
         }
         entry<AppRoutes.Login> { LoginScreen { viewModel.changeLoginState() } }
-        entry<AppRoutes.CreateMatch> { CreateMatchScreen(matchRecord = it.matchRecord) }
+        entry<AppRoutes.CreateMatch> {
+          CreateMatchScreen(
+            matchRecord = it.matchRecord,
+            onMatchCreated = { backStack.removeLastOrNull() },
+          )
+        }
         entry<AppRoutes.MatchRecord> { key -> }
       },
   )

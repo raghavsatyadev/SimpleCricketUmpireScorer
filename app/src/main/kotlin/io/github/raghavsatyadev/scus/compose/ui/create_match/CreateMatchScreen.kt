@@ -36,6 +36,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -51,6 +52,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.compose.components.AppToolBar
+import io.github.raghavsatyadev.support.compose.components.ErrorDialog
 import io.github.raghavsatyadev.support.compose.components.DarkPreview
 import io.github.raghavsatyadev.support.compose.components.LightPreview
 import io.github.raghavsatyadev.support.compose.theme.AppTheme
@@ -59,6 +61,7 @@ import io.github.raghavsatyadev.support.extensions.DateExtensions.toZoneEpochMil
 import io.github.raghavsatyadev.support.extensions.DateExtensions.toZoneLocalDate
 import io.github.raghavsatyadev.support.extensions.DateExtensions.toZoneLocalDateTime
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
+import io.github.raghavsatyadev.support.models.essential.UiState
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.Calendar
@@ -67,6 +70,7 @@ import java.util.Calendar
 fun CreateMatchScreen(
   matchRecord: MatchRecord? = null,
   viewModel: CreateMatchScreenViewModel = hiltViewModel(),
+  onMatchCreated: (MatchRecord) -> Unit = {},
 ) {
 
   LaunchedEffect(matchRecord) {
@@ -76,6 +80,8 @@ fun CreateMatchScreen(
       viewModel.resetMatchRecord()
     }
   }
+
+  HandleCreateMatchEvents(viewModel, onMatchCreated)
 
   var showDateTimeDialogs by remember { mutableStateOf(false) }
 
@@ -109,6 +115,33 @@ fun CreateMatchScreen(
       )
     },
   )
+}
+
+@Composable
+private fun HandleCreateMatchEvents(
+  viewModel: CreateMatchScreenViewModel,
+  onMatchCreated: (MatchRecord) -> Unit,
+) {
+  val createMatchState by viewModel.createMatchRecordEvent.collectAsState()
+
+  when (val state = createMatchState) {
+    is UiState.Initial -> {}
+
+    is UiState.Error -> {
+      ErrorDialog(
+        errorCode = state.error.errorCode,
+        errorMessage = state.error.exception?.message
+          ?: stringResource(state.error.errorCode.warning),
+      ) {
+        viewModel.createMatchEventConsumed()
+      }
+    }
+
+    is UiState.Success -> {
+      onMatchCreated(state.data)
+      viewModel.createMatchEventConsumed()
+    }
+  }
 }
 
 @Composable
