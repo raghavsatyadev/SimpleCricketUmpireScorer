@@ -42,17 +42,16 @@ import io.github.raghavsatyadev.support.models.db.match_record.MatchStatus
 fun MatchRecordItemPreview() {
   AppTheme {
     val matchRecord = getSampleMatchRecord(1)
-    MatchRecordProperties.CreateMatchRecordProperties { properties ->
-      MatchRecordItem(
-        matchRecord = matchRecord,
-        properties = properties,
-        onCopyClick = {},
-        onDeleteClick = {},
-        onMatchClick = {},
-        modifier =
-          Modifier.padding(vertical = 8.dp, horizontal = 16.dp).fillMaxWidth().wrapContentHeight(),
-      )
-    }
+    val properties = MatchRecordProperties.rememberMatchRecordProperties()
+    MatchRecordItem(
+      matchRecord = matchRecord,
+      properties = properties,
+      onCopyClick = {},
+      onDeleteClick = {},
+      onMatchClick = {},
+      modifier =
+        Modifier.padding(vertical = 8.dp, horizontal = 16.dp).fillMaxWidth().wrapContentHeight(),
+    )
   }
 }
 
