@@ -26,6 +26,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
 import io.github.raghavsatyadev.scus.R
+import io.github.raghavsatyadev.scus.compose.support.models.MatchRecordProperties
 import io.github.raghavsatyadev.support.compose.components.DarkPreview
 import io.github.raghavsatyadev.support.compose.components.LightPreview
 import io.github.raghavsatyadev.support.compose.theme.AppTheme
@@ -42,17 +43,16 @@ import io.github.raghavsatyadev.support.models.db.match_record.MatchStatus
 fun MatchRecordItemPreview() {
   AppTheme {
     val matchRecord = getSampleMatchRecord(1)
-    MatchRecordProperties.CreateMatchRecordProperties { properties ->
-      MatchRecordItem(
-        matchRecord = matchRecord,
-        properties = properties,
-        onCopyClick = {},
-        onDeleteClick = {},
-        onMatchClick = {},
-        modifier =
-          Modifier.padding(vertical = 8.dp, horizontal = 16.dp).fillMaxWidth().wrapContentHeight(),
-      )
-    }
+    val properties = MatchRecordProperties.rememberMatchRecordProperties()
+    MatchRecordItem(
+      matchRecord = matchRecord,
+      properties = properties,
+      onCopyClick = {},
+      onDeleteClick = {},
+      onMatchClick = {},
+      modifier =
+        Modifier.padding(vertical = 8.dp, horizontal = 16.dp).fillMaxWidth().wrapContentHeight(),
+    )
   }
 }
 
