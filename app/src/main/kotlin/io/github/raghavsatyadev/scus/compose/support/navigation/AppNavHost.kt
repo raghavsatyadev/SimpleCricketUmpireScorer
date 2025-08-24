@@ -14,6 +14,8 @@ import androidx.navigation3.ui.NavDisplay
 import io.github.raghavsatyadev.scus.compose.ui.create_match.CreateMatchScreen
 import io.github.raghavsatyadev.scus.compose.ui.dashboard.DashboardScreen
 import io.github.raghavsatyadev.scus.compose.ui.main.MainViewModel
+import io.github.raghavsatyadev.scus.compose.ui.match_complete.MatchCompleteScreen
+import io.github.raghavsatyadev.scus.compose.ui.match_record.MatchRecordScreen
 import io.github.raghavsatyadev.scus.compose.ui.user.LoginScreen
 import io.github.raghavsatyadev.support.compose.extesions.NavigationExtensions.replaceAll
 
@@ -72,7 +74,23 @@ fun AppNavHost(viewModel: MainViewModel) {
             onMatchCreated = { backStack.removeLastOrNull() },
           )
         }
-        entry<AppRoutes.MatchRecord> { key -> }
+        entry<AppRoutes.MatchRecord> { key ->
+          MatchRecordScreen(
+            matchId = key.matchId,
+            matchRecord = key.matchRecord,
+            onBack = { backStack.removeLastOrNull() },
+            onMatchCompleted = {
+              backStack.removeLastOrNull()
+              backStack.add(AppRoutes.MatchComplete(matchId = key.matchId))
+            },
+          )
+        }
+        entry<AppRoutes.MatchComplete> { key ->
+          MatchCompleteScreen(
+            matchId = key.matchId,
+            onBack = { backStack.removeLastOrNull() },
+          )
+        }
       },
   )
 }
