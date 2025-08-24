@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -28,13 +27,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.compose.components.AppToolBar
-import io.github.raghavsatyadev.support.compose.components.DarkRealDevicePreview
-import io.github.raghavsatyadev.support.compose.theme.AppTheme
 import io.github.raghavsatyadev.support.models.BasicMatchUIDetails
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.isMatchCompleted
-import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.toBasicMatchUIDetails
-import io.github.raghavsatyadev.support.models.db.match_record.TeamDetail
 
 @Composable
 fun MatchRecordScreen(
@@ -56,15 +51,26 @@ fun MatchRecordScreen(
 
   val record = recordState
 
-  MatchRecordUI(matchId, record, viewModel, onBack)
+  MatchRecordUI(
+    record = record,
+    onBack = onBack,
+    endInning = { viewModel.endInning(matchId) },
+    endMatch = { viewModel.endMatch(matchId) },
+    setWicket = { viewModel.setWicket(matchId, it) },
+    setBall = { balls, isAdd -> viewModel.setBall(matchId, balls, isAdd) },
+    setRun = { runs, isAdd -> viewModel.setRun(matchId, runs, isAdd) },
+  )
 }
 
 @Composable
 private fun MatchRecordUI(
-  matchId: String,
   record: BasicMatchUIDetails?,
-  viewModel: MatchRecordScreenViewModel,
   onBack: () -> Unit,
+  endMatch: () -> Unit,
+  endInning: () -> Unit,
+  setWicket: (Boolean) -> Unit,
+  setBall: (Int, Boolean) -> Unit,
+  setRun: (Int, Boolean) -> Unit,
 ) {
   Scaffold(
     modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
@@ -89,24 +95,28 @@ private fun MatchRecordUI(
         labelOvers,
         btnMinusBall,
         btnAddBall,
+        btnEndInning,
+        btnEndMatch,
+      ) = createRefs()
+      val (
         labelRuns,
         btnMinusRun,
         btnAddRun,
-        btnEndInning,
-        btnEndMatch,
       ) = createRefs()
 
       record?.let { details ->
         if (details.isFirstInningComplete) {
           Button(
-            onClick = { viewModel.endMatch(matchId) },
+            onClick = endMatch,
             modifier =
               Modifier.constrainAs(btnEndMatch) {
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 top.linkTo(parent.top)
               },
-          ) { Text(text = stringResource(R.string.end_match)) }
+          ) {
+            Text(text = stringResource(R.string.end_match))
+          }
 
           Text(
             text = stringResource(R.string.required_runs_balls, details.requiredRunsBalls),
@@ -135,14 +145,16 @@ private fun MatchRecordUI(
           )
         } else {
           Button(
-            onClick = { viewModel.endInning(matchId) },
+            onClick = endInning,
             modifier =
               Modifier.constrainAs(btnEndInning) {
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 top.linkTo(parent.top)
               },
-          ) { Text(text = stringResource(R.string.end_inning)) }
+          ) {
+            Text(text = stringResource(R.string.end_inning))
+          }
 
           Text(
             text = stringResource(R.string.crr, details.currentCRR),
@@ -179,7 +191,9 @@ private fun MatchRecordUI(
               start.linkTo(txtOvers.end, margin = 8.dp)
               top.linkTo(txtOvers.top)
             },
-        ) { Icon(painterResource(R.drawable.ic_edit), null) }
+        ) {
+          Icon(painterResource(R.drawable.ic_edit), null)
+        }
 
         // Wickets row
         Text(
@@ -192,7 +206,7 @@ private fun MatchRecordUI(
             },
         )
         ExtendedFloatingActionButton(
-          onClick = { viewModel.setWicket(matchId, false) },
+          onClick = { setWicket(false) },
           modifier =
             Modifier.constrainAs(btnMinusWicket) {
               top.linkTo(labelWickets.top)
@@ -203,7 +217,7 @@ private fun MatchRecordUI(
           text = {},
         )
         ExtendedFloatingActionButton(
-          onClick = { viewModel.setWicket(matchId) },
+          onClick = { setWicket(true) },
           modifier =
             Modifier.constrainAs(btnAddWicket) {
               top.linkTo(labelWickets.top)
@@ -225,7 +239,7 @@ private fun MatchRecordUI(
             },
         )
         ExtendedFloatingActionButton(
-          onClick = { viewModel.setBall(matchId, 1, false) },
+          onClick = { setBall(1, false) },
           modifier =
             Modifier.constrainAs(btnMinusBall) {
               top.linkTo(labelOvers.top)
@@ -236,7 +250,7 @@ private fun MatchRecordUI(
           text = {},
         )
         ExtendedFloatingActionButton(
-          onClick = { viewModel.setBall(matchId, 1) },
+          onClick = { setBall(1, true) },
           modifier =
             Modifier.constrainAs(btnAddBall) {
               start.linkTo(parent.start)
@@ -257,7 +271,7 @@ private fun MatchRecordUI(
             },
         )
         ExtendedFloatingActionButton(
-          onClick = { viewModel.setRun(matchId, 1, false) },
+          onClick = { setRun(1, false) },
           modifier =
             Modifier.constrainAs(btnMinusRun) {
               top.linkTo(labelRuns.top)
@@ -268,7 +282,7 @@ private fun MatchRecordUI(
           text = {},
         )
         ExtendedFloatingActionButton(
-          onClick = { viewModel.setRun(matchId, 1) },
+          onClick = { setRun(1, true) },
           modifier =
             Modifier.constrainAs(btnAddRun) {
               end.linkTo(parent.end)
@@ -279,26 +293,5 @@ private fun MatchRecordUI(
         )
       }
     }
-  }
-}
-
-@DarkRealDevicePreview
-@Composable
-fun MatchRecordScreenPreview() {
-  AppTheme {
-    MatchRecordUI(
-      matchId = "match123",
-      record =
-        MatchRecord(
-            matchRecordId = "record123",
-            startDateTime = System.currentTimeMillis(),
-            team1Detail = TeamDetail(teamName = "Team A", runs = 150, wickets = 5, balls = 120),
-            team2Detail = TeamDetail(teamName = "Team B", runs = 100, wickets = 3, balls = 90),
-            ballsPerInning = 120,
-            matchAdminID = "admin123",
-          )
-          .toBasicMatchUIDetails(),
-      viewModel = hiltViewModel<MatchRecordScreenViewModel>(),
-    ) {}
   }
 }
