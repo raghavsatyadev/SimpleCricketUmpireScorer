@@ -124,21 +124,22 @@ private fun HandleCreateMatchEvents(
 ) {
   val createMatchState by viewModel.createMatchRecordEvent.collectAsState()
 
-  when (val state = createMatchState) {
-    is UiState.Initial -> {}
-
-    is UiState.Error -> {
-      ErrorDialog(
-        errorCode = state.error.errorCode,
-        errorMessage = state.error.exception?.message
-          ?: stringResource(state.error.errorCode.warning),
-      ) {
-        viewModel.createMatchEventConsumed()
-      }
+  if (createMatchState is UiState.Error) {
+    val state = createMatchState as UiState.Error
+    ErrorDialog(
+      errorCode = state.error.errorCode,
+      errorMessage = state.error.exception?.message
+        ?: stringResource(state.error.errorCode.warning),
+    ) {
+      viewModel.createMatchEventConsumed()
     }
+  }
 
-    is UiState.Success -> {
-      onMatchCreated(state.data)
+  val matchRecord = (createMatchState as? UiState.Success)?.data
+
+  LaunchedEffect(matchRecord) {
+    matchRecord?.let {
+      onMatchCreated(it)
       viewModel.createMatchEventConsumed()
     }
   }
