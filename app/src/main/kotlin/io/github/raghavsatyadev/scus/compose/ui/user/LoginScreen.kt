@@ -64,7 +64,7 @@ private fun HandleLoginEvents(
     is UiState.Error -> {
       with(state.error) {
         ErrorDialog(errorCode = errorCode, errorMessage = stringResource(errorCode.warning)) {
-          viewModel.signOut {}
+          viewModel.signOut { activity?.finishAffinity() }
         }
       }
     }
@@ -109,7 +109,7 @@ private fun LoginView(doLogin: () -> Unit) {
         modifier =
           Modifier.align(alignment = Alignment.BottomCenter)
             .padding(bottom = innerPadding.calculateBottomPadding() + 40.dp),
-        onClick = { doLogin() },
+        onClick = doLogin,
       )
     }
   }

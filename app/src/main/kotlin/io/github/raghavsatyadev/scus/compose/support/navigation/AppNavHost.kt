@@ -12,7 +12,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import io.github.raghavsatyadev.scus.compose.ui.create_match.CreateMatchScreen
-import io.github.raghavsatyadev.scus.compose.ui.dahboard.DashboardScreen
+import io.github.raghavsatyadev.scus.compose.ui.dashboard.DashboardScreen
 import io.github.raghavsatyadev.scus.compose.ui.main.MainViewModel
 import io.github.raghavsatyadev.scus.compose.ui.user.LoginScreen
 import io.github.raghavsatyadev.support.compose.extesions.NavigationExtensions.replaceAll

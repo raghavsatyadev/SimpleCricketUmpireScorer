@@ -24,8 +24,4 @@ object Randoms {
   fun randomLong(initialValue: Long = 1): Long {
     return Random.nextLong(initialValue, Long.MAX_VALUE)
   }
-
-  fun <T> selectRandomElement(vararg elements: T): T {
-    return elements[Random.nextInt(0, elements.size)]
-  }
 }
