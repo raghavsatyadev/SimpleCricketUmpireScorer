@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
-package io.github.raghavsatyadev.scus.compose.ui.dahboard
+package io.github.raghavsatyadev.scus.compose.ui.dashboard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

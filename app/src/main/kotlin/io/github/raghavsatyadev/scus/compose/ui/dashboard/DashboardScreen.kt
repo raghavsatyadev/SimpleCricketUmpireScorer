@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 
-package io.github.raghavsatyadev.scus.compose.ui.dahboard
+package io.github.raghavsatyadev.scus.compose.ui.dashboard
 
 import androidx.annotation.Keep
 import androidx.compose.animation.animateContentSize
@@ -33,7 +33,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.github.raghavsatyadev.scus.R
-import io.github.raghavsatyadev.scus.compose.ui.dahboard.MatchRecordProperties.Companion.CreateMatchRecordProperties
+import io.github.raghavsatyadev.scus.compose.ui.dashboard.MatchRecordProperties.Companion.CreateMatchRecordProperties
 import io.github.raghavsatyadev.support.compose.components.AdUI
 import io.github.raghavsatyadev.support.compose.components.AppToolBar
 import io.github.raghavsatyadev.support.compose.components.DarkRealDevicePreview

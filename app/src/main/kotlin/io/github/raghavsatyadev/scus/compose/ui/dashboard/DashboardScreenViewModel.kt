@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.scus.compose.ui.dahboard
+package io.github.raghavsatyadev.scus.compose.ui.dashboard
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.raghavsatyadev.support.compose.components.UiStateManager
