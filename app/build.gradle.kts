@@ -55,7 +55,6 @@ android {
     // targetSdkPreview = libs.versions.targetSdkPreview.get()
     versionCode = libs.versions.versionCode.get().toInt()
     versionName = libs.versions.versionName.get()
-    multiDexEnabled = true
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

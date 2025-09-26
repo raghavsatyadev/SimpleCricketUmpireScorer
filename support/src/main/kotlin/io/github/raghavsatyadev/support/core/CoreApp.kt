@@ -2,7 +2,6 @@ package io.github.raghavsatyadev.support.core
 
 import android.app.Application
 import android.content.Context
-import androidx.multidex.MultiDex
 import com.google.android.material.color.DynamicColors
 import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.BuildConfig
@@ -44,7 +43,6 @@ open class CoreApp() : Application(), CoroutineScope {
 
   override fun attachBaseContext(base: Context?) {
     super.attachBaseContext(base)
-    MultiDex.install(this)
   }
 
   override fun onTerminate() {
