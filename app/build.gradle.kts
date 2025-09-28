@@ -1,9 +1,7 @@
-import com.android.build.api.artifact.BuiltArtifactsLoader
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.ApplicationVariant
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import org.gradle.api.file.Directory
-import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import java.io.File
 import java.text.SimpleDateFormat
@@ -171,14 +169,13 @@ fun Project.moveAAB(
   val bundleTaskName = "bundle${variantNameCapitalized}"
   val bundleTask = tasks.named(bundleTaskName)
   val bundleProvider = variant.artifacts.get(SingleArtifact.BUNDLE)
-  val artifactsLoader: BuiltArtifactsLoader = variant.artifacts.getBuiltArtifactsLoader()
 
   val copyBundleTask =
     tasks.register("copy${variantNameCapitalized}Bundle") {
       doLast {
         val destination = buildOutputDirectory.get().asFile
         println("Copying AAB to output directory: $destination")
-        val bundleFile = findSingleOutputFile(bundleProvider.orNull, artifactsLoader)
+        val bundleFile = bundleProvider.orNull?.asFile?.takeIf { it.exists() }
         if (bundleFile != null) {
           println("AAB Location: ${bundleFile.absolutePath}")
           this@moveAAB.copy {
@@ -203,9 +200,8 @@ fun Project.moveAPK(
 ) {
   val variantNameCapitalized = variant.name.replaceFirstChar { it.uppercase() }
   val assembleTask = tasks.named("assemble${variantNameCapitalized}")
-  val apkProvider = variant.artifacts.get(SingleArtifact.APK)
+  val apkDirectoryProvider = variant.artifacts.get(SingleArtifact.APK)
   val mappingProvider = variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE)
-  val artifactsLoader: BuiltArtifactsLoader = variant.artifacts.getBuiltArtifactsLoader()
 
   val copyOutputsTask =
     tasks.register("copy${variantNameCapitalized}Outputs") {
@@ -215,7 +211,7 @@ fun Project.moveAPK(
         destination.mkdirs()
         println("Copying APK to output directory: $destinationPath")
 
-        val apkFile = findSingleOutputFile(apkProvider.orNull, artifactsLoader)
+        val apkFile = findOutputFile(apkDirectoryProvider.orNull?.asFile, "apk")
         if (apkFile != null) {
           this@moveAPK.copy {
             from(apkFile)
@@ -257,17 +253,11 @@ fun Project.moveAPK(
   assembleTask.configure { finalizedBy(copyOutputsTask) }
 }
 
-private fun findSingleOutputFile(
-  metadataFile: RegularFile?,
-  loader: BuiltArtifactsLoader,
-): File? {
-  if (metadataFile == null) {
-    return null
-  }
-
-  val builtArtifacts = loader.load(metadataFile)
-  val builtArtifact = builtArtifacts?.elements?.firstOrNull()
-  return builtArtifact?.outputFile?.let { File(it) }?.takeIf { it.exists() }
+private fun findOutputFile(directory: File?, extension: String): File? {
+  return directory
+    ?.takeIf { it.exists() }
+    ?.walkTopDown()
+    ?.firstOrNull { file -> file.isFile && file.extension.equals(extension, ignoreCase = true) }
 }
 
 private fun Project.shouldCopyArtifacts(): Boolean {
