@@ -141,6 +141,10 @@ fun Project.renameOutputs(variant: ApplicationVariant) {
     return
   }
 
+  if (!shouldCopyArtifacts()) {
+    return
+  }
+
   val outputFullName = getBuildName(variant.name)
   val buildOutputDirectory = layout.buildDirectory.dir("outputs")
   buildOutputDirectory.get().asFile.mkdirs()
@@ -242,6 +246,18 @@ fun Project.moveAPK(
     }
 
   assembleTask.configure { finalizedBy(copyOutputsTask) }
+}
+
+private fun Project.shouldCopyArtifacts(): Boolean {
+  val taskNames = gradle.startParameter.taskNames
+  if (taskNames.isEmpty()) {
+    return false
+  }
+
+  return taskNames.any { task ->
+    val normalized = task.substringAfterLast(':').lowercase(Locale.getDefault())
+    normalized.startsWith("assemble") || normalized.startsWith("bundle")
+  }
 }
 
 dependencies {
