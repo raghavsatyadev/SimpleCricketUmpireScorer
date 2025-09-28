@@ -1,6 +1,5 @@
 @file:Suppress("DEPRECATION")
 
-import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariantOutput
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
@@ -116,17 +115,23 @@ android {
       }
     }
   }
-  val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
 
-  androidComponents.beforeVariants { variant ->
-    val names = variant.flavorName
+  androidComponents {
+    beforeVariants { variant ->
+      val names = variant.flavorName
 
-    if (
-      (names == "Dev" && variant.buildType == "release") ||
-        (names == "Prod" && (variant.buildType != "release"))
-    ) {
-      variant.enable = false
+      val isDevRelease = names == "Dev" && variant.buildType == "release"
+      val isProdNotRelease = names == "Prod" && (variant.buildType != "release")
+
+      if (isDevRelease || isProdNotRelease) {
+        variant.enable = false
+      }
     }
+    // onVariants { variant ->
+    //   if (!variant.name.lowercase(Locale.getDefault()).contains("debug")) {
+    //     variant.outputs.forEach { output -> renameOutputs(variant, output) }
+    //   }
+    // }
   }
   applicationVariants.configureEach {
     val variant = this
@@ -137,6 +142,31 @@ android {
       }
     }
   }
+}
+
+fun renameOutputs(variant: ApplicationVariant, output: BaseVariantOutput): BaseVariantOutput {
+  val variantName = variant.name
+
+  if (variantName.lowercase().contains("release")) {
+    val outputFullName = getBuildName(variantName)
+    val buildTypeDirectory = output.outputFile.parentFile
+    val buildOutputDirectory = buildTypeDirectory?.parentFile?.parentFile
+    val buildOutputDirectoryPath = buildOutputDirectory?.path
+    buildOutputDirectory?.mkdirs()
+
+    if (buildOutputDirectoryPath != null) {
+      moveAAB(variant, outputFullName, buildOutputDirectory, buildTypeDirectory)
+      moveAPK(
+        variant,
+        buildOutputDirectoryPath,
+        output,
+        outputFullName,
+        variantName,
+        buildTypeDirectory,
+      )
+    }
+  }
+  return output
 }
 
 fun getBuildName(variantName: String): String {
@@ -216,31 +246,6 @@ fun moveAPK(
     println("Deleting build type directory: $buildTypeDirectory")
     buildTypeDirectory.parentFile?.deleteRecursively()
   }
-}
-
-fun renameOutputs(variant: ApplicationVariant, output: BaseVariantOutput): BaseVariantOutput {
-  val variantName = variant.name
-
-  if (variantName.lowercase().contains("release")) {
-    val outputFullName = getBuildName(variantName)
-    val buildTypeDirectory = output.outputFile.parentFile
-    val buildOutputDirectory = buildTypeDirectory?.parentFile?.parentFile
-    val buildOutputDirectoryPath = buildOutputDirectory?.path
-    buildOutputDirectory?.mkdirs()
-
-    if (buildOutputDirectoryPath != null) {
-      moveAAB(variant, outputFullName, buildOutputDirectory, buildTypeDirectory)
-      moveAPK(
-        variant,
-        buildOutputDirectoryPath,
-        output,
-        outputFullName,
-        variantName,
-        buildTypeDirectory,
-      )
-    }
-  }
-  return output
 }
 
 dependencies {

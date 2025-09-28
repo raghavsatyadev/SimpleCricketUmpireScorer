@@ -97,14 +97,16 @@ android {
       create("Prod") {}
       create("Dev") {}
     }
-    androidComponents.beforeVariants { variant ->
-      val names = variant.flavorName
+    androidComponents {
+      beforeVariants { variant ->
+        val names = variant.flavorName
 
-      if (
-        (names == "Dev" && variant.buildType == "release") ||
-          (names == "Prod" && (variant.buildType != "release"))
-      ) {
-        variant.enable = false
+        val isDevRelease = names == "Dev" && variant.buildType == "release"
+        val isProdNotRelease = names == "Prod" && (variant.buildType != "release")
+
+        if (isDevRelease || isProdNotRelease) {
+          variant.enable = false
+        }
       }
     }
     packaging {
