@@ -167,7 +167,6 @@ fun Project.moveAAB(
 ) {
   val variantNameCapitalized = variant.name.replaceFirstChar { it.uppercase() }
   val bundleTaskName = "bundle${variantNameCapitalized}"
-  val bundleTask = tasks.named(bundleTaskName)
   val bundleProvider = variant.artifacts.get(SingleArtifact.BUNDLE)
 
   val copyBundleTask =
@@ -190,7 +189,12 @@ fun Project.moveAAB(
         }
       }
     }
-  bundleTask.configure { finalizedBy(copyBundleTask) }
+
+  tasks.configureEach {
+    if (name == bundleTaskName) {
+      finalizedBy(copyBundleTask)
+    }
+  }
 }
 
 fun Project.moveAPK(
@@ -199,7 +203,6 @@ fun Project.moveAPK(
   buildOutputDirectory: Provider<Directory>,
 ) {
   val variantNameCapitalized = variant.name.replaceFirstChar { it.uppercase() }
-  val assembleTask = tasks.named("assemble${variantNameCapitalized}")
   val apkDirectoryProvider = variant.artifacts.get(SingleArtifact.APK)
   val mappingProvider = variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE)
 
@@ -250,7 +253,13 @@ fun Project.moveAPK(
       }
     }
 
-  assembleTask.configure { finalizedBy(copyOutputsTask) }
+  val assembleTaskName = "assemble${variantNameCapitalized}"
+
+  tasks.configureEach {
+    if (name == assembleTaskName) {
+      finalizedBy(copyOutputsTask)
+    }
+  }
 }
 
 private fun findOutputFile(directory: File?, extension: String): File? {
