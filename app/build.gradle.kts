@@ -1,8 +1,11 @@
+import com.android.build.api.artifact.BuiltArtifactsLoader
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.ApplicationVariant
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -168,13 +171,14 @@ fun Project.moveAAB(
   val bundleTaskName = "bundle${variantNameCapitalized}"
   val bundleTask = tasks.named(bundleTaskName)
   val bundleProvider = variant.artifacts.get(SingleArtifact.BUNDLE)
+  val artifactsLoader: BuiltArtifactsLoader = variant.artifacts.getBuiltArtifactsLoader()
 
   val copyBundleTask =
     tasks.register("copy${variantNameCapitalized}Bundle") {
       doLast {
         val destination = buildOutputDirectory.get().asFile
         println("Copying AAB to output directory: $destination")
-        val bundleFile = bundleProvider.orNull?.asFile
+        val bundleFile = findSingleOutputFile(bundleProvider.orNull, artifactsLoader)
         if (bundleFile != null) {
           println("AAB Location: ${bundleFile.absolutePath}")
           this@moveAAB.copy {
@@ -184,6 +188,8 @@ fun Project.moveAAB(
           }
           println("Deleting build type directory: ${bundleFile.parentFile}")
           bundleFile.parentFile?.parentFile?.deleteRecursively()
+        } else {
+          println("No bundle artifact produced for ${variant.name}; skipping copy")
         }
       }
     }
@@ -199,6 +205,7 @@ fun Project.moveAPK(
   val assembleTask = tasks.named("assemble${variantNameCapitalized}")
   val apkProvider = variant.artifacts.get(SingleArtifact.APK)
   val mappingProvider = variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE)
+  val artifactsLoader: BuiltArtifactsLoader = variant.artifacts.getBuiltArtifactsLoader()
 
   val copyOutputsTask =
     tasks.register("copy${variantNameCapitalized}Outputs") {
@@ -208,7 +215,7 @@ fun Project.moveAPK(
         destination.mkdirs()
         println("Copying APK to output directory: $destinationPath")
 
-        val apkFile = apkProvider.orNull?.asFile
+        val apkFile = findSingleOutputFile(apkProvider.orNull, artifactsLoader)
         if (apkFile != null) {
           this@moveAPK.copy {
             from(apkFile)
@@ -241,11 +248,26 @@ fun Project.moveAPK(
 
           println("Deleting build type directory: ${apkFile.parentFile}")
           apkFile.parentFile?.parentFile?.deleteRecursively()
+        } else {
+          println("No APK artifact produced for ${variant.name}; skipping copy")
         }
       }
     }
 
   assembleTask.configure { finalizedBy(copyOutputsTask) }
+}
+
+private fun findSingleOutputFile(
+  metadataFile: RegularFile?,
+  loader: BuiltArtifactsLoader,
+): File? {
+  if (metadataFile == null) {
+    return null
+  }
+
+  val builtArtifacts = loader.load(metadataFile)
+  val builtArtifact = builtArtifacts?.elements?.firstOrNull()
+  return builtArtifact?.outputFile?.let { File(it) }?.takeIf { it.exists() }
 }
 
 private fun Project.shouldCopyArtifacts(): Boolean {
