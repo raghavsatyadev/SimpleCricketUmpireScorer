@@ -127,11 +127,6 @@ android {
         variant.enable = false
       }
     }
-    // onVariants { variant ->
-    //   if (!variant.name.lowercase(Locale.getDefault()).contains("debug")) {
-    //     variant.outputs.forEach { output -> renameOutputs(variant, output) }
-    //   }
-    // }
   }
   applicationVariants.configureEach {
     val variant = this
