@@ -15,7 +15,7 @@ class MobileAdsInitializer : Initializer<Unit> {
         MobileAds.setRequestConfiguration(
           MobileAds.getRequestConfiguration()
             .toBuilder()
-            .setTestDeviceIds(listOf("9CC8AD8C783D84C97DF0A252B0F63285"))
+            .setTestDeviceIds(listOf("2B39C5E2140FC15DD45814184D9B515E"))
             .build()
         )
       }
