@@ -39,11 +39,13 @@ fun MatchRecordScreen(
   onBack: () -> Unit = {},
   onMatchCompleted: () -> Unit = {},
 ) {
-  LaunchedEffect(matchRecord) { viewModel.loadMatchRecord(matchRecord) }
+  LaunchedEffect(Unit) { viewModel.loadMatchRecord(matchRecord) }
 
   val recordState by viewModel.matchRecordEvent.collectAsState()
 
-  LaunchedEffect(recordState?.matchStatus) {
+    val matchStatus = recordState?.matchStatus
+
+    LaunchedEffect(matchStatus) {
     if (recordState?.isMatchCompleted() == true) {
       onMatchCompleted()
     }
