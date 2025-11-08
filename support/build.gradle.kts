@@ -44,7 +44,7 @@ android {
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles.add(file("consumer-rules.pro"))
 
-    sourceSets { getByName("androidTest").assets.srcDirs(files("$projectDir/schemas")) }
+    sourceSets { getByName("androidTest").assets.directories.add(("$projectDir/schemas")) }
 
     ndk { abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a")) }
 
