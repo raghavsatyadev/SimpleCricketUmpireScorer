@@ -33,63 +33,57 @@ fun AppNavHost(viewModel: MainViewModel) {
   }
 
   NavDisplay(
-      backStack = backStack,
-      onBack = { backStack.removeLastOrNull() },
-      transitionSpec = {
-        // Slide in from right when navigating forward
-        slideInHorizontally(initialOffsetX = { it }) togetherWith
-            slideOutHorizontally(targetOffsetX = { -it })
+    backStack = backStack,
+    onBack = { backStack.removeLastOrNull() },
+    transitionSpec = {
+      // Slide in from right when navigating forward
+      slideInHorizontally(initialOffsetX = { it }) togetherWith
+        slideOutHorizontally(targetOffsetX = { -it })
+    },
+    popTransitionSpec = {
+      // Slide in from left when navigating back
+      slideInHorizontally(initialOffsetX = { -it }) togetherWith
+        slideOutHorizontally(targetOffsetX = { it })
+    },
+    predictivePopTransitionSpec = {
+      // Slide in from left when navigating back
+      slideInHorizontally(initialOffsetX = { -it }) togetherWith
+        slideOutHorizontally(targetOffsetX = { it })
+    },
+    entryProvider =
+      entryProvider {
+        entry<AppRoutes.Dashboard> {
+          DashboardScreen(
+            onAddMatchClick = { backStack.add(AppRoutes.CreateMatch()) },
+            onMatchClick = { matchRecord ->
+              backStack.add(AppRoutes.MatchRecord(matchId = matchRecord.matchRecordId))
+            },
+            onCopyMatchRecord = { backStack.add(AppRoutes.CreateMatch(matchRecord = it)) },
+          )
+        }
+        entry<AppRoutes.Login> { LoginScreen { viewModel.changeLoginState() } }
+        entry<AppRoutes.CreateMatch> {
+          CreateMatchScreen(
+            matchRecord = it.matchRecord,
+            onMatchCreated = { matchRecord ->
+              backStack.removeLastOrNull()
+              backStack.add(AppRoutes.MatchRecord(matchId = matchRecord.matchRecordId))
+            },
+          )
+        }
+        entry<AppRoutes.MatchRecord> { key ->
+          MatchRecordScreen(
+            matchRecordId = key.matchId,
+            onBack = { backStack.removeLastOrNull() },
+            onMatchCompleted = {
+              backStack.removeLastOrNull()
+              backStack.add(AppRoutes.MatchComplete(matchId = key.matchId))
+            },
+          )
+        }
+        entry<AppRoutes.MatchComplete> { key ->
+          MatchCompleteScreen(matchId = key.matchId, onBack = { backStack.removeLastOrNull() })
+        }
       },
-      popTransitionSpec = {
-        // Slide in from left when navigating back
-        slideInHorizontally(initialOffsetX = { -it }) togetherWith
-            slideOutHorizontally(targetOffsetX = { it })
-      },
-      predictivePopTransitionSpec = {
-        // Slide in from left when navigating back
-        slideInHorizontally(initialOffsetX = { -it }) togetherWith
-            slideOutHorizontally(targetOffsetX = { it })
-      },
-      entryProvider =
-          entryProvider {
-            entry<AppRoutes.Dashboard> {
-              DashboardScreen(
-                  onAddMatchClick = { backStack.add(AppRoutes.CreateMatch()) },
-                  onMatchClick = { matchRecord ->
-                    backStack.add(
-                        AppRoutes.MatchRecord(
-                            matchId = matchRecord.matchRecordId,
-                            matchRecord = matchRecord,
-                        )
-                    )
-                  },
-                  onCopyMatchRecord = { backStack.add(AppRoutes.CreateMatch(matchRecord = it)) },
-              )
-            }
-            entry<AppRoutes.Login> { LoginScreen { viewModel.changeLoginState() } }
-            entry<AppRoutes.CreateMatch> {
-              CreateMatchScreen(
-                  matchRecord = it.matchRecord,
-                  onMatchCreated = { backStack.removeLastOrNull() },
-              )
-            }
-            entry<AppRoutes.MatchRecord> { key ->
-              MatchRecordScreen(
-                  matchId = key.matchId,
-                  matchRecord = key.matchRecord,
-                  onBack = { backStack.removeLastOrNull() },
-                  onMatchCompleted = {
-                    backStack.removeLastOrNull()
-                    backStack.add(AppRoutes.MatchComplete(matchId = key.matchId))
-                  },
-              )
-            }
-            entry<AppRoutes.MatchComplete> { key ->
-              MatchCompleteScreen(
-                  matchId = key.matchId,
-                  onBack = { backStack.removeLastOrNull() },
-              )
-            }
-          },
   )
 }

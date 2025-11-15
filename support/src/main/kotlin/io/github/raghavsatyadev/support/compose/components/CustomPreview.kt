@@ -7,7 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
   showBackground = true,
   showSystemUi = true,
   uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
-  device = "spec:parent=pixel_9_pro,navigation=buttons",
+    device = "spec:parent=pixel_9,navigation=buttons",
 )
 annotation class LightRealDevicePreview()
 
@@ -15,7 +15,7 @@ annotation class LightRealDevicePreview()
   showBackground = true,
   uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL,
   showSystemUi = true,
-  device = "spec:parent=pixel_9_pro,navigation=buttons",
+    device = "spec:parent=pixel_9,navigation=buttons",
 )
 annotation class DarkRealDevicePreview()
 

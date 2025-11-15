@@ -141,7 +141,7 @@ private fun MatchCompleteUI(
             },
         )
         Text(
-          text = d.currentOvers,
+          text = d.currentFormattedOvers,
           modifier =
             Modifier.constrainAs(txtOvers) {
               top.linkTo(txtRuns.bottom, margin = 8.dp)

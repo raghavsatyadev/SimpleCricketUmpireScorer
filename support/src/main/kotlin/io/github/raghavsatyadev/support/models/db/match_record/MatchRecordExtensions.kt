@@ -101,9 +101,11 @@ object MatchRecordExtensions {
     val currentWickets = getWickets(shouldPrepareTeam1Details)
     val currentBalls = getBalls(shouldPrepareTeam1Details)
     val currentRunsAndWickets = formatCurrentRunsAndWickets(currentRuns, currentWickets)
-    val currentOvers = "${formatToOvers(currentBalls)} / ${formatToOvers(ballsPerInning)}"
+    val currentOvers = formatToOvers(currentBalls)
+    val currentFormattedOvers = "$currentOvers / ${formatToOvers(ballsPerInning)}"
     val currentCRR = getCRR(shouldPrepareTeam1Details)
     val otherTeamRuns = getRuns(!shouldPrepareTeam1Details)
+    val totalOvers = getOvers()
     val currentRRR = getRRR(currentRuns, otherTeamRuns, currentBalls)
     val requiredRunsBalls = getRequiredRunsBalls(currentRuns, otherTeamRuns, currentBalls)
 
@@ -115,7 +117,9 @@ object MatchRecordExtensions {
           team2Detail.teamName
         },
       currentRunsAndWickets = currentRunsAndWickets,
+      currentFormattedOvers = currentFormattedOvers,
       currentOvers = currentOvers,
+      totalOvers = totalOvers,
       currentCRR = currentCRR,
       isFirstInningComplete = isFirstInningComplete,
       currentRRR = currentRRR,
@@ -153,6 +157,14 @@ object MatchRecordExtensions {
     } else {
       team2Detail.balls
     }
+
+  @Throws(NumberFormatException::class)
+  fun oversToBalls(overs: String): Int {
+    val parts = overs.split(".")
+    val wholeOvers = parts[0].toInt()
+    val additionalBalls = if (parts.size > 1) parts[1].toInt() else 0
+    return wholeOvers * 6 + additionalBalls
+  }
 
   /**
    * Takes into account following things
