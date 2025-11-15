@@ -15,14 +15,7 @@ object AppRoutes {
     val matchRecord: io.github.raghavsatyadev.support.models.db.match_record.MatchRecord? = null
   ) : NavKey
 
-  @Keep
-  @Serializable
-  data class MatchRecord(
-    val matchId: String,
-    val matchRecord: io.github.raghavsatyadev.support.models.db.match_record.MatchRecord,
-  ) : NavKey
+  @Keep @Serializable data class MatchRecord(val matchId: String) : NavKey
 
-  @Keep
-  @Serializable
-  data class MatchComplete(val matchId: String) : NavKey
+  @Keep @Serializable data class MatchComplete(val matchId: String) : NavKey
 }

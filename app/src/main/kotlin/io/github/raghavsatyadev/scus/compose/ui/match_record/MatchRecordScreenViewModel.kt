@@ -5,33 +5,66 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.raghavsatyadev.support.compose.components.UiStateManager
 import io.github.raghavsatyadev.support.compose.core.CoreScreenViewModel
 import io.github.raghavsatyadev.support.models.BasicMatchUIDetails
-import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordComposeDataUtil
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.getRRR
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.isTeam1CurrentlyBatting
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.toBasicMatchUIDetails
 import io.github.raghavsatyadev.support.models.db.match_record.MatchStatus
-import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @HiltViewModel
-class MatchRecordScreenViewModel @Inject constructor(
+class MatchRecordScreenViewModel
+@Inject
+constructor(
   private val matchRecordDataUtil: MatchRecordComposeDataUtil,
   uiStateManager: UiStateManager,
 ) : CoreScreenViewModel(uiStateManager) {
   private val _matchRecordEvent = MutableStateFlow<BasicMatchUIDetails?>(null)
   val matchRecordEvent = _matchRecordEvent.asStateFlow()
 
-  fun loadMatchRecord(matchRecord: MatchRecord) {
-    viewModelScope.launch {
-      matchRecordDataUtil.getItemLive(matchRecord.matchRecordId).collectLatest { value ->
-        _matchRecordEvent.emit(value.toBasicMatchUIDetails())
+  private var loadingJob: Job? = null
+  private var currentLoadingMatchId: String? = null
+
+  fun loadMatchRecord(matchRecordId: String) {
+
+    // Update the current match ID being loaded
+    currentLoadingMatchId = matchRecordId
+
+    loadingJob =
+      viewModelScope.launch {
+        try {
+          matchRecordDataUtil.getItemLive(matchRecordId).distinctUntilChanged().collectLatest {
+            value ->
+            // Only emit if this is still the current loading match
+            if (currentLoadingMatchId == matchRecordId) {
+              _matchRecordEvent.emit(value.toBasicMatchUIDetails())
+            }
+          }
+        } catch (_: Exception) {
+          // Handle cancellation gracefully
+          if (currentLoadingMatchId == matchRecordId) {
+            _matchRecordEvent.emit(null)
+          }
+        }
       }
-    }
+  }
+
+  fun clearLoadingState() {
+    // Cancel the loading job
+    loadingJob?.cancel()
+
+    // Clear the current match ID
+    currentLoadingMatchId = null
+
+    // Clear the state
+    _matchRecordEvent.value = null
   }
 
   fun reset(matchRecordID: String, resetFull: Boolean = false) {
@@ -71,7 +104,18 @@ class MatchRecordScreenViewModel @Inject constructor(
           if (team1CurrentlyBatting) {
             matchRecord.team1Detail.runs += runCount
           } else {
-            matchRecord.team2Detail.runs += runCount
+            // In second inning, team 2 can only make runs till team 1's runs + 6
+            val maxRunsAllowed = if (matchRecord.isFirstInningComplete) {
+              matchRecord.team1Detail.runs + 6
+            } else {
+              Int.MAX_VALUE // No limit in first inning
+            }
+
+            if (matchRecord.team2Detail.runs + runCount <= maxRunsAllowed) {
+              matchRecord.team2Detail.runs += runCount
+            } else {
+              return@withContext // Reject if exceeds limit
+            }
           }
         } else {
           if (team1CurrentlyBatting) {
@@ -170,14 +214,13 @@ class MatchRecordScreenViewModel @Inject constructor(
     }
   }
 
-  fun editTotalOvers(matchRecordID: String, editedOvers: Int) {
+  fun editTotalOvers(matchRecordID: String, editedOversInBalls: Int) {
     viewModelScope.launch {
       withContext(ioDispatcher) {
         val matchRecord = matchRecordDataUtil.getItem(matchRecordID)
-        matchRecord.ballsPerInning = editedOvers * 6
+        matchRecord.ballsPerInning = editedOversInBalls
         matchRecordDataUtil.update(matchRecord)
       }
     }
   }
 }
-

@@ -67,7 +67,7 @@ class MatchCompleteActivity : CoreActivity<ActivityMatchCompleteBinding>() {
 
       binding.txtTeamName.text = currentTeamName
       binding.txtRunsWickets.text = currentRunsAndWickets
-      binding.txtOvers.text = currentOvers
+      binding.txtOvers.text = currentFormattedOvers
       binding.txtCrr.text = getString(R.string.crr, currentCRR)
     }
   }

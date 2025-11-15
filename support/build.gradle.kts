@@ -15,6 +15,7 @@ plugins {
   alias(libs.plugins.safe.args)
 
   alias(libs.plugins.room)
+  alias(libs.plugins.stability.analyzer)
 }
 
 fun readProperties(propertiesFile: File) =
