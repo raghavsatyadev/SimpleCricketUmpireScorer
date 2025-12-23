@@ -65,11 +65,9 @@ junit = "4.13.2"
 junit-jupiter = "6.0.1"
 ktor = "3.3.3"
 lifecycle = "2.10.0"
-lottie = "6.7.1"
 material = "1.14.0-alpha08"
 navigation = "2.9.6"
 navigation3 = "1.0.0"
-permissionx = "1.8.1"
 play-services-ads = "24.9.0"
 play-services-auth = "21.4.0"
 recyclerview = "1.4.0"
@@ -184,10 +182,6 @@ androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref
 #Coil
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
-
-#Other
-permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = "permissionx" }
-lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 
 #Support
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar-jdk-libs" }
@@ -304,8 +298,6 @@ navigation = [
 ]
 other = [
     "androidx-work-runtime",
-    "lottie",
-    "permissionx",
 ]
 room = [
     "room",
