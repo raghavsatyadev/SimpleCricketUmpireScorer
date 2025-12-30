@@ -10,7 +10,6 @@ import androidx.viewbinding.ViewBinding
 import io.github.raghavsatyadev.support.core.CoreActivity
 import io.github.raghavsatyadev.support.core.CoreFragment
 
-@Suppress("unused")
 object MenuExtensions {
   fun <T : ViewBinding> CoreFragment<T>.invalidateOptionsMenu() {
     menuHost.invalidateMenu()

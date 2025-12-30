@@ -8,24 +8,20 @@ plugins {
 
   alias(libs.plugins.google.plugin)
 
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.ksp)
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.kotlin.parcelize)
 
   alias(libs.plugins.compose.plugin)
 
-  alias(libs.plugins.hilt)
-
   alias(libs.plugins.crashlytics)
 
-  alias(libs.plugins.safe.args)
   alias(libs.plugins.stability.analyzer)
 }
 
 sonar {
   properties {
-    setAndroidVariant("DevDebug")
+    // androidVariant = "DevDebug"
     property(
       "sonar.androidLint.reportPaths",
       "${layout.buildDirectory.asFile}/reports/lint-results-DevDebug.xml",
@@ -124,15 +120,15 @@ android {
       }
     }
   }
-//  applicationVariants.configureEach {
-//    val variant = this
-//    if (!variant.name.lowercase(Locale.getDefault()).contains("debug")) {
-//      outputs.configureEach {
-//        val output = this
-//        renameOutputs(variant, output)
-//      }
-//    }
-//  }
+  //  applicationVariants.configureEach {
+  //    val variant = this
+  //    if (!variant.name.lowercase(Locale.getDefault()).contains("debug")) {
+  //      outputs.configureEach {
+  //        val output = this
+  //        renameOutputs(variant, output)
+  //      }
+  //    }
+  //  }
 }
 
 // fun renameOutputs(variant: ApplicationVariant, output: BaseVariantOutput): BaseVariantOutput {
@@ -158,20 +154,20 @@ android {
 //    }
 //  }
 //  return output
-//}
+// }
 //
 // fun getBuildName(variantName: String): String {
 //  val timestamp = SimpleDateFormat("dd-MM-yy_HH-mm").format(Date())
 //
 //  return "${libs.versions.apkName.get()}-${variantName}-${timestamp}"
-//}
+// }
 //
 // fun moveAAB(
 //  variant: ApplicationVariant,
 //  outputFullName: String,
 //  buildOutputDirectory: File,
 //  buildTypeDirectory: File,
-//) {
+// ) {
 //  val name = variant.name
 //  val variantNameCapitalized = name.replaceFirstChar { it.uppercase() }
 //  val bundleTaskName = "bundle${variantNameCapitalized}"
@@ -194,7 +190,7 @@ android {
 //      }
 //    }
 //  bundleTask.configure { finalizedBy(copyBundleTask) }
-//}
+// }
 //
 // fun moveAPK(
 //  variant: ApplicationVariant,
@@ -203,7 +199,7 @@ android {
 //  outputFullName: String,
 //  variantName: String?,
 //  buildTypeDirectory: File,
-//) {
+// ) {
 //  variant.assembleProvider.get().doLast {
 //    println("Copying APK to output directory: $buildOutputDirectoryPath")
 //    copy {
@@ -221,12 +217,14 @@ android {
 //
 //    val nativeSymbolsDir =
 //      file(
-//        "${layout.buildDirectory.asFile}/app/intermediates/merged_native_libs/${variantName}/out/lib"
+//
+// "${layout.buildDirectory.asFile}/app/intermediates/merged_native_libs/${variantName}/out/lib"
 //      )
 //
 //    if (nativeSymbolsDir.exists()) {
 //      println(
-//        "Zipping native debug symbols and copying them to output directory: $buildOutputDirectoryPath"
+//        "Zipping native debug symbols and copying them to output directory:
+// $buildOutputDirectoryPath"
 //      )
 //
 //      val zipFile = file("$buildOutputDirectoryPath/$outputFullName-native_debug_symbols.zip")
@@ -237,7 +235,7 @@ android {
 //    println("Deleting build type directory: $buildTypeDirectory")
 //    buildTypeDirectory.parentFile?.deleteRecursively()
 //  }
-//}
+// }
 
 dependencies {
   implementation(project(path = ":support"))
@@ -266,11 +264,8 @@ dependencies {
   // Coil
   implementation(libs.bundles.coil)
 
-  // Ktor
-  implementation(libs.bundles.ktor)
-
-  // Hilt
-  implementation(libs.bundles.hilt)
+  // Koin
+  implementation(libs.bundles.koin)
 
   // Room
   implementation(libs.bundles.room)

@@ -8,7 +8,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 
-@Suppress("unused")
 object ViewExtensions {
   fun View.gone() {
     if (isGone) return

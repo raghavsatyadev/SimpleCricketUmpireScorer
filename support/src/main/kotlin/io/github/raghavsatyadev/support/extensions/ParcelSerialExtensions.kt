@@ -6,7 +6,6 @@ import android.os.Parcelable
 import java.io.Serializable
 import kotlin.reflect.KClass
 
-@Suppress("unused")
 object ParcelSerialExtensions {
   @Suppress("DEPRECATION")
   inline fun <reified T : Parcelable> Intent.getParcelExtra(key: String, kClass: KClass<T>) =

@@ -28,7 +28,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Random
 
-@Suppress("unused")
 object NotificationUtils {
   private const val MINIMUM = 1
 

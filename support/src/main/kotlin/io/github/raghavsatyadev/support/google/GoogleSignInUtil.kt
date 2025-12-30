@@ -14,11 +14,6 @@ import io.github.raghavsatyadev.support.core.CoreApp
 import io.github.raghavsatyadev.support.extensions.AppExtensions.generateRandomNonce
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
 
-/**
- * Utility class to facilitate Google Sign-In using Credential Manager.
- *
- * @property activity The activity context used for initiating sign-in.
- */
 class GoogleSignInUtil(private val activity: Activity) {
   // Initialize Credential Manager
   private val credentialManager: CredentialManager = CredentialManager.create(activity)
@@ -45,8 +40,8 @@ class GoogleSignInUtil(private val activity: Activity) {
    * @param onFailure Callback function invoked upon sign-in failure with the encountered exception.
    */
   suspend fun startSignIn(
-    onSuccess: (idToken: String) -> Unit,
-    onFailure: (exception: Exception) -> Unit,
+    onSuccess: suspend (idToken: String) -> Unit,
+    onFailure: suspend (exception: Exception) -> Unit,
   ) {
     try {
       // Request credentials using Credential Manager
@@ -66,19 +61,17 @@ class GoogleSignInUtil(private val activity: Activity) {
    * @param onSuccess Callback function invoked with the obtained ID token.
    * @param onFailure Callback function invoked with the encountered exception.
    */
-  private fun handleSignInSuccess(
+  private suspend fun handleSignInSuccess(
     result: GetCredentialResponse,
-    onSuccess: (idToken: String) -> Unit,
-    onFailure: (exception: Exception) -> Unit,
+    onSuccess: suspend (idToken: String) -> Unit,
+    onFailure: suspend (exception: Exception) -> Unit,
   ) {
-    val credential = result.credential
-    when (credential) {
+    when (val credential = result.credential) {
       is CustomCredential -> {
-        if (credential.type == GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+        if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
           try {
             // Parse the Google ID token credential
-            val googleIdTokenCredential =
-              GoogleIdTokenCredential.Companion.createFrom(credential.data)
+            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
             val idToken = googleIdTokenCredential.idToken
             // Invoke the success callback with the obtained ID token
             onSuccess(idToken)
