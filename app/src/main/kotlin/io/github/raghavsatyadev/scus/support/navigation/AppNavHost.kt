@@ -5,8 +5,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -18,8 +16,7 @@ import io.github.raghavsatyadev.scus.ui.user.LoginScreen
 import io.github.raghavsatyadev.support.extensions.NavigationExtensions.replaceAll
 
 @Composable
-fun AppNavHost(viewModel: io.github.raghavsatyadev.scus.ui.main.MainViewModel) {
-  val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+fun AppNavHost(isLoggedIn: Boolean, onLoginStateChange: () -> Unit) {
   val startRoute = if (isLoggedIn) AppRoutes.Dashboard else AppRoutes.Login
   val backStack = rememberNavBackStack(startRoute)
 
@@ -60,7 +57,7 @@ fun AppNavHost(viewModel: io.github.raghavsatyadev.scus.ui.main.MainViewModel) {
             onCopyMatchRecord = { backStack.add(AppRoutes.CreateMatch(matchRecord = it)) },
           )
         }
-        entry<AppRoutes.Login> { LoginScreen { viewModel.changeLoginState() } }
+        entry<AppRoutes.Login> { LoginScreen { onLoginStateChange() } }
         entry<AppRoutes.CreateMatch> {
           CreateMatchScreen(
             matchRecord = it.matchRecord,
