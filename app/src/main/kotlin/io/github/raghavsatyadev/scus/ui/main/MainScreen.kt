@@ -23,7 +23,8 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
   val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
   Box(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.primary)) {
-    AppNavHost(viewModel)
+    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
+    AppNavHost(isLoggedIn = isLoggedIn, onLoginStateChange = viewModel::changeLoginState)
 
     if (isLoading) {
       Box(
