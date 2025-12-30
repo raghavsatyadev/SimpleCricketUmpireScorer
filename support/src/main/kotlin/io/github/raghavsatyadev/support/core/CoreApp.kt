@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-open class CoreApp() : Application(), CoroutineScope {
+open class CoreApp : Application(), CoroutineScope {
 
   private lateinit var job: Job
 

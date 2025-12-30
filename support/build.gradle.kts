@@ -3,16 +3,11 @@ import java.util.Properties
 plugins {
   alias(libs.plugins.android.library)
 
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.ksp)
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.kotlin.parcelize)
 
   alias(libs.plugins.compose.plugin)
-
-  alias(libs.plugins.hilt)
-
-  alias(libs.plugins.safe.args)
 
   alias(libs.plugins.room)
   alias(libs.plugins.stability.analyzer)
@@ -150,11 +145,8 @@ dependencies {
   // Coil
   implementation(libs.bundles.coil)
 
-  // Ktor
-  implementation(libs.bundles.ktor)
-
-  // Hilt
-  implementation(libs.bundles.hilt)
+  // Koin
+  implementation(libs.bundles.koin)
 
   // Room
   implementation(libs.bundles.room)

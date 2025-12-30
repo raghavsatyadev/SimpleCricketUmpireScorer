@@ -22,6 +22,6 @@ fun CustomError.handleError(fragment: Fragment) {
   error?.let { fragment.snackBar(it) }
 }
 
-private fun CustomError.getErrorString(): Int? {
+private fun CustomError.getErrorString(): Int {
   return errorCode.warning
 }

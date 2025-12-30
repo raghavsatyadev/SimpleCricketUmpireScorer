@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
-@Suppress("unused")
 object DateExtensions {
   private const val DEFAULT_DATE_FORMAT = "dd-MM-yyyy hh:mm a"
 

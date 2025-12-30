@@ -15,6 +15,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import androidx.viewbinding.ViewBinding
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.core.CoreActivity
@@ -82,5 +84,27 @@ object NavigationExtensions {
     val appBarConfiguration = AppBarConfiguration.Builder(navGraph).build()
     NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
     return appBarConfiguration
+  }
+
+  fun <T : NavKey> NavBackStack<T>.replaceAll(destination: T) {
+    clear()
+    add(destination)
+  }
+
+  fun <T : NavKey> NavBackStack<T>.replaceAll(destinations: List<T>) {
+    clear()
+    addAll(destinations)
+  }
+
+  fun <T : NavKey> NavBackStack<T>.removeTill(destination: T, inclusive: Boolean = false) {
+    val index = indexOf(destination)
+    if (index != -1) {
+      for (i in size - 1 downTo index + 1) {
+        removeAt(i)
+      }
+      if (inclusive) {
+        removeAt(index)
+      }
+    }
   }
 }

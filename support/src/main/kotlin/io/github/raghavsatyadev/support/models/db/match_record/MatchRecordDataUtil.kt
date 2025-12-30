@@ -7,42 +7,26 @@ import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import io.github.raghavsatyadev.support.Constants.DB.Tables
 import io.github.raghavsatyadev.support.Constants.FieldKeys
+import io.github.raghavsatyadev.support.database.AppDatabase
 import io.github.raghavsatyadev.support.database.BaseDao
 import io.github.raghavsatyadev.support.database.BaseDataUtil
-import io.github.raghavsatyadev.support.database.RoomDBUtil
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
-class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchRecordDao>() {
-  companion object {
-    @Volatile private var instance: MatchRecordDataUtil? = null
+class MatchRecordDataUtil(private val database: AppDatabase) :
+  BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchRecordDao>() {
 
-    @Synchronized
-    fun getInstance(): MatchRecordDataUtil {
-      if (instance == null) instance = MatchRecordDataUtil()
-      return instance!!
-    }
-  }
+  override fun getDao(): MatchRecordDao = database.matchRecordDao()
 
-  override fun getDao(): MatchRecordDao {
-    return RoomDBUtil.getInstance().matchRecordDao()
-  }
+  override fun getTableName(): String = Tables.MATCH_RECORD_TABLE
 
-  override fun getTableName(): String {
-    return Tables.MATCH_RECORD_TABLE
-  }
+  override fun getPrimaryKey(): String = FieldKeys.MATCH_RECORD_ID
 
-  override fun getPrimaryKey(): String {
-    return FieldKeys.MATCH_RECORD_ID
-  }
+  fun getAllLive(sortKey: String = ""): Flow<List<MatchRecord>> =
+    database.matchRecordDao().getAllLive(SimpleSQLiteQuery(buildGetAllSortedQuery(sortKey)))
 
-  fun getAllLive(sortKey: String = ""): Flow<List<MatchRecord>> {
-    return getDao().getAllLive(SimpleSQLiteQuery(buildGetAllSortedQuery(sortKey)))
-  }
-
-  fun getCountLive(): Flow<Long> {
-    return getDao().getCountLive(SimpleSQLiteQuery(buildGetCountQuery()))
-  }
+  fun getCountLive(): Flow<Long> =
+    database.matchRecordDao().getCountLive(SimpleSQLiteQuery(buildGetCountQuery()))
 
   override fun update(t: MatchRecord): Int {
     t.localUpdateDateTime = Date()
@@ -51,28 +35,23 @@ class MatchRecordDataUtil : BaseDataUtil<MatchRecord, MatchRecordDataUtil.MatchR
 
   fun upsert(allNewRecords: List<MatchRecord>) {
     val now = Date()
-
-    val allOldRecords = getAll()
-
-    val (presentRecords, newRecords) =
-      allNewRecords.partition { newRecord ->
-        newRecord.localUpdateDateTime = now
-        val foundRecord = allOldRecords.find { newRecord.matchRecordId == it.matchRecordId }
-        foundRecord?.let { newRecord.serverUpdateDateTime!! > foundRecord.localUpdateDateTime!! } ==
-          true
+    val allOld = getAll()
+    val (present, fresh) =
+      allNewRecords.partition { new ->
+        new.localUpdateDateTime = now
+        allOld
+          .find { it.matchRecordId == new.matchRecordId }
+          ?.let { new.serverUpdateDateTime!! > it.localUpdateDateTime!! } == true
       }
-
-    insertIgnore(newRecords)
-    update(presentRecords)
+    insertIgnore(fresh)
+    update(present)
   }
 
-  fun updateServerTime(id: String, time: Date) {
-    return getDao().updateServerTime(id, time.time)
-  }
+  fun updateServerTime(id: String, time: Date) =
+    database.matchRecordDao().updateServerTime(id, time.time)
 
-  fun getItemLive(id: String): Flow<MatchRecord> {
-    return getDao().getItemLive(SimpleSQLiteQuery(buildGetItemQuery(id)))
-  }
+  fun getItemLive(id: String): Flow<MatchRecord> =
+    database.matchRecordDao().getItemLive(SimpleSQLiteQuery(buildGetItemQuery(id)))
 
   @Dao
   interface MatchRecordDao : BaseDao<MatchRecord> {

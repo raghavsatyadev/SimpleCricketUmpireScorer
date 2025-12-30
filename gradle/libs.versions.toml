@@ -28,7 +28,7 @@ versionCode = "3"
 versionName = "0.0.1"
 
 # Plugin Versions
-agp = "9.0.0-rc01"
+agp = "9.1.0-alpha01"
 kotlin = "2.3.0"
 ksp = "2.3.4"
 google-plugin = "4.4.4"
@@ -45,6 +45,7 @@ compose-constraint = "1.1.1"
 compose-material3 = "1.5.0-alpha11"
 compose-ui = "1.10.0"
 compose-icons = "1.7.8"
+concurrent-futures = "1.3.0"
 constraintlayout = "2.2.1"
 coroutines = "1.10.2"
 credentials = "1.6.0-rc01"
@@ -59,11 +60,9 @@ firebase-gradle = "3.0.6"
 firebase-messaging = "25.0.1"
 fragment = "1.8.9"
 google-id = "1.1.1"
-dagger-hilt = "2.57.2"
-hilt = "1.3.0"
+koin = "4.2.0-beta2"
 junit = "4.13.2"
 junit-jupiter = "6.0.1"
-ktor = "3.3.3"
 lifecycle = "2.10.0"
 material = "1.14.0-alpha08"
 navigation = "2.9.6"
@@ -82,13 +81,13 @@ work-manager = "2.11.0"
 
 [libraries]
 # Classpaths
-androidx-navigation = { group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version.ref = "navigation" }
 com-google-firebase = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebase-gradle" }
 
 # Android
 androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-collection = { module = "androidx.collection:collection-ktx", version.ref = "collection" }
+androidx-concurrent-futures = { module = "androidx.concurrent:concurrent-futures-ktx", version.ref = "concurrent-futures" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
@@ -141,12 +140,11 @@ navigation-ui = { module = "androidx.navigation:navigation-ui-ktx", version.ref 
 navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
 navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 
-# Hilt
-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt" }
-dagger-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger-hilt" }
-hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt" }
-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hilt" }
-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt" }
+
+# Koin
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koin" }
 
 #Firebase
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebase-analytics" }
@@ -162,15 +160,6 @@ play-services-auth = { module = "com.google.android.gms:play-services-auth", ver
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "play-services-ads" }
 google-id = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "google-id" }
 
-#Ktor
-ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
-ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
-ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
-ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
-ktor-client-serialization-jvm = { module = "io.ktor:ktor-client-serialization-jvm", version.ref = "ktor" }
-ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
-
 #Room
 room = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -181,7 +170,6 @@ androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref
 
 #Coil
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
-coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 
 #Support
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar-jdk-libs" }
@@ -201,20 +189,16 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 
 google-plugin = { id = "com.google.gms.google-services", version.ref = "google-plugin" }
 
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 compose-plugin = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
-
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
 room = { id = "androidx.room", version.ref = "room" }
 stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "stability-analyzer" }
 crashlytics = { id = "com.google.firebase.crashlytics" }
-safe-args = { id = "androidx.navigation.safeargs.kotlin" }
 
 [bundles]
 kotlin = [
@@ -227,6 +211,7 @@ androidx = [
     "androidx-activity",
     "androidx-appcompat",
     "androidx-collection",
+    "androidx-concurrent-futures",
     "androidx-constraintlayout",
     "androidx-core",
     "androidx-credentials",
@@ -241,7 +226,6 @@ androidx = [
 ]
 coil = [
     "coil",
-    "coil-network-ktor3",
 ]
 compose = [
     "compose-activity",
@@ -267,19 +251,10 @@ google = [
     "play-services-ads",
     "play-services-auth",
 ]
-hilt = [
-    "hilt-android",
-    "hilt-navigation",
-    "hilt-work",
-]
-ktor = [
-    "ktor-client-android",
-    "ktor-client-content-negotiation",
-    "ktor-client-core",
-    "ktor-client-logging",
-    "ktor-client-okhttp",
-    "ktor-client-serialization-jvm",
-    "ktor-serialization-kotlinx-json",
+koin = [
+    "koin-android",
+    "koin-androidx-compose",
+    "koin-androidx-workmanager",
 ]
 lifecycle = [
     "lifecycle-common-java8",
@@ -304,9 +279,7 @@ room = [
     "room-runtime",
 ]
 ksp = [
-    "hilt-compiler",
     "room-compiler",
-    "dagger-hilt-compiler",
 ]
 test = [
     "androidx-junit",

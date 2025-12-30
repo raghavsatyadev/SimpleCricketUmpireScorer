@@ -10,11 +10,13 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.memoryCacheSettings
 import com.google.firebase.firestore.persistentCacheSettings
+import io.github.raghavsatyadev.support.AppHelpers
 import io.github.raghavsatyadev.support.AppLog
 import io.github.raghavsatyadev.support.Constants.FieldKeys
 import io.github.raghavsatyadev.support.Constants.FieldKeys.SERVER_UPDATE_DATE_TIME
 import io.github.raghavsatyadev.support.Constants.FirebaseConstants
 import io.github.raghavsatyadev.support.core.CoreApp
+import io.github.raghavsatyadev.support.database.RoomDBUtil
 import io.github.raghavsatyadev.support.extensions.AppExtensions
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
 import io.github.raghavsatyadev.support.extensions.AppExtensions.restartApp
@@ -27,26 +29,14 @@ import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUt
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.toMap
 import io.github.raghavsatyadev.support.preferences.AppPrefsUtil
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
-  companion object {
-    @Volatile private var instance: FireStoreUtil? = null
-
-    @Synchronized
-    fun create(firebaseApp: FirebaseApp) {
-      FireStoreUtil(firebaseApp).also { instance = it }
-      CoreApp.instance.launch { getInstance().initialize(true) }
-    }
-
-    @Synchronized
-    fun getInstance(): FireStoreUtil {
-      return instance
-        ?: throw IllegalStateException("Initialize in Application class using create()")
-    }
-  }
-
+class FireStoreUtil(
+  private val firebaseApp: FirebaseApp,
+  private val authUtil: FirebaseAuthUtil,
+  private val matchRecordDataUtil: MatchRecordDataUtil,
+  private val roomDBUtil: RoomDBUtil,
+) {
   private val db by lazy {
     Firebase.firestore(firebaseApp).apply {
       val settings = firestoreSettings {
@@ -54,20 +44,19 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
         setLocalCacheSettings(persistentCacheSettings {})
       }
       firestoreSettings = settings
-      persistentCacheIndexManager?.apply { enableIndexAutoCreation() }
-        ?: println("indexManager is null")
+      persistentCacheIndexManager?.enableIndexAutoCreation()
     }
   }
 
   suspend fun initialize(checkUserToken: Boolean = false) {
     try {
-      val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
+      val currentUserId = authUtil.currentUserId
       if (currentUserId != null) {
         if (checkUserToken) {
           val user = getUser(currentUserId)
           val userToken = AppPrefsUtil.getUserToken().firstOrNull()
           if (user.loginToken != userToken) {
-            AppExtensions.signOut()
+            AppHelpers.signOut(this, authUtil, roomDBUtil)
             CoreApp.instance.restartApp()
             return
           }
@@ -86,7 +75,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
           await()
           if (isSuccessful) {
             val records = result.toDataObjects<MatchRecord>()
-            MatchRecordDataUtil.getInstance().upsert(records)
+            matchRecordDataUtil.upsert(records)
           }
         }
       }
@@ -114,7 +103,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
 
   @Throws(Exception::class)
   suspend fun updateUserLoginTokens(): Boolean {
-    val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
+    val currentUserId = authUtil.currentUserId
     currentUserId?.let {
       val generateRandomNonce = AppExtensions.generateRandomNonce()
       val task =
@@ -132,7 +121,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
 
   @Throws(Exception::class)
   suspend fun signOutUser(): Boolean {
-    val currentUserId = FirebaseAuthUtil.getInstance().currentUserId
+    val currentUserId = authUtil.currentUserId
     currentUserId?.let {
       val task =
         db
@@ -180,7 +169,7 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
           try {
             val record: MatchRecord = readTask.result.toDataObject<MatchRecord>()
             record.localUpdateDateTime = record.serverUpdateDateTime
-            MatchRecordDataUtil.getInstance().insertIgnore(record)
+            matchRecordDataUtil.insertIgnore(record)
             return record
           } catch (e: Exception) {
             AppLog.loge(false, kotlinFileName, "setMatchRecord", e, Exception())
@@ -226,8 +215,10 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
         if (readTask.isSuccessful) {
           try {
             val record: MatchRecord = readTask.result.toDataObject<MatchRecord>()
-            MatchRecordDataUtil.getInstance()
-              .updateServerTime(record.matchRecordId, record.serverUpdateDateTime!!)
+            matchRecordDataUtil.updateServerTime(
+              record.matchRecordId,
+              record.serverUpdateDateTime!!,
+            )
             return true
           } catch (e: Exception) {
             AppLog.loge(false, kotlinFileName, "setMatchRecord", e, Exception())
@@ -244,7 +235,12 @@ class FireStoreUtil private constructor(private val firebaseApp: FirebaseApp) {
       db.collection(FirebaseConstants.Collections.MATCH_RECORD).document(matchRecordId).delete()
     with(task) {
       await()
-      return isSuccessful
+      return if (isSuccessful) {
+        matchRecordDataUtil.delete(matchRecordId)
+        true
+      } else {
+        false
+      }
     }
   }
 
