@@ -145,6 +145,8 @@ navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref =
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koin" }
+koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
+koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4", version.ref = "koin" }
 
 #Firebase
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebase-analytics" }
@@ -288,7 +290,9 @@ test = [
     "androidx-runner",
     "androidx-test-core",
     "junit",
-    "junit-jupiter"
+    "junit-jupiter",
+    "koin-test",
+    "koin-test-junit4",
 ]
 androidTest = [
     "androidx-junit",
