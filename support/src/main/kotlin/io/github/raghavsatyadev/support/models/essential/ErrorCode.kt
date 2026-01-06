@@ -6,22 +6,25 @@ import androidx.fragment.app.Fragment
 import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.extensions.ErrorShowExtensions.snackBar
 
-enum class ErrorCode(@param:StringRes val warning: Int) {
-  UNKNOWN_ERROR(R.string.warning_unknown_error),
-  NETWORK_ERROR(R.string.warning_network_error),
-  AUTH_FAILED(R.string.warning_auth_failed),
+enum class ErrorCode(
+    @param:StringRes
+    val warning: Int,
+) {
+    UNKNOWN_ERROR(R.string.warning_unknown_error),
+    NETWORK_ERROR(R.string.warning_network_error),
+    AUTH_FAILED(R.string.warning_auth_failed),
 }
 
 fun CustomError.handleError(activity: ComponentActivity) {
-  val error = this.getErrorString()
-  error?.let { activity.snackBar(it) }
+    val error = this.getErrorString()
+    error.let { activity.snackBar(it) }
 }
 
 fun CustomError.handleError(fragment: Fragment) {
-  val error = this.getErrorString()
-  error?.let { fragment.snackBar(it) }
+    val error = this.getErrorString()
+    error.let { fragment.snackBar(it) }
 }
 
 private fun CustomError.getErrorString(): Int {
-  return errorCode.warning
+    return errorCode.warning
 }
