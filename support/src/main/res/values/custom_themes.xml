@@ -1,56 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="AppThemeDay" parent="Theme.Material3.Light.NoActionBar">
-        <item name="colorPrimary">@color/md_theme_primary_light</item>
-        <item name="colorOnPrimary">@color/md_theme_onPrimary_light</item>
-        <item name="colorPrimaryContainer">@color/md_theme_primaryContainer_light</item>
-        <item name="colorOnPrimaryContainer">@color/md_theme_onPrimaryContainer_light</item>
-        <item name="colorSecondary">@color/md_theme_secondary_light</item>
-        <item name="colorOnSecondary">@color/md_theme_onSecondary_light</item>
-        <item name="colorSecondaryContainer">@color/md_theme_secondaryContainer_light</item>
-        <item name="colorOnSecondaryContainer">@color/md_theme_onSecondaryContainer_light</item>
-        <item name="colorTertiary">@color/md_theme_tertiary_light</item>
-        <item name="colorOnTertiary">@color/md_theme_onTertiary_light</item>
-        <item name="colorTertiaryContainer">@color/md_theme_tertiaryContainer_light</item>
-        <item name="colorOnTertiaryContainer">@color/md_theme_onTertiaryContainer_light</item>
-        <item name="colorError">@color/md_theme_error_light</item>
-        <item name="colorOnError">@color/md_theme_onError_light</item>
-        <item name="colorErrorContainer">@color/md_theme_errorContainer_light</item>
-        <item name="colorOnErrorContainer">@color/md_theme_onErrorContainer_light</item>
-        <item name="android:colorBackground">@color/md_theme_background_light</item>
-        <item name="colorOnBackground">@color/md_theme_onBackground_light</item>
-        <item name="colorSurface">@color/md_theme_surface_light</item>
-        <item name="colorOnSurface">@color/md_theme_onSurface_light</item>
-        <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant_light</item>
-        <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant_light</item>
-        <item name="colorOutline">@color/md_theme_outline_light</item>
-        <item name="colorOutlineVariant">@color/md_theme_outlineVariant_light</item>
-        <item name="colorSurfaceInverse">@color/md_theme_inverseSurface_light</item>
-        <item name="colorOnSurfaceInverse">@color/md_theme_inverseOnSurface_light</item>
-        <item name="colorPrimaryInverse">@color/md_theme_inversePrimary_light</item>
-        <item name="colorPrimaryFixed">@color/md_theme_primaryFixed_light</item>
-        <item name="colorOnPrimaryFixed">@color/md_theme_onPrimaryFixed_light</item>
-        <item name="colorPrimaryFixedDim">@color/md_theme_primaryFixedDim_light</item>
-        <item name="colorOnPrimaryFixedVariant">@color/md_theme_onPrimaryFixedVariant_light</item>
-        <item name="colorSecondaryFixed">@color/md_theme_secondaryFixed_light</item>
-        <item name="colorOnSecondaryFixed">@color/md_theme_onSecondaryFixed_light</item>
-        <item name="colorSecondaryFixedDim">@color/md_theme_secondaryFixedDim_light</item>
-        <item name="colorOnSecondaryFixedVariant">@color/md_theme_onSecondaryFixedVariant_light
-        </item>
-        <item name="colorTertiaryFixed">@color/md_theme_tertiaryFixed_light</item>
-        <item name="colorOnTertiaryFixed">@color/md_theme_onTertiaryFixed_light</item>
-        <item name="colorTertiaryFixedDim">@color/md_theme_tertiaryFixedDim_light</item>
-        <item name="colorOnTertiaryFixedVariant">@color/md_theme_onTertiaryFixedVariant_light</item>
-        <item name="colorSurfaceDim">@color/md_theme_surfaceDim_light</item>
-        <item name="colorSurfaceBright">@color/md_theme_surfaceBright_light</item>
-        <item name="colorSurfaceContainerLowest">@color/md_theme_surfaceContainerLowest_light</item>
-        <item name="colorSurfaceContainerLow">@color/md_theme_surfaceContainerLow_light</item>
-        <item name="colorSurfaceContainer">@color/md_theme_surfaceContainer_light</item>
-        <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh_light</item>
-        <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest_light
-        </item>
-
+    <style name="AppThemeDay" parent="android:Theme.Material.Light.NoActionBar">
         <item name="fontFamily">@font/app_fonts</item>
         <item name="android:fontFamily">@font/app_fonts</item>
     </style>
