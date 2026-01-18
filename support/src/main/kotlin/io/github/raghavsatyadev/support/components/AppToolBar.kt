@@ -4,8 +4,6 @@ package io.github.raghavsatyadev.support.components
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -15,9 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import io.github.raghavsatyadev.support.R
 import io.github.raghavsatyadev.support.theme.AppTheme
-import io.github.raghavsatyadev.support.R as Rs
 
 @Composable
 fun AppToolBar(
@@ -39,8 +38,8 @@ fun AppToolBar(
       if (onNavigateBack != null) {
         IconButton(onClick = onNavigateBack) {
           Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = stringResource(Rs.string.back),
+            painter = painterResource(R.drawable.ic_arrow_back),
+            contentDescription = stringResource(R.string.back),
             tint = MaterialTheme.colorScheme.surface,
           )
         }

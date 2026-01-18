@@ -41,9 +41,8 @@ androidx-test = "1.7.0"
 coil = "3.3.0"
 collection = "1.5.0"
 compose-constraint = "1.1.1"
-compose-material3 = "1.5.0-alpha11"
-compose-ui = "1.10.0"
-compose-icons = "1.7.8"
+compose-material3 = "1.5.0-alpha12"
+compose-ui = "1.11.0-alpha03"
 concurrent-futures = "1.3.0"
 coroutines = "1.10.2"
 credentials = "1.6.0-rc01"
@@ -52,9 +51,9 @@ desugar-jdk-libs = "2.1.5"
 firebase-analytics = "23.0.0"
 firebase-appcheck = "19.0.1"
 firebase-auth = "24.0.1"
-firebase-crashlytics = "20.0.3"
-firebase-firestore = "26.0.2"
-firebase-gradle = "3.0.6"
+firebase-crashlytics = "20.0.4"
+firebase-firestore = "26.1.0"
+firebase-crashlytics-gradle = "3.0.6"
 firebase-messaging = "25.0.1"
 google-id = "1.1.1"
 koin = "4.2.0-beta2"
@@ -74,7 +73,7 @@ work-manager = "2.11.0"
 
 [libraries]
 # Classpaths
-com-google-firebase = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebase-gradle" }
+com-google-firebase = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebase-crashlytics-gradle" }
 
 # Android
 androidx-activity = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
@@ -102,9 +101,6 @@ compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", ve
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-ui" }
 
 compose-ui-animation = { module = "androidx.compose.animation:animation", version.ref = "compose-ui" }
-
-compose-material-icons = { module = "androidx.compose.material:material-icons-core", version.ref = "compose-icons" }
-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose-icons" }
 
 #Kotlin
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
@@ -208,8 +204,6 @@ coil = [
 compose = [
     "compose-activity",
     "compose-constraint",
-    "compose-material-icons",
-    "compose-material-icons-extended",
     "compose-material3",
     "compose-ui-font",
     "compose-ui-preview",
