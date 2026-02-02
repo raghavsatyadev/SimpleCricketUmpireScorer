@@ -40,8 +40,8 @@ class CreateMatchScreenViewModel(
     team1Name: String,
     team2Name: String,
     inningOver: String,
-    selectedIndexToss: Int,
-    selectedIndexBat: Int,
+    didTeam1WinToss: Boolean,
+    isTeam1BattingFirst: Boolean,
     matchLocation: String,
   ) {
     executeWithLoader {
@@ -55,8 +55,8 @@ class CreateMatchScreenViewModel(
             ballsPerInning = inningOver.toInt() * 6,
             team1Detail = TeamDetail(teamName = team1Name),
             team2Detail = TeamDetail(teamName = team2Name),
-            didTeam1WonToss = selectedIndexToss == 0,
-            isTeam1BattingFirst = selectedIndexBat == 0,
+            didTeam1WonToss = didTeam1WinToss,
+            isTeam1BattingFirst = isTeam1BattingFirst,
             localUpdateDateTime = Date(),
             serverUpdateDateTime = Date(),
             matchAdminID = currentUserId!!,
