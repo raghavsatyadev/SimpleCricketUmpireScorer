@@ -9,29 +9,33 @@ This document outlines the step-by-step timetable to convert the existing Androi
 ---
 
 ## Part 1: Minor Migrations & Preparation
-**Schedule**: This Weekend (Jan 10 - Jan 11)
+**Schedule**: Completed (Jan 10 - Feb 02)
 **Goal**: Clean up the Android codebase and prepare it for a smooth transition to KMP.
 
 ### Saturday, Jan 10: Cleanup & Standardization
-- [ ] **Resources Check**:
+- [x] **Resources Check**:
     - Ensure all Strings/Colors are in `res/values`.
     - Identify direct Android Asset usage that might need moving to `composeResources`.
-- [ ] **Dependency Update**:
+- [x] **Dependency Update**:
     - Update `androidx.navigation`, `room`, `lifecycle`, `coil` to latest stable versions in `libs.versions.toml` (if not already).
-- [ ] **Database Inspection**:
+- [x] **Database Inspection**:
     - Review Room Entities (`@Entity`) and DAOs.
     - Ensure no Android-specific imports (like `android.graphics.Bitmap` or `Parcelable` inside DB entities if possible).
-- [ ] **Code Sanitation**:
+- [x] **Code Sanitation**:
     - Verify no `android.context.Context` is passed into ViewModels (use Koin injection if context is needed, but prefer platform-agnostic interfaces).
 
 ### Sunday, Jan 11: Architecture Decoupling
-- [ ] **Service Abstraction (Critical)**:
-    - Create repository interfaces for **Firebase**, **Google Auth**, and **Ads**.
+- [x] **Service Abstraction (Critical)**:
+    - ✅ **Implemented Repository Pattern**:
+        - Created `AuthRepository` interface and `AuthRepositoryImpl` (hiding Firebase Auth).
+        - Refactored `FireStoreUtil` to an interface and `FireStoreUtilImpl` (hiding Firestore SDK).
+        - Created `StringResourceProvider` interface (hiding Android Context).
     - *Why*: These are Android-only SDKs. KMP code cannot see them directly.
-    - *Action*: Ensure usage in ViewModels is effectively `repo.doSomething()`, not `Firebase.auth.signIn()`.
-- [ ] **ViewModel Check**:
+    - *Action*: ViewModels now interact with `AuthRepository` and `FireStoreUtil` interfaces. `CreateMatchScreenViewModel` and `LoginScreenViewModel` have been refactored to remove direct platform dependencies.
+- [x] **ViewModel Check**:
     - Ensure all ViewModels inherit `androidx.lifecycle.ViewModel`.
     - Verify `viewModelScope` usage.
+    - **Coroutine Hygiene**: Moved coroutine launching from Compose UI to ViewModels (e.g., `LoginScreen.kt` no longer launches coroutines directly).
 
 ---
 
