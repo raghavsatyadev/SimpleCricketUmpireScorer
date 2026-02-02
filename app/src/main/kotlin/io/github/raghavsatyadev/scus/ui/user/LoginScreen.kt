@@ -46,7 +46,7 @@ fun LoginScreen(viewModel: LoginScreenViewModel = koinViewModel(), onLoginSucces
   CheckPlayService {
     val googleSignInUtil = remember { GoogleSignInUtil(activity = activity!!) }
 
-    LoginView(doLogin = { viewModel.signInWithGoogle(googleSignInUtil) })
+    LoginView(doLogin = { viewModel.initiateGoogleLogin(googleSignInUtil) })
   }
 }
 

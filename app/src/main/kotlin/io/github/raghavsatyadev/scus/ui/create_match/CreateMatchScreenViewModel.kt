@@ -2,15 +2,15 @@ package io.github.raghavsatyadev.scus.ui.create_match
 
 import androidx.lifecycle.viewModelScope
 import io.github.raghavsatyadev.support.components.UiStateManager
-import io.github.raghavsatyadev.support.core.CoreApp
 import io.github.raghavsatyadev.support.core.CoreScreenViewModel
 import io.github.raghavsatyadev.support.google.FireStoreUtil
-import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.models.db.match_record.TeamDetail
 import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
 import io.github.raghavsatyadev.support.models.essential.UiState
+import io.github.raghavsatyadev.support.models.repository.AuthRepository
+import io.github.raghavsatyadev.support.providers.StringResourceProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,8 +18,9 @@ import java.util.Date
 import io.github.raghavsatyadev.support.R as Rs
 
 class CreateMatchScreenViewModel(
-  private val authUtil: FirebaseAuthUtil,
+  private val authRepository: AuthRepository,
   private val fireStoreUtil: FireStoreUtil,
+  private val stringResourceProvider: StringResourceProvider,
   uiStateManager: UiStateManager,
 ) : CoreScreenViewModel(uiStateManager) {
   private val _matchRecordFlow = MutableStateFlow<MatchRecord?>(null)
@@ -47,7 +48,7 @@ class CreateMatchScreenViewModel(
     executeWithLoader {
       try {
         validateMatchDetails(matchLocation, inningOver, team1Name, team2Name)
-        val currentUserId = authUtil.currentUserId
+        val currentUserId = authRepository.currentUserId
         val matchRecord =
           MatchRecord(
             location = matchLocation,
@@ -76,16 +77,18 @@ class CreateMatchScreenViewModel(
     team1Name: String,
     team2Name: String,
   ) {
-    val context = CoreApp.instance
-    val currentUserId = authUtil.currentUserId
+    val currentUserId = authRepository.currentUserId
     when {
       currentUserId.isNullOrEmpty() ->
-        throw Exception(context.getString(Rs.string.warning_please_login))
+        throw Exception(stringResourceProvider.getString(Rs.string.warning_please_login))
       matchLocation.isEmpty() ->
-        throw Exception(context.getString(Rs.string.warning_match_location))
-      inningOver.isEmpty() -> throw Exception(context.getString(Rs.string.warning_overs))
-      team1Name.isEmpty() -> throw Exception(context.getString(Rs.string.warning_team_1_name))
-      team2Name.isEmpty() -> throw Exception(context.getString(Rs.string.warning_team_2_name))
+        throw Exception(stringResourceProvider.getString(Rs.string.warning_match_location))
+      inningOver.isEmpty() ->
+        throw Exception(stringResourceProvider.getString(Rs.string.warning_overs))
+      team1Name.isEmpty() ->
+        throw Exception(stringResourceProvider.getString(Rs.string.warning_team_1_name))
+      team2Name.isEmpty() ->
+        throw Exception(stringResourceProvider.getString(Rs.string.warning_team_2_name))
     }
   }
 

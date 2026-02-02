@@ -18,8 +18,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MatchRecordScreenViewModel(
-    private val matchRecordDataUtil: MatchRecordDataUtil,
-    uiStateManager: UiStateManager,
+  private val matchRecordDataUtil: MatchRecordDataUtil,
+  uiStateManager: UiStateManager,
 ) : CoreScreenViewModel(uiStateManager) {
   private val _matchRecordEvent = MutableStateFlow<BasicMatchUIDetails?>(null)
   val matchRecordEvent = _matchRecordEvent.asStateFlow()
