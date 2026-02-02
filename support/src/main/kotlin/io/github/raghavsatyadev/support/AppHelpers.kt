@@ -21,10 +21,10 @@ import io.github.raghavsatyadev.support.preferences.AppPrefsUtil
 object AppHelpers {
 
   suspend fun signOut(
-      fireStoreUtil: FireStoreUtil,
-      authUtil: FirebaseAuthUtil,
-      roomDBUtil: RoomDBUtil,
-      doSignOutFromFirestore: Boolean = false,
+    fireStoreUtil: FireStoreUtil,
+    authUtil: FirebaseAuthUtil,
+    roomDBUtil: RoomDBUtil,
+    doSignOutFromFirestore: Boolean = false,
   ) {
     if (doSignOutFromFirestore) {
       fireStoreUtil.signOutUser()

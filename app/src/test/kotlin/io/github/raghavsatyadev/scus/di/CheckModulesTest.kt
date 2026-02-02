@@ -8,14 +8,11 @@ import org.koin.test.verify.verify
 
 class CheckModulesTest : KoinTest {
 
-    @OptIn(KoinExperimentalAPI::class)
-    @Test
-    fun checkAllModules() {
-        appModule.verify(
-            extraTypes = listOf(
-                android.content.Context::class,
-                androidx.work.WorkerParameters::class,
-            )
-        )
-    }
+  @OptIn(KoinExperimentalAPI::class)
+  @Test
+  fun checkAllModules() {
+    appModule.verify(
+      extraTypes = listOf(android.content.Context::class, androidx.work.WorkerParameters::class)
+    )
+  }
 }

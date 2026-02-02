@@ -11,7 +11,6 @@ import io.github.raghavsatyadev.support.components.UiStateManager
 import io.github.raghavsatyadev.support.database.AppDatabase
 import io.github.raghavsatyadev.support.database.MigrationUtil
 import io.github.raghavsatyadev.support.database.RoomDBUtil
-import io.github.raghavsatyadev.support.google.FireStoreUtil
 import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUtil
 import io.github.raghavsatyadev.support.storage.StorageUtils
@@ -23,7 +22,9 @@ val supportModule = module {
   // Firebase
   single { FirebaseApp.initializeApp(androidContext()) }
   singleOf(::FirebaseAuthUtil)
-  singleOf(::FireStoreUtil)
+  single<io.github.raghavsatyadev.support.google.FireStoreUtil> {
+    io.github.raghavsatyadev.support.google.FireStoreUtilImpl(get(), get(), get(), get())
+  }
 
   // Room
   single<AppDatabase> {
@@ -45,4 +46,12 @@ val supportModule = module {
   single { WorkManager.getInstance(androidContext()) }
   singleOf(::MatchDataWorkScheduler)
   singleOf(::MatchDataUploadUtil)
+
+  // Providers & Repositories
+  single<io.github.raghavsatyadev.support.providers.StringResourceProvider> {
+    io.github.raghavsatyadev.support.providers.AndroidStringResourceProvider(androidContext())
+  }
+  single<io.github.raghavsatyadev.support.models.repository.AuthRepository> {
+    io.github.raghavsatyadev.support.models.repository.AuthRepositoryImpl(get(), get(), get())
+  }
 }

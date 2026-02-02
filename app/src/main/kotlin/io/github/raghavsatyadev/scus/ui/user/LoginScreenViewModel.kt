@@ -1,103 +1,71 @@
 package io.github.raghavsatyadev.scus.ui.user
 
 import androidx.compose.runtime.Stable
-import io.github.raghavsatyadev.support.AppHelpers
+import androidx.lifecycle.viewModelScope
 import io.github.raghavsatyadev.support.components.UiStateManager
 import io.github.raghavsatyadev.support.core.CoreScreenViewModel
-import io.github.raghavsatyadev.support.database.RoomDBUtil
-import io.github.raghavsatyadev.support.google.FireStoreUtil
-import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
-import io.github.raghavsatyadev.support.google.GoogleSignInUtil
-import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
 import io.github.raghavsatyadev.support.models.essential.UiState
+import io.github.raghavsatyadev.support.models.repository.AuthRepository
+import io.github.raghavsatyadev.support.models.repository.LoginTokenStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class LoginScreenViewModel(
-    uiStateManager: UiStateManager,
-    private val authUtil: FirebaseAuthUtil,
-    private val fireStoreUtil: FireStoreUtil,
-    private val roomDBUtil: RoomDBUtil,
+  uiStateManager: UiStateManager,
+  private val authRepository: AuthRepository,
 ) : CoreScreenViewModel(uiStateManager) {
   private val _isUserAlreadyLoggedInEvent = MutableStateFlow<UiState<Boolean>>(UiState.Initial)
   @Stable val isUserAlreadyLoggedInEvent = _isUserAlreadyLoggedInEvent.asStateFlow()
 
-  fun signInWithGoogle(googleSignInUtil: GoogleSignInUtil) {
-    executeWithLoader {
+  fun initiateGoogleLogin(
+    googleSignInUtil: io.github.raghavsatyadev.support.google.GoogleSignInUtil
+  ) {
+    viewModelScope.launch {
       googleSignInUtil.startSignIn(
-        onSuccess = { idToken -> signInWithFirebaseAuth(idToken) },
-        onFailure = { e ->
-          _isUserAlreadyLoggedInEvent.emit(UiState.Error(CustomError(ErrorCode.AUTH_FAILED, e)))
-        },
+        onSuccess = { idToken -> signInWithGoogle(idToken) },
+        onFailure = { e -> onSignInError(e) },
       )
     }
   }
 
+  fun signInWithGoogle(idToken: String) {
+    executeWithLoader { signInWithFirebaseAuth(idToken) }
+  }
+
+  fun onSignInError(e: Exception) {
+    viewModelScope.launch {
+      _isUserAlreadyLoggedInEvent.emit(UiState.Error(CustomError(ErrorCode.AUTH_FAILED, e)))
+    }
+  }
+
   private suspend fun signInWithFirebaseAuth(idToken: String) {
-    val (user, error) = authUtil.signInWithGoogle(idToken)
+    val (user, error) = authRepository.signInWithGoogle(idToken)
     if (user != null) {
       try {
-        loginWithFirestore(user)
+        when (val result = authRepository.validateLoginToken(user)) {
+          is LoginTokenStatus.Success -> _isUserAlreadyLoggedInEvent.emit(UiState.Success(false))
+          is LoginTokenStatus.Error ->
+            _isUserAlreadyLoggedInEvent.emit(
+              UiState.Error(CustomError(ErrorCode.AUTH_FAILED, result.exception))
+            )
+          is LoginTokenStatus.RemoteTokenMismatch ->
+            _isUserAlreadyLoggedInEvent.emit(UiState.Success(true))
+        }
       } catch (e: Exception) {
         _isUserAlreadyLoggedInEvent.emit(UiState.Error(CustomError(ErrorCode.AUTH_FAILED, e)))
       }
-    } else {
+    } else if (error != null) {
       _isUserAlreadyLoggedInEvent.emit(UiState.Error(error))
-    }
-  }
-
-  @Throws(Exception::class)
-  private suspend fun loginWithFirestore(user: User) {
-    with(fireStoreUtil) {
-      try {
-
-        if (!validateLoginToken(this, user)) {
-          return
-        }
-        initialize()
-        _isUserAlreadyLoggedInEvent.emit(UiState.Success(false))
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-  }
-
-  @Throws(Exception::class)
-  private suspend fun validateLoginToken(util: FireStoreUtil, user: User): Boolean {
-    val remoteUser =
-      try {
-        util.getUser(user.userID)
-      } catch (_: Exception) {
-        null
-      }
-
-    return when {
-      remoteUser == null -> {
-        try {
-          util.setUser(user)
-        } catch (e: Exception) {
-          throw e
-        }
-        true
-      }
-      remoteUser.loginToken.isNullOrEmpty() -> {
-        util.updateUserLoginTokens()
-        true
-      }
-      else -> {
-        _isUserAlreadyLoggedInEvent.emit(UiState.Success(true))
-        false
-      }
     }
   }
 
   fun updateUserTokens() {
     executeWithLoader {
       try {
-        fireStoreUtil.updateUserLoginTokens()
-        fireStoreUtil.initialize()
+        authRepository.updateUserTokens()
         _isUserAlreadyLoggedInEvent.emit(UiState.Success(false))
       } catch (e: Exception) {
         _isUserAlreadyLoggedInEvent.emit(UiState.Error(CustomError(ErrorCode.AUTH_FAILED, e)))
@@ -107,7 +75,7 @@ class LoginScreenViewModel(
 
   fun signOut(onLogout: () -> Unit) {
     executeWithLoader {
-      AppHelpers.signOut(fireStoreUtil, authUtil, roomDBUtil)
+      authRepository.signOut()
       onLogout()
     }
   }
