@@ -39,7 +39,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -53,7 +52,6 @@ import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.components.AppToolBar
 import io.github.raghavsatyadev.support.components.DarkPreview
 import io.github.raghavsatyadev.support.components.ErrorDialog
-import io.github.raghavsatyadev.support.components.LightPreview
 import io.github.raghavsatyadev.support.extensions.DateExtensions.formatToDateString
 import io.github.raghavsatyadev.support.extensions.DateExtensions.toZoneEpochMillis
 import io.github.raghavsatyadev.support.extensions.DateExtensions.toZoneLocalDate
@@ -114,6 +112,12 @@ fun CreateMatchScreen(
         location,
       )
     },
+    initialTeam1Name = matchRecord?.team1Detail?.teamName ?: "",
+    initialTeam2Name = matchRecord?.team2Detail?.teamName ?: "",
+    initialInningOver = matchRecord?.ballsPerInning?.div(6)?.toString() ?: "",
+    initialMatchLocation = matchRecord?.location ?: "",
+    initialTossWonByTeam1 = matchRecord?.didTeam1WonToss ?: true,
+    initialBatFirstByTeam1 = matchRecord?.isTeam1BattingFirst ?: true,
   )
 }
 
@@ -273,22 +277,28 @@ private fun CreateMatchRecordUI(
       team1Name: String,
       team2Name: String,
       inningOver: String,
-      selectedIndexToss: Int,
-      selectedIndexBat: Int,
+      didTeam1WinToss: Boolean,
+      isTeam1BattingFirst: Boolean,
       matchLocation: String,
     ) -> Unit,
+  initialTeam1Name: String = "",
+  initialTeam2Name: String = "",
+  initialInningOver: String = "",
+  initialMatchLocation: String = "",
+  initialTossWonByTeam1: Boolean = true,
+  initialBatFirstByTeam1: Boolean = true,
 ) {
   val matchDateTime = remember(selectedDateTime) { selectedDateTime.formatToDateString() }
   val scrollState = rememberScrollState()
-  var team1Name by remember { mutableStateOf("") }
-  var team2Name by remember { mutableStateOf("") }
-  var inningOver by remember { mutableStateOf("") }
-  var matchLocation by remember { mutableStateOf("") }
+  var team1Name by remember { mutableStateOf(initialTeam1Name) }
+  var team2Name by remember { mutableStateOf(initialTeam2Name) }
+  var inningOver by remember { mutableStateOf(initialInningOver) }
+  var matchLocation by remember { mutableStateOf(initialMatchLocation) }
   val team1Label = stringResource(id = R.string.team_1)
   val team2Label = stringResource(id = R.string.team_2)
   val options = listOf(team1Label, team2Label)
-  var selectedIndexToss by remember { mutableIntStateOf(0) }
-  var selectedIndexBat by remember { mutableIntStateOf(0) }
+  var tossWonByTeam1 by remember { mutableStateOf(initialTossWonByTeam1) }
+  var batFirstByTeam1 by remember { mutableStateOf(initialBatFirstByTeam1) }
 
   Scaffold(
     modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
@@ -380,14 +390,14 @@ private fun CreateMatchRecordUI(
 
       ToggleButtonGroup(
         options,
-        selectedIndexToss,
+        tossWonByTeam1,
         Modifier.constrainAs(tossToggleRef) {
           top.linkTo(tossLabelRef.bottom)
           start.linkTo(parent.start)
           end.linkTo(parent.end)
           width = Dimension.fillToConstraints
         },
-        onSelection = { index, isChecked -> selectedIndexToss = index },
+        onSelection = { tossWonByTeam1 = it },
       )
 
       Text(
@@ -403,7 +413,7 @@ private fun CreateMatchRecordUI(
 
       ToggleButtonGroup(
         options = options,
-        selectedIndex = selectedIndexBat,
+        isFirstOptionSelected = batFirstByTeam1,
         modifier =
           Modifier.constrainAs(batToggleRef) {
             top.linkTo(batLabelRef.bottom)
@@ -411,7 +421,7 @@ private fun CreateMatchRecordUI(
             end.linkTo(parent.end)
             width = Dimension.fillToConstraints
           },
-        onSelection = { index, isChecked -> selectedIndexBat = index },
+        onSelection = { batFirstByTeam1 = it },
       )
 
       OutlinedTextField(
@@ -434,8 +444,8 @@ private fun CreateMatchRecordUI(
             team1Name,
             team2Name,
             inningOver,
-            selectedIndexToss,
-            selectedIndexBat,
+            tossWonByTeam1,
+            batFirstByTeam1,
             matchLocation,
           )
         },
@@ -455,9 +465,9 @@ private fun CreateMatchRecordUI(
 @Composable
 private fun ToggleButtonGroup(
   options: List<String>,
-  selectedIndex: Int,
+  isFirstOptionSelected: Boolean,
   modifier: Modifier,
-  onSelection: (Int, Boolean) -> Unit,
+  onSelection: (Boolean) -> Unit,
 ) {
   FlowRow(
     modifier = modifier,
@@ -465,9 +475,10 @@ private fun ToggleButtonGroup(
     verticalArrangement = Arrangement.spacedBy(2.dp),
   ) {
     options.forEachIndexed { index, label ->
+      val isSelected = if (index == 0) isFirstOptionSelected else !isFirstOptionSelected
       ToggleButton(
-        checked = selectedIndex == index,
-        onCheckedChange = { onSelection(index, it) },
+        checked = isSelected,
+        onCheckedChange = { if (index == 0) onSelection(true) else onSelection(false) },
         modifier = Modifier.weight(1f),
         shapes =
           when (index) {
@@ -483,7 +494,6 @@ private fun ToggleButtonGroup(
   }
 }
 
-@LightPreview
 @DarkPreview
 @Composable
 fun CreateMatchRecordScreenPreview() {

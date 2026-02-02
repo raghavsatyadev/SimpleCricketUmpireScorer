@@ -28,6 +28,10 @@ class MatchRecordDataUtil(private val database: AppDatabase) :
   fun getCountLive(): Flow<Long> =
     database.matchRecordDao().getCountLive(SimpleSQLiteQuery(buildGetCountQuery()))
 
+  override fun delete(primaryKeyId: String): Int {
+    return database.matchRecordDao().delete(primaryKeyId)
+  }
+
   override fun update(t: MatchRecord): Int {
     t.localUpdateDateTime = Date()
     return super.update(t)
@@ -57,6 +61,9 @@ class MatchRecordDataUtil(private val database: AppDatabase) :
   interface MatchRecordDao : BaseDao<MatchRecord> {
     @RawQuery(observedEntities = [MatchRecord::class])
     fun getAllLive(simpleSQLiteQuery: SimpleSQLiteQuery): Flow<List<MatchRecord>>
+
+    @Query("DELETE FROM ${Tables.MATCH_RECORD_TABLE} WHERE ${FieldKeys.MATCH_RECORD_ID} = :id")
+    fun delete(id: String): Int
 
     @RawQuery(observedEntities = [MatchRecord::class])
     fun getCountLive(supportSQLiteQuery: SupportSQLiteQuery): Flow<Long>
