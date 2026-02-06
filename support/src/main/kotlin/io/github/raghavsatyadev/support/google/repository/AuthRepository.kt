@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.support.models.repository
+package io.github.raghavsatyadev.support.google.repository
 
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.essential.CustomError

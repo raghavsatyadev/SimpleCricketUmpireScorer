@@ -4,12 +4,12 @@ import androidx.lifecycle.viewModelScope
 import io.github.raghavsatyadev.support.components.UiStateManager
 import io.github.raghavsatyadev.support.core.CoreScreenViewModel
 import io.github.raghavsatyadev.support.google.FireStoreUtil
+import io.github.raghavsatyadev.support.google.repository.AuthRepository
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.models.db.match_record.TeamDetail
 import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
 import io.github.raghavsatyadev.support.models.essential.UiState
-import io.github.raghavsatyadev.support.models.repository.AuthRepository
 import io.github.raghavsatyadev.support.providers.StringResourceProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

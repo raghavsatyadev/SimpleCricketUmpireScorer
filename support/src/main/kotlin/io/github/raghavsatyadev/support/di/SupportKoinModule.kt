@@ -12,6 +12,8 @@ import io.github.raghavsatyadev.support.database.AppDatabase
 import io.github.raghavsatyadev.support.database.MigrationUtil
 import io.github.raghavsatyadev.support.database.RoomDBUtil
 import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
+import io.github.raghavsatyadev.support.google.repository.AuthRepository
+import io.github.raghavsatyadev.support.google.repository.AuthRepositoryImpl
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUtil
 import io.github.raghavsatyadev.support.storage.StorageUtils
 import org.koin.android.ext.koin.androidContext
@@ -51,7 +53,11 @@ val supportModule = module {
   single<io.github.raghavsatyadev.support.providers.StringResourceProvider> {
     io.github.raghavsatyadev.support.providers.AndroidStringResourceProvider(androidContext())
   }
-  single<io.github.raghavsatyadev.support.models.repository.AuthRepository> {
-    io.github.raghavsatyadev.support.models.repository.AuthRepositoryImpl(get(), get(), get())
+  single<AuthRepository> {
+      AuthRepositoryImpl(
+          get(),
+          get(),
+          get()
+      )
   }
 }
