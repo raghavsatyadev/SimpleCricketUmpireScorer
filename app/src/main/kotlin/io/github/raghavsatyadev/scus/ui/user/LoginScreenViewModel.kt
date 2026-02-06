@@ -4,11 +4,11 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.viewModelScope
 import io.github.raghavsatyadev.support.components.UiStateManager
 import io.github.raghavsatyadev.support.core.CoreScreenViewModel
+import io.github.raghavsatyadev.support.google.repository.AuthRepository
+import io.github.raghavsatyadev.support.google.repository.LoginTokenStatus
 import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
 import io.github.raghavsatyadev.support.models.essential.UiState
-import io.github.raghavsatyadev.support.models.repository.AuthRepository
-import io.github.raghavsatyadev.support.models.repository.LoginTokenStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
