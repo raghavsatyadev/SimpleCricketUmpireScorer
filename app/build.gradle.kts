@@ -21,7 +21,6 @@ plugins {
 
 sonar {
   properties {
-    // androidVariant = "DevDebug"
     property(
       "sonar.androidLint.reportPaths",
       "${layout.buildDirectory.asFile}/reports/lint-results-DevDebug.xml",
@@ -86,8 +85,10 @@ android {
       //            applicationIdSuffix = ".debug"
       configure<CrashlyticsExtension> { mappingFileUploadEnabled = false }
     }
+
     kotlin { jvmToolchain(21) }
     compileOptions { isCoreLibraryDesugaringEnabled = true }
+
     buildFeatures {
       viewBinding = true
       buildConfig = true
@@ -108,18 +109,6 @@ android {
     }
   }
 
-  androidComponents {
-    beforeVariants { variant ->
-      val names = variant.flavorName
-
-      val isDevRelease = names == "Dev" && variant.buildType == "release"
-      val isProdNotRelease = names == "Prod" && (variant.buildType != "release")
-
-      if (isDevRelease || isProdNotRelease) {
-        variant.enable = false
-      }
-    }
-  }
   //  applicationVariants.configureEach {
   //    val variant = this
   //    if (!variant.name.lowercase(Locale.getDefault()).contains("debug")) {
@@ -129,6 +118,19 @@ android {
   //      }
   //    }
   //  }
+}
+
+androidComponents {
+  beforeVariants { variant ->
+    val names = variant.flavorName
+
+    val isDevRelease = names == "Dev" && variant.buildType == "release"
+    val isProdNotRelease = names == "Prod" && (variant.buildType != "release")
+
+    if (isDevRelease || isProdNotRelease) {
+      variant.enable = false
+    }
+  }
 }
 
 // fun renameOutputs(variant: ApplicationVariant, output: BaseVariantOutput): BaseVariantOutput {
