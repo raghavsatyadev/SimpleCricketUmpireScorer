@@ -40,6 +40,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.components.AppToolBar
 import io.github.raghavsatyadev.support.components.DarkRealDevicePreview
@@ -47,6 +49,8 @@ import io.github.raghavsatyadev.support.models.BasicMatchUIDetails
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.isMatchCompleted
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtensions.oversToBalls
 import io.github.raghavsatyadev.support.theme.AppTheme
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -59,7 +63,11 @@ fun MatchRecordScreen(
   var showResetDialog by remember { mutableStateOf(false) }
   var showEditOversDialog by remember { mutableStateOf(false) }
 
-  LaunchedEffect(matchRecordId) { viewModel.loadMatchRecord(matchRecordId) }
+  val lifecycleOwner = LocalLifecycleOwner.current
+  LaunchedEffect(matchRecordId) {
+    lifecycleOwner.lifecycle.currentStateFlow.filter { it == Lifecycle.State.RESUMED }.first()
+    viewModel.loadMatchRecord(matchRecordId)
+  }
 
   DisposableEffect(Unit) { onDispose { viewModel.clearLoadingState() } }
 
@@ -95,18 +103,18 @@ fun MatchRecordScreen(
         dismissDialog = { showEditOversDialog = false },
       )
     }
-    MatchRecordUI(
-      record = record,
-      onBack = onBack,
-      endInning = { viewModel.endInning(matchRecordId) },
-      endMatch = { viewModel.endMatch(matchRecordId) },
-      setWicket = { viewModel.setWicket(matchRecordId, it) },
-      setBall = { balls, isAdd -> viewModel.setBall(matchRecordId, balls, isAdd) },
-      setRun = { runs, isAdd -> viewModel.setRun(matchRecordId, runs, isAdd) },
-      showResetDialog = { showResetDialog = true },
-      showEditOversDialog = { showEditOversDialog = true },
-    )
   }
+  MatchRecordUI(
+    record = recordState,
+    onBack = onBack,
+    endInning = { viewModel.endInning(matchRecordId) },
+    endMatch = { viewModel.endMatch(matchRecordId) },
+    setWicket = { viewModel.setWicket(matchRecordId, it) },
+    setBall = { balls, isAdd -> viewModel.setBall(matchRecordId, balls, isAdd) },
+    setRun = { runs, isAdd -> viewModel.setRun(matchRecordId, runs, isAdd) },
+    showResetDialog = { showResetDialog = true },
+    showEditOversDialog = { showEditOversDialog = true },
+  )
 }
 
 @DarkRealDevicePreview
@@ -139,7 +147,7 @@ fun MatchRecordUIPreview() {
 
 @Composable
 private fun MatchRecordUI(
-  record: BasicMatchUIDetails,
+  record: BasicMatchUIDetails?,
   onBack: () -> Unit,
   endMatch: () -> Unit,
   endInning: () -> Unit,
@@ -153,7 +161,9 @@ private fun MatchRecordUI(
   Scaffold(
     modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
     topBar = {
-      val title = record.let { stringResource(R.string.team) + " " + it.currentTeamName }
+      val title =
+        record?.let { stringResource(R.string.team) + " " + it.currentTeamName }
+          ?: stringResource(R.string.match_record_title)
       AppToolBar(
         title = title,
         onNavigateBack = onBack,
@@ -172,6 +182,7 @@ private fun MatchRecordUI(
       modifier =
         Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState())
     ) {
+      if (record == null) return@ConstraintLayout
       val (
         txtRequired,
         txtCrr,
