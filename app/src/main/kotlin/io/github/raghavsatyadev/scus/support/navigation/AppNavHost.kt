@@ -14,6 +14,7 @@ import io.github.raghavsatyadev.scus.ui.match_complete.MatchCompleteScreen
 import io.github.raghavsatyadev.scus.ui.match_record.MatchRecordScreen
 import io.github.raghavsatyadev.scus.ui.user.LoginScreen
 import io.github.raghavsatyadev.support.extensions.replaceAll
+import io.github.raghavsatyadev.support.models.db.match_record.MatchStatus
 
 @Composable
 fun AppNavHost(isLoggedIn: Boolean, onLoginStateChange: () -> Unit) {
@@ -52,7 +53,17 @@ fun AppNavHost(isLoggedIn: Boolean, onLoginStateChange: () -> Unit) {
           DashboardScreen(
             onAddMatchClick = { backStack.add(AppRoutes.CreateMatch()) },
             onMatchClick = { matchRecord ->
-              backStack.add(AppRoutes.MatchRecord(matchId = matchRecord.matchRecordId))
+              val route =
+                when (matchRecord.status) {
+                  MatchStatus.NOT_STARTED,
+                  MatchStatus.IN_PROGRESS -> {
+                    AppRoutes.MatchRecord(matchId = matchRecord.matchRecordId)
+                  }
+                  else -> {
+                    AppRoutes.MatchComplete(matchId = matchRecord.matchRecordId)
+                  }
+                }
+              backStack.add(route)
             },
             onCopyMatchRecord = { backStack.add(AppRoutes.CreateMatch(matchRecord = it)) },
           )

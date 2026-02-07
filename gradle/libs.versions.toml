@@ -24,12 +24,12 @@ compileSdkPreview = "Baklava"
 buildTools = "36.1.0"
 
 # App Version Codes
-versionCode = "3"
-versionName = "0.0.1"
+versionCode = "4"
+versionName = "1.0.0"
 
 # Plugin Versions
 agp = "9.1.0-alpha08"
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 ksp = "2.3.4"
 google-plugin = "4.4.4"
 
