@@ -36,6 +36,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.components.AppToolBar
 import io.github.raghavsatyadev.support.components.DarkRealDevicePreview
@@ -45,6 +47,8 @@ import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordExtens
 import io.github.raghavsatyadev.support.models.db.match_record.MatchStatus
 import io.github.raghavsatyadev.support.models.db.match_record.TeamDetail
 import io.github.raghavsatyadev.support.theme.AppTheme
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -53,7 +57,11 @@ fun MatchCompleteScreen(
   viewModel: MatchCompleteScreenViewModel = koinViewModel(),
   onBack: () -> Unit = {},
 ) {
-  LaunchedEffect(matchId) { viewModel.loadMatchRecord(matchId) }
+  val lifecycleOwner = LocalLifecycleOwner.current
+  LaunchedEffect(matchId) {
+    lifecycleOwner.lifecycle.currentStateFlow.filter { it == Lifecycle.State.RESUMED }.first()
+    viewModel.loadMatchRecord(matchId)
+  }
 
   val matchRecord by viewModel.matchRecord.collectAsState()
 
