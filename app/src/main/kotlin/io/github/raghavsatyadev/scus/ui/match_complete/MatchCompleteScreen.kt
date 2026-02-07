@@ -95,6 +95,42 @@ private fun MatchCompleteUI(
         horizontalAlignment = Alignment.CenterHorizontally,
       ) {
         details?.let { d ->
+          matchRecord?.status?.let { status ->
+            val isWin =
+              (showTeam1 && status == MatchStatus.TEAM_1_WON) ||
+                (!showTeam1 && status == MatchStatus.TEAM_2_WON)
+            val isLoss =
+              (showTeam1 && status == MatchStatus.TEAM_2_WON) ||
+                (!showTeam1 && status == MatchStatus.TEAM_1_WON)
+            val isDraw = status == MatchStatus.DRAW
+
+            val textId =
+              when {
+                isWin -> R.string.won
+                isLoss -> R.string.lost
+                isDraw -> R.string.draw
+                else -> null
+              }
+            val color =
+              when {
+                isWin -> MaterialTheme.colorScheme.primary
+                isLoss -> MaterialTheme.colorScheme.error
+                isDraw -> MaterialTheme.colorScheme.secondary
+                else -> null
+              }
+
+            if (textId != null && color != null) {
+              Text(
+                text = stringResource(textId).uppercase(),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = color,
+                textAlign = TextAlign.Center,
+              )
+              Spacer(modifier = Modifier.height(8.dp))
+            }
+          }
+
           // Team Name
           Text(
             text = d.currentTeamName,
