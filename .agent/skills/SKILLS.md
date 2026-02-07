@@ -18,5 +18,6 @@ batch wrapper.
 
 Execute the following command in the terminal:
 
-```cmd
-.\ktfmt.bat "{file_path}"
+```shell
+ktfmt "{file_path}"
+```
