@@ -56,6 +56,7 @@ firebase-firestore = "26.1.0"
 firebase-crashlytics-gradle = "3.0.6"
 firebase-messaging = "25.0.1"
 google-id = "1.2.0"
+integrity = "1.6.0"
 koin = "4.2.0-RC1"
 junit = "4.13.2"
 lifecycle = "2.10.0"
@@ -136,6 +137,7 @@ firebase-messaging = { module = "com.google.firebase:firebase-messaging", versio
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "play-services-auth" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "play-services-ads" }
 google-id = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "google-id" }
+play-integrity = { module = "com.google.android.play:integrity", version.ref = "integrity" }
 
 #Room
 room = { module = "androidx.room:room-ktx", version.ref = "room" }
@@ -217,6 +219,7 @@ google = [
     "google-id",
     "play-services-ads",
     "play-services-auth",
+    "play-integrity",
 ]
 koin = [
     "koin-android",

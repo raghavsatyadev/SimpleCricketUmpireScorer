@@ -14,6 +14,8 @@ import io.github.raghavsatyadev.support.database.RoomDBUtil
 import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.google.repository.AuthRepository
 import io.github.raghavsatyadev.support.google.repository.AuthRepositoryImpl
+import io.github.raghavsatyadev.support.google.repository.FireStoreRepository
+import io.github.raghavsatyadev.support.google.repository.FireStoreRepositoryImpl
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUtil
 import io.github.raghavsatyadev.support.storage.StorageUtils
 import org.koin.android.ext.koin.androidContext
@@ -24,8 +26,13 @@ val supportModule = module {
   // Firebase
   single { FirebaseApp.initializeApp(androidContext()) }
   singleOf(::FirebaseAuthUtil)
-  single<io.github.raghavsatyadev.support.google.FireStoreUtil> {
-    io.github.raghavsatyadev.support.google.FireStoreUtilImpl(get(), get(), get(), get())
+  single<FireStoreRepository> {
+    FireStoreRepositoryImpl(
+      get(),
+      get(),
+      get(),
+      get()
+    )
   }
 
   // Room

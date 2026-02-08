@@ -1,9 +1,9 @@
-package io.github.raghavsatyadev.support.google
+package io.github.raghavsatyadev.support.google.repository
 
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 
-interface FireStoreUtil {
+interface FireStoreRepository {
   suspend fun initialize(checkUserToken: Boolean = false)
 
   suspend fun setUser(user: User): User

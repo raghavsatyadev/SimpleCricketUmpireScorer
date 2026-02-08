@@ -3,8 +3,8 @@ package io.github.raghavsatyadev.scus.ui.create_match
 import androidx.lifecycle.viewModelScope
 import io.github.raghavsatyadev.support.components.UiStateManager
 import io.github.raghavsatyadev.support.core.CoreScreenViewModel
-import io.github.raghavsatyadev.support.google.FireStoreUtil
 import io.github.raghavsatyadev.support.google.repository.AuthRepository
+import io.github.raghavsatyadev.support.google.repository.FireStoreRepository
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.models.db.match_record.TeamDetail
 import io.github.raghavsatyadev.support.models.essential.CustomError
@@ -19,7 +19,7 @@ import io.github.raghavsatyadev.support.R as Rs
 
 class CreateMatchScreenViewModel(
   private val authRepository: AuthRepository,
-  private val fireStoreUtil: FireStoreUtil,
+  private val fireStoreRepository: FireStoreRepository,
   private val stringResourceProvider: StringResourceProvider,
   uiStateManager: UiStateManager,
 ) : CoreScreenViewModel(uiStateManager) {
@@ -63,7 +63,7 @@ class CreateMatchScreenViewModel(
             matchAdminID = currentUserId!!,
           )
 
-        val record = fireStoreUtil.createMatchRecord(matchRecord)
+        val record = fireStoreRepository.createMatchRecord(matchRecord)
         _createMatchRecordEvent.emit(UiState.Success(record))
       } catch (e: Exception) {
         _createMatchRecordEvent.emit(UiState.Error(CustomError(ErrorCode.UNKNOWN_ERROR, e)))
