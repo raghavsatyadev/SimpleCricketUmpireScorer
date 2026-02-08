@@ -9,6 +9,10 @@ import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
 import coil3.util.DebugLogger
 import com.google.android.gms.ads.MobileAds
+import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import io.github.raghavsatyadev.scus.support.di.appModule
 import io.github.raghavsatyadev.support.BuildConfig
 import io.github.raghavsatyadev.support.R
@@ -37,6 +41,7 @@ class ChildCoreApp : CoreApp() {
     setupWorker()
     setupCoil()
     setupAds()
+    setupFirebaseAppCheck()
   }
 
   private val scheduler: MatchDataWorkScheduler by inject()
@@ -74,5 +79,17 @@ class ChildCoreApp : CoreApp() {
     } else {
       Toast.makeText(this, R.string.warning_update_play_service, Toast.LENGTH_SHORT).show()
     }
+  }
+
+  private fun setupFirebaseAppCheck() {
+    FirebaseApp.initializeApp(this)
+    val firebaseAppCheck = FirebaseAppCheck.getInstance()
+    firebaseAppCheck.installAppCheckProviderFactory(
+      if (BuildConfig.DEBUG) {
+        DebugAppCheckProviderFactory.getInstance()
+      } else {
+        PlayIntegrityAppCheckProviderFactory.getInstance()
+      }
+    )
   }
 }

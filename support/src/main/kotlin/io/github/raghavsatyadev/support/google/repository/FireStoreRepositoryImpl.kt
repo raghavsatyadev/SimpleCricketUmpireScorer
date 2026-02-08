@@ -1,4 +1,4 @@
-package io.github.raghavsatyadev.support.google
+package io.github.raghavsatyadev.support.google.repository
 
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
@@ -23,6 +23,7 @@ import io.github.raghavsatyadev.support.extensions.AppExtensions.restartApp
 import io.github.raghavsatyadev.support.extensions.KotlinExtensions.forEachParallel
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toJsonString
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toKotlinObject
+import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUtil
@@ -31,12 +32,12 @@ import io.github.raghavsatyadev.support.preferences.AppPrefsUtil
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.tasks.await
 
-class FireStoreUtilImpl(
+class FireStoreRepositoryImpl(
   private val firebaseApp: FirebaseApp,
   private val authUtil: FirebaseAuthUtil,
   private val matchRecordDataUtil: MatchRecordDataUtil,
   private val roomDBUtil: RoomDBUtil,
-) : FireStoreUtil {
+) : FireStoreRepository {
   private val db by lazy {
     Firebase.firestore(firebaseApp).apply {
       val settings = firestoreSettings {

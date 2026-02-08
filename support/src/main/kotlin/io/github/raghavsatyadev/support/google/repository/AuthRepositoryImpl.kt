@@ -2,14 +2,13 @@ package io.github.raghavsatyadev.support.google.repository
 
 import io.github.raghavsatyadev.support.AppHelpers
 import io.github.raghavsatyadev.support.database.RoomDBUtil
-import io.github.raghavsatyadev.support.google.FireStoreUtil
 import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.models.User
 import io.github.raghavsatyadev.support.models.essential.CustomError
 
 class AuthRepositoryImpl(
   private val authUtil: FirebaseAuthUtil,
-  private val fireStoreUtil: FireStoreUtil,
+  private val fireStoreRepository: FireStoreRepository,
   private val roomDBUtil: RoomDBUtil,
 ) : AuthRepository {
 
@@ -23,7 +22,7 @@ class AuthRepositoryImpl(
   override suspend fun validateLoginToken(user: User): LoginTokenStatus {
     val remoteUser =
       try {
-        fireStoreUtil.getUser(user.userID)
+        fireStoreRepository.getUser(user.userID)
       } catch (_: Exception) {
         null
       }
@@ -31,8 +30,8 @@ class AuthRepositoryImpl(
     return when {
       remoteUser == null -> {
         try {
-          fireStoreUtil.setUser(user)
-          fireStoreUtil.initialize()
+          fireStoreRepository.setUser(user)
+          fireStoreRepository.initialize()
           LoginTokenStatus.Success
         } catch (e: Exception) {
           LoginTokenStatus.Error(e)
@@ -40,8 +39,8 @@ class AuthRepositoryImpl(
       }
       remoteUser.loginToken.isNullOrEmpty() -> {
         try {
-          fireStoreUtil.updateUserLoginTokens()
-          fireStoreUtil.initialize()
+          fireStoreRepository.updateUserLoginTokens()
+          fireStoreRepository.initialize()
           LoginTokenStatus.Success
         } catch (e: Exception) {
           LoginTokenStatus.Error(e)
@@ -54,11 +53,11 @@ class AuthRepositoryImpl(
   }
 
   override suspend fun updateUserTokens() {
-    fireStoreUtil.updateUserLoginTokens()
-    fireStoreUtil.initialize()
+    fireStoreRepository.updateUserLoginTokens()
+    fireStoreRepository.initialize()
   }
 
   override suspend fun signOut() {
-    AppHelpers.signOut(fireStoreUtil, authUtil, roomDBUtil)
+    AppHelpers.signOut(fireStoreRepository, authUtil, roomDBUtil)
   }
 }
