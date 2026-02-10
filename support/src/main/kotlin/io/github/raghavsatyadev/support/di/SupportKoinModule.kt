@@ -26,14 +26,7 @@ val supportModule = module {
   // Firebase
   single { FirebaseApp.initializeApp(androidContext()) }
   singleOf(::FirebaseAuthUtil)
-  single<FireStoreRepository> {
-    FireStoreRepositoryImpl(
-      get(),
-      get(),
-      get(),
-      get()
-    )
-  }
+  single<FireStoreRepository> { FireStoreRepositoryImpl(get(), get(), get(), get()) }
 
   // Room
   single<AppDatabase> {
@@ -60,11 +53,5 @@ val supportModule = module {
   single<io.github.raghavsatyadev.support.providers.StringResourceProvider> {
     io.github.raghavsatyadev.support.providers.AndroidStringResourceProvider(androidContext())
   }
-  single<AuthRepository> {
-      AuthRepositoryImpl(
-          get(),
-          get(),
-          get()
-      )
-  }
+  single<AuthRepository> { AuthRepositoryImpl(get(), get(), get()) }
 }
