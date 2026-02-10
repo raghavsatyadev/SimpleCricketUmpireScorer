@@ -17,4 +17,5 @@ google-services.json
 keystore.gradle
 local.properties
 release
+gradle-daemon-jvm.properties
 secret.properties

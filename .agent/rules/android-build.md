@@ -3,10 +3,12 @@ trigger: always_on
 ---
 
 # RULE: ANDROID & KMP BUILD VERIFICATION
+
 **Context:**
 You must verify that the codebase compiles successfully before marking a task as complete.
 
 **Trigger:**
+
 - AFTER formatting the code.
 - BEFORE presenting the final solution to the user.
 
@@ -24,5 +26,6 @@ If you edited source code (`.kt`, `.xml`):
 `.\gradlew.bat :composeApp:compileDebugKotlin`
 
 **Recovery:**
+
 - If build fails: Read error -> Fix specific issue -> Retry.
 - Do NOT guess imports.
