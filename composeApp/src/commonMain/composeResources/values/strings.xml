@@ -1,5 +1,39 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <string name="app_name">SCUS</string>
+    <!--Permission Dialog-->
+    <string name="permission_positive_button">OK</string>
+    <string name="permission_negative_button">Cancel</string>
+    <string name="permission_deny_reason_message">These permissions are required for the application to work
+        successfully
+    </string>
+    <string name="permission_forward_settings_message">You need to allow necessary permissions in Settings manually
+    </string>
+
+    <!--Notification-->
+    <string name="general_notification_channel_name">General</string>
+    <string name="general_notification_channel_description">General Notifications</string>
+    <string name="default_notification_message">You have received a notification</string>
+
+    <!-- Warnings -->
+    <string name="warning_connect_internet">Please connect to internet.</string>
+    <string name="warning_update_play_service">Update Play Service and Restart app</string>
+    <string name="warning_unknown_error">Unknown Error</string>
+    <string name="warning_network_error">Please connect to a stable internet connection</string>
+    <string name="warning_auth_failed">Authentication failed</string>
+    <string name="warning_match_location">Please enter match location</string>
+    <string name="warning_match_date_time">Please enter match date &amp; time</string>
+    <string name="warning_overs">Please enter overs</string>
+    <string name="warning_team_1_name">Please enter team 1 name</string>
+    <string name="warning_team_2_name">Please enter team 2 name</string>
+    <string name="warning_please_login">Please login first</string>
+    <string name="warning_already_logged_in_1">You are currently logged in on another device. To prevent data loss, please sync your data from that device first.</string>
+    <string name="warning_already_logged_in_2">If you have synced your data, click the \'Force Login\' button. This will log you out from the other device.</string>
+    <string name="warning_already_logged_in_3">If you have not synced your data yet, please click \'Logout\' to log out from this device.</string>
+    <string name="dialog_already_logged_in_title">Already logged in?</string>
+
+    <!-- General -->
+    <string name="error">Error</string>
+    <string name="okay">Okay</string>
     <string name="back">Back</string>
+
 </resources>
