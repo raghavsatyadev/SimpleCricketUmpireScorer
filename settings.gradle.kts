@@ -25,4 +25,4 @@ rootProject.buildFileName = "project.gradle.kts"
 
 rootProject.name = "SCUS"
 
-include(":app", ":support", ":composeApp", ":androidCMP")
+include(":app", ":support", ":composeApp", ":androidCMP", ":desktopCMP")
