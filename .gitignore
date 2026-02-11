@@ -18,3 +18,4 @@ keystore.gradle
 local.properties
 release
 secret.properties
+gradle/gradle-daemon-jvm.properties
