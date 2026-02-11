@@ -101,7 +101,7 @@ fun AppTheme(
     }
   MaterialExpressiveTheme(
     colorScheme = colorScheme,
-    typography = AppTypography,
+    typography = getAppTypoGraphy(),
     motionScheme = MotionScheme.expressive(),
     content = content,
   )
