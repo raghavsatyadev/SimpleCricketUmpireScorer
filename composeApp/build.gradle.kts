@@ -19,7 +19,7 @@ kotlin {
 
   jvm("desktop")
 
-  listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
+  listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
     iosTarget.binaries.framework {
       baseName = "SCUS"
       isStatic = true
@@ -39,6 +39,7 @@ kotlin {
       implementation(libs.bundles.lifecycle.mp)
       implementation(libs.bundles.navigation.mp)
       implementation(libs.bundles.room.mp)
+      implementation(libs.kotlinx.serialization.json)
     }
   }
 }
@@ -48,6 +49,5 @@ dependencies {
   add("kspAndroid", libs.room.compiler)
   add("kspDesktop", libs.room.compiler)
   add("kspIosSimulatorArm64", libs.room.compiler)
-  add("kspIosX64", libs.room.compiler)
   add("kspIosArm64", libs.room.compiler)
 }

@@ -6,7 +6,9 @@ project (`SimpleCricketUmpireScorer`) to a Compose Multiplatform (CMP) project.
 ## Current Status (as of Jan 6)
 
 - **Hilt to Koin**: ✅ Done
+- **Hilt to Koin**: ✅ Done
 - **CMP Migration**: ⏳ Pending (Scheduled for Jan 17-18)
+- **Detailed Status**: [View Migration Inventory](CMP_Migration_Status.md)
 
 ---
 

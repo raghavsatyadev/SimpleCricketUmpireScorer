@@ -43,8 +43,8 @@ coil = "3.3.0"
 collection = "1.6.0-beta01"
 compose-constraint = "1.1.1"
 compose-material3 = "1.5.0-alpha13"
-compose-material3-mp = "1.9.0"
-compose-multiplatform = "1.10.0"
+compose-material3-mp = "1.10.0-alpha05"
+compose-multiplatform = "1.11.0-alpha02"
 compose-ui = "1.11.0-alpha04"
 concurrent-futures = "1.3.0"
 coroutines = "1.10.2"
@@ -65,6 +65,7 @@ junit = "4.13.2"
 lifecycle = "2.10.0"
 lifecycle-mp = "2.9.6"
 navigation3 = "1.1.0-alpha03"
+navigation3-mp = "1.1.0-alpha02"
 navigation3-adaptive = "1.3.0-alpha04"
 play-services-ads = "24.9.0"
 play-services-auth = "21.5.0"
@@ -76,7 +77,6 @@ splashscreen = "1.2.0"
 stability-analyzer = "0.6.6"
 startup = "1.2.0"
 work-manager = "2.11.1"
-navigation-compose-mp = "2.9.1"
 logback = "1.5.28"
 
 [libraries]
@@ -136,6 +136,7 @@ lifecycle-runtime-compose-mp = { module = "org.jetbrains.androidx.lifecycle:life
 navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
 navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 navigation3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation3", version.ref = "navigation3-adaptive" }
+navigation3-ui-mp = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3-mp" }
 
 # Koin
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
@@ -295,9 +296,7 @@ navigation = [
     "navigation3-adaptive",
 ]
 navigation-mp = [
-    "navigation3-runtime",
-    "navigation3-ui",
-    "navigation3-adaptive",
+    "navigation3-ui-mp",
 ]
 other = [
     "androidx-work-runtime",
