@@ -10,7 +10,7 @@ plugins {
 }
 
 kotlin {
-  androidLibrary {
+  android {
     namespace = libs.versions.sharedAndroidId.get()
     compileSdk = libs.versions.compileSdk.get().toInt()
     androidResources.enable = true
