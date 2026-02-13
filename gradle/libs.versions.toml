@@ -31,6 +31,7 @@ versionName = "1.0.0"
 # Plugin Versions
 agp = "9.1.0-alpha09"
 kotlin = "2.3.10"
+kotlinx-datetime = "0.6.0"
 ksp = "2.3.5"
 google-plugin = "4.4.4"
 
@@ -115,6 +116,7 @@ compose-runtime-mp = { module = "org.jetbrains.compose.runtime:runtime", version
 
 #Kotlin
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
