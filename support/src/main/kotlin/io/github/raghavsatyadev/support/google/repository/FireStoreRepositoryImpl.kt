@@ -20,7 +20,6 @@ import io.github.raghavsatyadev.support.database.RoomDBUtil
 import io.github.raghavsatyadev.support.extensions.AppExtensions
 import io.github.raghavsatyadev.support.extensions.AppExtensions.kotlinFileName
 import io.github.raghavsatyadev.support.extensions.AppExtensions.restartApp
-import io.github.raghavsatyadev.support.extensions.KotlinExtensions.forEachParallel
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toJsonString
 import io.github.raghavsatyadev.support.extensions.serializer.SerializationExtensions.toKotlinObject
 import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
@@ -185,7 +184,7 @@ class FireStoreRepositoryImpl(
   override suspend fun updateMatchRecords(matchRecords: List<MatchRecord>): Boolean {
     val task =
       db.runTransaction {
-        matchRecords.forEachParallel { record ->
+        matchRecords.forEach { record ->
           val document =
             db.collection(FirebaseConstants.Collections.MATCH_RECORD).document(record.matchRecordId)
           it[document] = record

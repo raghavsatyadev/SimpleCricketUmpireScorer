@@ -40,6 +40,7 @@ kotlin {
       implementation(libs.bundles.navigation.mp)
       implementation(libs.bundles.room.mp)
       implementation(libs.kotlinx.serialization.json)
+      implementation(libs.kotlinx.datetime)
     }
   }
 }
