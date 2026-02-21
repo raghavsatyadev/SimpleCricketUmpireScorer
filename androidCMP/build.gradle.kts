@@ -14,7 +14,7 @@ android {
   buildToolsVersion = libs.versions.buildTools.get()
 
   defaultConfig {
-    applicationId = libs.versions.appIdDev.get()
+    applicationId = libs.versions.appIdProd.get()
     minSdk = libs.versions.minSdk.get().toInt()
     targetSdk = libs.versions.targetSdk.get().toInt()
     versionCode = libs.versions.versionCode.get().toInt()
@@ -30,7 +30,6 @@ android {
 
 dependencies {
   implementation(projects.composeApp)
-  implementation(libs.compose.activity)
-  implementation(libs.compose.ui.preview)
+  implementation(libs.bundles.android.mp)
   debugImplementation(libs.compose.ui.tooling)
 }

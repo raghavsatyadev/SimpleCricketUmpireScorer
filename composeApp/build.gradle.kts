@@ -7,8 +7,11 @@ plugins {
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.ksp)
+  alias(libs.plugins.kotzilla)
 }
-
+kotzilla {
+  versionName = libs.versions.versionName.get()
+}
 kotlin {
   android {
     namespace = libs.versions.sharedAndroidId.get()
@@ -41,6 +44,7 @@ kotlin {
       implementation(libs.bundles.room.mp)
       implementation(libs.kotlinx.serialization.json)
       implementation(libs.kotlinx.datetime)
+      implementation(libs.kotzilla.sdk.compose)
     }
   }
 }
@@ -52,3 +56,16 @@ dependencies {
   add("kspIosSimulatorArm64", libs.room.compiler)
   add("kspIosArm64", libs.room.compiler)
 }
+
+
+afterEvaluate {
+  val kotzillaTask = tasks.findByName("generateKotzillaConfig")
+  if (kotzillaTask != null) {
+    tasks.configureEach {
+      if (name.startsWith("ksp")) {
+        dependsOn(kotzillaTask)
+      }
+    }
+  }
+}
+
