@@ -29,9 +29,9 @@ versionCode = "4"
 versionName = "1.0.0"
 
 # Plugin Versions
-agp = "9.1.0-alpha09"
+agp = "9.0.1"
 kotlin = "2.3.10"
-kotlinx-datetime = "0.6.0"
+kotlinx-datetime = "0.7.1"
 ksp = "2.3.5"
 google-plugin = "4.4.4"
 
@@ -62,23 +62,24 @@ firebase-messaging = "25.0.1"
 google-id = "1.2.0"
 integrity = "1.6.0"
 koin = "4.2.0-RC1"
+kotzilla = "2.0.6"
 junit = "4.13.2"
 lifecycle = "2.10.0"
 lifecycle-mp = "2.10.0-alpha08"
 navigation3 = "1.1.0-alpha04"
 navigation3-mp = "1.1.0-alpha02"
 navigation3-adaptive = "1.3.0-alpha04"
-play-services-ads = "24.9.0"
-play-services-auth = "21.5.0"
+play-services-ads = "25.0.0"
+play-services-auth = "21.5.1"
 room = "2.8.4"
 room-sqlite = "2.6.2"
 serialization = "1.10.0"
 sonarqube = "7.2.2.6593"
 splashscreen = "1.2.0"
-stability-analyzer = "0.6.7"
+stability-analyzer = "0.7.0"
 startup = "1.2.0"
 work-manager = "2.11.1"
-logback = "1.5.29"
+logback = "1.5.32"
 
 [libraries]
 # Classpaths
@@ -152,6 +153,8 @@ koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose-mp = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel-mp = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 
+kotzilla-sdk-compose = { group = "io.kotzilla", name = "kotzilla-sdk-compose", version.ref = "kotzilla" }
+
 #Firebase
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebase-analytics" }
 firebase-appcheck-debug = { module = "com.google.firebase:firebase-appcheck-debug", version.ref = "firebase-appcheck" }
@@ -216,6 +219,8 @@ room = { id = "androidx.room", version.ref = "room" }
 stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "stability-analyzer" }
 crashlytics = { id = "com.google.firebase.crashlytics" }
 
+kotzilla = { id = "io.kotzilla.kotzilla-plugin", version.ref = "kotzilla" }
+
 [bundles]
 kotlin = [
     "kotlin-stdlib-jdk8",
@@ -247,6 +252,17 @@ compose = [
     "compose-ui-font",
     "compose-ui-preview",
     "compose-ui-animation",
+]
+android-mp=[
+    "compose-ui-preview",
+    "compose-activity",
+    "koin-core",
+    "koin-android",
+    "koin-androidx-compose",
+    "koin-compose-mp",
+    "koin-compose-viewmodel-mp",
+    "koin-androidx-workmanager",
+
 ]
 compose-mp = [
     "compose-ui-mp",
