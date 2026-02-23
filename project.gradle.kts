@@ -1,4 +1,9 @@
-buildscript { dependencies { classpath(libs.com.google.firebase) } }
+buildscript {
+  dependencies {
+    classpath(libs.com.google.firebase)
+    classpath(libs.kotlin.gradle.plugin)
+  }
+}
 
 plugins {
   alias(libs.plugins.android.application) apply false
