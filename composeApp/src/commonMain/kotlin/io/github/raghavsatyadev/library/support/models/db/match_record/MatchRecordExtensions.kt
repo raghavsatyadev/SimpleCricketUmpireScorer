@@ -1,0 +1,221 @@
+package io.github.raghavsatyadev.library.support.models.db.match_record
+
+import io.github.raghavsatyadev.library.support.Constants.FieldKeys
+import io.github.raghavsatyadev.library.support.extensions.DateExtensions.formatMillisToDate
+import io.github.raghavsatyadev.library.support.extensions.format
+
+object MatchRecordExtensions {
+  private fun MatchRecord.getWickets(shouldPrepareTeam1Details: Boolean) =
+    if (shouldPrepareTeam1Details) {
+      team1Detail.wickets
+    } else {
+      team2Detail.wickets
+    }
+
+  private fun MatchRecord.getCRR(shouldPrepareTeam1Details: Boolean): String {
+    val runs =
+      if (shouldPrepareTeam1Details) {
+        team1Detail.runs
+      } else {
+        team2Detail.runs
+      }
+    val balls =
+      if (shouldPrepareTeam1Details) {
+        team1Detail.balls
+      } else {
+        team2Detail.balls
+      }
+    return if (balls == 0) {
+      "N/A"
+    } else {
+      val crr = runs * 6.0 / balls
+      crr.format(2)
+    }
+  }
+
+  fun MatchRecord.getRRR(): String {
+    val shouldPrepareTeam1Details = isTeam1CurrentlyBatting()
+
+    val currentRuns = getRuns(shouldPrepareTeam1Details)
+    val currentBalls = getBalls(shouldPrepareTeam1Details)
+    val otherTeamRuns = getRuns(!shouldPrepareTeam1Details)
+
+    return getRRR(currentRuns, otherTeamRuns, currentBalls)
+  }
+
+  /**
+   * Calculates the Required Run Rate (RRR) in a cricket match.
+   *
+   * @param currentBattingTeamRuns The runs scored by the current batting team.
+   * @param otherTeamRuns The total runs scored by the other team.
+   * @param currentBattingTeamBalls The balls faced by the current batting team.
+   * @return The Required Run Rate (RRR) as a formatted String.
+   */
+  fun MatchRecord.getRRR(
+    currentBattingTeamRuns: Int,
+    otherTeamRuns: Int,
+    currentBattingTeamBalls: Int,
+  ): String {
+    val ballsRemaining = ballsPerInning - currentBattingTeamBalls
+    val runsRequired = otherTeamRuns + 1 - currentBattingTeamRuns
+
+    // Check if the target has been achieved or if there are no balls left
+    if (ballsRemaining <= 0 || runsRequired <= 0) {
+      return if (runsRequired <= 0) {
+        "0.0"
+      } else {
+        "N/A"
+      }
+    }
+
+    // Calculate Required Run Rate (RRR)
+    val rrr = (runsRequired.toDouble() * 6) / ballsRemaining
+
+    // Format the result to 2 decimal places
+    return rrr.format(2)
+  }
+
+  /**
+   * Get required runs balls
+   *
+   * @param currentBattingTeamRuns
+   * @param otherTeamRuns
+   * @param currentBattingTeamBalls
+   * @return required run and balls in format of Runs (Balls)
+   */
+  private fun MatchRecord.getRequiredRunsBalls(
+    currentBattingTeamRuns: Int,
+    otherTeamRuns: Int,
+    currentBattingTeamBalls: Int,
+  ): String {
+    val runsRequired = otherTeamRuns + 1 - currentBattingTeamRuns
+    val ballsRemaining = ballsPerInning - currentBattingTeamBalls
+    return "$runsRequired ($ballsRemaining)"
+  }
+
+  fun MatchRecord.toBasicMatchUIDetails(needTeam1Details: Boolean? = null): io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails {
+    val shouldPrepareTeam1Details = needTeam1Details ?: isTeam1CurrentlyBatting()
+
+    val currentRuns = getRuns(shouldPrepareTeam1Details)
+    val currentWickets = getWickets(shouldPrepareTeam1Details)
+    val currentBalls = getBalls(shouldPrepareTeam1Details)
+    val currentRunsAndWickets = formatCurrentRunsAndWickets(currentRuns, currentWickets)
+    val currentOvers = formatToOvers(currentBalls)
+    val currentFormattedOvers = "$currentOvers / ${formatToOvers(ballsPerInning)}"
+    val currentCRR = getCRR(shouldPrepareTeam1Details)
+    val otherTeamRuns = getRuns(!shouldPrepareTeam1Details)
+    val totalOvers = getOvers()
+    val currentRRR = getRRR(currentRuns, otherTeamRuns, currentBalls)
+    val requiredRunsBalls = getRequiredRunsBalls(currentRuns, otherTeamRuns, currentBalls)
+
+    return _root_ide_package_.io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails(
+        currentTeamName = if (shouldPrepareTeam1Details) {
+            team1Detail.teamName
+        } else {
+            team2Detail.teamName
+        },
+        currentRunsAndWickets = currentRunsAndWickets,
+        currentFormattedOvers = currentFormattedOvers,
+        currentOvers = currentOvers,
+        totalOvers = totalOvers,
+        currentCRR = currentCRR,
+        isFirstInningComplete = isFirstInningComplete,
+        currentRRR = currentRRR,
+        requiredRunsBalls = requiredRunsBalls,
+        matchStatus = status,
+    )
+  }
+
+  private fun MatchRecord.getRuns(shouldPrepareTeam1Details: Boolean) =
+    if (shouldPrepareTeam1Details) {
+      team1Detail.runs
+    } else {
+      team2Detail.runs
+    }
+
+  fun MatchRecord.getTeam1FormattedScore() =
+    "${getRuns(true)}-${getWickets(true)} (${formatToOvers(getBalls(true))})"
+
+  fun MatchRecord.getTeam2FormattedScore() =
+    "${getRuns(false)}-${getWickets(false)} (${formatToOvers(getBalls(false))})"
+
+  private fun formatCurrentRunsAndWickets(runs: Int, wickets: Int) = "$runs-$wickets"
+
+  private fun formatToOvers(balls: Int): String {
+    return "${balls / 6}.${balls % 6}"
+  }
+
+  fun MatchRecord.getOvers(): String {
+    return "${ballsPerInning / 6}"
+  }
+
+  private fun MatchRecord.getBalls(shouldPrepareTeam1Details: Boolean) =
+    if (shouldPrepareTeam1Details) {
+      team1Detail.balls
+    } else {
+      team2Detail.balls
+    }
+
+  @Throws(NumberFormatException::class)
+  fun oversToBalls(overs: String): Int {
+    val parts = overs.split(".")
+    val wholeOvers = parts[0].toInt()
+    val additionalBalls = if (parts.size > 1) parts[1].toInt() else 0
+    return wholeOvers * 6 + additionalBalls
+  }
+
+  /**
+   * Takes into account following things
+   * - [io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord.isTeam1BattingFirst] if team 1 took first batting or not
+   * - [io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord.isFirstInningComplete] if first inning is complete or not
+   */
+  fun MatchRecord.isTeam1CurrentlyBatting() =
+    when {
+      isTeam1BattingFirst && !isFirstInningComplete -> true
+      !isTeam1BattingFirst && !isFirstInningComplete -> false
+      isTeam1BattingFirst -> false
+      else -> true
+    }
+
+  fun MatchRecord.isMatchCompleted() =
+    !(status == MatchStatus.NOT_STARTED || status == MatchStatus.IN_PROGRESS)
+
+  fun io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails.isMatchCompleted() =
+    !(matchStatus == MatchStatus.NOT_STARTED || matchStatus == MatchStatus.IN_PROGRESS)
+
+  fun MatchRecord.getMatchTimings(): String {
+    val matchEndTimeString =
+      if (isMatchCompleted()) {
+        " - ${endDateTime.formatMillisToDate()}"
+      } else {
+        ""
+      }
+    val matchStartTime = startDateTime.formatMillisToDate()
+    val matchTimings = matchStartTime + matchEndTimeString
+    return matchTimings
+  }
+
+  fun MatchRecord.toMap(): Map<String, Any?> {
+    return mapOf(
+      FieldKeys.START_DATE_TIME to startDateTime,
+      FieldKeys.END_DATE_TIME to endDateTime,
+      FieldKeys.TEAM_1 to team1Detail.toMap(),
+      FieldKeys.TEAM_2 to team2Detail.toMap(),
+      FieldKeys.BALLS_PER_INNING to ballsPerInning,
+      FieldKeys.DID_TEAM_1_WON_TOSS to didTeam1WonToss,
+      FieldKeys.IS_TEAM_1_BATTING_FIRST to isTeam1BattingFirst,
+      FieldKeys.IS_FIRST_INNING_COMPLETE to isFirstInningComplete,
+      FieldKeys.RRR_AT_SECOND_INNING_START to rrrAtSecondInningStart,
+      FieldKeys.STATUS to status,
+    )
+  }
+
+  private fun TeamDetail.toMap(): Map<String, Any?> {
+    return mapOf(
+      FieldKeys.TEAM_NAME to teamName,
+      FieldKeys.RUNS to runs,
+      FieldKeys.WICKETS to wickets,
+      FieldKeys.BALLS to balls,
+    )
+  }
+}
