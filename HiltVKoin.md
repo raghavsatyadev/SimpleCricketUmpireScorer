@@ -98,7 +98,7 @@ object AppDataModule {
 ```kotlin
 val appModule = module {
     // simple
-    singleOf(::DataRepoImpl) 
+    singleOf(::DataRepoImpl)
 }
 ```
 
@@ -124,7 +124,8 @@ fun provideAuthRetrofit(): Retrofit = ...
 
 // 3. Inject
 class AuthService @Inject constructor(
-    @AuthRetrofit private val retrofit: Retrofit
+    @AuthRetrofit
+    private val retrofit: Retrofit
 )
 ```
 

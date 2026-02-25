@@ -36,21 +36,22 @@ ksp = "2.3.5"
 google-plugin = "4.4.4"
 
 # Library Versions
-activity = "1.13.0-alpha01"
+activity = "1.13.0-rc01"
 androidx-core = "1.18.0-rc01"
 androidx-junit = "1.3.0"
 androidx-test = "1.7.0"
 coil = "3.3.0"
 collection = "1.6.0-rc01"
 compose-constraint = "1.1.1"
-compose-material3 = "1.5.0-alpha14"
+compose-constraint-mp = "0.6.1"
+compose-material3 = "1.5.0-alpha15"
 compose-material3-mp = "1.10.0-alpha05"
 compose-multiplatform = "1.11.0-alpha02"
-compose-ui = "1.11.0-alpha05"
+compose-ui = "1.11.0-alpha06"
 concurrent-futures = "1.3.0"
 coroutines = "1.10.2"
-credentials = "1.6.0-rc01"
-datastore = "1.3.0-alpha05"
+credentials = "1.6.0-rc02"
+datastore = "1.3.0-alpha06"
 desugar-jdk-libs = "2.1.5"
 firebase-analytics = "23.0.0"
 firebase-appcheck = "19.0.2"
@@ -66,7 +67,7 @@ kotzilla = "2.0.6"
 junit = "4.13.2"
 lifecycle = "2.10.0"
 lifecycle-mp = "2.10.0-alpha08"
-navigation3 = "1.1.0-alpha04"
+navigation3 = "1.1.0-alpha05"
 navigation3-mp = "1.1.0-alpha02"
 navigation3-adaptive = "1.3.0-alpha04"
 play-services-ads = "25.0.0"
@@ -115,6 +116,7 @@ compose-material3-mp = { module = "org.jetbrains.compose.material3:material3", v
 compose-components-resources-mp = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
 compose-ui-tooling-preview-mp = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-multiplatform" }
 compose-runtime-mp = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
+compose-constraint-mp = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "compose-constraint-mp" }
 
 #Kotlin
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
@@ -254,7 +256,7 @@ compose = [
     "compose-ui-preview",
     "compose-ui-animation",
 ]
-android-mp=[
+android-mp = [
     "compose-ui-preview",
     "compose-activity",
     "koin-core",
@@ -263,7 +265,6 @@ android-mp=[
     "koin-compose-mp",
     "koin-compose-viewmodel-mp",
     "koin-androidx-workmanager",
-
 ]
 compose-mp = [
     "compose-ui-mp",
@@ -272,6 +273,7 @@ compose-mp = [
     "compose-material3-mp",
     "compose-components-resources-mp",
     "compose-runtime-mp",
+    "compose-constraint-mp",
 ]
 firebase = [
     "firebase-analytics",

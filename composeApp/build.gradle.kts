@@ -9,9 +9,9 @@ plugins {
   alias(libs.plugins.ksp)
   alias(libs.plugins.kotzilla)
 }
-kotzilla {
-  versionName = libs.versions.versionName.get()
-}
+
+kotzilla { versionName = libs.versions.versionName.get() }
+
 kotlin {
   android {
     namespace = libs.versions.sharedAndroidId.get()
@@ -57,7 +57,6 @@ dependencies {
   add("kspIosArm64", libs.room.compiler)
 }
 
-
 afterEvaluate {
   val kotzillaTask = tasks.findByName("generateKotzillaConfig")
   if (kotzillaTask != null) {
@@ -68,4 +67,3 @@ afterEvaluate {
     }
   }
 }
-

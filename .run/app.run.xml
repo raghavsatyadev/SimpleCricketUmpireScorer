@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
     <configuration name="app" activateToolWindowBeforeRun="false" default="false"
-        factoryName="Android App" type="AndroidRunConfigurationType">
+                   factoryName="Android App" type="AndroidRunConfigurationType">
         <module name="SCUS.app" />
         <option name="ANDROID_RUN_CONFIGURATION_SCHEMA_VERSION" value="1" />
         <option name="DEPLOY" value="true" />
@@ -60,7 +60,7 @@
             <option name="STARTUP_PROFILING_ENABLED" value="false" />
             <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
             <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME"
-                value="Java/Kotlin Method Sample (legacy)" />
+                    value="Java/Kotlin Method Sample (legacy)" />
             <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
             <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
         </Profilers>

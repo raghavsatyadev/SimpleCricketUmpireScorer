@@ -93,7 +93,9 @@ object MatchRecordExtensions {
     return "$runsRequired ($ballsRemaining)"
   }
 
-  fun MatchRecord.toBasicMatchUIDetails(needTeam1Details: Boolean? = null): io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails {
+  fun MatchRecord.toBasicMatchUIDetails(
+    needTeam1Details: Boolean? = null
+  ): io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails {
     val shouldPrepareTeam1Details = needTeam1Details ?: isTeam1CurrentlyBatting()
 
     val currentRuns = getRuns(shouldPrepareTeam1Details)
@@ -109,20 +111,21 @@ object MatchRecordExtensions {
     val requiredRunsBalls = getRequiredRunsBalls(currentRuns, otherTeamRuns, currentBalls)
 
     return _root_ide_package_.io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails(
-        currentTeamName = if (shouldPrepareTeam1Details) {
-            team1Detail.teamName
+      currentTeamName =
+        if (shouldPrepareTeam1Details) {
+          team1Detail.teamName
         } else {
-            team2Detail.teamName
+          team2Detail.teamName
         },
-        currentRunsAndWickets = currentRunsAndWickets,
-        currentFormattedOvers = currentFormattedOvers,
-        currentOvers = currentOvers,
-        totalOvers = totalOvers,
-        currentCRR = currentCRR,
-        isFirstInningComplete = isFirstInningComplete,
-        currentRRR = currentRRR,
-        requiredRunsBalls = requiredRunsBalls,
-        matchStatus = status,
+      currentRunsAndWickets = currentRunsAndWickets,
+      currentFormattedOvers = currentFormattedOvers,
+      currentOvers = currentOvers,
+      totalOvers = totalOvers,
+      currentCRR = currentCRR,
+      isFirstInningComplete = isFirstInningComplete,
+      currentRRR = currentRRR,
+      requiredRunsBalls = requiredRunsBalls,
+      matchStatus = status,
     )
   }
 
@@ -166,8 +169,10 @@ object MatchRecordExtensions {
 
   /**
    * Takes into account following things
-   * - [io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord.isTeam1BattingFirst] if team 1 took first batting or not
-   * - [io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord.isFirstInningComplete] if first inning is complete or not
+   * - [io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord.isTeam1BattingFirst]
+   *   if team 1 took first batting or not
+   * - [io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord.isFirstInningComplete]
+   *   if first inning is complete or not
    */
   fun MatchRecord.isTeam1CurrentlyBatting() =
     when {

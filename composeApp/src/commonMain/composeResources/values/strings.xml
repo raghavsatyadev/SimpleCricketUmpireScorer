@@ -37,8 +37,7 @@
     <string name="back">Back</string>
 
 
-
-     <!-- Login -->
+    <!-- Login -->
     <string name="background">Background</string>
 
     <!-- Dashboard -->
@@ -107,6 +106,6 @@
     <string name="required_runs_balls_at_end">Required at the end\n%s</string>
     <string name="google_login">Google Login</string>
     <string name="force_login">Force Login</string>
-    <string name="logout">Logout</string> 
+    <string name="logout">Logout</string>
 
 </resources>

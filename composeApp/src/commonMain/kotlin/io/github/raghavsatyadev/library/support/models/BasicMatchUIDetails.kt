@@ -12,17 +12,19 @@ package io.github.raghavsatyadev.library.support.models
  * @property isFirstInningComplete Indicates if the first inning is complete.
  * @property currentRRR The required run rate (RRR) for the chasing team.
  * @property requiredRunsBalls The required runs and balls remaining in the format "runs (balls)".
- * @property matchStatus The current status of the match [io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus]
+ * @property matchStatus The current status of the match
+ *   [io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus]
  */
 data class BasicMatchUIDetails(
-    val currentTeamName: String,
-    val currentRunsAndWickets: String,
-    val currentFormattedOvers: String,
-    val currentOvers: String,
-    val totalOvers: String,
-    val currentCRR: String,
-    val isFirstInningComplete: Boolean = false,
-    val currentRRR: String = "",
-    val requiredRunsBalls: String = "",
-    val matchStatus: io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus = io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus.IN_PROGRESS,
+  val currentTeamName: String,
+  val currentRunsAndWickets: String,
+  val currentFormattedOvers: String,
+  val currentOvers: String,
+  val totalOvers: String,
+  val currentCRR: String,
+  val isFirstInningComplete: Boolean = false,
+  val currentRRR: String = "",
+  val requiredRunsBalls: String = "",
+  val matchStatus: io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus =
+    io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus.IN_PROGRESS,
 )
