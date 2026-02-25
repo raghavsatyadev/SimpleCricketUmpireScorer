@@ -56,21 +56,16 @@ fun AppToolBar(
 @DarkPreview
 @Composable
 fun AppToolBarPreview() {
-    _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
-        AppToolBar(
-            title = "SCUS",
-            onNavigateBack = {})
-    }
+  _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
+    AppToolBar(title = "SCUS", onNavigateBack = {})
+  }
 }
 
 @LightPreview
 @DarkPreview
 @Composable
 fun AppToolBarWithoutBackButtonPreview() {
-    _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
-        AppToolBar(
-            title = "SCUS",
-            onNavigateBack = null
-        )
-    }
+  _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
+    AppToolBar(title = "SCUS", onNavigateBack = null)
+  }
 }

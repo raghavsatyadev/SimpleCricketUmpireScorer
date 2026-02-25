@@ -12,7 +12,11 @@ import scus.composeapp.generated.resources.Res
 import scus.composeapp.generated.resources.okay
 
 @Composable
-fun ErrorDialog(errorCode: io.github.raghavsatyadev.library.support.models.essential.ErrorCode, errorMessage: String? = null, onDismiss: () -> Unit) {
+fun ErrorDialog(
+  errorCode: io.github.raghavsatyadev.library.support.models.essential.ErrorCode,
+  errorMessage: String? = null,
+  onDismiss: () -> Unit,
+) {
   AlertDialog(
     onDismissRequest = { onDismiss() },
     text = { Text(text = errorMessage ?: errorCode.name) },

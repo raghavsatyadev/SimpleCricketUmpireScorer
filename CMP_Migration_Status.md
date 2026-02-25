@@ -96,12 +96,14 @@ to new CMP module, instead of moving.
 
 ### Screens (Features)
 
-- `CreateMatchScreen`, `CreateMatchScreenViewModel`
-- `DashboardScreen`, `DashboardScreenViewModel`
-- `LoginScreen`, `LoginScreenViewModel`
-- `MatchRecordScreen`, `MatchRecordScreenViewModel`
-- `MatchCompleteScreen`, `MatchCompleteScreenViewModel`
-- `MainScreen`, `MainViewModel`
+- ✅ `CreateMatchScreen` | ⏳ `CreateMatchScreenViewModel`
+- ✅ `DashboardScreen` | ⏳ `DashboardScreenViewModel`
+- ✅ `MatchRecordItem`
+- ✅ `LoginScreen` | ⏳ `LoginScreenViewModel`
+- ✅ `UserAlreadyLoggedInDialog`
+- ✅ `MatchRecordScreen` | ⏳ `MatchRecordScreenViewModel`
+- ✅ `MatchCompleteScreen` | ⏳ `MatchCompleteScreenViewModel`
+- ✅ `MainScreen` | ⏳ `MainViewModel`
 
 ### Navigation & Entry Point
 
