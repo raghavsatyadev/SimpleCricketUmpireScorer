@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
+import io.github.raghavsatyadev.library.support.components.DarkPreview
+import io.github.raghavsatyadev.library.support.components.LightPreview
 import io.github.raghavsatyadev.library.support.extensions.serializer.SerializationExtensions.toKotlinObject
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getMatchTimings
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getTeam1FormattedScore
@@ -35,8 +37,8 @@ import scus.composeapp.generated.resources.delete_match_record
 import scus.composeapp.generated.resources.ic_copy
 import scus.composeapp.generated.resources.ic_delete
 
-@io.github.raghavsatyadev.library.support.components.LightPreview
-@io.github.raghavsatyadev.library.support.components.DarkPreview
+@LightPreview
+@DarkPreview
 @Composable
 fun MatchRecordItemPreview() {
   _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {

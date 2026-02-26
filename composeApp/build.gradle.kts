@@ -8,7 +8,10 @@ plugins {
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.ksp)
   alias(libs.plugins.kotzilla)
+  alias(libs.plugins.room)
 }
+
+room { schemaDirectory("$projectDir/schemas") }
 
 kotzilla { versionName = libs.versions.versionName.get() }
 
@@ -33,7 +36,12 @@ kotlin {
     androidMain.dependencies {
       implementation(libs.compose.ui.preview)
       implementation(libs.compose.activity)
+      implementation(libs.bundles.firebase)
+      implementation(libs.bundles.firebase.mp)
+      implementation(libs.room.runtime)
     }
+
+    val iosMain by creating { dependencies { implementation(libs.bundles.firebase.mp) } }
 
     commonMain.dependencies {
       implementation(libs.bundles.compose.mp)

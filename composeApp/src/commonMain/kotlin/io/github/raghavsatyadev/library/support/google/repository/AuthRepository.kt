@@ -16,6 +16,8 @@ interface AuthRepository {
 
   suspend fun updateUserTokens()
 
+  fun isLoggedIn()
+
   suspend fun signOut()
 }
 
