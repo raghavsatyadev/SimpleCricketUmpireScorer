@@ -1,0 +1,155 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "8b7bae1ee81c644f4e568a5de42d729e",
+    "entities": [
+      {
+        "tableName": "match_record",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`match_record_id` TEXT NOT NULL, `start_date_time` INTEGER NOT NULL, `end_date_time` INTEGER NOT NULL, `balls_per_inning` INTEGER NOT NULL, `did_team_1_won_toss` INTEGER NOT NULL, `is_team_1_batting_first` INTEGER NOT NULL, `is_first_inning_complete` INTEGER NOT NULL, `rrr_at_second_inning_start` TEXT NOT NULL, `status` TEXT NOT NULL, `location` TEXT NOT NULL, `match_admin_id` TEXT NOT NULL, `match_shared_user_ids` TEXT NOT NULL, `local_update_date_time` INTEGER, `server_update_date_time` INTEGER, `team_1_team_name` TEXT NOT NULL, `team_1_runs` INTEGER NOT NULL, `team_1_wickets` INTEGER NOT NULL, `team_1_balls` INTEGER NOT NULL, `team_2_team_name` TEXT NOT NULL, `team_2_runs` INTEGER NOT NULL, `team_2_wickets` INTEGER NOT NULL, `team_2_balls` INTEGER NOT NULL, PRIMARY KEY(`match_record_id`))",
+        "fields": [
+          {
+            "fieldPath": "matchRecordId",
+            "columnName": "match_record_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startDateTime",
+            "columnName": "start_date_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endDateTime",
+            "columnName": "end_date_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ballsPerInning",
+            "columnName": "balls_per_inning",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "didTeam1WonToss",
+            "columnName": "did_team_1_won_toss",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isTeam1BattingFirst",
+            "columnName": "is_team_1_batting_first",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFirstInningComplete",
+            "columnName": "is_first_inning_complete",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rrrAtSecondInningStart",
+            "columnName": "rrr_at_second_inning_start",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "matchAdminID",
+            "columnName": "match_admin_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "matchSharedUserIDs",
+            "columnName": "match_shared_user_ids",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "localUpdateDateTime",
+            "columnName": "local_update_date_time",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "serverUpdateDateTime",
+            "columnName": "server_update_date_time",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "team1Detail.teamName",
+            "columnName": "team_1_team_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team1Detail.runs",
+            "columnName": "team_1_runs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team1Detail.wickets",
+            "columnName": "team_1_wickets",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team1Detail.balls",
+            "columnName": "team_1_balls",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team2Detail.teamName",
+            "columnName": "team_2_team_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team2Detail.runs",
+            "columnName": "team_2_runs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team2Detail.wickets",
+            "columnName": "team_2_wickets",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "team2Detail.balls",
+            "columnName": "team_2_balls",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "match_record_id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8b7bae1ee81c644f4e568a5de42d729e')"
+    ]
+  }
+}
