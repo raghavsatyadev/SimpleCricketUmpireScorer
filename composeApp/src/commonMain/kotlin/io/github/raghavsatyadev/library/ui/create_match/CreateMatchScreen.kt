@@ -36,6 +36,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,8 +47,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import io.github.raghavsatyadev.library.support.components.ErrorDialog
 import io.github.raghavsatyadev.library.support.extensions.DateExtensions.formatMillisToDate
+import io.github.raghavsatyadev.library.support.models.essential.UiState
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import scus.composeapp.generated.resources.Res
 import scus.composeapp.generated.resources.cancel
 import scus.composeapp.generated.resources.create_match_title
@@ -67,10 +71,20 @@ import kotlin.time.Clock.System
 @Composable
 fun CreateMatchScreen(
   matchRecord: io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord? = null,
+  viewModel: CreateMatchScreenViewModel = koinViewModel(),
   onMatchCreated:
     (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit =
     {},
 ) {
+  LaunchedEffect(matchRecord) {
+    if (matchRecord != null) {
+      viewModel.setMatchRecord(matchRecord)
+    } else {
+      viewModel.resetMatchRecord()
+    }
+  }
+
+  HandleCreateMatchEvents(viewModel, onMatchCreated)
 
   var showDateTimeDialogs by remember { mutableStateOf(false) }
 
@@ -93,8 +107,7 @@ fun CreateMatchScreen(
     selectedDateTimeMillis = selectedDateTimeMillis,
     onMatchDateTimeClick = { showDateTimeDialogs = true },
     onSaveMatchRecord = { dateTimeMillis, team1, team2, over, toss, bat, location ->
-      // TODO migration: viewModel.saveMatchRecord(dateTimeMillis, team1, team2, over,
-      // toss, bat, location)
+      viewModel.saveMatchRecord(dateTimeMillis, team1, team2, over, toss, bat, location)
     },
     initialTeam1Name = matchRecord?.team1Detail?.teamName ?: "",
     initialTeam2Name = matchRecord?.team2Detail?.teamName ?: "",
@@ -475,5 +488,33 @@ fun CreateMatchRecordScreenPreview() {
       onMatchDateTimeClick = {},
       onSaveMatchRecord = { _, _, _, _, _, _, _ -> },
     )
+  }
+}
+
+@Composable
+private fun HandleCreateMatchEvents(
+  viewModel: CreateMatchScreenViewModel,
+  onMatchCreated:
+    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
+) {
+  val createMatchState by viewModel.createMatchRecordEvent.collectAsState()
+
+  if (createMatchState is UiState.Error) {
+    val state = createMatchState as UiState.Error
+    ErrorDialog(
+      errorCode = state.error.errorCode,
+      errorMessage = state.error.exception?.message ?: state.error.errorCode.warning,
+    ) {
+      viewModel.createMatchEventConsumed()
+    }
+  }
+
+  val matchRecord = (createMatchState as? UiState.Success)?.data
+
+  LaunchedEffect(matchRecord) {
+    matchRecord?.let {
+      onMatchCreated(it)
+      viewModel.createMatchEventConsumed()
+    }
   }
 }

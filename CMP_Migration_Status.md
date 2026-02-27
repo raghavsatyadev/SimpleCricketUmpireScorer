@@ -9,8 +9,8 @@ to new CMP module, instead of moving.
 ## Summary
 
 - **Total Support Files:** 66
-- **Transferred:** 35
-- **Pending:** 28
+- **Transferred:** 36
+- **Pending:** 27
 
 ## Support Module Files
 
@@ -87,7 +87,7 @@ to new CMP module, instead of moving.
 | [Type.kt](file:///home/raghav/Documents/Raghav/Projects/SimpleCricketUmpireScorer/support/src/main/kotlin/io/github/raghavsatyadev/support/theme/Type.kt)                                                       |            ✅ Yes (Compose)             |         ✅ Yes         | [Type.kt](file:///c:/Raghav/Work/CurrentProjects/SCUS/SimpleCricketUmpireScorer/composeApp/src/commonMain/kotlin/io/github/raghavsatyadev/library/theme/Type.kt)                                                         |
 | **Core & DI**                                                                                                                                                                                                   |                                        |                       |                                                                                                                                                                                                                          |
 | [CoreApp.kt](file:///home/raghav/Documents/Raghav/Projects/SimpleCricketUmpireScorer/support/src/main/kotlin/io/github/raghavsatyadev/support/core/CoreApp.kt)                                                  |        ❌ No (Application class)        |         ❌ No          | -                                                                                                                                                                                                                        |
-| [CoreScreenViewModel.kt](file:///home/raghav/Documents/Raghav/Projects/SimpleCricketUmpireScorer/support/src/main/kotlin/io/github/raghavsatyadev/support/core/CoreScreenViewModel.kt)                          |        ⚠️ Minor (Lifecycle KMP)        |         ❌ No          | -                                                                                                                                                                                                                        |
+| [CoreScreenViewModel.kt](file:///home/raghav/Documents/Raghav/Projects/SimpleCricketUmpireScorer/support/src/main/kotlin/io/github/raghavsatyadev/support/core/CoreScreenViewModel.kt)                          |        ⚠️ Minor (Lifecycle KMP)        |         ✅ Yes         | [CoreScreenViewModel.kt](file:///c:/Raghav/Work/CurrentProjects/SCUS/SimpleCricketUmpireScorer/composeApp/src/commonMain/kotlin/io/github/raghavsatyadev/library/support/core/CoreScreenViewModel.kt)                            |
 | [SupportKoinModule.kt](file:///home/raghav/Documents/Raghav/Projects/SimpleCricketUmpireScorer/support/src/main/kotlin/io/github/raghavsatyadev/support/di/SupportKoinModule.kt)                                | ⚠️ Minor (Remove Android dependencies) |         ❌ No          | -                                                                                                                                                                                                                        |
 
 ---
@@ -96,14 +96,14 @@ to new CMP module, instead of moving.
 
 ### Screens (Features)
 
-- ✅ `CreateMatchScreen` | ⏳ `CreateMatchScreenViewModel`
-- ✅ `DashboardScreen` | ⏳ `DashboardScreenViewModel`
+- ✅ `CreateMatchScreen` | ✅ `CreateMatchScreenViewModel`
+- ✅ `DashboardScreen` | ✅ `DashboardScreenViewModel`
 - ✅ `MatchRecordItem`
-- ✅ `LoginScreen` | ⏳ `LoginScreenViewModel`
+- ✅ `LoginScreen` | ✅ `LoginScreenViewModel`
 - ✅ `UserAlreadyLoggedInDialog`
-- ✅ `MatchRecordScreen` | ⏳ `MatchRecordScreenViewModel`
-- ✅ `MatchCompleteScreen` | ⏳ `MatchCompleteScreenViewModel`
-- ✅ `MainScreen` | ⏳ `MainViewModel`
+- ✅ `MatchRecordScreen` | ✅ `MatchRecordScreenViewModel`
+- ✅ `MatchCompleteScreen` | ✅ `MatchCompleteScreenViewModel`
+- ✅ `MainScreen` | ✅ `MainViewModel`
 
 ### Navigation & Entry Point
 

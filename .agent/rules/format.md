@@ -14,7 +14,7 @@ is prohibited.
 - BEFORE running any build verification.
 
 **Command:**
-`ktfmt <relative_path_to_file>`
+`ktfmt --google-style <relative_path_to_file>`
 
 **Verification:**
 

@@ -2,8 +2,6 @@
 
 package io.github.raghavsatyadev.library.ui.dashboard
 
-// common version
-
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,12 +19,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import scus.composeapp.generated.resources.Res
 import scus.composeapp.generated.resources.add_match
 import scus.composeapp.generated.resources.app_name
@@ -34,22 +35,21 @@ import scus.composeapp.generated.resources.ic_add
 
 @Composable
 fun DashboardScreen(
-  matchRecords: List<io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord> =
-    emptyList(), // Passing records directly for UI instead of VM flow
+  viewModel: DashboardScreenViewModel = koinViewModel(),
   onMatchClick:
     (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
   onAddMatchClick: () -> Unit,
   onCopyMatchRecord:
     (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
-  onDeleteMatchRecord:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
 ) {
+  val matchRecords by viewModel.matchRecordsFlow.collectAsState(initial = emptyList())
+
   DashboardUI(
     matchRecords = matchRecords,
     onAddMatchClick = onAddMatchClick,
     onMatchClick = onMatchClick,
     onCopyMatchRecord = onCopyMatchRecord,
-    onDeleteMatchRecord = onDeleteMatchRecord,
+    onDeleteMatchRecord = { viewModel.deleteMatchRecord(it) },
   )
 }
 
