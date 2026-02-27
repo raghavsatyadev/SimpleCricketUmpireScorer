@@ -15,12 +15,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallExtendedFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import io.github.raghavsatyadev.library.support.models.essential.UiState
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import scus.composeapp.generated.resources.Res
 import scus.composeapp.generated.resources.background
 import scus.composeapp.generated.resources.google_login
@@ -28,9 +32,35 @@ import scus.composeapp.generated.resources.ic_google
 import scus.composeapp.generated.resources.img_background
 
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit) {
+fun LoginScreen(viewModel: LoginScreenViewModel = koinViewModel(), onLoginSuccess: () -> Unit) {
+  val loginUiState by viewModel.isUserAlreadyLoggedInEvent.collectAsState()
+
+  when (val state = loginUiState) {
+    is UiState.Initial -> {}
+    is UiState.Error -> {
+      with(state.error) {
+        io.github.raghavsatyadev.library.support.components.ErrorDialog(
+          errorCode = errorCode,
+          errorMessage = exception?.message ?: errorCode.warning,
+        ) {
+          viewModel.signOut { /* activity?.finishAffinity() TODO migration */ }
+        }
+      }
+    }
+    is UiState.Success -> {
+      if (state.data) {
+        UserAlreadyLoggedInDialog(
+          onForceLogin = { viewModel.updateUserTokens() },
+          onSignOut = { viewModel.signOut { /* activity?.finishAffinity() TODO migration */ } },
+        )
+      } else {
+        onLoginSuccess()
+      }
+    }
+  }
+
   // TODO migrate login viewmodel and google sign in flow
-  LoginView(doLogin = { /* TODO login */ })
+  LoginView(doLogin = { /* TODO implement googleSignInUtil platform agnostic initiation */ })
 }
 
 @Composable

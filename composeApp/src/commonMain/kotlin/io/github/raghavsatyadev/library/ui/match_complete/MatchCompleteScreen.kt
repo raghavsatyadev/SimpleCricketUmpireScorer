@@ -24,6 +24,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,8 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.raghavsatyadev.library.support.components.AppToolBar
+import io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails
+import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.toBasicMatchUIDetails
+import io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import scus.composeapp.generated.resources.Res
 import scus.composeapp.generated.resources.crr
 import scus.composeapp.generated.resources.draw
@@ -48,9 +55,14 @@ import scus.composeapp.generated.resources.won
 
 @Composable
 fun MatchCompleteScreen(
-  matchRecord: io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord?,
+  matchId: String,
+  viewModel: MatchCompleteScreenViewModel = koinViewModel(),
   onBack: () -> Unit = {},
 ) {
+  LaunchedEffect(matchId) { viewModel.loadMatchRecord(matchId) }
+
+  val matchRecord by viewModel.matchRecord.collectAsState()
+
   val team1Details = remember(matchRecord) { matchRecord?.toBasicMatchUIDetails(true) }
   val team2Details = remember(matchRecord) { matchRecord?.toBasicMatchUIDetails(false) }
 
@@ -60,29 +72,22 @@ fun MatchCompleteScreen(
 @Composable
 private fun MatchCompleteUI(
   onBack: () -> Unit,
-  matchRecord: io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord?,
-  team1Details: io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails?,
-  team2Details: io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails?,
+  matchRecord: MatchRecord?,
+  team1Details: BasicMatchUIDetails?,
+  team2Details: BasicMatchUIDetails?,
 ) {
   var showTeam1 by
     remember(matchRecord) {
       mutableStateOf(
-        matchRecord?.status ==
-          io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus.TEAM_1_WON ||
-          matchRecord?.status ==
-            io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus.DRAW
+        matchRecord?.status == MatchStatus.TEAM_1_WON || matchRecord?.status == MatchStatus.DRAW
       )
     }
-  val details: io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails? =
-    if (showTeam1) team1Details else team2Details
+  val details: BasicMatchUIDetails? = if (showTeam1) team1Details else team2Details
 
   Scaffold(
     modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
     topBar = {
-      _root_ide_package_.io.github.raghavsatyadev.library.support.components.AppToolBar(
-        title = stringResource(Res.string.match_complete_title),
-        onNavigateBack = onBack,
-      )
+      AppToolBar(title = stringResource(Res.string.match_complete_title), onNavigateBack = onBack)
     },
   ) { padding ->
     Column(
@@ -99,26 +104,12 @@ private fun MatchCompleteUI(
         details?.let { d ->
           matchRecord?.status?.let { status ->
             val isWin =
-              (showTeam1 &&
-                status ==
-                  io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
-                    .TEAM_1_WON) ||
-                (!showTeam1 &&
-                  status ==
-                    io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
-                      .TEAM_2_WON)
+              (showTeam1 && status == MatchStatus.TEAM_1_WON) ||
+                (!showTeam1 && status == MatchStatus.TEAM_2_WON)
             val isLoss =
-              (showTeam1 &&
-                status ==
-                  io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
-                    .TEAM_2_WON) ||
-                (!showTeam1 &&
-                  status ==
-                    io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
-                      .TEAM_1_WON)
-            val isDraw =
-              status ==
-                io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus.DRAW
+              (showTeam1 && status == MatchStatus.TEAM_2_WON) ||
+                (!showTeam1 && status == MatchStatus.TEAM_1_WON)
+            val isDraw = status == MatchStatus.DRAW
 
             val textRes =
               when {
@@ -255,7 +246,7 @@ private fun MatchCompleteUI(
 @Composable
 private fun MatchCompleteUIPreview() {
   val sampleMatchRecord =
-    _root_ide_package_.io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord(
+    MatchRecord(
       matchRecordId = "sample_id",
       startDateTime = 0L,
       endDateTime = 0L,
@@ -270,8 +261,7 @@ private fun MatchCompleteUIPreview() {
       isTeam1BattingFirst = true,
       isFirstInningComplete = true,
       rrrAtSecondInningStart = "7.5",
-      status =
-        io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus.TEAM_2_WON,
+      status = MatchStatus.TEAM_2_WON,
       matchAdminID = "admin_id",
     )
   val team1Details = sampleMatchRecord.toBasicMatchUIDetails(true)

@@ -26,6 +26,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,9 +39,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails
+import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.isMatchCompleted
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.oversToBalls
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import scus.composeapp.generated.resources.Res
 import scus.composeapp.generated.resources.add_ball
 import scus.composeapp.generated.resources.add_run
@@ -71,26 +76,33 @@ import scus.composeapp.generated.resources.wickets
 
 @Composable
 fun MatchRecordScreen(
-  recordState: BasicMatchUIDetails?,
+  matchRecordId: String,
+  viewModel: MatchRecordScreenViewModel = koinViewModel(),
   onBack: () -> Unit = {},
   onMatchCompleted: () -> Unit = {},
-  onEndInning: () -> Unit = {},
-  onEndMatch: () -> Unit = {},
-  onSetWicket: (shouldAdd: Boolean) -> Unit = {},
-  onSetBall: (balls: Int, shouldAdd: Boolean) -> Unit = { _, _ -> },
-  onSetRun: (runs: Int, shouldAdd: Boolean) -> Unit = { _, _ -> },
-  onReset: (Boolean) -> Unit = {},
-  onEditTotalOvers: (Int) -> Unit = {},
 ) {
   var showResetDialog by remember { mutableStateOf(false) }
   var showEditOversDialog by remember { mutableStateOf(false) }
+
+  LaunchedEffect(matchRecordId) { viewModel.loadMatchRecord(matchRecordId) }
+
+  DisposableEffect(Unit) { onDispose { viewModel.clearLoadingState() } }
+
+  val recordState by viewModel.matchRecordEvent.collectAsState()
+  val matchStatus = recordState?.matchStatus
+
+  LaunchedEffect(matchStatus) {
+    if (recordState?.isMatchCompleted() == true) {
+      onMatchCompleted()
+    }
+  }
 
   recordState?.let { record ->
     if (showResetDialog) {
       ResetDialog(
         record,
         onReset = {
-          onReset(it)
+          viewModel.reset(matchRecordId, it)
           showResetDialog = false
         },
         dismissDialog = { showResetDialog = false },
@@ -101,7 +113,7 @@ fun MatchRecordScreen(
       EditOversDialog(
         record,
         editedOversInBalls = {
-          onEditTotalOvers(it)
+          viewModel.editTotalOvers(matchRecordId, it)
           showEditOversDialog = false
         },
         dismissDialog = { showEditOversDialog = false },
@@ -111,11 +123,11 @@ fun MatchRecordScreen(
   MatchRecordUI(
     record = recordState,
     onBack = onBack,
-    endInning = onEndInning,
-    endMatch = onEndMatch,
-    setWicket = onSetWicket,
-    setBall = onSetBall,
-    setRun = onSetRun,
+    endInning = { viewModel.endInning(matchRecordId) },
+    endMatch = { viewModel.endMatch(matchRecordId) },
+    setWicket = { viewModel.setWicket(matchRecordId, it) },
+    setBall = { balls, isAdd -> viewModel.setBall(matchRecordId, balls, isAdd) },
+    setRun = { runs, isAdd -> viewModel.setRun(matchRecordId, runs, isAdd) },
     showResetDialog = { showResetDialog = true },
     showEditOversDialog = { showEditOversDialog = true },
   )

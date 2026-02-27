@@ -11,7 +11,10 @@ plugins {
   alias(libs.plugins.room)
 }
 
-room { schemaDirectory("$projectDir/schemas") }
+room {
+  schemaDirectory("$projectDir/schemas")
+  generateKotlin = true
+}
 
 kotzilla { versionName = libs.versions.versionName.get() }
 
@@ -41,7 +44,7 @@ kotlin {
       implementation(libs.room.runtime)
     }
 
-    val iosMain by creating { dependencies { implementation(libs.bundles.firebase.mp) } }
+    iosMain.dependencies { implementation(libs.bundles.firebase.mp) }
 
     commonMain.dependencies {
       implementation(libs.bundles.compose.mp)
