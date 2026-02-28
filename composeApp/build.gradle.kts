@@ -58,6 +58,8 @@ kotlin {
       implementation(libs.kotzilla.sdk.compose)
     }
   }
+
+  compilerOptions { freeCompilerArgs.add("-Xexpect-actual-classes") }
 }
 
 dependencies {
