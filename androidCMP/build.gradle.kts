@@ -31,5 +31,6 @@ android {
 dependencies {
   implementation(projects.composeApp)
   implementation(libs.bundles.android.mp)
+  implementation(libs.androidx.splashscreen)
   debugImplementation(libs.compose.ui.tooling)
 }

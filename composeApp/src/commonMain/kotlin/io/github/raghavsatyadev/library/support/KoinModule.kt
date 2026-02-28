@@ -1,7 +1,10 @@
 package io.github.raghavsatyadev.library.support
 
+import io.github.raghavsatyadev.library.support.components.UiStateManager
 import io.github.raghavsatyadev.library.support.database.commonDatabaseModule
 import io.github.raghavsatyadev.library.support.database.platformDatabaseModule
+import io.github.raghavsatyadev.library.support.google.repository.AuthRepository
+import io.github.raghavsatyadev.library.support.google.repository.DummyAuthRepository
 import io.github.raghavsatyadev.library.ui.create_match.CreateMatchScreenViewModel
 import io.github.raghavsatyadev.library.ui.dashboard.DashboardScreenViewModel
 import io.github.raghavsatyadev.library.ui.main.MainViewModel
@@ -10,11 +13,15 @@ import io.github.raghavsatyadev.library.ui.match_record.MatchRecordScreenViewMod
 import io.github.raghavsatyadev.library.ui.user.LoginScreenViewModel
 import io.kotzilla.generated.monitoring
 import org.koin.core.context.startKoin
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
 val appModule = module {
+  singleOf(::UiStateManager)
+  single<AuthRepository> { DummyAuthRepository() }
+
   viewModelOf(::MainViewModel)
   viewModelOf(::CreateMatchScreenViewModel)
   viewModelOf(::DashboardScreenViewModel)

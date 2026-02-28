@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import io.github.raghavsatyadev.library.support.navigation.AppNavHost
+import io.github.raghavsatyadev.library.support.navigation.AppRoutes
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -25,8 +27,14 @@ fun MainScreen(
   val isLoading by viewModel.isLoading.collectAsState()
 
   Box(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.primary)) {
-    // TODO migrate navigation: AppNavHost(isLoggedIn = isLoggedIn, onLoginStateChange =
-    // viewModel::changeLoginState)
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+    val startRoute = if (isLoggedIn) AppRoutes.Dashboard else AppRoutes.Login
+
+    AppNavHost(
+      elements = arrayOf(startRoute),
+      isLoggedIn = isLoggedIn,
+      onLoginStateChange = { viewModel.changeLoginState() },
+    )
 
     if (isLoading) {
       Box(
