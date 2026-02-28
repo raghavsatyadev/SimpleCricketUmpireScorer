@@ -20,12 +20,15 @@ If you edited `build.gradle.kts` or `libs.versions.toml`:
 If you edited source code (`.kt`, `.xml`):
 
 *For Standard Android:*
-`.\gradlew.bat :app:compileDebugKotlin`
+`.\gradlew.bat :app:compileDebugKotlin --no-daemon --console=plain`
 
 *For KMP / Compose Multiplatform:*
-`.\gradlew.bat :composeApp:compileDebugKotlin`
+`.\gradlew.bat :composeApp:compileDebugKotlin --no-daemon --console=plain`
 
 **Recovery:**
 
 - If build fails: Read error -> Fix specific issue -> Retry.
 - Do NOT guess imports.
+
+**Notes:**
+- Always add `--no-daemon --console=plain` in all gradlew commands. 
