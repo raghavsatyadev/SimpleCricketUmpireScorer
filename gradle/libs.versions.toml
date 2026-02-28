@@ -138,6 +138,7 @@ lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewm
 # Lifecycle Multiplatform
 lifecycle-viewmodel-compose-mp = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle-mp" }
 lifecycle-runtime-compose-mp = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-mp" }
+lifecycle-viewmodel-navigation3-mp = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycle-mp" }
 
 #Navigation
 navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
@@ -263,6 +264,7 @@ compose = [
     "compose-ui-animation",
 ]
 android-mp = [
+    "androidx-splashscreen",
     "compose-ui-preview",
     "compose-activity",
     "koin-core",
@@ -321,6 +323,7 @@ lifecycle = [
 lifecycle-mp = [
     "lifecycle-viewmodel-compose-mp",
     "lifecycle-runtime-compose-mp",
+    "lifecycle-viewmodel-navigation3-mp",
 ]
 navigation = [
     "navigation3-runtime",
