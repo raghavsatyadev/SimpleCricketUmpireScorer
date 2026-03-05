@@ -1,6 +1,6 @@
 buildscript {
   dependencies {
-    classpath(libs.com.google.firebase)
+    classpath(libs.firebase.gradle.plugin)
     classpath(libs.kotlin.gradle.plugin)
   }
 }

@@ -40,13 +40,13 @@ activity = "1.13.0-rc01"
 androidx-core = "1.18.0-rc01"
 androidx-junit = "1.3.0"
 androidx-test = "1.7.0"
-coil = "3.3.0"
+coil = "3.4.0"
 collection = "1.6.0-rc01"
 compose-constraint = "1.1.1"
 compose-constraint-mp = "0.6.1"
 compose-material3 = "1.5.0-alpha15"
 compose-material3-mp = "1.10.0-alpha05"
-compose-multiplatform = "1.11.0-alpha02"
+compose-multiplatform = "1.11.0-alpha03"
 compose-ui = "1.11.0-alpha06"
 concurrent-futures = "1.3.0"
 coroutines = "1.10.2"
@@ -64,19 +64,19 @@ gitlive-firebase = "2.4.0"
 google-id = "1.2.0"
 integrity = "1.6.0"
 koin = "4.2.0-RC1"
-kotzilla = "2.0.6"
+kotzilla = "2.0.8"
 junit = "4.13.2"
-lifecycle = "2.10.0"
-lifecycle-mp = "2.10.0-alpha08"
+lifecycle = "2.11.0-alpha01"
+lifecycle-mp = "2.10.0-beta01"
 navigation3 = "1.1.0-alpha05"
-navigation3-mp = "1.1.0-alpha02"
-navigation3-adaptive = "1.3.0-alpha04"
+navigation3-mp = "1.1.0-alpha03"
+navigation3-adaptive = "1.3.0-alpha05"
 play-services-ads = "25.0.0"
 play-services-auth = "21.5.1"
 room = "2.8.4"
 room-sqlite = "2.6.2"
 serialization = "1.10.0"
-sonarqube = "7.2.2.6593"
+sonarqube = "7.2.3.7755"
 splashscreen = "1.2.0"
 stability-analyzer = "0.7.0"
 startup = "1.2.0"
@@ -85,7 +85,7 @@ logback = "1.5.32"
 
 [libraries]
 # Classpaths
-com-google-firebase = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebase-crashlytics-gradle" }
+firebase-gradle-plugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebase-crashlytics-gradle" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 # Android
@@ -368,4 +368,90 @@ androidTest = [
 debug = [
     "compose-ui-test-manifest",
     "compose-ui-tooling",
+]
+
+update-libs = [
+    "firebase-gradle-plugin",
+    "kotlin-gradle-plugin",
+    "androidx-collection",
+    "androidx-concurrent-futures",
+    "androidx-core",
+    "androidx-credentials",
+    "androidx-datastore-preferences",
+    "androidx-play-credentials",
+    "androidx-splashscreen",
+    "androidx-startup",
+    "compose-material3",
+    "compose-activity",
+    "compose-constraint",
+    "compose-ui-preview",
+    "compose-ui-font",
+    "compose-ui-test-junit4",
+    "compose-ui-test-manifest",
+    "compose-ui-tooling",
+    "compose-ui-animation",
+    "compose-ui-mp",
+    "compose-foundation-mp",
+    "compose-material3-mp",
+    "compose-components-resources-mp",
+    "compose-ui-tooling-preview-mp",
+    "compose-runtime-mp",
+    "compose-constraint-mp",
+    "kotlin-stdlib-jdk8",
+    "kotlinx-datetime",
+    "kotlinx-coroutines-android",
+    "kotlinx-coroutines-core",
+    "kotlinx-coroutines-swing",
+    "kotlinx-serialization-json",
+    "logback-classic",
+    "lifecycle-common-java8",
+    "lifecycle-viewmodel",
+    "lifecycle-runtime",
+    "lifecycle-viewmodel-compose",
+    "lifecycle-viewmodel-navigation3",
+    "lifecycle-viewmodel-compose-mp",
+    "lifecycle-runtime-compose-mp",
+    "lifecycle-viewmodel-navigation3-mp",
+    "navigation3-runtime",
+    "navigation3-ui",
+    "navigation3-adaptive",
+    "navigation3-ui-mp",
+    "koin-android",
+    "koin-androidx-compose",
+    "koin-androidx-workmanager",
+    "koin-test",
+    "koin-test-junit4",
+    "koin-core",
+    "koin-compose-mp",
+    "koin-compose-viewmodel-mp",
+    "kotzilla-sdk-compose",
+    "firebase-analytics",
+    "firebase-appcheck-debug",
+    "firebase-appcheck-playintegrity",
+    "firebase-auth",
+    "firebase-crashlytics",
+    "firebase-firestore",
+    "firebase-messaging",
+    "gitlive-firebase-auth",
+    "gitlive-firebase-firestore",
+    "gitlive-firebase-crashlytics",
+    "play-services-auth",
+    "play-services-ads",
+    "google-id",
+    "play-integrity",
+    "room",
+    "room-compiler",
+    "room-runtime",
+    "room-sqlite-bundled-mp",
+    "androidx-work-runtime",
+    "coil",
+    "coil-compose-mp",
+    "coil-network-ktor-mp",
+    "desugar_jdk_libs",
+    "androidx-junit",
+    "androidx-room-testing",
+    "androidx-rules",
+    "androidx-runner",
+    "androidx-test-core",
+    "junit",
 ]
