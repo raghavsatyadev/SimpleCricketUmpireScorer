@@ -30,7 +30,7 @@ kotlin {
 
   listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
     iosTarget.binaries.framework {
-      baseName = "SCUS"
+      baseName = "SCUSLib"
       isStatic = true
     }
   }
@@ -44,7 +44,6 @@ kotlin {
       implementation(libs.room.runtime)
     }
 
-    iosMain.dependencies { implementation(libs.bundles.firebase.mp) }
 
     commonMain.dependencies {
       implementation(libs.bundles.compose.mp)
