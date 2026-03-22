@@ -30,9 +30,9 @@ versionName = "1.0.0"
 
 # Plugin Versions
 agp = "9.2.0-alpha05"
-kotlin = "2.3.20"
+kotlin = "2.3.10"
 kotlinx-datetime = "0.7.1"
-ksp = "2.3.5"
+ksp = "2.3.6"
 google-plugin = "4.4.4"
 
 # Library Versions
@@ -120,7 +120,7 @@ compose-runtime-mp = { module = "org.jetbrains.compose.runtime:runtime", version
 compose-constraint-mp = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "compose-constraint-mp" }
 
 #Kotlin
-kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version = "2.3.10" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
