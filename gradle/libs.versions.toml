@@ -120,7 +120,7 @@ compose-runtime-mp = { module = "org.jetbrains.compose.runtime:runtime", version
 compose-constraint-mp = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "compose-constraint-mp" }
 
 #Kotlin
-kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version = "2.3.10" }
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
