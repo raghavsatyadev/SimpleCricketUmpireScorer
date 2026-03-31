@@ -16,7 +16,11 @@ room {
   generateKotlin = true
 }
 
-kotzilla { versionName = libs.versions.versionName.get() }
+kotzilla {
+  versionName = libs.versions.versionName.get()
+
+  displayLogs = true
+}
 
 kotlin {
   android {
@@ -43,7 +47,6 @@ kotlin {
       implementation(libs.bundles.firebase.mp)
       implementation(libs.room.runtime)
     }
-
 
     commonMain.dependencies {
       implementation(libs.bundles.compose.mp)
