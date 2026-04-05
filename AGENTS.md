@@ -129,7 +129,7 @@ migrations managed in `MigrationUtil.kt`.
 ### Gradle Structure
 
 - **Versions managed centrally:** `gradle/libs.versions.toml` (457 lines)
-    - SDK targets: minSdk=26, targetSdk=36 (Baklava preview)
+    - SDK targets: minSdk=26, targetSdk=37
     - Kotlin 2.3.20, AGP 9.2.0-alpha07
 
 - **Plugin Chain:**
@@ -414,7 +414,3 @@ Android implementation to the Compose Multiplatform (CMP) implementation.
   transform it to the CMP implementation.
 - NEVER modify any original Jetpack Compose code (`app` or `support` modules).
 - NEVER delete any original Jetpack Compose code.
-
----
-
-## References & Documentation
