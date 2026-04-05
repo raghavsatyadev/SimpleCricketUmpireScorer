@@ -1,11 +1,11 @@
 {
-  "sdkVersion": "1.4.2",
   "keys": [
     {
       "appId": "019c65f6-da5a-7ba0-8e80-b8f4f178f181",
       "applicationPackageName": "io.github.raghavsatyadev.scus",
-      "keyId": "019c65f7-191f-79f3-8dd9-6c814832d2f0",
-      "apiKey": "ktz-sdk-KLiIFlH0f84SXAk4Hvp_HgQIHqOr5HlfYEIIqbnvUjY"
+      "keyId": "019d5ce6-4957-739b-934c-9df06a0c158d",
+      "apiKey": "ktz-sdk-_CUT9PaGmETDQ8GaUFC8i69qyDroNY09EUZNMG-B9bA",
+      "isDefault": true
     }
   ]
 }

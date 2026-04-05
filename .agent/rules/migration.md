@@ -9,7 +9,8 @@ trigger: always_on
 # RULE: COMPOSE MULTIPLATFORM MIGRATION
 
 **Context:**
-You must follow strict rules when transferring or migrating code from the Jetpack Compose Native Android implementation to the Compose Multiplatform (CMP) implementation.
+You must follow strict rules when transferring or migrating code from the Jetpack Compose Native
+Android implementation to the Compose Multiplatform (CMP) implementation.
 
 **Module Architecture:**
 
@@ -18,6 +19,7 @@ You must follow strict rules when transferring or migrating code from the Jetpac
 
 **Rules:**
 
-- Whenever asked to transfer or migrate code, ALWAYS copy it from the Jetpack Compose code and transform it to the CMP implementation.
+- Whenever asked to transfer or migrate code, ALWAYS copy it from the Jetpack Compose code and
+  transform it to the CMP implementation.
 - NEVER modify any original Jetpack Compose code (`app` or `support` modules).
 - NEVER delete any original Jetpack Compose code.

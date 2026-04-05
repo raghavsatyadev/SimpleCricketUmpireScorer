@@ -94,6 +94,8 @@ to new CMP module, instead of moving.
 
 ## ⏳ Pending Transfer from `app` Module
 
+*(All previously pending UI and logic transfers from the `app` module have been executed)*
+
 ### Screens (Features)
 
 - ✅ `CreateMatchScreen` | ✅ `CreateMatchScreenViewModel`
@@ -107,11 +109,33 @@ to new CMP module, instead of moving.
 
 ### Navigation & Entry Point
 
-- `AppNavHost`
-- `AppRoutes`
-- `MainActivity` (Will remain android-specific, but logic moves to `MainScreen`)
+- ✅ `AppNavHost`
+- ✅ `AppRoutes`
+- `MainActivity` (Remains android-specific, logic moved to `MainScreen`)
 
 ### Application Setup
 
-- `ChildCoreApp`
-- `AppModule` (DI)
+- `ChildCoreApp` (Pending or not needed in KMP)
+- `AppModule` (DI - Moved/Combined into common Koin modules)
+
+---
+
+## 📝 Known Partial Migrations & Omitted Functions
+
+During the transfer process, certain functions and platform-specific implementations from both the `support` and `app` modules could not be carried over exactly or were adapted natively for Compose Multiplatform.
+
+### 1. `DateExtensions.kt`
+- **Omitted Functions**: `toZoneEpochMillis()`, `toZoneLocalDateTime()`, `toZoneLocalDate()`, `formatToDateString()` (which relied on `java.time.*`).
+- **Was it required?** **No.** The app primarily needed formatting between `Long` (milliseconds) and `String` (date display). This was perfectly substituted utilizing `kotlinx.datetime` formats, completely satisfying the UI layers without the unmigrated functions.
+
+### 2. Authentication & Google Integrations (`AuthRepositoryImpl` / `GoogleSignInUtil`)
+- **Omitted Functions**: The `AuthRepositoryImpl.kt` class and Google Play Services integration.
+- **Was it required?** **Yes**, for real authentication. However, since they heavily rely on Android SDKs, they could not be ported directly to `commonMain`. A `DummyAuthRepository.kt` was wired up as a placeholder to ensure the app compiles and navigates seamlessly. Real implementation will require an `expect`/`actual` setup or a platform-agnostic Auth library.
+
+### 3. `StorageUtils.kt` & File APIs
+- **Omitted Functions**: Methods querying `java.io.File` and Android `Context` storage paths.
+- **Was it required?** **No.** Immediate operations in the migrated ViewModels were adapted or abstracted.
+
+### 4. `AdUI.kt` (Google AdMob)
+- **Omitted Functions**: The `.xml` Ad wrappers and `AndroidView` configurations.
+- **Was it required?** **No.** Core match-scoring functionality is unhindered without ads. AdMob support can be introduced iteratively natively.
