@@ -32,5 +32,5 @@ dependencies {
   implementation(projects.composeApp)
   implementation(libs.bundles.android.mp)
   debugImplementation(libs.compose.ui.tooling)
-//  debugImplementation(libs.bundles.update.libs)
+  // debugImplementation(libs.bundles.update.libs)
 }

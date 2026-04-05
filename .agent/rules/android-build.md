@@ -31,4 +31,5 @@ If you edited source code (`.kt`, `.xml`):
 - Do NOT guess imports.
 
 **Notes:**
+
 - Always add `--no-daemon --console=plain` in all gradlew commands. 
