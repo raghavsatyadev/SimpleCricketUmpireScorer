@@ -19,6 +19,7 @@ local.properties
 release
 gradle-daemon-jvm.properties
 secret.properties
+composeApp/kotzilla.json
 
 ### Objective-C template
 # Xcode
