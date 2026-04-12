@@ -135,9 +135,8 @@ migrations managed in `MigrationUtil.kt`.
 - **Plugin Chain:**
     1. **KSP** (Kotlin Symbol Processing): Room, @Serializable code gen
     2. **Compose Compiler Plugin:** Stability analysis
-    3. **Kotzilla**: Version/build metadata generation
-    4. **SonarQube**: Code quality metrics
-    5. **Room**: Schema export and migrations
+    3. **SonarQube**: Code quality metrics
+    4. **Room**: Schema export and migrations
 
 - **Flavor Dimensions:** `isPlayStoreVersion` splits into `Dev` and `Prod` builds
     - Variant filtering: Only `Prod-release` and `Dev-debug` variants enabled
@@ -298,7 +297,6 @@ remains Android-only:
 | **Firebase (GitLive)**    | 2.4.0         | Multiplatform backend | Wrapper for auth/Firestore; Android also has native SDKs                    |
 | **Navigation3**           | 1.1.0+        | Typed navigation      | Use `navigation3-ui-mp` for KMP, `navigation3` for Android                  |
 | **Lifecycle**             | 2.11.0-alpha+ | State management      | Use multiplatform versions in `commonMain`                                  |
-| **Kotzilla**              | 2.1.3         | Build metadata        | Generates version constants and monitoring                                  |
 | **Serialization**         | 1.10.0        | JSON serialization    | `@Serializable` for data models, Room TypeConverters                        |
 
 ---

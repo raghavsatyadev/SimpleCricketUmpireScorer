@@ -11,7 +11,6 @@ import io.github.raghavsatyadev.library.ui.main.MainViewModel
 import io.github.raghavsatyadev.library.ui.match_complete.MatchCompleteScreenViewModel
 import io.github.raghavsatyadev.library.ui.match_record.MatchRecordScreenViewModel
 import io.github.raghavsatyadev.library.ui.user.LoginScreenViewModel
-import io.kotzilla.generated.monitoring
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -34,6 +33,5 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
   startKoin {
     appDeclaration()
     modules(appModule, commonDatabaseModule, platformDatabaseModule())
-    monitoring()
   }
 }
