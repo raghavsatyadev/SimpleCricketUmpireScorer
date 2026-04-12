@@ -16,10 +16,10 @@ supportId = "io.github.raghavsatyadev.support"
 sharedAndroidId = "io.github.raghavsatyadev.android.library"
 
 # SDK Versions
-targetSdk = "37"
+targetSdk = "36"
 targetSdkPreview = "Baklava"
 minSdk = "26"
-compileSdk = "37"
+compileSdk = "36"
 compileSdkPreview = "Baklava"
 
 buildTools = "36.1.0"
@@ -44,42 +44,41 @@ coil = "3.4.0"
 collection = "1.6.0"
 compose-constraint = "1.1.1"
 compose-constraint-mp = "0.7.0"
-compose-material3 = "1.5.0-alpha16"
+compose-material3 = "1.5.0-alpha17"
 compose-material3-mp = "1.10.0-alpha05"
-compose-multiplatform = "1.11.0-beta01"
-compose-ui = "1.11.0-beta02"
+compose-multiplatform = "1.11.0-beta02"
+compose-ui = "1.11.0-rc01"
 concurrent-futures = "1.3.0"
 coroutines = "1.10.2"
-credentials = "1.6.0-rc02"
+credentials = "1.6.0"
 datastore = "1.3.0-alpha07"
 desugar-jdk-libs = "2.1.5"
 firebase-analytics = "23.2.0"
 firebase-appcheck = "19.0.2"
 firebase-auth = "24.0.1"
-firebase-crashlytics = "20.0.4"
-firebase-crashlytics-gradle = "3.0.6"
-firebase-firestore = "26.1.2"
+firebase-crashlytics = "20.0.5"
+firebase-crashlytics-gradle = "3.0.7"
+firebase-firestore = "26.2.0"
 firebase-messaging = "25.0.1"
 gitlive-firebase = "2.4.0"
 google-id = "1.2.0"
 integrity = "1.6.0"
 junit = "4.13.2"
-koin = "4.2.1-RC1"
-kotzilla = "2.1.3"
+koin = "4.2.1"
 lifecycle = "2.11.0-alpha03"
-lifecycle-mp = "2.11.0-alpha02"
+lifecycle-mp = "2.11.0-alpha03"
 logback = "1.5.32"
-navigation3 = "1.1.0-rc01"
+navigation3 = "1.1.0"
 navigation3-adaptive = "1.3.0-alpha06"
-navigation3-mp = "1.1.0-beta01"
+navigation3-mp = "1.1.0-rc01"
 play-services-ads = "25.1.0"
 play-services-auth = "21.5.1"
 room = "2.8.4"
 room-sqlite = "2.6.2"
-serialization = "1.10.0"
+serialization = "1.11.0"
 sonarqube = "7.2.3.7755"
 splashscreen = "1.2.0"
-stability-analyzer = "0.7.1"
+stability-analyzer = "0.7.3"
 startup = "1.2.0"
 work-manager = "2.11.2"
 
@@ -158,7 +157,6 @@ koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose-mp = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel-mp = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 
-kotzilla-sdk-compose = { group = "io.kotzilla", name = "kotzilla-sdk-compose", version.ref = "kotzilla" }
 
 #Firebase
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebase-analytics" }
@@ -229,7 +227,6 @@ room = { id = "androidx.room", version.ref = "room" }
 stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "stability-analyzer" }
 crashlytics = { id = "com.google.firebase.crashlytics" }
 
-kotzilla = { id = "io.kotzilla.kotzilla-plugin", version.ref = "kotzilla" }
 
 [bundles]
 kotlin = [
@@ -424,7 +421,6 @@ update-libs = [
     "koin-core",
     "koin-compose-mp",
     "koin-compose-viewmodel-mp",
-    "kotzilla-sdk-compose",
     "firebase-analytics",
     "firebase-appcheck-debug",
     "firebase-appcheck-playintegrity",

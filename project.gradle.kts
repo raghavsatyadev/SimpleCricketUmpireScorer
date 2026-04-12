@@ -25,6 +25,4 @@ plugins {
   alias(libs.plugins.room) apply false
 
   alias(libs.plugins.sonarqube)
-
-  alias(libs.plugins.kotzilla) apply false
 }

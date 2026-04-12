@@ -1,3 +1,4 @@
+import com.android.ide.common.repository.keysMatch
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -7,19 +8,12 @@ plugins {
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.ksp)
-  alias(libs.plugins.kotzilla)
   alias(libs.plugins.room)
 }
 
 room {
   schemaDirectory("$projectDir/schemas")
   generateKotlin = true
-}
-
-kotzilla {
-  versionName = libs.versions.versionName.get()
-
-  displayLogs = true
 }
 
 kotlin {
@@ -57,7 +51,6 @@ kotlin {
       implementation(libs.bundles.room.mp)
       implementation(libs.kotlinx.serialization.json)
       implementation(libs.kotlinx.datetime)
-      implementation(libs.kotzilla.sdk.compose)
     }
   }
 
@@ -70,15 +63,4 @@ dependencies {
   add("kspDesktop", libs.room.compiler)
   add("kspIosSimulatorArm64", libs.room.compiler)
   add("kspIosArm64", libs.room.compiler)
-}
-
-afterEvaluate {
-  val kotzillaTask = tasks.findByName("generateKotzillaConfig")
-  if (kotzillaTask != null) {
-    tasks.configureEach {
-      if (name.startsWith("ksp")) {
-        dependsOn(kotzillaTask)
-      }
-    }
-  }
 }
