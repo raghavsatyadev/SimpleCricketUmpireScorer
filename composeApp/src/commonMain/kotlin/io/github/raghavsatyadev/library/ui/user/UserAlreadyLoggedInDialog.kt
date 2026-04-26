@@ -4,6 +4,9 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import io.github.raghavsatyadev.library.support.components.DarkPreview
+import io.github.raghavsatyadev.library.support.components.LightPreview
+import io.github.raghavsatyadev.library.support.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 import scus.composeapp.generated.resources.Res
 import scus.composeapp.generated.resources.dialog_already_logged_in_title
@@ -41,11 +44,9 @@ fun UserAlreadyLoggedInDialog(onForceLogin: () -> Unit, onSignOut: () -> Unit) {
   )
 }
 
-@io.github.raghavsatyadev.library.support.components.DarkPreview
-@io.github.raghavsatyadev.library.support.components.LightPreview
+@DarkPreview
+@LightPreview
 @Composable
 private fun UserAlreadyLoggedInDialogPreview() {
-  _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
-    UserAlreadyLoggedInDialog(onForceLogin = {}, onSignOut = {})
-  }
+  AppTheme { UserAlreadyLoggedInDialog(onForceLogin = {}, onSignOut = {}) }
 }

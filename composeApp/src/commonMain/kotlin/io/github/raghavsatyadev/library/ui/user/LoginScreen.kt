@@ -21,7 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
+import io.github.raghavsatyadev.library.support.components.ErrorDialog
+import io.github.raghavsatyadev.library.support.components.LightRealDevicePreview
 import io.github.raghavsatyadev.library.support.models.essential.UiState
+import io.github.raghavsatyadev.library.support.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -39,10 +43,7 @@ fun LoginScreen(viewModel: LoginScreenViewModel = koinViewModel(), onLoginSucces
     is UiState.Initial -> {}
     is UiState.Error -> {
       with(state.error) {
-        io.github.raghavsatyadev.library.support.components.ErrorDialog(
-          errorCode = errorCode,
-          errorMessage = exception?.message ?: errorCode.warning,
-        ) {
+        ErrorDialog(errorCode = errorCode, errorMessage = exception?.message ?: errorCode.warning) {
           viewModel.signOut { /* activity?.finishAffinity() TODO migration */ }
         }
       }
@@ -96,11 +97,9 @@ private fun LoginView(doLogin: () -> Unit) {
   }
 }
 
-@io.github.raghavsatyadev.library.support.components.LightRealDevicePreview
-@io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
+@LightRealDevicePreview
+@DarkRealDevicePreview
 @Composable
 private fun PreviewLoginScreen() {
-  _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
-    LoginView(doLogin = {})
-  }
+  AppTheme { LoginView(doLogin = {}) }
 }

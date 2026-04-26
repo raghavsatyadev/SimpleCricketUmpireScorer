@@ -25,6 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import io.github.raghavsatyadev.library.support.components.AppToolBar
+import io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
+import io.github.raghavsatyadev.library.support.components.LightRealDevicePreview
+import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
+import io.github.raghavsatyadev.library.support.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -36,11 +41,9 @@ import scus.composeapp.generated.resources.ic_add
 @Composable
 fun DashboardScreen(
   viewModel: DashboardScreenViewModel = koinViewModel(),
-  onMatchClick:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
+  onMatchClick: (MatchRecord) -> Unit,
   onAddMatchClick: () -> Unit,
-  onCopyMatchRecord:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
+  onCopyMatchRecord: (MatchRecord) -> Unit,
 ) {
   val matchRecords by viewModel.matchRecordsFlow.collectAsState(initial = emptyList())
 
@@ -55,22 +58,15 @@ fun DashboardScreen(
 
 @Composable
 private fun DashboardUI(
-  matchRecords: List<io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord>,
+  matchRecords: List<MatchRecord>,
   onAddMatchClick: () -> Unit,
-  onMatchClick:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
-  onCopyMatchRecord:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
-  onDeleteMatchRecord:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
+  onMatchClick: (MatchRecord) -> Unit,
+  onCopyMatchRecord: (MatchRecord) -> Unit,
+  onDeleteMatchRecord: (MatchRecord) -> Unit,
 ) {
   Scaffold(
     modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
-    topBar = {
-      _root_ide_package_.io.github.raghavsatyadev.library.support.components.AppToolBar(
-        title = stringResource(Res.string.app_name)
-      )
-    },
+    topBar = { AppToolBar(title = stringResource(Res.string.app_name)) },
   ) { innerPadding ->
     ConstraintLayout(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
       val (listMatchRecord, boxAd, btnCreateMatch) = createRefs()
@@ -123,13 +119,10 @@ private fun DashboardUI(
 @Composable
 private fun MatchRecordList(
   modifier: Modifier,
-  matchRecords: List<io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord>,
-  onMatchClick:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
-  onCopyMatchRecord:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
-  onDeleteMatchRecord:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
+  matchRecords: List<MatchRecord>,
+  onMatchClick: (MatchRecord) -> Unit,
+  onCopyMatchRecord: (MatchRecord) -> Unit,
+  onDeleteMatchRecord: (MatchRecord) -> Unit,
 ) {
   val properties = MatchRecordProperties.rememberMatchRecordProperties()
   LazyColumn(
@@ -154,11 +147,11 @@ private fun MatchRecordList(
   }
 }
 
-@io.github.raghavsatyadev.library.support.components.LightRealDevicePreview
-@io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
+@LightRealDevicePreview
+@DarkRealDevicePreview
 @Composable
 fun DashboardScreenPreview() {
-  _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
+  AppTheme {
     DashboardUI(
       matchRecords = getSampleRecords(),
       onAddMatchClick = {},

@@ -26,9 +26,12 @@ import androidx.constraintlayout.compose.Visibility
 import io.github.raghavsatyadev.library.support.components.DarkPreview
 import io.github.raghavsatyadev.library.support.components.LightPreview
 import io.github.raghavsatyadev.library.support.extensions.serializer.SerializationExtensions.toKotlinObject
+import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getMatchTimings
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getTeam1FormattedScore
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getTeam2FormattedScore
+import io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
+import io.github.raghavsatyadev.library.support.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import scus.composeapp.generated.resources.Res
@@ -41,7 +44,7 @@ import scus.composeapp.generated.resources.ic_delete
 @DarkPreview
 @Composable
 fun MatchRecordItemPreview() {
-  _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
+  AppTheme {
     val matchRecord = getSampleMatchRecord(1)
     val properties = MatchRecordProperties.rememberMatchRecordProperties()
     MatchRecordItem(
@@ -59,14 +62,11 @@ fun MatchRecordItemPreview() {
 @Composable
 fun MatchRecordItem(
   modifier: Modifier,
-  matchRecord: io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord,
+  matchRecord: MatchRecord,
   properties: MatchRecordProperties,
-  onCopyClick:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
-  onDeleteClick:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
-  onMatchClick:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
+  onCopyClick: (MatchRecord) -> Unit,
+  onDeleteClick: (MatchRecord) -> Unit,
+  onMatchClick: (MatchRecord) -> Unit,
 ) {
   ElevatedCard(
     shape = MaterialTheme.shapes.medium,
@@ -103,21 +103,21 @@ fun MatchRecordItem(
       var shouldShowCombined: Boolean
 
       when (matchRecord.status) {
-        io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus.TEAM_1_WON -> {
+        MatchStatus.TEAM_1_WON -> {
           team1Status = properties.won
           team2Status = properties.lost
           team1StatusColor = properties.winColor
           team2StatusColor = properties.lostColor
           shouldShowCombined = false
         }
-        io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus.TEAM_2_WON -> {
+        MatchStatus.TEAM_2_WON -> {
           team1Status = properties.lost
           team2Status = properties.won
           team1StatusColor = properties.lostColor
           team2StatusColor = properties.winColor
           shouldShowCombined = false
         }
-        io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus.DRAW -> {
+        MatchStatus.DRAW -> {
           shouldShowCombined = true
           combinedStatus = properties.draw
           combinedStatusColor = properties.drawColor
@@ -281,14 +281,11 @@ fun MatchRecordItem(
   }
 }
 
-fun getSampleMatchRecord(
-  i: Int
-): io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord {
+fun getSampleMatchRecord(i: Int): MatchRecord {
   return "{\"match_record_id\":\"eHBkXOi9Gxzqsd8dSP0D\$i\",\"start_date_time\":1745345640000,\"end_date_time\":1745589475307,\"team_1\":{\"team_name\":\"Raghav\",\"runs\":21,\"wickets\":7,\"balls\":22},\"team_2\":{\"team_name\":\"Archan\",\"runs\":18,\"balls\":18},\"balls_per_inning\":72,\"is_first_inning_complete\":true,\"rrr_at_second_inning_start\":\"1.83\",\"status\":\"TEAM_1_WON\",\"location\":\"Ahmedabad \",\"match_admin_id\":\"r4pkT36tARfXSv2OLx1qP8xfWzl1\",\"local_update_date_time\":1745589475307,\"server_update_date_time\":1745345691000}"
     .toKotlinObject()
 }
 
-fun getSampleRecords():
-  List<io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord> {
+fun getSampleRecords(): List<MatchRecord> {
   return buildList { repeat(10) { add(getSampleMatchRecord(it)) } }
 }

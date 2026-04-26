@@ -47,9 +47,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import io.github.raghavsatyadev.library.support.components.AppToolBar
+import io.github.raghavsatyadev.library.support.components.DarkPreview
 import io.github.raghavsatyadev.library.support.components.ErrorDialog
 import io.github.raghavsatyadev.library.support.extensions.DateExtensions.formatMillisToDate
+import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.library.support.models.essential.UiState
+import io.github.raghavsatyadev.library.support.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import scus.composeapp.generated.resources.Res
@@ -70,11 +74,9 @@ import kotlin.time.Clock.System
 
 @Composable
 fun CreateMatchScreen(
-  matchRecord: io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord? = null,
+  matchRecord: MatchRecord? = null,
   viewModel: CreateMatchScreenViewModel = koinViewModel(),
-  onMatchCreated:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit =
-    {},
+  onMatchCreated: (MatchRecord) -> Unit = {},
 ) {
   LaunchedEffect(matchRecord) {
     if (matchRecord != null) {
@@ -283,11 +285,7 @@ private fun CreateMatchRecordUI(
 
   Scaffold(
     modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
-    topBar = {
-      _root_ide_package_.io.github.raghavsatyadev.library.support.components.AppToolBar(
-        title = stringResource(Res.string.create_match_title)
-      )
-    },
+    topBar = { AppToolBar(title = stringResource(Res.string.create_match_title)) },
   ) { innerPadding ->
     ConstraintLayout(
       modifier =
@@ -479,10 +477,10 @@ private fun ToggleButtonGroup(
   }
 }
 
-@io.github.raghavsatyadev.library.support.components.DarkPreview
+@DarkPreview
 @Composable
 fun CreateMatchRecordScreenPreview() {
-  _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
+  AppTheme {
     CreateMatchRecordUI(
       selectedDateTimeMillis = System.now().toEpochMilliseconds(),
       onMatchDateTimeClick = {},
@@ -494,8 +492,7 @@ fun CreateMatchRecordScreenPreview() {
 @Composable
 private fun HandleCreateMatchEvents(
   viewModel: CreateMatchScreenViewModel,
-  onMatchCreated:
-    (io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord) -> Unit,
+  onMatchCreated: (MatchRecord) -> Unit,
 ) {
   val createMatchState by viewModel.createMatchRecordEvent.collectAsState()
 

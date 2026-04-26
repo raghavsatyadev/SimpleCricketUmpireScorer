@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import io.github.raghavsatyadev.library.support.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import scus.composeapp.generated.resources.Res
@@ -56,16 +57,12 @@ fun AppToolBar(
 @DarkPreview
 @Composable
 fun AppToolBarPreview() {
-  _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
-    AppToolBar(title = "SCUS", onNavigateBack = {})
-  }
+  AppTheme { AppToolBar(title = "SCUS", onNavigateBack = {}) }
 }
 
 @LightPreview
 @DarkPreview
 @Composable
 fun AppToolBarWithoutBackButtonPreview() {
-  _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
-    AppToolBar(title = "SCUS", onNavigateBack = null)
-  }
+  AppTheme { AppToolBar(title = "SCUS", onNavigateBack = null) }
 }

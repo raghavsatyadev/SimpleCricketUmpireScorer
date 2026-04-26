@@ -36,10 +36,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.raghavsatyadev.library.support.components.AppToolBar
+import io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
 import io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.toBasicMatchUIDetails
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
+import io.github.raghavsatyadev.library.support.models.db.match_record.TeamDetail
+import io.github.raghavsatyadev.library.support.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import scus.composeapp.generated.resources.Res
@@ -242,7 +245,7 @@ private fun MatchCompleteUI(
   }
 }
 
-@io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
+@DarkRealDevicePreview
 @Composable
 private fun MatchCompleteUIPreview() {
   val sampleMatchRecord =
@@ -250,12 +253,8 @@ private fun MatchCompleteUIPreview() {
       matchRecordId = "sample_id",
       startDateTime = 0L,
       endDateTime = 0L,
-      team1Detail =
-        _root_ide_package_.io.github.raghavsatyadev.library.support.models.db.match_record
-          .TeamDetail(teamName = "Team 1", runs = 150, wickets = 5, balls = 120),
-      team2Detail =
-        _root_ide_package_.io.github.raghavsatyadev.library.support.models.db.match_record
-          .TeamDetail(teamName = "Team 2", runs = 145, wickets = 8, balls = 120),
+      team1Detail = TeamDetail(teamName = "Team 1", runs = 150, wickets = 5, balls = 120),
+      team2Detail = TeamDetail(teamName = "Team 2", runs = 145, wickets = 8, balls = 120),
       ballsPerInning = 120,
       didTeam1WonToss = true,
       isTeam1BattingFirst = true,
@@ -267,7 +266,5 @@ private fun MatchCompleteUIPreview() {
   val team1Details = sampleMatchRecord.toBasicMatchUIDetails(true)
   val team2Details = sampleMatchRecord.toBasicMatchUIDetails(false)
 
-  _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
-    MatchCompleteUI(onBack = {}, sampleMatchRecord, team1Details, team2Details)
-  }
+  AppTheme { MatchCompleteUI(onBack = {}, sampleMatchRecord, team1Details, team2Details) }
 }
