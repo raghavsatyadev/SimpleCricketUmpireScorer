@@ -38,9 +38,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import io.github.raghavsatyadev.library.support.components.AppToolBar
+import io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
 import io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.isMatchCompleted
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.oversToBalls
+import io.github.raghavsatyadev.library.support.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -133,10 +136,10 @@ fun MatchRecordScreen(
   )
 }
 
-@io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
+@DarkRealDevicePreview
 @Composable
 fun MatchRecordUIPreview() {
-  _root_ide_package_.io.github.raghavsatyadev.library.support.theme.AppTheme {
+  AppTheme {
     MatchRecordUI(
       record =
         BasicMatchUIDetails(
@@ -180,7 +183,7 @@ private fun MatchRecordUI(
       val title =
         record?.let { stringResource(Res.string.team) + " " + it.currentTeamName }
           ?: stringResource(Res.string.match_record_title)
-      _root_ide_package_.io.github.raghavsatyadev.library.support.components.AppToolBar(
+      AppToolBar(
         title = title,
         onNavigateBack = onBack,
         actions = {

@@ -3,6 +3,7 @@ package io.github.raghavsatyadev.library.support.models.db.match_record
 import io.github.raghavsatyadev.library.support.Constants.FieldKeys
 import io.github.raghavsatyadev.library.support.extensions.DateExtensions.formatMillisToDate
 import io.github.raghavsatyadev.library.support.extensions.format
+import io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails
 
 object MatchRecordExtensions {
   private fun MatchRecord.getWickets(shouldPrepareTeam1Details: Boolean) =
@@ -93,9 +94,7 @@ object MatchRecordExtensions {
     return "$runsRequired ($ballsRemaining)"
   }
 
-  fun MatchRecord.toBasicMatchUIDetails(
-    needTeam1Details: Boolean? = null
-  ): io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails {
+  fun MatchRecord.toBasicMatchUIDetails(needTeam1Details: Boolean? = null): BasicMatchUIDetails {
     val shouldPrepareTeam1Details = needTeam1Details ?: isTeam1CurrentlyBatting()
 
     val currentRuns = getRuns(shouldPrepareTeam1Details)
@@ -110,7 +109,7 @@ object MatchRecordExtensions {
     val currentRRR = getRRR(currentRuns, otherTeamRuns, currentBalls)
     val requiredRunsBalls = getRequiredRunsBalls(currentRuns, otherTeamRuns, currentBalls)
 
-    return _root_ide_package_.io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails(
+    return BasicMatchUIDetails(
       currentTeamName =
         if (shouldPrepareTeam1Details) {
           team1Detail.teamName
@@ -185,7 +184,7 @@ object MatchRecordExtensions {
   fun MatchRecord.isMatchCompleted() =
     !(status == MatchStatus.NOT_STARTED || status == MatchStatus.IN_PROGRESS)
 
-  fun io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails.isMatchCompleted() =
+  fun BasicMatchUIDetails.isMatchCompleted() =
     !(matchStatus == MatchStatus.NOT_STARTED || matchStatus == MatchStatus.IN_PROGRESS)
 
   fun MatchRecord.getMatchTimings(): String {
