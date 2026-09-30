@@ -1,0 +1,11 @@
+Git-ignored caches (safe to delete; rebuilt automatically)
+
+.device-cache/                 dev.sh
+  last-serial                  device used last
+  devices/<serial>/device.env  see device.env.example
+  devices/<serial>/coords.tsv  see coords.tsv.example
+  ui-dump.xml                  last uiautomator dump
+  artifacts/                   <timestamp>-<label>.png|.mp4|.log
+
+.cache/ktfmt/                  scripts/ci-local.sh
+  ktfmt-<ver>-with-dependencies.jar   latest Maven Central release = the version CI uses

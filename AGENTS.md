@@ -1,4 +1,79 @@
-# AGENTS.md – SimpleCricketUmpireScorer Developer Guide
+# AGENTS.md
+
+Shared instructions for every coding agent in this repo — Claude, Gemini, Codex, Cursor.
+`CLAUDE.md` and `GEMINI.md` just point here.
+
+**SimpleCricketUmpireScorer (SCUS)** — a cricket umpire scoring app, mid-migration from Jetpack Compose (`app`, `support`) to Compose Multiplatform (`composeApp`, `androidCMP`).
+Modules: `app`, `support`, `composeApp`, `androidCMP`, `desktopCMP` · app module `:androidCMP` · applicationId `io.github.raghavsatyadev.scus` ·
+base branch `migration-cmp`. Values also live in `agent-kit.env`.
+
+## How to work
+
+- Do only what the task asks: no unrequested features, tests, files, docs or refactors.
+- Ask only when blocked, or before an action that needs approval (push, PR).
+- Before "done", run the check for the change (android-build.md); if none can run, say why.
+- When done and checked, stop. Report in five lines or fewer, in ASD-STE100 Simplified Technical English.
+- Claude Code: medium effort for scoped edits; high for native or architecture work. A second
+  agent only for a review the user asked for.
+- Decision model (skill `nimble`): start it first, `bash ~/.nimble/nimble-on` (the SessionStart
+  hook does this in Claude Code). Then rely on it: `~/.nimble/jgl` first for any search where
+  you do not know the exact name; `~/.nimble/nimble-ask` first for a long log or file when you
+  need only a verdict. `rg` for exact names. When done, `~/.nimble/nimble-off nimble`.
+
+## Rules — `.agents/rules/`
+
+| Rule | Read it when |
+| --- | --- |
+| [android-build.md](.agents/rules/android-build.md) | before calling any task done — the code must compile |
+| [format.md](.agents/rules/format.md) | touching any Kotlin — ktfmt Google style is mandatory |
+| [artemis-mobile-testing.md](.agents/rules/artemis-mobile-testing.md) | *on demand* — using ARTEMIS MCP tools |
+| [branch-pr-policy.md](.agents/rules/branch-pr-policy.md) | *always* — see the summary below |
+| [migration.md](.agents/rules/migration.md) | *always* — moving code to CMP; never edit `app` or `support` |
+
+## Skills — `.agents/skills/`
+
+One folder per skill; each `SKILL.md` `description` says when to read it. Claude Code sees them
+through the `.claude/skills/` links that `scripts/setup-env.*` create.
+
+## Commands
+
+New machine: run the setup doctor first — `scripts/setup-env.ps1` (Windows) or
+`scripts/setup-env.sh` (macOS/Linux).
+
+```bash
+scripts/ci-local.sh                      # ktfmt + compile<APP_VARIANT>Kotlin — run before pushing
+scripts/gradle-agent.sh <tasks>          # agents: Gradle with errors only; full log in tmp/
+./gradlew :androidCMP:assembleDebug   # build
+./gradlew :androidCMP:testDebugUnitTest
+git config core.hooksPath .githooks      # once: pre-commit runs ktfmt, pre-push runs ci-local.sh
+```
+
+`ci-local.sh` flags: `--fix` reformats, `--format-only` skips the compile, `--committed-only`
+matches CI exactly. Never format with a `ktfmt` from your PATH; `ci-local.sh` fetches the right one.
+
+## Branches & PRs (strict)
+
+Never push to `migration-cmp` or `master`. Branch off `origin/migration-cmp` as `<type>/<slug>`,
+push, and open a PR against `migration-cmp` with `gh pr create --body-file <file>` (never inline
+`--body`). Never merge or approve a PR — hand off the URL.
+
+## Working on a bug
+
+Follow [project-onboarding-setup](.agents/skills/project-onboarding-setup/SKILL.md) Part 2
+(`/fix-issue <url>` in Claude Code): reproduce on the device → diagnose from real device state →
+fix with a test that fails on the old behaviour → reinstall and re-run the reproduction → PR, stop.
+A green unit test is not device verification. Inspect the device with ARTEMIS, not
+`uiautomator dump`, which rebinds accessibility services.
+
+## Housekeeping
+
+`tmp/` (agent scratch), `memory/` (persistent local data such as device serials),
+`.cache/` and every `.env` are git-ignored. Never commit credentials. Never clean `tmp/` unless the
+user asks — see [workspace-cleanup](.agents/skills/workspace-cleanup/SKILL.md).
+
+---
+
+# Project guide
 
 ## Project Overview
 
@@ -321,94 +396,3 @@ ls composeApp/build/generated/ksp/*/kotlin/io/github/.../database/AppDatabase_Im
 ```
 
 ---
-
-## Agent Rules
-
-### Android & KMP Build Verification
-
----
-trigger: always_on
----
-
-# RULE: ANDROID & KMP BUILD VERIFICATION
-
-**Context:**
-You must verify that the codebase compiles successfully before marking a task as complete.
-
-**Trigger:**
-
-- AFTER formatting the code.
-- BEFORE presenting the final solution to the user.
-
-**Command (Configuration Change):**
-If you edited `build.gradle.kts`, `libs.versions.toml`, `project.gradle.kts`, `gradle.properties` or
-`settings.gradle.kts`:
-`.\gradlew.bat help`
-
-**Command (Logic Change):**
-If you edited source code (`.kt`, `.xml`):
-
-*For Standard Android:*
-`.\gradlew.bat :app:compileDebugKotlin --no-daemon --console=plain`
-
-*For KMP / Compose Multiplatform:*
-`.\gradlew.bat :composeApp:compileDebugKotlin --no-daemon --console=plain`
-
-**Recovery:**
-
-- If build fails: Read error -> Fix specific issue -> Retry.
-- Do NOT guess imports.
-
-**Notes:**
-
-- Always add `--no-daemon --console=plain` in all gradlew commands.
-
-### Kotlin Formatting
-
----
-trigger: always_on
----
-
-# RULE: KOTLIN FORMATTING (STRICT)
-
-**Context:**
-You must strictly enforce Google Internal Formatting using the local `ktfmt` tool. Manual formatting
-is prohibited.
-
-**Trigger:**
-
-- IMMEDIATELY after editing any `.kt` file.
-- BEFORE running any build verification.
-
-**Command:**
-`ktfmt --google-style <relative_path_to_file>`
-
-**Verification:**
-
-- If the command runs without error, the file is formatted.
-- Do NOT output the file content again.
-- Do NOT manually adjust whitespace.
-
-### Compose Multiplatform Migration
-
----
-trigger: always_on
----
-
-# RULE: COMPOSE MULTIPLATFORM MIGRATION
-
-**Context:**
-You must follow strict rules when transferring or migrating code from the Jetpack Compose Native
-Android implementation to the Compose Multiplatform (CMP) implementation.
-
-**Module Architecture:**
-
-- **Original Jetpack Compose Code:** `app` module and `support` module.
-- **Compose Multiplatform (CMP) Code:** `androidCMP` module and `composeApp` module.
-
-**Rules:**
-
-- Whenever asked to transfer or migrate code, ALWAYS copy it from the Jetpack Compose code and
-  transform it to the CMP implementation.
-- NEVER modify any original Jetpack Compose code (`app` or `support` modules).
-- NEVER delete any original Jetpack Compose code.
