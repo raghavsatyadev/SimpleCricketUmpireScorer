@@ -1,9 +1,6 @@
 ---
 trigger: always_on
----
-
----
-trigger: always_on
+description: Migrating code from app/support to androidCMP/composeApp; never edit the original modules.
 ---
 
 # RULE: COMPOSE MULTIPLATFORM MIGRATION

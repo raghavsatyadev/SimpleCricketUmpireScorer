@@ -105,3 +105,12 @@ playground.xcworkspace
 #
 # Add this line if you want to avoid checking in source code from Carthage dependencies.
 # Carthage/Checkouts
+
+# Agent kit
+tmp/
+memory/
+.cache/
+.env
+# setup-env links each .agents/skills/<name> here; links, not files to commit
+.claude/skills/
+.claude/settings.local.json

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Ask the local decision model (Nimble or Laya), or Jev when the text is too long for it, one
+# question about text on stdin.
+#
+#   nimble-ask yesno  "<question>"                       < file   -> "yes 0.97 local"
+#   nimble-ask choice "<question>" label="desc" ...      < file   -> "<label> 0.93 jev"
+#
+# Fields: answer, P(yes) or the chosen label's probability, backend (local | jev).
+# Jev (paid) is used only when the input is longer than the local budget, or no local model
+# answers, and a TypeSafe key is set. NIMBLE_ALLOW_JEV=0 forbids it for one call.
+# Exit 0 = answered, 2 = no backend answered (read the text the normal way), 64 = usage.
+# Env: see nimble.sh. NIMBLE_TIMEOUT (seconds, default 30) covers a cold model load.
+set -u
+d="$(dirname "$0")"
+if [ -f "$d/nimble.sh" ]; then . "$d/nimble.sh"; else . "$d/../../scripts/nimble.sh"; fi
+export NIMBLE_ALLOW_JEV="${NIMBLE_ALLOW_JEV:-1}" NIMBLE_CALLER=nimble-ask
+
+kind="${1:-}"; question="${2:-}"
+[ -n "$kind" ] && [ -n "$question" ] || { sed -n '2,13p' "$0" >&2; exit 64; }
+shift 2
+q=$(printf '%s' "$question" | _nimble_escape)
+
+case "$kind" in
+  yesno) qs=$(printf '{"a":{"type":"noul","instructions":"%s"}}' "$q") ;;
+  choice)
+    [ $# -ge 2 ] || { echo "choice needs at least two label=description pairs" >&2; exit 64; }
+    crit=""
+    for pair in "$@"; do
+      label="${pair%%=*}"; desc="${pair#*=}"; [ "$desc" = "$pair" ] && desc="$label"
+      crit="$crit${crit:+,}\"$(printf '%s' "$label" | _nimble_escape)\":\"$(printf '%s' "$desc" | _nimble_escape)\""
+    done
+    qs=$(printf '{"a":{"type":"choice","instructions":"%s","criteria":{%s}}}' "$q" "$crit") ;;
+  *) echo "kind must be yesno or choice" >&2; exit 64 ;;
+esac
+
+tmp=$(mktemp)
+trap 'rm -f "$tmp"' EXIT
+nimble_ask "${NIMBLE_TIMEOUT:-30}" "$qs" >"$tmp" || exit 2
+resp=$(cat "$tmp")
+if [ "$kind" = yesno ]; then
+  v=$(nimble_get "$resp" a noul) || exit 2
+  if nimble_ge "$v" 0.5; then echo "yes $v $NIMBLE_BACKEND"; else echo "no $v $NIMBLE_BACKEND"; fi
+else
+  c=$(nimble_get "$resp" a choice) || exit 2
+  p=$(nimble_get "$resp" a p) || p="?"
+  echo "$c $p $NIMBLE_BACKEND"
+fi
