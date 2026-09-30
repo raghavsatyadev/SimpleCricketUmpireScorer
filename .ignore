@@ -1,0 +1,2 @@
+# Search tools (ripgrep, agent search) skip the upstream llama.cpp submodule.
+llamaAndroid/src/main/cpp/llama.cpp/
