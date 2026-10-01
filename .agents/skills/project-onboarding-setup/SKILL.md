@@ -1,7 +1,7 @@
 ---
 name: project-onboarding-setup
-description: Set up a developer machine — toolchain, global agent skills, ARTEMIS and its model, GitHub CLI, the Nimble/Tev1/Laya/Jev decision model. Use when setup-env reports a failure or a tool is missing.
-version: 3.3.0
+description: Set up a developer machine — toolchain, global agent skills, official Android skills, ARTEMIS and its model, GitHub CLI, the Nimble/Tev1/Laya/Jev decision model. Use when setup-env reports a failure or a tool is missing.
+version: 3.4.0
 ---
 
 # Onboarding
@@ -25,6 +25,7 @@ bash scripts/setup-env.sh                                         # macOS / Linu
 | Submodules *(if any)* | `git submodule update --init` |
 | Git hooks | `git config core.hooksPath .githooks` |
 | Global skills | `global_skills/*` copied to the user's global skill folders (see below) |
+| Android skills | `android` CLI, then `android skills add --all` (see below) |
 | GitHub CLI | `gh`, logged in (`gh auth login`) with push access to the repo |
 | Python / uv | Python 3.10+, `uv` |
 | ARTEMIS | cloned, MCP registered with your agent, Gemini key in its `.env` |
@@ -48,6 +49,23 @@ It copies each skill folder to `~/.claude/skills/` (Claude Code), `~/.gemini/ski
 (Gemini CLI / Antigravity) and `~/.agents/skills/` (Codex and other agents), and runs the skill's
 own `install.sh` (`nimble`: `~/.nimble/` commands and Claude Code hooks). On a no, tell the user
 which skills are missing. Restart the agent afterwards so it loads them.
+
+### Android skills — official, from the `android` CLI
+
+Google's Android skills (Compose, adaptive UI, edge-to-edge, Navigation 3, R8, profiling,
+permissions and intent security, testing setup, Play policy, …) are not kept in this repo: the
+`android` CLI installs and updates them. Ask the user, then on a yes:
+
+```bash
+# Install the CLI if `android --version` fails:
+#   Windows: curl -fsSL https://dl.google.com/android/cli/latest/windows_x86_64/install.cmd -o "%TEMP%\i.cmd" && "%TEMP%\i.cmd"
+#   macOS (Apple Silicon): curl -fsSL https://dl.google.com/android/cli/latest/darwin_arm64/install.sh | bash
+#   Linux: curl -fsSL https://dl.google.com/android/cli/latest/linux_x86_64/install.sh | bash
+android skills add --all    # every official skill, for every agent it finds on this PC
+android skills update       # later, to refresh them
+```
+
+`agp-9-upgrade` is for Android-only projects; do not run it on a KMP project.
 
 ### ARTEMIS
 
