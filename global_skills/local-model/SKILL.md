@@ -1,6 +1,6 @@
 ---
 name: local-model
-description: Turn on the local decision model first (bash ~/.local-model/lm-on), then rely on it. lm-ask gives a yes/no or pick-one verdict on a long log, test output or file instead of reading it; jgl finds code when you do not know its name, rg when you do. Unload the model when done.
+description: Turn on the local decision model first (bash ~/.local-model/lm-on), then rely on it. lm-ask gives a yes/no or pick-one verdict on a long log, test output or file instead of reading it; jgl finds code when you do not know its name, rg when you do; lm-rank picks the files worth opening from many rg hits; lm-diffcheck runs the project's rule checks over a diff. Unload the model when done.
 ---
 
 # Local model: cheap verdicts instead of long reads
@@ -20,6 +20,8 @@ the same for Claude Code and Gemini/Antigravity agents.
    - Build log, test output, logcat or a file over ~200 lines, and you need a verdict →
      `lm-ask` first. Read the text only when it answers below 0.9 or exits 2.
    - Exact identifier or error string → `rg` directly (faster than jgl, same result).
+   - `rg` hits in more than ~5 files → pipe them to `lm-rank "<task>"` and open its top 2-3.
+   - Before a review of your own branch → `lm-diffcheck` (the `/code-review` hook runs it too).
 3. At the end of the task: `~/.local-model/lm-off "${LOCAL_MODEL_NAME:-nimble}"`.
 
 | Backend | Where | Cost | Reads |
@@ -55,6 +57,63 @@ So only ask about a **very long** file when the other choice is reading all of i
 it first (`grep -n`, `tail -n 400`) when a slice is enough: then it stays local and free. Force
 local for one call with `LOCAL_MODEL_ALLOW_JEV=0`. Every Jev call is logged with its input tokens in
 `~/.config/typesafe/usage.log`.
+
+## Long build and test output is shortened for you (Claude Code)
+
+The global PostToolUse hook `lm-gate.mjs` runs after a Bash build, test or lint command (`gradlew`,
+`gradle-agent.sh`, `ci-local.sh`, `npm test`, `pytest`, `cargo test`, `am instrument` ...) whose
+output is over 200 lines (`LOCAL_MODEL_GATE_LINES`). It saves the full output in
+`~/.local-model/gate/` and asks the local model whether the run passed:
+
+- Passed (yes ≥ 0.9 and a result line such as `BUILD SUCCESSFUL`): you see `[lm-gate] PASSED`, the
+  result lines and the last 5 lines.
+- Otherwise, with failure lines found: you see `[lm-gate] Not a clean pass`, each failure line with
+  the lines after it (assertion message, first stack frames) and the last 20 lines.
+- No model, or nothing it can shorten: the output is left as it was.
+
+Every shortened output ends with `Full output (N lines): <path>`: read that file when the short
+view is not enough. Turn it off for one command with `LM_GATE=0 <command>`, or for the session
+with `LOCAL_MODEL_GATE=0`. Quote the real result line it shows when you report a pass.
+
+## Pick the files worth opening from many hits
+
+```bash
+rg -n "Prompt" app/src | ~/.local-model/lm-rank "where is the tone prompt built"     # top 3 files
+~/.local-model/lm-rank "which note covers the jlink failure" .remember/*.md memory/*.md   # whole files
+```
+
+Prints `<P(relevant)> <path> (<hits> hits)` for the best 3 (`--top N`, `--all`). For each file the
+model reads the hit lines with a few lines around them (a whole file: its best 3 KB chunk). On 8
+code questions in the CuspGrammar app the right file was in its top 3 every time; `rg` ordered by hit count
+got 3 of 8. About 4-8 s for 30-40 files. Exit 2: no score, read the hits yourself. Do not pass
+files that hold secrets.
+
+## Rule checks over a diff before a review
+
+```bash
+~/.local-model/lm-diffcheck              # this branch + uncommitted + new files, against its base
+git diff | ~/.local-model/lm-diffcheck - # any diff
+```
+
+Asks each changed file's diff the project's yes/no questions in `.agents/diff-checks.txt` (one per
+line, `<glob> | <question>`, phrased so that yes is the problem). Prints
+`<P(yes)> <file>: <question>` for every yes ≥ 0.7, or `no flags`. A rule that depends only on the
+path (a module that must not change) is written `<glob> | !<message>`: any change there is
+flagged without asking the model, which is unreliable for such rules. The base is `BASE_BRANCH` from
+`agent-kit.env`, else `origin/HEAD`. In Claude Code the global UserPromptExpansion hook runs it
+when the user types `/code-review`, `/review`, `/security-review` or `/simplify`, and adds the
+flags to the prompt. A flag is a lead to check, not a finding. No checks file: it does nothing.
+
+## Hooks that run on their own (Claude Code)
+
+- **Loop stop** (`lm-loop.mjs`). The same Bash command failing 3 times in a row with the same error
+  and nothing changed in between (no file edit, no other command) → a warning; the next identical
+  run is blocked once. With edits in between, the model is asked whether the 3 errors are the
+  same; yes ≥ 0.9 → a warning that the edits are not reaching the cause. When you see
+  `[lm-loop]`: stop retrying, read the error, change the approach or ask the user.
+- **Request size hint** (`lm-route.mjs`). The model sizes each prompt; only a sure answer (≥ 0.9)
+  adds a line. Quick request → answer directly, no subagents. Multi-step → search-only subagents
+  can use `haiku` or `sonnet`. On 34 real prompts its sure answers were right 14 of 14.
 
 ## Find code by meaning
 
@@ -92,6 +151,9 @@ run it yourself at the end of the task.
 
 `LOCAL_MODEL_URL`, `LOCAL_MODEL_NAME`, `LOCAL_MODEL_MAX_BYTES`, `LOCAL_MODEL_KEEP_ALIVE` (default `10m`),
 `LOCAL_MODEL_TIMEOUT` (default 30 s), `LOCAL_MODEL_LOCAL=0` (Jev only), `LOCAL_MODEL_HOOKS=0` (all off),
+`LOCAL_MODEL_GATE=0` (output gate off), `LOCAL_MODEL_GATE_LINES` (default 200), `LOCAL_MODEL_LOOP=0`
+(loop stop off), `LOCAL_MODEL_LOOP_MAX` (default 3), `LOCAL_MODEL_ROUTE=0` (size hint off),
+`LM_DIFFCHECK_MIN` (default 0.7),
 `JEV_API_KEY`, `JEV_MODEL` (default `jev-latest`), `JEV_MAX_BYTES` (default 100000).
 
 ## Usage log
@@ -99,4 +161,6 @@ run it yourself at the end of the task.
 `lm-ask` and `jgl` add one tab-separated line per call to `~/.local-model/usage.log`: time, tool,
 milliseconds, bytes (the input for `lm-ask`, the output for `jgl`), answer or result count,
 working directory, question or arguments. `LOCAL_MODEL_USAGE_LOG=0` turns it off;
-`LOCAL_MODEL_USAGE_LOG_FILE` moves it.
+`LOCAL_MODEL_USAGE_LOG_FILE` moves it. `lm-gate` adds a line for each output it shortens: bytes
+in, then `passed|failed <P(yes)> <bytes out>`, so the savings can be summed. `lm-rank`, `lm-diffcheck`,
+`lm-loop` and `lm-route` add their own lines (tool name in the second column).
