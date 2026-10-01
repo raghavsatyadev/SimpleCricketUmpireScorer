@@ -15,10 +15,10 @@ base branch `migration-cmp`. Values also live in `agent-kit.env`.
 - When done and checked, stop. Report in five lines or fewer, in ASD-STE100 Simplified Technical English.
 - Claude Code: medium effort for scoped edits; high for native or architecture work. A second
   agent only for a review the user asked for.
-- Decision model (skill `nimble`): start it first, `bash ~/.nimble/nimble-on` (the SessionStart
-  hook does this in Claude Code). Then rely on it: `~/.nimble/jgl` first for any search where
-  you do not know the exact name; `~/.nimble/nimble-ask` first for a long log or file when you
-  need only a verdict. `rg` for exact names. When done, `~/.nimble/nimble-off nimble`.
+- Decision model: global skill `local-model`. Global skills live in `global_skills/` (no agent reads it
+  directly); install them with `bash global_skills/install.sh`.
+  Turn on the local decision model first (`bash ~/.local-model/lm-on`), then use `jgl`,
+  `lm-ask` and `rg` as the skill says.
 
 ## Rules — `.agents/rules/`
 
@@ -28,6 +28,7 @@ base branch `migration-cmp`. Values also live in `agent-kit.env`.
 | [format.md](.agents/rules/format.md) | touching any Kotlin — ktfmt Google style is mandatory |
 | [artemis-mobile-testing.md](.agents/rules/artemis-mobile-testing.md) | *on demand* — using ARTEMIS MCP tools |
 | [branch-pr-policy.md](.agents/rules/branch-pr-policy.md) | *always* — see the summary below |
+| [parallel-agents.md](.agents/rules/parallel-agents.md) | the user asks for agents in parallel worktrees — pin the base commit, cap Gradle memory, clean up after |
 | [migration.md](.agents/rules/migration.md) | *always* — moving code to CMP; never edit `app` or `support` |
 
 ## Skills — `.agents/skills/`
@@ -59,7 +60,7 @@ push, and open a PR against `migration-cmp` with `gh pr create --body-file <file
 
 ## Working on a bug
 
-Follow [project-onboarding-setup](.agents/skills/project-onboarding-setup/SKILL.md) Part 2
+Follow [fix-issue](.agents/skills/fix-issue/SKILL.md)
 (`/fix-issue <url>` in Claude Code): reproduce on the device → diagnose from real device state →
 fix with a test that fails on the old behaviour → reinstall and re-run the reproduction → PR, stop.
 A green unit test is not device verification. Inspect the device with ARTEMIS, not
@@ -68,7 +69,8 @@ A green unit test is not device verification. Inspect the device with ARTEMIS, n
 ## Housekeeping
 
 `tmp/` (agent scratch), `memory/` (persistent local data such as device serials),
-`.cache/` and every `.env` are git-ignored. Never commit credentials. Never clean `tmp/` unless the
+`.cache/` and every `.env` are git-ignored. Never commit credentials. Never put a token in a remote URL or
+`.git/config`; `gh` and the credential manager handle auth. Never clean `tmp/` unless the
 user asks — see [workspace-cleanup](.agents/skills/workspace-cleanup/SKILL.md).
 
 ---

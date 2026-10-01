@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Starts the local decision tools at the start of a session, so the first lm-ask or jgl call
+# does not wait for a cold load: starts Ollama when it is installed but not running, loads the
+# model (kept LOCAL_MODEL_KEEP_ALIVE, default 10m, after the last call) and starts the jgl proxy.
+# Returns at once; the start and the load run in the background. Safe to run again.
+#   lm-on           # Claude Code runs this from the global SessionStart hook
+d="$(cd "$(dirname "$0")" && pwd)"
+url="${LOCAL_MODEL_URL:-http://127.0.0.1:11434}"; url="${url%/}"
+model="${LOCAL_MODEL_NAME:-nimble}"
+[ "${LOCAL_MODEL_HOOKS:-1}" = "0" ] && exit 0
+case "$url" in *:11434*) ;; *) echo "lm-on: $url is not Ollama; nothing to load"; exit 0 ;; esac
+mkdir -p "$HOME/.local-model"
+
+# Start Ollama: the desktop app on Windows and macOS (it keeps the user's settings, such as
+# listening on the network), else `ollama serve`. Only for an Ollama on this PC.
+start_ollama() {
+  case "$url" in *://127.0.0.1:*|*://localhost:*) ;; *) return 1 ;; esac
+  local app="${LOCALAPPDATA:-}/Programs/Ollama/ollama app.exe"
+  if [ -n "${LOCALAPPDATA:-}" ] && [ -f "$app" ]; then
+    powershell.exe -NoProfile -Command "Start-Process -FilePath '$(cygpath -w "$app" 2>/dev/null || echo "$app")'" >/dev/null 2>&1
+  elif [ "$(uname)" = Darwin ] && open -Ra Ollama >/dev/null 2>&1; then
+    open -ga Ollama
+  elif command -v ollama >/dev/null 2>&1; then
+    nohup ollama serve >"$HOME/.local-model/ollama.log" 2>&1 &
+  else
+    return 1
+  fi
+}
+
+started=""
+if ! curl -s -m 2 "$url/api/tags" >/dev/null 2>&1; then
+  start_ollama || { echo "lm-on: Ollama is not installed or not reachable at $url"; exit 0; }
+  started="started Ollama, "
+fi
+# Wait for Ollama (up to 30 s when it was just started), then load the model.
+( for _ in $(seq 1 30); do curl -s -m 1 "$url/api/tags" >/dev/null 2>&1 && break; sleep 1; done
+  curl -s -m 120 "$url/api/generate" \
+    -d "{\"model\":\"$model\",\"keep_alive\":\"${LOCAL_MODEL_KEEP_ALIVE:-10m}\"}" >/dev/null 2>&1 ) \
+  >/dev/null 2>&1 &
+port="${JG_PROXY_PORT:-11435}"
+if [ -f "$d/jg-local-proxy.mjs" ] && command -v node >/dev/null 2>&1 \
+   && ! curl -s -m 1 "http://127.0.0.1:$port/api/v1/me" >/dev/null 2>&1; then
+  nohup node "$d/jg-local-proxy.mjs" >"$HOME/.local-model/jg-proxy.log" 2>&1 &
+fi
+echo "lm-on: ${started}loading $model; jgl proxy on :$port. Use lm-ask and jgl first (skill local-model)."
+exit 0

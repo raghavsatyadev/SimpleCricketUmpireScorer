@@ -1,7 +1,7 @@
 ---
 name: cmp-best-practices
 description: Project conventions for Compose Multiplatform code in this project — source-set layout, UDF state, resources, dependencies, Compose stability, expect/actual boundaries.
-version: 3.0.0
+version: 3.1.0
 ---
 
 # Compose Multiplatform conventions
@@ -43,5 +43,28 @@ Put logic in `commonMain`; platform source sets only bridge to OS APIs.
   Compose Preview Screenshot Testing — see [compose-screenshot-test](../compose-screenshot-test/SKILL.md).
 - **expect/actual**: keep platform bridges small and primitive (e.g. an engine factory), at the
   system boundary. No platform types in `commonMain` signatures.
+
+## Recomposition
+
+Picked from [skydoves/compose-performance-skills](https://github.com/skydoves/compose-performance-skills);
+its Android-only parts (baseline profiles, R8, Hilt) do not apply here.
+
+- **Honest annotations**: mark a type `@Immutable`/`@Stable` only when the contract is true — a false
+  one silently skips recompositions. Prefer immutable collections to annotating a mutable one.
+- **No `Flow` parameters**: collect at the screen and pass the value down (or a `() -> T` for very
+  hot values). New screens collect with `collectAsStateWithLifecycle()` (`lifecycle-runtime-compose-mp`).
+- **No fresh literals in arguments**: hoist `listOf(...)`, objects and lambdas that capture nothing
+  into `remember { }` or a top-level `persistentListOf(...)`; strong skipping compares unstable arguments by `===`.
+- **Hot state in later phases**: animated alpha/scale/translation through `Modifier.graphicsLayer { }`,
+  never `Modifier.alpha(state.value)`. Never write a state that was already read in the same pass.
+- **`derivedStateOf`**: always inside `remember(keys)`, keyed on captured non-state values, and only
+  when the output changes less often than the input. Never wrap a `collectAsState` result in it;
+  filter the flow upstream (`distinctUntilChanged`, `conflate` for >10 emissions/s).
+- **Effects**: key every effect on what it closes over; `rememberUpdatedState` for callbacks read
+  by a long-lived `LaunchedEffect`; `DisposableEffect` for non-coroutine listeners; no allocation
+  in `SideEffect`.
+- **Lazy lists**: `key` is a stable domain id — never the index or a per-emission random id
+  (`animateItem()` needs it). No `BoxWithConstraints` inside items; no `Scaffold` inside `Scaffold`.
+- **Proof**: claim a performance gain only from a release build on a device, before and after.
 
 Build and format commands: [AGENTS.md](../../../AGENTS.md#commands).

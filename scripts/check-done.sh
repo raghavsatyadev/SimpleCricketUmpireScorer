@@ -8,7 +8,7 @@
 #      evidence hash (scripts/evidence-hash.sh)  ->  exit 2, reason on stderr. Claude Code
 #      feeds that back to the agent, which must run scripts/ci-local.sh before stopping.
 #   2. On fix/* branches only: reminds (never blocks) when nothing in tmp/ is newer than the
-#      newest debug APK (plus an optional Nimble check: "fix is done" with no device re-run in the
+#      newest debug APK (plus an optional local-model check: "fix is done" with no device re-run in the
 #      transcript). ARTEMIS keeps its traces in its own clone, so tmp/ has no artifact
 #      that reliably proves a device run; this is a nudge, not a gate.
 #
@@ -93,9 +93,9 @@ if [ -z "$evidence" ]; then
   msg="fix/* branch: no device evidence in tmp/ newer than the latest APK. Reinstall and re-run the ARTEMIS reproduction (save notes/screens to tmp/) before calling the fix verified."
 fi
 
-# Fuzzy check (optional, Nimble): the last assistant text claims the fix is done, but the
-# transcript shows no device re-run. Reminder only; silent when Nimble is off, slow or unsure.
-if [ -z "$msg" ] && [ -f "$REPO/scripts/nimble.sh" ]; then
+# Fuzzy check (optional, local model): the last assistant text claims the fix is done, but the
+# transcript shows no device re-run. Reminder only; silent when the local model is off, slow or unsure.
+if [ -z "$msg" ] && [ -f "$REPO/scripts/local-model.sh" ]; then
   tpath=$(printf '%s' "$flat" \
     | sed -n 's/.*"transcript_path"[[:space:]]*:[[:space:]]*"\(\([^"\\]\|\\.\)*\)".*/\1/p' \
     | sed 's/\\\\/\\/g; s/\\/\//g')
@@ -103,13 +103,13 @@ if [ -z "$msg" ] && [ -f "$REPO/scripts/nimble.sh" ]; then
     last=$(grep '"type":"assistant"' "$tpath" | grep '"type":"text"' | tail -n 1 \
       | sed -n 's/.*"type":"text","text":"\(\([^"\\]\|\\.\)*\)".*/\1/p')
     if printf '%s' "$last" | grep -Eiq '(fixed|done|resolved|works now|complete)'; then
-      # shellcheck source=nimble.sh
-      . "$REPO/scripts/nimble.sh"
-      NIMBLE_ALLOW_JEV=0   # hooks stay local and free
+      # shellcheck source=local-model.sh
+      . "$REPO/scripts/local-model.sh"
+      LOCAL_MODEL_ALLOW_JEV=0   # hooks stay local and free
       q='{"rerun":{"type":"noul","instructions":"Is there a device re-run in the text?"}}'
-      if resp=$(tail -c 60000 "$tpath" | nimble_ask 2 "$q") \
-         && n=$(nimble_get "$resp" rerun noul) && ! nimble_ge "$n" 0.3; then
-        msg="fix/* branch: the last message says the fix is done, but the transcript shows no device re-run (Nimble, re-run score $n). Re-run the reproduction on the device before calling it verified."
+      if resp=$(tail -c 60000 "$tpath" | lm_ask 2 "$q") \
+         && n=$(lm_get "$resp" rerun noul) && ! lm_ge "$n" 0.3; then
+        msg="fix/* branch: the last message says the fix is done, but the transcript shows no device re-run (local model, re-run score $n). Re-run the reproduction on the device before calling it verified."
       fi
     fi
   fi
