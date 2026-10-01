@@ -1,6 +1,6 @@
 ---
 name: nimble
-description: Start the local decision model first in every session (nimble-on), then rely on it. Ask a System One decision model (local Nimble or Laya; hosted Jev only for very long text) a yes/no or pick-one question about a long log, file or command output instead of reading it into context, and find code by meaning with jgl. Use before reading a big build log, test output, logcat dump or generated file when you only need a verdict, and when a keyword search would miss what you are looking for. Unload the model when the work is done.
+description: Turn on the Ollama Nimble model first (bash ~/.nimble/nimble-on), then rely on it. nimble-ask gives a yes/no or pick-one verdict on a long log, test output or file instead of reading it; jgl finds code when you do not know its name, rg when you do. Unload the model when done.
 ---
 
 # Nimble: cheap verdicts instead of long reads
@@ -8,22 +8,24 @@ description: Start the local decision model first in every session (nimble-on), 
 Commands live in `~/.nimble/` (Windows: `%USERPROFILE%\.nimble\`); run them with bash. They work
 the same for Claude Code and Gemini/Antigravity agents.
 
-## Start first, then rely on it
+## Turn on the Ollama Nimble model first, then rely on it
 
-1. **Before any other work in a session**, start the tools:
+1. **Before any nimble-ask or jgl call**, turn on the Nimble model in Ollama:
    `bash ~/.nimble/nimble-on`. It returns at once and loads the model and the jgl proxy in the
-   background. Claude Code repos with the SessionStart hook do this for you; run it anyway if
-   `curl -s 127.0.0.1:11434/api/ps` does not list the model. Gemini/Antigravity: always run it.
+   background. In Claude Code the global SessionStart hook (added by `global_skills/install.sh`) does
+   this for you; run it anyway if `curl -s 127.0.0.1:11434/api/ps` does not list the model.
+   Gemini/Antigravity has no such hook: always run it.
 2. **Then use these tools before the usual ones:**
    - Looking for code and you do not know the exact name → `jgl` first, then `rg` to confirm.
    - Build log, test output, logcat or a file over ~200 lines, and you need a verdict →
      `nimble-ask` first. Read the text only when it answers below 0.9 or exits 2.
    - Exact identifier or error string → `rg` directly (faster than jgl, same result).
-3. At the end of the task: `~/.nimble/nimble-off nimble`.
+3. At the end of the task: `~/.nimble/nimble-off "${NIMBLE_MODEL:-nimble}"`.
 
 | Backend | Where | Cost | Reads |
 | --- | --- | --- | --- |
 | Nimble | Ollama on this PC (`NIMBLE_URL`, default `127.0.0.1:11434`) | free | last ~6K tokens |
+| Tev1 | Ollama on this PC (`NIMBLE_MODEL=tev1:4b` or `tev1:0.8b`, `NIMBLE_MAX_BYTES=3600`) | free | last ~1.5K tokens |
 | Laya | pip server on this PC (`NIMBLE_URL=http://127.0.0.1:8000`, `NIMBLE_MODEL=laya`) | free | last ~400 tokens |
 | Jev | TypeSafe hosted (`api.typesafe.ai`), optional | paid per input token | last ~28K tokens |
 
@@ -80,10 +82,10 @@ Ollama unloads the model 10 minutes after the last call (`NIMBLE_KEEP_ALIVE`). W
 that used it is finished, unload it now so the GPU frees ~9 GB and cools down:
 
 ```bash
-~/.nimble/nimble-off nimble     # just the decision model; Ollama keeps serving other models
+~/.nimble/nimble-off "${NIMBLE_MODEL:-nimble}"  # just the decision model; Ollama keeps serving other models
 ```
 
-Claude Code runs this on session end through the repo hook. Gemini/Antigravity has no such hook:
+Claude Code runs this on session end through the global hook. Gemini/Antigravity has no such hook:
 run it yourself at the end of the task.
 
 ## Settings
@@ -91,3 +93,10 @@ run it yourself at the end of the task.
 `NIMBLE_URL`, `NIMBLE_MODEL`, `NIMBLE_MAX_BYTES`, `NIMBLE_KEEP_ALIVE` (default `10m`),
 `NIMBLE_TIMEOUT` (default 30 s), `NIMBLE_LOCAL=0` (Jev only), `NIMBLE_HOOKS=0` (all off),
 `JEV_API_KEY`, `JEV_MODEL` (default `jev-latest`), `JEV_MAX_BYTES` (default 100000).
+
+## Usage log
+
+`nimble-ask` and `jgl` add one tab-separated line per call to `~/.nimble/usage.log`: time, tool,
+milliseconds, bytes (the input for `nimble-ask`, the output for `jgl`), answer or result count,
+working directory, question or arguments. `NIMBLE_USAGE_LOG=0` turns it off;
+`NIMBLE_USAGE_LOG_FILE` moves it.

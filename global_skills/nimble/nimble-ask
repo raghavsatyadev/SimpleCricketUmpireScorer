@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Ask the local decision model (Nimble or Laya), or Jev when the text is too long for it, one
+# Ask the local decision model (Nimble, Tev1 or Laya), or Jev when the text is too long for it, one
 # question about text on stdin.
 #
 #   nimble-ask yesno  "<question>"                       < file   -> "yes 0.97 local"
@@ -33,15 +33,35 @@ case "$kind" in
   *) echo "kind must be yesno or choice" >&2; exit 64 ;;
 esac
 
-tmp=$(mktemp)
-trap 'rm -f "$tmp"' EXIT
-nimble_ask "${NIMBLE_TIMEOUT:-30}" "$qs" >"$tmp" || exit 2
-resp=$(cat "$tmp")
-if [ "$kind" = yesno ]; then
-  v=$(nimble_get "$resp" a noul) || exit 2
-  if nimble_ge "$v" 0.5; then echo "yes $v $NIMBLE_BACKEND"; else echo "no $v $NIMBLE_BACKEND"; fi
-else
-  c=$(nimble_get "$resp" a choice) || exit 2
-  p=$(nimble_get "$resp" a p) || p="?"
-  echo "$c $p $NIMBLE_BACKEND"
+in=$(mktemp); tmp=$(mktemp)
+trap 'rm -f "$tmp" "$in"' EXIT
+cat >"$in"
+t0=$(date +%s%3N)
+
+# One line per call in ~/.nimble/usage.log (NIMBLE_USAGE_LOG=0 turns it off):
+# time, tool, ms, input bytes, answer, cwd, question. Never fails the call.
+usage_log() {
+  [ "${NIMBLE_USAGE_LOG:-1}" = 0 ] && return 0
+  local f="${NIMBLE_USAGE_LOG_FILE:-$HOME/.nimble/usage.log}"
+  mkdir -p "$(dirname "$f")" 2>/dev/null
+  printf '%s\tnimble-ask\t%s\t%s\t%s\t%s\t%s\n' "$(date -Iseconds)" "$(( $(date +%s%3N) - t0 ))" \
+    "$(wc -c <"$in" | tr -d ' ')" "$1" "$PWD" "$(printf '%s' "$question" | tr '\t\r\n' '   ')" \
+    >>"$f" 2>/dev/null
+  return 0
+}
+
+out=""
+if nimble_ask "${NIMBLE_TIMEOUT:-30}" "$qs" <"$in" >"$tmp"; then
+  resp=$(cat "$tmp")
+  if [ "$kind" = yesno ]; then
+    if v=$(nimble_get "$resp" a noul); then
+      if nimble_ge "$v" 0.5; then out="yes $v $NIMBLE_BACKEND"; else out="no $v $NIMBLE_BACKEND"; fi
+    fi
+  elif c=$(nimble_get "$resp" a choice); then
+    p=$(nimble_get "$resp" a p) || p="?"
+    out="$c $p $NIMBLE_BACKEND"
+  fi
 fi
+usage_log "${out:-failed}"
+[ -n "$out" ] || exit 2
+echo "$out"

@@ -12,7 +12,7 @@
 #   7. ARTEMIS clone, API key and MCP registration
 #   8. ARTEMIS model: Gemini (local Qwen fallback) or local Qwen only, sized to your GPU
 #      Non-interactive choice: ARTEMIS_MODEL=gemini|qwen bash scripts/setup-env.sh
-#      Decision model: DECISION_MODEL=nimble|laya|jev|none (default: asks, recommending by hardware)
+#      Decision model: DECISION_MODEL=nimble|tev1|laya|jev|none (default: asks, recommending by hardware)
 #   9. ktfmt (fetched by scripts/ci-local.sh)
 #  10. Links .agents/skills/ into .claude/skills/ so Claude Code finds the skills
 # ==============================================================================
@@ -360,31 +360,38 @@ if [[ -d "$ARTEMIS_HOME/mcp_server" ]] && (( HAVE_LOCAL )); then
 fi
 
 # -------------------------------------------------------------
-# 8b. Decision model for agents: Nimble / Laya (local) and Jev (hosted, optional)
+# 8b. Decision model for agents: Nimble / Tev1 / Laya (local) and Jev (hosted, optional)
 # -------------------------------------------------------------
 # Optional. The hooks (scripts/nimble.sh) and the nimble skill ask a System One model quick yes/no
-# and pick-one questions instead of reading long text. Nimble (Ollama) reads long logs but needs
-# ~9 GB of GPU memory while loaded. Laya (pip, ~1.3 GB) fits smaller machines but sees only the
-# last ~512 tokens. Jev (TypeSafe, hosted, paid per token) reads ~28K tokens; it is only used for
-# text too long for the local model, never by the hooks.
-header "8b. Decision Model for Agents (Nimble / Laya local, Jev hosted)"
+# and pick-one questions instead of reading long text. All run on Ollama 0.35+ except Laya.
+# Measured on an RTX 5080 (60 tone samples, 10 log questions):
+#   Nimble 9B   ~9 GB VRAM, ~8K-token window, tone 55/60, logs 10/10
+#   Tev1 4B     ~4.7 GB,    ~2K-token window, tone 55/60, logs 10/10
+#   Tev1 0.8B   ~0.9 GB,    ~2K-token window, tone 46/60, logs 10/10
+#   Laya (pip)  ~1.3 GB,    ~512 tokens,      tone 46/60
+# Jev (TypeSafe, hosted, paid per token) reads ~28K tokens; it is only used for text too long for
+# the local model, never by the hooks.
+header "8b. Decision Model for Agents (Nimble / Tev1 / Laya local, Jev hosted)"
 if [[ "$OS_TYPE" == Darwin* ]]; then RAM_GB=$(( $(sysctl -n hw.memsize) / 1073741824 ))
 else RAM_GB=$(( $(awk '/MemTotal/ {print $2}' /proc/meminfo) / 1048576 )); fi
+if (( VRAM_GB >= 6 )); then TEV_MODEL=tev1:4b; else TEV_MODEL=tev1:0.8b; fi
 if (( VRAM_GB >= 12 )); then RECOMMENDED=nimble; REC_TEXT="Nimble + Jev"
-elif (( VRAM_GB >= 4 || RAM_GB >= 16 )); then RECOMMENDED=laya; REC_TEXT="Laya + Jev"
+elif (( VRAM_GB >= 2 || RAM_GB >= 8 )); then RECOMMENDED=tev1; REC_TEXT="$TEV_MODEL + Jev"
 else RECOMMENDED=jev; REC_TEXT="Jev only"; fi
 info "Recommended for this machine (~${VRAM_GB} GB GPU, ${RAM_GB} GB RAM): $REC_TEXT (Jev optional)."
 DECISION="${DECISION_MODEL:-}"
 if [[ -z "$DECISION" ]]; then
   echo ""
   echo "  Which decision model should the agents use?"
-  echo "    n) Nimble   - local, free, needs ~9 GB GPU memory"
-  echo "    l) Laya     - local, free, small, short window"
+  echo "    n) Nimble   - local, free, needs ~9 GB GPU memory, reads ~6K tokens"
+  if [[ "$TEV_MODEL" == tev1:4b ]]; then echo "    t) tev1:4b  - local, free, ~5 GB GPU memory, reads ~1.5K tokens"
+  else echo "    t) tev1:0.8b - local, free, ~1 GB, reads ~1.5K tokens"; fi
+  echo "    l) Laya     - local, free, pip server, reads ~400 tokens"
   echo "    j) Jev only - hosted, paid per token, no local model"
   echo "    s) skip     - no decision model; hooks stay off"
   echo "    Enter) $REC_TEXT"
   read -r -p "  --> " answer
-  case "$answer" in n|N) DECISION=nimble ;; l|L) DECISION=laya ;; j|J) DECISION=jev ;; s|S) DECISION=none ;; *) DECISION=$RECOMMENDED ;; esac
+  case "$answer" in n|N) DECISION=nimble ;; t|T) DECISION=tev1 ;; l|L) DECISION=laya ;; j|J) DECISION=jev ;; s|S) DECISION=none ;; *) DECISION=$RECOMMENDED ;; esac
 fi
 [[ "$DECISION" == none ]] && DECISION=""
 
@@ -398,25 +405,38 @@ if [[ -z "$DECISION" ]]; then
 elif [[ "$DECISION" == jev ]]; then
   printf '# Agent hooks: decision model = Jev only\nexport NIMBLE_LOCAL=0\n' >> "$SHELL_PROFILE"
   pass "Jev only: nimble-ask goes to Jev; the hooks stay off (they never pay for Jev)."
-elif [[ "$DECISION" == nimble ]]; then
-  (( VRAM_GB < 12 )) && warn "Nimble needs ~9 GB of GPU memory while loaded; this machine has ~${VRAM_GB} GB. Expect slow answers."
-  pass "Nimble (~${VRAM_GB} GB usable; it needs ~9 GB while loaded)."
-  if [[ -n "$LOCAL_MODEL" ]] && (( VRAM_GB < 18 )); then
-    info "Nimble and $LOCAL_MODEL do not both fit; Ollama swaps them, so the first hook after an ARTEMIS run is slower."
+elif [[ "$DECISION" == nimble || "$DECISION" == tev1 ]]; then
+  if [[ "$DECISION" == nimble ]]; then
+    OLLAMA_MODEL=nimble; MODEL_SIZE="~9.5 GB"
+    (( VRAM_GB < 12 )) && warn "Nimble needs ~9 GB of GPU memory while loaded; this machine has ~${VRAM_GB} GB. Expect slow answers."
+    pass "Nimble (~${VRAM_GB} GB usable; it needs ~9 GB while loaded)."
+    if [[ -n "$LOCAL_MODEL" ]] && (( VRAM_GB < 18 )); then
+      info "Nimble and $LOCAL_MODEL do not both fit; Ollama swaps them, so the first hook after an ARTEMIS run is slower."
+    fi
+  else
+    # Tev1's window is ~2K tokens: send the last 3.6 KB (dense Gradle logs run ~2 bytes a token).
+    OLLAMA_MODEL=$TEV_MODEL
+    if [[ "$TEV_MODEL" == tev1:4b ]]; then MODEL_SIZE="~4.5 GB"; else MODEL_SIZE="~0.8 GB"; fi
+    printf '# Agent hooks: decision model = %s
+export NIMBLE_MODEL=%s NIMBLE_MAX_BYTES=3600
+' "$TEV_MODEL" "$TEV_MODEL" >> "$SHELL_PROFILE"
+    pass "$TEV_MODEL (~${VRAM_GB} GB GPU, ${RAM_GB} GB RAM). Hooks use it (NIMBLE_MODEL, NIMBLE_MAX_BYTES in $SHELL_PROFILE; restart your agent)."
+    (( VRAM_GB < 2 )) && info "No usable GPU: $TEV_MODEL runs on the CPU. Untested here; expect slower answers."
+    info "Longer text goes to Jev when a key is set; otherwise nimble-ask reads only the tail."
   fi
   OLLAMA_VER="$(ollama --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
   if ! command -v ollama &>/dev/null; then
     info "Ollama not installed (optional). Get 0.35.0 or later from https://ollama.com/download"
   elif [[ -n "$OLLAMA_VER" && "$(printf '%s\n0.35.0\n' "$OLLAMA_VER" | sort -V | head -1)" != "0.35.0" ]]; then
-    warn "Ollama $OLLAMA_VER is too old for Nimble's /v1/systemone endpoint. Update to 0.35.0 or later."
+    warn "Ollama $OLLAMA_VER is too old for the /v1/systemone endpoint. Update to 0.35.0 or later."
   elif ! TAGS="$(curl -sf --max-time 3 http://localhost:11434/api/tags)"; then
     warn "Ollama is installed but not running. Start it (ollama serve &), then re-run."
-  elif grep -qE '"nimble(:[^"]*)?"' <<<"$TAGS"; then
-    pass "Nimble is ready in Ollama. The hooks use it at http://127.0.0.1:11434."
-  elif prompt_fix "Download Nimble into Ollama (several GB)?"; then
-    ollama pull nimble
+  elif grep -qF "\"$OLLAMA_MODEL\"" <<<"$TAGS" || grep -qF "\"$OLLAMA_MODEL:latest\"" <<<"$TAGS"; then
+    pass "$OLLAMA_MODEL is ready in Ollama. The hooks use it at http://127.0.0.1:11434."
+  elif prompt_fix "Download $OLLAMA_MODEL into Ollama ($MODEL_SIZE)?"; then
+    ollama pull "$OLLAMA_MODEL"
   else
-    info "Later: ollama pull nimble"
+    info "Later: ollama pull $OLLAMA_MODEL"
   fi
 else
   LAYA_ENV="$HOME/laya-env"
@@ -435,7 +455,7 @@ else
     else
       "$LAYA_ENV/bin/python" -m pip install torch
     fi
-    "$LAYA_ENV/bin/python" -m pip install laya
+    "$LAYA_ENV/bin/python" -m pip install "laya[serve]"   # [serve] brings fastapi + uvicorn for laya-serve
   else
     info "Later: re-run this script and answer yes to install Laya."
   fi
@@ -482,7 +502,7 @@ if [[ -n "$DECISION" ]]; then
 fi
 
 # jgl = jg (jevgrep) with the local model judging: finds code by meaning, nothing leaves the PC.
-if [[ "$DECISION" == nimble || "$DECISION" == laya ]]; then
+if [[ -n "$DECISION" && "$DECISION" != jev ]]; then
   if command -v jg &>/dev/null && command -v rg &>/dev/null; then
     pass "jg and ripgrep are installed; ~/.nimble/jgl searches code by meaning with $DECISION."
   elif prompt_fix "Install jg (npm) for search by meaning? (ripgrep: install it with your package manager)"; then
@@ -493,19 +513,26 @@ if [[ "$DECISION" == nimble || "$DECISION" == laya ]]; then
   fi
 fi
 
-# The `nimble` skill lets an agent in ANY project (Claude Code and Gemini/Antigravity) ask the
-# model instead of reading long text, find code with jgl, and unload the model when done.
-# Installed per user, only when asked.
+# Global skills (global_skills/, e.g. `nimble`) work in every project, so they live in each
+# user's global skill folders: Claude Code, Gemini/Antigravity, Codex. Installed only when asked.
+missing_skills=()
+for d in "$REPO_ROOT"/global_skills/*/; do
+  [[ -f "$d/SKILL.md" ]] || continue
+  s="$(basename "$d")"
+  for t in .claude .gemini .agents; do
+    [[ -f "$HOME/$t/skills/$s/SKILL.md" ]] || { missing_skills+=("$s"); break; }
+  done
+done
+if [[ ${#missing_skills[@]} -eq 0 ]]; then
+  pass "Global skills are installed. Re-run global_skills/install.sh after a pull that changes them."
+elif prompt_fix "Install the global skills (${missing_skills[*]}) for Claude Code, Gemini and Codex (every project)?"; then
+  bash "$REPO_ROOT/global_skills/install.sh"
+  pass "Restart your agent. Check: echo hi | ~/.nimble/nimble-ask yesno \"Is this a greeting?\""
+else
+  warn "Skipped. Missing global skills: ${missing_skills[*]}. Later: bash global_skills/install.sh"
+fi
 if [[ -n "$DECISION" ]]; then
-  if [[ -x "$HOME/.nimble/nimble-ask" && -f "$HOME/.claude/skills/nimble/SKILL.md" && -f "$HOME/.gemini/skills/nimble/SKILL.md" ]]; then
-    pass "The nimble skill is installed globally (~/.nimble, Claude and Gemini skills). Re-run tools/nimble-skill/install-global.sh to update."
-  elif prompt_fix "Install the nimble skill globally for Claude Code and Gemini (every project)?"; then
-    bash "$REPO_ROOT/tools/nimble-skill/install-global.sh"
-    pass "Restart your agent. Check: echo hi | ~/.nimble/nimble-ask yesno \"Is this a greeting?\""
-  else
-    info "Skipped. The repo hooks still use the model; only other projects miss the skill."
-  fi
-  info "Free the GPU after use: ~/.nimble/nimble-off nimble (Claude Code does it on session end)."
+  [[ -n "${OLLAMA_MODEL:-}" ]] && info "Free the GPU after use: ~/.nimble/nimble-off $OLLAMA_MODEL (Claude Code does it on session end)."
 fi
 
 # -------------------------------------------------------------

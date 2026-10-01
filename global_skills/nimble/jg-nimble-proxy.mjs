@@ -8,6 +8,7 @@
 // Each snippet is one Noul ("could this snippet be what the query looks for?") with the query and
 // snippet as named state fields, as in TypeSafe's re-ranking cookbook. The noul is the score.
 // Env: NIMBLE_URL (default http://127.0.0.1:11434), NIMBLE_MODEL (nimble), NIMBLE_KEEP_ALIVE (2m),
+// NIMBLE_MAX_BYTES (16000; the snippet gets 3/4 of it, at most 12000),
 // JG_PROXY_PORT (11435), JG_PROXY_CONCURRENCY (4).
 import http from 'node:http';
 
@@ -16,7 +17,8 @@ const MODEL = process.env.NIMBLE_MODEL || 'nimble';
 const KEEP_ALIVE = process.env.NIMBLE_KEEP_ALIVE || '2m';
 const PORT = Number(process.env.JG_PROXY_PORT || 11435);
 const CONCURRENCY = Number(process.env.JG_PROXY_CONCURRENCY || 4);
-const MAX_SNIPPET = 12000; // characters; keeps one request inside Nimble's ~8K-token window
+// Characters per snippet: keeps one request inside the model's window (Nimble ~8K tokens, Tev1 ~2K).
+const MAX_SNIPPET = Math.min(12000, Math.floor(Number(process.env.NIMBLE_MAX_BYTES || 16000) * 0.75));
 
 async function judge(query, snippet) {
   const state = { query, snippet: snippet.text.slice(0, MAX_SNIPPET) };

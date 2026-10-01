@@ -51,26 +51,6 @@
           }
         ]
       }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/tools/nimble-skill/nimble-on\""
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/tools/nimble-skill/nimble-off\" \"${NIMBLE_MODEL:-nimble}\""
-          }
-        ]
-      }
     ]
   }
 }
