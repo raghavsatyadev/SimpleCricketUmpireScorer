@@ -362,7 +362,7 @@ fi
 # -------------------------------------------------------------
 # 8b. Decision model for agents: Nimble / Tev1 / Laya (local) and Jev (hosted, optional)
 # -------------------------------------------------------------
-# Optional. The hooks (scripts/nimble.sh) and the nimble skill ask a System One model quick yes/no
+# Optional. The hooks (scripts/local-model.sh) and the local-model skill ask a System One model quick yes/no
 # and pick-one questions instead of reading long text. All run on Ollama 0.35+ except Laya.
 # Measured on an RTX 5080 (60 tone samples, 10 log questions):
 #   Nimble 9B   ~9 GB VRAM, ~8K-token window, tone 55/60, logs 10/10
@@ -395,7 +395,7 @@ if [[ -z "$DECISION" ]]; then
 fi
 [[ "$DECISION" == none ]] && DECISION=""
 
-# The hooks read NIMBLE_* from the shell profile; drop what an earlier choice wrote there.
+# The hooks read LOCAL_MODEL_* from the shell profile; drop what an earlier choice wrote there.
 if [[ -n "$DECISION" && -f "$SHELL_PROFILE" ]] && grep -q "^# Agent hooks: decision model" "$SHELL_PROFILE"; then
   awk '/^# Agent hooks: decision model/ { skip = 2 } skip { skip--; next } 1' "$SHELL_PROFILE" > "$SHELL_PROFILE.tmp"     && mv "$SHELL_PROFILE.tmp" "$SHELL_PROFILE"
 fi
@@ -403,8 +403,8 @@ fi
 if [[ -z "$DECISION" ]]; then
   info "No decision model. The hooks stay off; nothing breaks. Re-run to choose one."
 elif [[ "$DECISION" == jev ]]; then
-  printf '# Agent hooks: decision model = Jev only\nexport NIMBLE_LOCAL=0\n' >> "$SHELL_PROFILE"
-  pass "Jev only: nimble-ask goes to Jev; the hooks stay off (they never pay for Jev)."
+  printf '# Agent hooks: decision model = Jev only\nexport LOCAL_MODEL_LOCAL=0\n' >> "$SHELL_PROFILE"
+  pass "Jev only: lm-ask goes to Jev; the hooks stay off (they never pay for Jev)."
 elif [[ "$DECISION" == nimble || "$DECISION" == tev1 ]]; then
   if [[ "$DECISION" == nimble ]]; then
     OLLAMA_MODEL=nimble; MODEL_SIZE="~9.5 GB"
@@ -418,11 +418,11 @@ elif [[ "$DECISION" == nimble || "$DECISION" == tev1 ]]; then
     OLLAMA_MODEL=$TEV_MODEL
     if [[ "$TEV_MODEL" == tev1:4b ]]; then MODEL_SIZE="~4.5 GB"; else MODEL_SIZE="~0.8 GB"; fi
     printf '# Agent hooks: decision model = %s
-export NIMBLE_MODEL=%s NIMBLE_MAX_BYTES=3600
+export LOCAL_MODEL_NAME=%s LOCAL_MODEL_MAX_BYTES=3600
 ' "$TEV_MODEL" "$TEV_MODEL" >> "$SHELL_PROFILE"
-    pass "$TEV_MODEL (~${VRAM_GB} GB GPU, ${RAM_GB} GB RAM). Hooks use it (NIMBLE_MODEL, NIMBLE_MAX_BYTES in $SHELL_PROFILE; restart your agent)."
+    pass "$TEV_MODEL (~${VRAM_GB} GB GPU, ${RAM_GB} GB RAM). Hooks use it (LOCAL_MODEL_NAME, LOCAL_MODEL_MAX_BYTES in $SHELL_PROFILE; restart your agent)."
     (( VRAM_GB < 2 )) && info "No usable GPU: $TEV_MODEL runs on the CPU. Untested here; expect slower answers."
-    info "Longer text goes to Jev when a key is set; otherwise nimble-ask reads only the tail."
+    info "Longer text goes to Jev when a key is set; otherwise lm-ask reads only the tail."
   fi
   OLLAMA_VER="$(ollama --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
   if ! command -v ollama &>/dev/null; then
@@ -471,12 +471,12 @@ EOF
     pass "Wrote $LAYA_ENV/start-laya.sh"
   fi
   # Point the hooks at Laya: same /v1/systemone API, but a 512-token window.
-  printf '# Agent hooks: decision model = Laya\nexport NIMBLE_URL=http://127.0.0.1:8000 NIMBLE_MODEL=laya NIMBLE_MAX_BYTES=1800\n' >> "$SHELL_PROFILE"
-  info "Hooks now use Laya (NIMBLE_URL, NIMBLE_MODEL, NIMBLE_MAX_BYTES in $SHELL_PROFILE; restart your agent)."
+  printf '# Agent hooks: decision model = Laya\nexport LOCAL_MODEL_URL=http://127.0.0.1:8000 LOCAL_MODEL_NAME=laya LOCAL_MODEL_MAX_BYTES=1800\n' >> "$SHELL_PROFILE"
+  info "Hooks now use Laya (LOCAL_MODEL_URL, LOCAL_MODEL_NAME, LOCAL_MODEL_MAX_BYTES in $SHELL_PROFILE; restart your agent)."
   info "Start it: $LAYA_ENV/start-laya.sh"
 fi
 
-# Jev (TypeSafe, hosted): optional, paid per input token. nimble-ask sends text there only when it
+# Jev (TypeSafe, hosted): optional, paid per input token. lm-ask sends text there only when it
 # is too long for the local model (or there is none); the hooks never do. The key stays in a
 # per-user file, never in the repo.
 if [[ -n "$DECISION" ]]; then
@@ -504,7 +504,7 @@ fi
 # jgl = jg (jevgrep) with the local model judging: finds code by meaning, nothing leaves the PC.
 if [[ -n "$DECISION" && "$DECISION" != jev ]]; then
   if command -v jg &>/dev/null && command -v rg &>/dev/null; then
-    pass "jg and ripgrep are installed; ~/.nimble/jgl searches code by meaning with $DECISION."
+    pass "jg and ripgrep are installed; ~/.local-model/jgl searches code by meaning with $DECISION."
   elif prompt_fix "Install jg (npm) for search by meaning? (ripgrep: install it with your package manager)"; then
     npm install -g @remotehost/jg
     command -v rg &>/dev/null || info "Also install ripgrep: brew install ripgrep / apt install ripgrep"
@@ -513,7 +513,7 @@ if [[ -n "$DECISION" && "$DECISION" != jev ]]; then
   fi
 fi
 
-# Global skills (global_skills/, e.g. `nimble`) work in every project, so they live in each
+# Global skills (global_skills/, e.g. `local-model`) work in every project, so they live in each
 # user's global skill folders: Claude Code, Gemini/Antigravity, Codex. Installed only when asked.
 missing_skills=()
 for d in "$REPO_ROOT"/global_skills/*/; do
@@ -527,12 +527,12 @@ if [[ ${#missing_skills[@]} -eq 0 ]]; then
   pass "Global skills are installed. Re-run global_skills/install.sh after a pull that changes them."
 elif prompt_fix "Install the global skills (${missing_skills[*]}) for Claude Code, Gemini and Codex (every project)?"; then
   bash "$REPO_ROOT/global_skills/install.sh"
-  pass "Restart your agent. Check: echo hi | ~/.nimble/nimble-ask yesno \"Is this a greeting?\""
+  pass "Restart your agent. Check: echo hi | ~/.local-model/lm-ask yesno \"Is this a greeting?\""
 else
   warn "Skipped. Missing global skills: ${missing_skills[*]}. Later: bash global_skills/install.sh"
 fi
 if [[ -n "$DECISION" ]]; then
-  [[ -n "${OLLAMA_MODEL:-}" ]] && info "Free the GPU after use: ~/.nimble/nimble-off $OLLAMA_MODEL (Claude Code does it on session end)."
+  [[ -n "${OLLAMA_MODEL:-}" ]] && info "Free the GPU after use: ~/.local-model/lm-off $OLLAMA_MODEL (Claude Code does it on session end)."
 fi
 
 # -------------------------------------------------------------

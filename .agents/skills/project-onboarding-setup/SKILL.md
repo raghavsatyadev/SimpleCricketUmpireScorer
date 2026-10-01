@@ -36,7 +36,7 @@ bash scripts/setup-env.sh                                         # macOS / Linu
 ### Global skills — ask the user to install them
 
 Some skills are global: they live in each developer's own skill folders and work in every
-project. The repo keeps the shared copy in `global_skills/` (now: `nimble`). No agent reads that
+project. The repo keeps the shared copy in `global_skills/` (now: `local-model`). No agent reads that
 folder directly, so a new machine has none of them until they are copied.
 
 Ask the user to install them, then on a yes run (Git Bash on Windows; the doctor offers the same):
@@ -47,7 +47,7 @@ bash global_skills/install.sh   # re-run after a pull that changes global_skills
 
 It copies each skill folder to `~/.claude/skills/` (Claude Code), `~/.gemini/skills/`
 (Gemini CLI / Antigravity) and `~/.agents/skills/` (Codex and other agents), and runs the skill's
-own `install.sh` (`nimble`: `~/.nimble/` commands and Claude Code hooks). On a no, tell the user
+own `install.sh` (`local-model`: `~/.local-model/` commands and Claude Code hooks). On a no, tell the user
 which skills are missing. Restart the agent afterwards so it loads them.
 
 ### Android skills — official, from the `android` CLI
@@ -125,8 +125,8 @@ sessions short. If a local run seems to use Gemini, check `stdout.log` for
 ## Part 1b — Decision model for agents: Nimble / Tev1 / Laya (local) and Jev (hosted)
 
 Optional. A System One model answers yes/no and pick-one questions so agents need not read long
-text: the hooks in `scripts/` (through `scripts/nimble.sh`) and the `nimble` skill
-(`global_skills/nimble/SKILL.md` — how to use it, Jev rules, `jgl`, unloading). Without a model every
+text: the hooks in `scripts/` (through `scripts/local-model.sh`) and the `local-model` skill
+(`global_skills/local-model/SKILL.md` — how to use it, Jev rules, `jgl`, unloading). Without a model every
 hook stays silent.
 
 The doctor (step 8b; `-DecisionModel` / `DECISION_MODEL=` for no prompt) checks the PC,
@@ -141,9 +141,9 @@ ollama --version                                                 # needs 0.35.0+
 | Hardware | Recommend | Local install |
 | --- | --- | --- |
 | GPU ≥ 12 GB VRAM (Apple Silicon ≥ 18 GB unified) | **Nimble + Jev** | `ollama pull nimble` (~9 GB VRAM loaded; reads ~6K tokens; 55/60 tone, 10/10 log questions, ~80 ms warm) |
-| GPU 6–12 GB | **Tev1 4B + Jev** | `ollama pull tev1:4b` (~4.7 GB loaded; reads ~1.5K tokens; 55/60 tone, 10/10 logs, ~85 ms); sets `NIMBLE_MODEL=tev1:4b`/`NIMBLE_MAX_BYTES=3600` |
-| GPU 2–6 GB, or no GPU but ≥ 8 GB RAM | **Tev1 0.8B + Jev** | `ollama pull tev1:0.8b` (~0.9 GB; reads ~1.5K tokens; 46/60 tone, 10/10 logs, ~45 ms on GPU; CPU untested); sets `NIMBLE_MODEL=tev1:0.8b`/`NIMBLE_MAX_BYTES=3600` |
-| Less than that | **Jev only** | none; sets `NIMBLE_LOCAL=0` |
+| GPU 6–12 GB | **Tev1 4B + Jev** | `ollama pull tev1:4b` (~4.7 GB loaded; reads ~1.5K tokens; 55/60 tone, 10/10 logs, ~85 ms); sets `LOCAL_MODEL_NAME=tev1:4b`/`LOCAL_MODEL_MAX_BYTES=3600` |
+| GPU 2–6 GB, or no GPU but ≥ 8 GB RAM | **Tev1 0.8B + Jev** | `ollama pull tev1:0.8b` (~0.9 GB; reads ~1.5K tokens; 46/60 tone, 10/10 logs, ~45 ms on GPU; CPU untested); sets `LOCAL_MODEL_NAME=tev1:0.8b`/`LOCAL_MODEL_MAX_BYTES=3600` |
+| Less than that | **Jev only** | none; sets `LOCAL_MODEL_LOCAL=0` |
 
 Laya (`~/laya-env`, pip, `127.0.0.1:8000`, last ~512 tokens, 46/60 tone) is still offered by hand
 (`l`), but Tev1 0.8B matches its tone score with 4x the window and needs only Ollama.
@@ -157,6 +157,6 @@ skips; stored in `~/.config/typesafe/api_key`, never in the repo) and offers the
 Nimble and a local ARTEMIS `qwen3-vl` model do not both fit under ~18 GB VRAM; Ollama swaps them.
 Tev1 4B and `qwen3-vl:4b` fit together in ~10 GB.
 
-The `nimble` skill comes from the global skills step above (`bash global_skills/install.sh`).
+The `local-model` skill comes from the global skills step above (`bash global_skills/install.sh`).
 After the model works, check it with
-`echo hi | bash ~/.nimble/nimble-ask yesno "Is this a greeting?"`.
+`echo hi | bash ~/.local-model/lm-ask yesno "Is this a greeting?"`.

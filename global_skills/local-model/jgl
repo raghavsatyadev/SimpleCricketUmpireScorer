@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
 # jg (jevgrep) with the snippet judging done by the LOCAL model instead of jevgrep.com: starts
-# jg-nimble-proxy.mjs on 127.0.0.1:11435 when it is not running, then runs jg against it.
+# jg-local-proxy.mjs on 127.0.0.1:11435 when it is not running, then runs jg against it.
 # Nothing leaves the PC. Same arguments as jg:  jgl --files "where is X built" [paths]
 d="$(cd "$(dirname "$0")" && pwd)"
 port="${JG_PROXY_PORT:-11435}"
 command -v jg >/dev/null 2>&1 || { echo "jgl: jg is not installed (npm install -g @remotehost/jg)" >&2; exit 2; }
 command -v rg >/dev/null 2>&1 || { echo "jgl: jg needs ripgrep (rg) on PATH" >&2; exit 2; }
 if ! curl -s -m 1 "http://127.0.0.1:$port/api/v1/me" >/dev/null 2>&1; then
-  mkdir -p "$HOME/.nimble"
-  nohup node "$d/jg-nimble-proxy.mjs" >"$HOME/.nimble/jg-proxy.log" 2>&1 &
+  mkdir -p "$HOME/.local-model"
+  nohup node "$d/jg-local-proxy.mjs" >"$HOME/.local-model/jg-proxy.log" 2>&1 &
   for _ in 1 2 3 4 5 6 7 8 9 10; do curl -s -m 1 "http://127.0.0.1:$port/api/v1/me" >/dev/null 2>&1 && break; sleep 0.3; done
 fi
-if [ "${NIMBLE_USAGE_LOG:-1}" = 0 ]; then
+if [ "${LOCAL_MODEL_USAGE_LOG:-1}" = 0 ]; then
   JEVGREP_ENDPOINT="http://127.0.0.1:$port" JEVGREP_TOKEN=local exec jg "$@"
 fi
-# One line per call in ~/.nimble/usage.log (NIMBLE_USAGE_LOG=0 turns it off):
+# One line per call in ~/.local-model/usage.log (LOCAL_MODEL_USAGE_LOG=0 turns it off):
 # time, tool, ms, output bytes, output lines + exit code, cwd, arguments.
 out=$(mktemp); trap 'rm -f "$out"' EXIT
 t0=$(date +%s%3N)
 JEVGREP_ENDPOINT="http://127.0.0.1:$port" JEVGREP_TOKEN=local jg "$@" | tee "$out"
 rc=${PIPESTATUS[0]}
-f="${NIMBLE_USAGE_LOG_FILE:-$HOME/.nimble/usage.log}"
+f="${LOCAL_MODEL_USAGE_LOG_FILE:-$HOME/.local-model/usage.log}"
 printf '%s\tjgl\t%s\t%s\t%s lines rc=%s\t%s\t%s\n' "$(date -Iseconds)" "$(( $(date +%s%3N) - t0 ))" \
   "$(wc -c <"$out" | tr -d ' ')" "$(wc -l <"$out" | tr -d ' ')" "$rc" "$PWD" \
   "$(printf '%s ' "$@" | tr '\t\r\n' '   ')" >>"$f" 2>/dev/null

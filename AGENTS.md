@@ -15,10 +15,10 @@ base branch `migration-cmp`. Values also live in `agent-kit.env`.
 - When done and checked, stop. Report in five lines or fewer, in ASD-STE100 Simplified Technical English.
 - Claude Code: medium effort for scoped edits; high for native or architecture work. A second
   agent only for a review the user asked for.
-- Decision model: global skill `nimble`. Global skills live in `global_skills/` (no agent reads it
+- Decision model: global skill `local-model`. Global skills live in `global_skills/` (no agent reads it
   directly); install them with `bash global_skills/install.sh`.
-  Turn on the Ollama Nimble model first (`bash ~/.nimble/nimble-on`), then use `jgl`,
-  `nimble-ask` and `rg` as the skill says.
+  Turn on the local decision model first (`bash ~/.local-model/lm-on`), then use `jgl`,
+  `lm-ask` and `rg` as the skill says.
 
 ## Rules — `.agents/rules/`
 
