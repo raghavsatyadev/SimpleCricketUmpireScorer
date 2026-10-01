@@ -1,0 +1,8 @@
+# Yes/no rule checks that lm-diffcheck (skill local-model) asks of each changed file's diff before
+# a review. One per line: "<glob> | <question>", phrased so that "yes" is the problem.
+app/* | !Edits the original app module; the migration rule keeps it untouched (copy into composeApp or androidCMP).
+support/* | !Edits the original support module; the migration rule keeps it untouched (copy into composeApp or androidCMP).
+*/ui/*.kt | Does this change hardcode a color with Color(0x...) instead of using a MaterialTheme.colorScheme role?
+*/ui/*.kt | Does this change add a hardcoded user-visible text string instead of using stringResource?
+*.gradle.kts | Does this change write a library's group, name and version inline instead of using the version catalog (libs.*)?
+composeApp/src/commonMain/*.kt | Does this change import or call android.* platform classes (android.content.Context, android.os, android.util.Log) or java.io.File in this multiplatform common source file? androidx libraries do not count.

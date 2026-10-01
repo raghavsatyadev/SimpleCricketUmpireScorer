@@ -20,7 +20,8 @@ It copies each skill folder to:
 | Codex (ChatGPT) and other agents | `~/.agents/skills/<skill>/` |
 
 A skill with its own `install.sh` runs it after the copy (`local-model`: commands in `~/.local-model/`,
-SessionStart/SessionEnd hooks in `~/.claude/settings.json`). Restart the agents afterwards.
+SessionStart/SessionEnd hooks, the output gate, loop stop, request size hint and the pre-review diff
+checks in `~/.claude/settings.json`). Restart the agents afterwards.
 
 To add a skill: put its folder here (`<skill>/SKILL.md`, plus an optional `install.sh`), run the
 installer, and do not also keep a copy in `.agents/skills/`.
