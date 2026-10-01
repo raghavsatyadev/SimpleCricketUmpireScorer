@@ -1,4 +1,4 @@
-# .device-cache/devices/<serial>/coords.tsv — written by `dev.sh tap`, read by `tap --fast`.
+# memory/devices/<serial>/coords.tsv — written by `dev.sh tap`, read by `tap --fast`.
 # key = <resumed activity>|<WxH>|<selector>   (tab-separated: key, x, y)
 # An entry only applies on the same screen at the same resolution.
 <pkg>/<pkg>.MainActivity|<WxH>|desc:Model	<x>	<y>

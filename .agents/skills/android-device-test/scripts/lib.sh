@@ -2,8 +2,8 @@
 # Shared discovery + cache layer for the android-device-test skill.
 #
 # Contains no device serials, package names, coordinates or absolute paths.
-# Everything is discovered at runtime on first use and cached under
-# $DT_CACHE (default: <repo>/.device-cache, which is git-ignored).
+# Everything is discovered at runtime on first use. Per-device data goes to
+# $DT_MEMORY (default <repo>/memory), dumps and artifacts to $DT_TMP (<repo>/tmp).
 #
 # Usage:  source "$(dirname "$0")/lib.sh"
 

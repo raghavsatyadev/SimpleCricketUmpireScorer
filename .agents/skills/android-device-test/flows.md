@@ -6,6 +6,12 @@ fallback. Helper script: `D=.agents/skills/android-device-test/scripts/dev.sh`
 Write prompts as explicit steps: name the screen the app is on, name each element to tap, and end
 with what to report.
 
+Launch an app with `am start`, not `monkey` (monkey switches auto-rotate on, SKILL.md gotcha 9):
+
+```bash
+adb shell am start -n "$(adb shell cmd package resolve-activity --brief -c android.intent.category.LAUNCHER <package> | tail -1 | tr -d '')"
+```
+
 ## 1. <Flow name>
 
 * **Primary (ARTEMIS):**

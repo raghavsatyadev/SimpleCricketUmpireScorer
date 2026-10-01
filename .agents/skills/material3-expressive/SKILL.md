@@ -26,3 +26,5 @@ List them here per app, for example `SectionCard`, `StatusPill`, `FloatingTabBar
 Expressive components in use: `LoadingIndicator`, `LinearWavyProgressIndicator`, motion from
 `MaterialTheme.motionScheme` (`defaultEffectsSpec`, `fastSpatialSpec`), segmented buttons for
 single choice. Icons are `Icons.Rounded.*` (selected) / `Icons.Outlined.*` (unselected) — no emoji.
+
+People planning a new screen can sketch it in [M3E Canvas](https://lnkiai.github.io/m3e-canvas/) and paste its prompt here.

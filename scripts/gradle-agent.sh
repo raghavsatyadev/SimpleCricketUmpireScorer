@@ -22,14 +22,14 @@ echo "BUILD FAILED ($code): $*"
 awk '/^\* What went wrong:/ { p = 1 } /^\* Try:/ { p = 0 } p' "$log" | head -n 40
 grep -E '^e: file://' "$log" | awk '!seen[$0]++' | head -n 40
 
-# Optional one-line hint from the local Nimble model (scripts/nimble.sh). Silent when Nimble is
+# Optional one-line hint from the local decision model (scripts/local-model.sh). Silent when the model is
 # off, slow or unsure (top choice under 0.6).
-if [ -f "$root/scripts/nimble.sh" ]; then
-  # shellcheck source=nimble.sh
-  . "$root/scripts/nimble.sh"
-  NIMBLE_ALLOW_JEV=0   # hooks stay local and free
+if [ -f "$root/scripts/local-model.sh" ]; then
+  # shellcheck source=local-model.sh
+  . "$root/scripts/local-model.sh"
+  LOCAL_MODEL_ALLOW_JEV=0   # hooks stay local and free
   q='{"class":{"type":"choice","instructions":"Classify why this Gradle build failed.","criteria":{"kotlin_compile":"Kotlin compile error (e: file://)","ktfmt":"ktfmt or spotless format check failed","dependency":"dependency resolution or download failure","jdk_jlink":"JDK, toolchain or jlink failure","submodule_native":"git submodule missing or native CMake build failure","gradle_oom":"Gradle or Kotlin daemon out of memory","other":"none of the above"}}}'
-  if resp=$(tail -n 200 "$log" | nimble_ask 2 "$q")      && c=$(nimble_get "$resp" class choice) && p=$(nimble_get "$resp" class p)      && [ "$c" != "other" ] && nimble_ge "$p" 0.6; then
+  if resp=$(tail -n 200 "$log" | lm_ask 2 "$q")      && c=$(lm_get "$resp" class choice) && p=$(lm_get "$resp" class p)      && [ "$c" != "other" ] && lm_ge "$p" 0.6; then
     case "$c" in
       kotlin_compile) h="Kotlin compile error: fix the e: lines above." ;;
       ktfmt) h="Format check failed: run scripts/ci-local.sh --fix." ;;
@@ -39,7 +39,7 @@ if [ -f "$root/scripts/nimble.sh" ]; then
       gradle_oom) h="Gradle ran out of memory: raise org.gradle.jvmargs or stop other daemons." ;;
       *) h="" ;;
     esac
-    [ -n "$h" ] && echo "Hint (Nimble, $p): $h"
+    [ -n "$h" ] && echo "Hint (local model, $p): $h"
   fi
 fi
 echo "Full log: $root/$log"
