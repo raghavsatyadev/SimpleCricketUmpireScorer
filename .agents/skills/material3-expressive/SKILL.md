@@ -1,6 +1,6 @@
 ---
 name: material3-expressive
-description: Material 3 Expressive UI conventions for this project — theme, motion, typography, semantic colors, and the card/pill/selector patterns the app uses.
+description: Material 3 Expressive UI conventions for this project — theme, motion, typography, semantic colors, and the card/pill/selector patterns the app uses. Use when building or restyling a screen or component.
 ---
 
 # Material 3 Expressive

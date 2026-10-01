@@ -4,7 +4,8 @@ Skills that belong in each developer's **global** skill folders, not in this rep
 `.agents/skills/`: they work in every project (for example `local-model`). No agent loads this folder
 directly. It is the copy that new team members install from.
 
-Install or update all of them (Git Bash on Windows):
+Install or update all of them. On Windows use Git Bash: from cmd or PowerShell, plain `bash` can
+be WSL's, which fails; run `"C:/Program Files/Git/bin/bash.exe" global_skills/install.sh`.
 
 ```bash
 bash global_skills/install.sh            # all skills

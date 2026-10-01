@@ -1,6 +1,6 @@
 ---
 name: compose-screenshot-test
-description: Compose Preview Screenshot Testing for Compose UI — AGP screenshot testing plugin, @PreviewTest, reference goldens, updateScreenshotTest, and validateScreenshotTest.
+description: Compose Preview Screenshot Testing for Compose UI — AGP screenshot testing plugin, @PreviewTest, reference goldens, updateScreenshotTest, and validateScreenshotTest. Use when a UI change needs a screenshot test or the goldens need updating.
 version: 1.0.0
 ---
 
