@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Rank search hits with the local model before reading them. See lm-rank.mjs.
+#   rg -n "Prompt" app/src | lm-rank "where is the tone prompt built"
+exec node "$(dirname "$0")/lm-rank.mjs" "$@"

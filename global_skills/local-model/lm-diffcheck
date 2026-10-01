@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Cheap rule checks over a diff with the local model, before a big review. See lm-diffcheck.mjs.
+#   lm-diffcheck            # this branch against its base
+exec node "$(dirname "$0")/lm-diffcheck.mjs" "$@"

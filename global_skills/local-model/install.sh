@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 # Extra setup for the local-model skill; global_skills/install.sh runs it after it copies SKILL.md.
-#   ~/.local-model/                local-model.sh, lm-ask, lm-on, lm-off, jgl, jg-local-proxy.mjs
-#   ~/.claude/settings.json        SessionStart hook lm-on, SessionEnd hook lm-off (Claude Code)
+#   ~/.local-model/                local-model.sh, lm-ask, lm-on, lm-off, jgl, lm-rank, lm-diffcheck and
+#                                  the Node hooks (lm-client, lm-gate, lm-loop, lm-route, ...)
+#   ~/.claude/settings.json        Claude Code hooks: SessionStart lm-on, SessionEnd lm-off,
+#                                  PostToolUse lm-gate (long build/test output), Pre/PostToolUse(Failure)
+#                                  lm-loop (repeated failures), UserPromptSubmit lm-route (request
+#                                  size hint), UserPromptExpansion lm-diffcheck (before /code-review)
 # Re-run to update. Moves an install from before the rename (the `nimble` skill, ~/.nimble/,
 # nimble-on/off hooks) over: keeps its usage.log, removes the rest.
 set -eu
@@ -9,8 +13,8 @@ here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../.." && pwd)"
 bin="$HOME/.local-model"
 mkdir -p "$bin"
-cp "$repo/scripts/local-model.sh" "$here/lm-ask" "$here/lm-off" "$here/lm-on" "$here/jgl" "$here/jg-local-proxy.mjs" "$bin/"
-chmod +x "$bin/lm-ask" "$bin/lm-off" "$bin/lm-on" "$bin/jgl"
+cp "$repo/scripts/local-model.sh" "$here"/lm-ask "$here"/lm-off "$here"/lm-on "$here"/jgl "$here"/lm-rank   "$here"/lm-diffcheck "$here"/*.mjs "$bin/"
+chmod +x "$bin/lm-ask" "$bin/lm-off" "$bin/lm-on" "$bin/jgl" "$bin/lm-rank" "$bin/lm-diffcheck"
 old="$HOME/.nimble"
 if [ -d "$old" ]; then
   [ -f "$old/usage.log" ] && cat "$old/usage.log" >>"$bin/usage.log"
@@ -18,18 +22,28 @@ if [ -d "$old" ]; then
 fi
 rm -rf "$HOME/.claude/nimble" "$HOME/.claude/skills/nimble" "$HOME/.gemini/skills/nimble" "$HOME/.agents/skills/nimble"
 # Global Claude Code hooks, so every project turns the model on at start and off at end.
-# Drops the old nimble-on/off hooks; skipped when an lm-on / lm-off hook is already there.
+# Drops the old nimble-on/off hooks; skipped when an lm-on / lm-off hook is already there; the
+# Node hooks are replaced each run.
 node - "$HOME/.claude/settings.json" <<'JS'
 const fs = require("fs"), f = process.argv[2];
 const s = fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, "utf8")) : {};
 s.hooks ??= {};
-const add = (event, oldScript, script, command) => {
+const add = (event, oldScript, script, command, extra = {}) => {
   let list = (s.hooks[event] ??= []).filter((h) => !JSON.stringify(h).includes(oldScript));
-  if (!JSON.stringify(list).includes(script)) list.push({ hooks: [{ type: "command", command }] });
+  if (!JSON.stringify(list).includes(script)) list.push({ ...extra, hooks: [{ type: "command", command }] });
   s.hooks[event] = list;
 };
 add("SessionStart", "nimble-on", "lm-on", 'bash "$HOME/.local-model/lm-on"');
 add("SessionEnd", "nimble-off", "lm-off", 'bash "$HOME/.local-model/lm-off" "${LOCAL_MODEL_NAME:-nimble}"');
+const node = (script, args = "") => `node "$HOME/.local-model/${script}"${args}`;
+add("PostToolUse", "lm-gate.mjs", "lm-gate.mjs", node("lm-gate.mjs"), { matcher: "Bash" });
+add("PreToolUse", "lm-loop.mjs", "lm-loop.mjs", node("lm-loop.mjs"), { matcher: "Bash" });
+add("PostToolUse", "lm-loop.mjs", "lm-loop.mjs", node("lm-loop.mjs"), { matcher: "Bash|Edit|Write|MultiEdit|NotebookEdit" });
+add("PostToolUseFailure", "lm-loop.mjs", "lm-loop.mjs", node("lm-loop.mjs"), { matcher: "Bash" });
+add("UserPromptSubmit", "lm-route.mjs", "lm-route.mjs", node("lm-route.mjs"));
+add("UserPromptExpansion", "lm-diffcheck.mjs", "lm-diffcheck.mjs", node("lm-diffcheck.mjs", " --hook"), {
+  matcher: "code-review|review|security-review|simplify",
+});
 fs.writeFileSync(f, JSON.stringify(s, null, 2) + "\n");
 JS
 echo "Installed: $bin, hooks in ~/.claude/settings.json"

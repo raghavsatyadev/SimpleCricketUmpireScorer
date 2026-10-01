@@ -18,7 +18,8 @@ base branch `migration-cmp`. Values also live in `agent-kit.env`.
 - Decision model: global skill `local-model`. Global skills live in `global_skills/` (no agent reads it
   directly); install them with `bash global_skills/install.sh`.
   Turn on the local decision model first (`bash ~/.local-model/lm-on`), then use `jgl`,
-  `lm-ask` and `rg` as the skill says.
+  `lm-ask`, `lm-rank` and `rg` as the skill says. Rule checks for `lm-diffcheck` (run before a
+  review): [.agents/diff-checks.txt](.agents/diff-checks.txt).
 
 ## Rules — `.agents/rules/`
 
