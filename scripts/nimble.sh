@@ -6,15 +6,16 @@
 # quietly and the caller does nothing. Nothing here prints except answers.
 #
 # Backends, all on the same /v1/systemone API:
-#   local  Nimble on Ollama (default) or Laya: free, on this PC.
+#   local  Nimble or Tev1 on Ollama (default Nimble) or Laya: free, on this PC.
 #   jev    TypeSafe's hosted Jev: paid per input token, 32K-token state. Used ONLY when the caller
 #          allows it (NIMBLE_ALLOW_JEV=1; the hooks never do) AND the text is too long for the
 #          local model, or no local model answers. Short text never goes to Jev.
 #
 #   NIMBLE_HOOKS=0      turn every backend off
 #   NIMBLE_URL          local backend, default http://127.0.0.1:11434 (Laya: http://127.0.0.1:8000)
-#   NIMBLE_MODEL        default nimble (Laya: laya)
-#   NIMBLE_MAX_BYTES    local input budget, default 24000 (Laya: 1800)
+#   NIMBLE_MODEL        default nimble (tev1:4b, tev1:0.8b; Laya: laya)
+#   NIMBLE_MAX_BYTES    local input budget, default 16000 (Tev1: 3600, Laya: 1800). Nimble refuses
+#                       more than 8194 tokens and dense Gradle logs run ~2.4 bytes a token.
 #   NIMBLE_KEEP_ALIVE   how long Ollama keeps the model loaded after a call, default 10m
 #   NIMBLE_LOCAL=0      skip the local backend (Jev only)
 #   JEV_API_KEY         TypeSafe API key; else read from ~/.config/typesafe/api_key. None = no Jev.
@@ -37,7 +38,7 @@ NIMBLE_URL="${NIMBLE_URL:-http://127.0.0.1:11434}"
 NIMBLE_MODEL="${NIMBLE_MODEL:-nimble}"
 # Local budget in bytes: Nimble's context (8194 tokens) binds first, ~4 bytes/token for Gradle
 # logs, ~2.5 for path-heavy text. _nimble_post retries smaller when the server says too many tokens.
-NIMBLE_MAX_BYTES="${NIMBLE_MAX_BYTES:-24000}"
+NIMBLE_MAX_BYTES="${NIMBLE_MAX_BYTES:-16000}"
 NIMBLE_KEEP_ALIVE="${NIMBLE_KEEP_ALIVE:-10m}"
 JEV_URL="${JEV_URL:-https://api.typesafe.ai}"
 JEV_MODEL="${JEV_MODEL:-jev-latest}"

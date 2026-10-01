@@ -17,8 +17,6 @@ This project uses Google's official Android Gradle Plugin Compose Preview Screen
 | Record / update reference goldens | `./gradlew :androidCMP:updateScreenshotTest` |
 | Run for specific variant | `./gradlew :androidCMP:validateDebugScreenshotTest` |
 
-On Windows PowerShell, use `.\gradlew.bat`.
-
 ## Architecture & Layout
 
 ```text
@@ -34,53 +32,13 @@ gradle/libs.versions.toml                       # screenshot plugin & screenshot
 
 ## Writing Preview Tests
 
-Tests reside in `androidCMP/src/screenshotTest/kotlin/`:
+Follow the existing tests in `androidCMP/src/screenshotTest/kotlin/`:
 
-1. **Annotations**: Every test composable must have `@PreviewTest` and `@Preview(showBackground = true)`.
-2. **App Theme**: Wrap the composable in `AppTheme { ... }` so colors, typography, and shapes render with the Material 3 Expressive theme.
-3. **Koin DI**: Screens using `koinViewModel()` or injected dependencies must wrap with `KoinApplication`:
-   ```kotlin
-   @Suppress("DEPRECATION")
-   @PreviewTest
-   @Preview(showBackground = true)
-   @Composable
-   fun PlaygroundScreen_ScreenshotTest() {
-     KoinApplication(
-       application = {
-         modules(appModule)
-       }
-     ) {
-       AppTheme {
-         PlaygroundScreen(
-           viewModel = koinViewModel(),
-           contentPadding = PaddingValues(16.dp),
-         )
-       }
-     }
-   }
-   ```
-4. **Deterministic UI State**: Pass explicit state models (such as `AssistantSetup`) with fixed permissions and status to avoid device-dependent or asynchronous visual variance:
-   ```kotlin
-   @PreviewTest
-   @Preview(showBackground = true)
-   @Composable
-   fun SetupScreen_MissingPermissions_ScreenshotTest() {
-     AppTheme {
-       SetupScreen(
-         setup = AssistantSetup(
-           hasOverlayPermission = false,
-           isAccessibilityEnabled = false,
-           isAssistantRunning = false,
-           onOpenOverlaySettings = {},
-           onOpenAccessibilitySettings = {},
-           onStartAssistant = {},
-           onStopAssistant = {},
-         ),
-         contentPadding = PaddingValues(16.dp),
-       )
-     }
-   }
-   ```
+1. Annotate each test `@PreviewTest` + `@Preview(showBackground = true)`.
+2. Wrap it in your app theme (`AppTheme { }`); screens that get a ViewModel from DI (Koin
+   `koinViewModel()`, Hilt) also need the DI setup around them, e.g.
+   `KoinApplication(application = { modules(appModule) }) { }` (with `@Suppress("DEPRECATION")`).
+3. Pass explicit state (fixed permissions, no-op lambdas), never device- or time-dependent state.
 
 ## Workflow for UI Changes
 
