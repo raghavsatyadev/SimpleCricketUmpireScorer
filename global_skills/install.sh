@@ -4,7 +4,7 @@
 #   ~/.claude/skills/<skill>/   Claude Code
 #   ~/.gemini/skills/<skill>/   Gemini CLI / Antigravity
 #   ~/.agents/skills/<skill>/   Codex (ChatGPT) and other agents that read the shared folder
-# A skill with its own install.sh (for example nimble: commands in ~/.nimble, Claude Code hooks)
+# A skill with its own install.sh (for example local-model: commands in ~/.local-model, Claude Code hooks)
 # runs it after the copy. Re-run to update.
 # Usage: bash global_skills/install.sh [skill ...]     (no names = all skills)
 set -eu

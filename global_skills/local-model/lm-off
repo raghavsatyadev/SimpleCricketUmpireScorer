@@ -2,17 +2,17 @@
 # Unloads every model Ollama has in memory, so the GPU frees its VRAM and cools down. Ollama
 # itself keeps running (other machines on the network may use it) and reloads a model on the
 # next call. Safe to run any time; prints what it unloaded. Exit 0 even when Ollama is off.
-#   nimble-off            # all loaded models
-#   nimble-off nimble     # just one
-url="${NIMBLE_URL:-http://127.0.0.1:11434}"
+#   lm-off            # all loaded models
+#   lm-off nimble     # just one
+url="${LOCAL_MODEL_URL:-http://127.0.0.1:11434}"
 case "$url" in *:11434*) ;; *) url="http://127.0.0.1:11434" ;; esac   # Laya is not Ollama
 url="${url%/}"
 if [ $# -gt 0 ]; then models="$*"; else
   models=$(curl -s -m 3 "$url/api/ps" 2>/dev/null | tr ',' '\n' | sed -n 's/.*"name":"\([^"]*\)".*/\1/p')
 fi
-[ -n "$models" ] || { echo "nimble-off: nothing loaded"; exit 0; }
+[ -n "$models" ] || { echo "lm-off: nothing loaded"; exit 0; }
 for m in $models; do
   curl -s -m 10 "$url/api/generate" -d "{\"model\":\"$m\",\"keep_alive\":0}" >/dev/null 2>&1 \
-    && echo "nimble-off: unloaded $m"
+    && echo "lm-off: unloaded $m"
 done
 exit 0

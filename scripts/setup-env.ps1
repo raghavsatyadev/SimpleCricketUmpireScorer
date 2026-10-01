@@ -428,7 +428,7 @@ if ($haveArtemis -and $haveLocal) {
 # -------------------------------------------------------------
 # 8b. Local decision model for the agent hooks (Nimble, Tev1 or Laya)
 # -------------------------------------------------------------
-# Optional. The hooks (scripts/nimble.sh) and the nimble skill ask a System One model quick yes/no
+# Optional. The hooks (scripts/local-model.sh) and the local-model skill ask a System One model quick yes/no
 # and pick-one questions instead of reading long text. All run on Ollama 0.35+ except Laya.
 # Measured on an RTX 5080 (60 tone samples, 10 log questions):
 #   Nimble 9B   ~9 GB VRAM, ~8K-token window, tone 55/60, logs 10/10
@@ -459,16 +459,18 @@ if (-not $decision) { $decision = $recommended }
 if ($decision -eq "none") { $decision = $null }
 
 $ollamaModel = $null
-# The hooks read these per-user variables; clear what the other choices set.
-foreach ($v in "NIMBLE_URL", "NIMBLE_MODEL", "NIMBLE_MAX_BYTES", "NIMBLE_LOCAL") {
+# The hooks read these per-user variables; clear what the other choices set (and the
+# NIMBLE_* names they had before the local-model rename).
+foreach ($v in "LOCAL_MODEL_URL", "LOCAL_MODEL_NAME", "LOCAL_MODEL_MAX_BYTES", "LOCAL_MODEL_LOCAL",
+    "NIMBLE_URL", "NIMBLE_MODEL", "NIMBLE_MAX_BYTES", "NIMBLE_LOCAL") {
   if ($decision) { [System.Environment]::SetEnvironmentVariable($v, $null, "User") }
 }
 
 if (-not $decision) {
   Write-Info "No decision model. The hooks stay off; nothing breaks. Re-run to choose one."
 } elseif ($decision -eq "jev") {
-  [System.Environment]::SetEnvironmentVariable("NIMBLE_LOCAL", "0", "User")
-  Write-Pass "Jev only: nimble-ask goes to Jev; the hooks stay off (they never pay for Jev)."
+  [System.Environment]::SetEnvironmentVariable("LOCAL_MODEL_LOCAL", "0", "User")
+  Write-Pass "Jev only: lm-ask goes to Jev; the hooks stay off (they never pay for Jev)."
 } elseif ($decision -eq "nimble" -or $decision -eq "tev1") {
   if ($decision -eq "nimble") {
     $ollamaModel = "nimble"
@@ -480,11 +482,11 @@ if (-not $decision) {
   } else {
     # Tev1's window is ~2K tokens: send the last 3.6 KB (dense Gradle logs run ~2 bytes a token).
     $ollamaModel = $tevModel
-    [System.Environment]::SetEnvironmentVariable("NIMBLE_MODEL", $tevModel, "User")
-    [System.Environment]::SetEnvironmentVariable("NIMBLE_MAX_BYTES", "3600", "User")
-    Write-Pass "$tevModel ($vramGb GB VRAM, $ramGb GB RAM). Hooks use it (NIMBLE_MODEL, NIMBLE_MAX_BYTES set; restart your agent)."
+    [System.Environment]::SetEnvironmentVariable("LOCAL_MODEL_NAME", $tevModel, "User")
+    [System.Environment]::SetEnvironmentVariable("LOCAL_MODEL_MAX_BYTES", "3600", "User")
+    Write-Pass "$tevModel ($vramGb GB VRAM, $ramGb GB RAM). Hooks use it (LOCAL_MODEL_NAME, LOCAL_MODEL_MAX_BYTES set; restart your agent)."
     if ($vramGb -lt 2) { Write-Info "No usable GPU: $tevModel runs on the CPU. Untested here; expect slower answers." }
-    Write-Info "Longer text goes to Jev when a key is set; otherwise nimble-ask reads only the tail."
+    Write-Info "Longer text goes to Jev when a key is set; otherwise lm-ask reads only the tail."
   }
   $ollamaCmd = Get-Command ollama -ErrorAction SilentlyContinue
   $ollamaVer = if ($ollamaCmd) { ((& ollama --version 2>$null) -join " ") -replace '.*?(\d+\.\d+\.\d+).*', '$1' } else { $null }
@@ -542,14 +544,14 @@ if (`$Background) {
     Write-Pass "Wrote $start"
   }
   # Point the hooks at Laya: same /v1/systemone API, but a 512-token window.
-  [System.Environment]::SetEnvironmentVariable("NIMBLE_URL", "http://127.0.0.1:8000", "User")
-  [System.Environment]::SetEnvironmentVariable("NIMBLE_MODEL", "laya", "User")
-  [System.Environment]::SetEnvironmentVariable("NIMBLE_MAX_BYTES", "1800", "User")
-  Write-Info "Hooks now use Laya (NIMBLE_URL, NIMBLE_MODEL, NIMBLE_MAX_BYTES set for your user; restart your agent)."
+  [System.Environment]::SetEnvironmentVariable("LOCAL_MODEL_URL", "http://127.0.0.1:8000", "User")
+  [System.Environment]::SetEnvironmentVariable("LOCAL_MODEL_NAME", "laya", "User")
+  [System.Environment]::SetEnvironmentVariable("LOCAL_MODEL_MAX_BYTES", "1800", "User")
+  Write-Info "Hooks now use Laya (LOCAL_MODEL_URL, LOCAL_MODEL_NAME, LOCAL_MODEL_MAX_BYTES set for your user; restart your agent)."
   Write-Info "Start it: powershell -ExecutionPolicy Bypass -File `"$start`" -Background"
 }
 
-# Jev (TypeSafe, hosted): optional, paid per input token. nimble-ask sends text there only when it
+# Jev (TypeSafe, hosted): optional, paid per input token. lm-ask sends text there only when it
 # is too long for the local model (or there is none); the hooks never do. The key stays in a
 # per-user file, never in the repo.
 if ($decision) {
@@ -586,7 +588,7 @@ if ($decision -and $decision -ne "jev") {
   $haveJg = [bool](Get-Command jg -ErrorAction SilentlyContinue)
   $haveRg = [bool](Get-Command rg -ErrorAction SilentlyContinue)
   if ($haveJg -and $haveRg) {
-    Write-Pass "jg and ripgrep are installed; ~/.nimble/jgl searches code by meaning with $decision."
+    Write-Pass "jg and ripgrep are installed; ~/.local-model/jgl searches code by meaning with $decision."
   } elseif (Prompt-Fix "Install jg (npm) and ripgrep (winget) for search by meaning?") {
     if (-not $haveJg) { & npm install -g @remotehost/jg }
     if (-not $haveRg) { & winget install --id BurntSushi.ripgrep.MSVC -e --silent --accept-package-agreements --accept-source-agreements }
@@ -596,7 +598,7 @@ if ($decision -and $decision -ne "jev") {
   }
 }
 
-# Global skills (global_skills/, e.g. `nimble`) work in every project, so they live in each
+# Global skills (global_skills/, e.g. `local-model`) work in every project, so they live in each
 # user's global skill folders: Claude Code, Gemini/Antigravity, Codex. Installed only when asked.
 $globalSkills = Get-ChildItem (Join-Path $repoRoot "global_skills") -Directory |
   Where-Object { Test-Path (Join-Path $_.FullName "SKILL.md") } | ForEach-Object { $_.Name }
@@ -609,12 +611,12 @@ if (-not $missingSkills) {
   Write-Warn "bash (Git Bash) not found; install Git for Windows, then run: bash global_skills/install.sh"
 } elseif (Prompt-Fix "Install the global skills ($($missingSkills -join ', ')) for Claude Code, Gemini and Codex (every project)?") {
   & bash (Join-Path $repoRoot "global_skills/install.sh")
-  Write-Pass "Restart your agent. Check: echo hi | bash ~/.nimble/nimble-ask yesno `"Is this a greeting?`""
+  Write-Pass "Restart your agent. Check: echo hi | bash ~/.local-model/lm-ask yesno `"Is this a greeting?`""
 } else {
   Write-Warn "Skipped. Missing global skills: $($missingSkills -join ', '). Later: bash global_skills/install.sh"
 }
 if ($decision) {
-  if ($ollamaModel) { Write-Info "Free the GPU after use: bash ~/.nimble/nimble-off $ollamaModel (Claude Code does it on session end)." }
+  if ($ollamaModel) { Write-Info "Free the GPU after use: bash ~/.local-model/lm-off $ollamaModel (Claude Code does it on session end)." }
 }
 
 # -------------------------------------------------------------
