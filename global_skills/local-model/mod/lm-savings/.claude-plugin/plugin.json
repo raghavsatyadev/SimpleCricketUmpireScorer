@@ -1,0 +1,6 @@
+{
+  "name": "lm-savings",
+  "version": "0.1.1",
+  "description": "/lm-savings: what the local decision model (lm-gate, lm-ask, lm-route, ...) saved, from ~/.local-model/usage.log",
+  "author": { "name": "Raghav Satyadev" }
+}
