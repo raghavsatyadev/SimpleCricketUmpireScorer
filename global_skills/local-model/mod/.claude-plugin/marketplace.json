@@ -1,0 +1,12 @@
+{
+  "name": "local-model",
+  "owner": { "name": "Raghav Satyadev" },
+  "description": "Claude Code mods for the local decision model",
+  "plugins": [
+    {
+      "name": "lm-savings",
+      "source": "./lm-savings",
+      "description": "/lm-savings: what the local decision model saved, from ~/.local-model/usage.log"
+    }
+  ]
+}
