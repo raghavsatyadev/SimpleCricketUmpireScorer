@@ -164,3 +164,4 @@ working directory, question or arguments. `LOCAL_MODEL_USAGE_LOG=0` turns it off
 `LOCAL_MODEL_USAGE_LOG_FILE` moves it. `lm-gate` adds a line for each output it shortens: bytes
 in, then `passed|failed <P(yes)> <bytes out>`, so the savings can be summed. `lm-rank`, `lm-diffcheck`,
 `lm-loop` and `lm-route` add their own lines (tool name in the second column).
+`/lm-savings [days|today|all]` (a Claude Code mod, 2.1.287+) sums it per tool without a Claude turn.

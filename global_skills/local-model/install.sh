@@ -6,6 +6,8 @@
 #                                  PostToolUse lm-gate (long build/test output), Pre/PostToolUse(Failure)
 #                                  lm-loop (repeated failures), UserPromptSubmit lm-route (request
 #                                  size hint), UserPromptExpansion lm-diffcheck (before /code-review)
+#   ~/.local-model/mod/            Claude Code mods, as the `local-model` plugin marketplace:
+#                                  lm-savings (/lm-savings sums usage.log). Needs Claude Code 2.1.287+.
 # Re-run to update. Moves an install from before the rename (the `nimble` skill, ~/.nimble/,
 # nimble-on/off hooks) over: keeps its usage.log, removes the rest.
 set -eu
@@ -46,4 +48,11 @@ add("UserPromptExpansion", "lm-diffcheck.mjs", "lm-diffcheck.mjs", node("lm-diff
 });
 fs.writeFileSync(f, JSON.stringify(s, null, 2) + "\n");
 JS
-echo "Installed: $bin, hooks in ~/.claude/settings.json"
+# Mods: a local marketplace; an installed plugin is cached by version, so bump plugin.json to update.
+rm -rf "$bin/mod" && cp -r "$here/mod" "$bin/mod"
+if command -v claude >/dev/null 2>&1; then
+  mp="$bin/mod"; command -v cygpath >/dev/null 2>&1 && mp="$(cygpath -w "$mp")"
+  claude plugin marketplace add "$mp" >/dev/null 2>&1 || claude plugin marketplace update local-model >/dev/null 2>&1 || true
+  claude plugin install lm-savings@local-model >/dev/null 2>&1 || claude plugin update lm-savings@local-model >/dev/null 2>&1 || true
+fi
+echo "Installed: $bin, hooks in ~/.claude/settings.json, mods from $bin/mod"

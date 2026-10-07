@@ -1,6 +1,6 @@
 ---
 name: android-device-test
-description: On-device testing and bug reproduction for an Android app. ARTEMIS MCP tools are the primary driver; ADB and dev.sh cover install, permissions, logcat and file access.
+description: On-device testing and bug reproduction for an Android app. ARTEMIS MCP tools are the primary driver; ADB and dev.sh cover install, permissions, logcat and file access. Use when a change needs checking on a phone or a bug needs reproducing.
 version: 3.0.0
 ---
 
