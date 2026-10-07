@@ -604,13 +604,21 @@ $globalSkills = Get-ChildItem (Join-Path $repoRoot "global_skills") -Directory |
   Where-Object { Test-Path (Join-Path $_.FullName "SKILL.md") } | ForEach-Object { $_.Name }
 $missingSkills = $globalSkills | Where-Object { $n = $_; @(".claude", ".gemini", ".agents") |
   Where-Object { -not (Test-Path (Join-Path $env:USERPROFILE "$_\skills\$n\SKILL.md")) } }
-$bash = Get-Command bash -ErrorAction SilentlyContinue
+# Git Bash, not the WSL bash.exe in System32 or WindowsApps, which comes first on some PATHs.
+$bash = Get-Command bash -All -ErrorAction SilentlyContinue |
+  Where-Object { $_.Source -notmatch '\\(System32|WindowsApps)\\' } | Select-Object -First 1 -ExpandProperty Source
+if (-not $bash) {
+  $roots = @("$env:ProgramFiles\Git")
+  $git = Get-Command git -ErrorAction SilentlyContinue
+  if ($git) { $d = Split-Path $git.Source; $roots += (Split-Path $d), (Split-Path (Split-Path $d)) }
+  $bash = $roots | ForEach-Object { Join-Path $_ "bin\bash.exe" } | Where-Object { Test-Path $_ } | Select-Object -First 1
+}
 if (-not $missingSkills) {
   Write-Pass "Global skills are installed ($($globalSkills -join ', ')). Re-run global_skills/install.sh after a pull that changes them."
 } elseif (-not $bash) {
   Write-Warn "bash (Git Bash) not found; install Git for Windows, then run: bash global_skills/install.sh"
 } elseif (Prompt-Fix "Install the global skills ($($missingSkills -join ', ')) for Claude Code, Gemini and Codex (every project)?") {
-  & bash (Join-Path $repoRoot "global_skills/install.sh")
+  & $bash (Join-Path $repoRoot "global_skills/install.sh")
   Write-Pass "Restart your agent. Check: echo hi | bash ~/.local-model/lm-ask yesno `"Is this a greeting?`""
 } else {
   Write-Warn "Skipped. Missing global skills: $($missingSkills -join ', '). Later: bash global_skills/install.sh"

@@ -1,6 +1,6 @@
 ---
 name: cmp-best-practices
-description: Project conventions for Compose Multiplatform code in this project — source-set layout, UDF state, resources, dependencies, Compose stability, expect/actual boundaries.
+description: Project conventions for Compose Multiplatform code in this project — source-set layout, UDF state, resources, dependencies, Compose stability, expect/actual boundaries. Use when writing or reviewing shared Kotlin or Compose code.
 version: 3.1.0
 ---
 
