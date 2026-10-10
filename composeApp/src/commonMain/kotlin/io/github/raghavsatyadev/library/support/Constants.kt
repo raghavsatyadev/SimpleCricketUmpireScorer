@@ -39,19 +39,6 @@ object Constants {
     // endregion
 
     const val TEAM_NAME = "team_name"
-
-    // region User
-    const val USER_ID = "user_id"
-    const val LOGIN_TOKEN = "login_token"
-
-    // endregion
-  }
-
-  object FirebaseConstants {
-    object Collections {
-      const val USER = "User"
-      const val MATCH_RECORD = "Match"
-    }
   }
 
   object NotificationKeys {

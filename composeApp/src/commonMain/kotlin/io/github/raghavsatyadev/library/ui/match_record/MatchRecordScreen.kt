@@ -2,6 +2,13 @@
 
 package io.github.raghavsatyadev.library.ui.match_record
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,12 +21,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -34,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -176,6 +188,7 @@ private fun MatchRecordUI(
   showResetDialog: () -> Unit,
   showEditOversDialog: () -> Unit,
 ) {
+  val motion = MaterialTheme.motionScheme
 
   Scaffold(
     modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
@@ -187,7 +200,7 @@ private fun MatchRecordUI(
         title = title,
         onNavigateBack = onBack,
         actions = {
-          IconButton(onClick = showResetDialog) {
+          IconButton(onClick = showResetDialog, shapes = IconButtonDefaults.shapes()) {
             Icon(
               painter = painterResource(Res.drawable.ic_refresh),
               contentDescription = stringResource(Res.string.reset_match),
@@ -236,6 +249,7 @@ private fun MatchRecordUI(
       val guidelineAddButtons = createGuidelineFromTop(0.8f)
 
       Button(
+        shapes = ButtonDefaults.shapes(),
         onClick = {
           if (isFirstInningComplete) {
             endMatch()
@@ -280,6 +294,7 @@ private fun MatchRecordUI(
             bottom.linkTo(txtCrr.top, 8.dp)
           },
         thickness = 1.dp,
+        color = MaterialTheme.colorScheme.outlineVariant,
       )
 
       Text(
@@ -315,26 +330,49 @@ private fun MatchRecordUI(
             bottom.linkTo(txtRunsWickets.top, 8.dp)
           },
         thickness = 1.dp,
+        color = MaterialTheme.colorScheme.outlineVariant,
       )
 
-      Text(
-        text = record.currentRunsAndWickets,
-        style = MaterialTheme.typography.displayMedium,
+      AnimatedContent(
+        targetState = record.currentRunsAndWickets,
         modifier =
           Modifier.constrainAs(txtRunsWickets) {
             centerHorizontallyTo(parent)
             bottom.linkTo(txtOvers.top, 12.dp)
           },
-      )
-      Text(
-        text = record.currentFormattedOvers,
-        style = MaterialTheme.typography.displaySmall,
+        transitionSpec = {
+          (slideInVertically(motion.fastSpatialSpec()) { it / 2 } +
+            fadeIn(motion.fastEffectsSpec())) togetherWith
+            (slideOutVertically(motion.fastSpatialSpec()) { -it / 2 } +
+              fadeOut(motion.fastEffectsSpec())) using
+            SizeTransform(clip = false)
+        },
+        label = "runs",
+      ) {
+        Text(
+          text = it,
+          style = MaterialTheme.typography.displayMedium,
+          fontWeight = FontWeight.Bold,
+        )
+      }
+      AnimatedContent(
+        targetState = record.currentFormattedOvers,
         modifier =
           Modifier.constrainAs(txtOvers) {
             centerHorizontallyTo(parent)
             bottom.linkTo(btnAddWicket.top, 12.dp)
           },
-      )
+        transitionSpec = {
+          (slideInVertically(motion.fastSpatialSpec()) { it / 2 } +
+            fadeIn(motion.fastEffectsSpec())) togetherWith
+            (slideOutVertically(motion.fastSpatialSpec()) { -it / 2 } +
+              fadeOut(motion.fastEffectsSpec())) using
+            SizeTransform(clip = false)
+        },
+        label = "overs",
+      ) {
+        Text(text = it, style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold)
+      }
 
       if (!isFirstInningComplete) {
         IconButton(
@@ -355,6 +393,7 @@ private fun MatchRecordUI(
 
       FloatingActionButton(
         onClick = { setWicket(true) },
+        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
         modifier =
           Modifier.constrainAs(btnAddWicket) {
             centerHorizontallyTo(btnAddRun)
@@ -378,6 +417,7 @@ private fun MatchRecordUI(
       )
       FloatingActionButton(
         onClick = { setWicket(false) },
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
         modifier =
           Modifier.constrainAs(btnMinusWicket) {
             centerHorizontallyTo(btnAddBall)
@@ -397,10 +437,12 @@ private fun MatchRecordUI(
             bottom.linkTo(btnMinusRun.top, 12.dp)
           },
         thickness = 1.dp,
+        color = MaterialTheme.colorScheme.outlineVariant,
       )
 
       FloatingActionButton(
         onClick = { setRun(1, false) },
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
         modifier =
           Modifier.constrainAs(btnMinusRun) {
             centerHorizontallyTo(btnAddRun)
@@ -414,6 +456,7 @@ private fun MatchRecordUI(
       }
       FloatingActionButton(
         onClick = { setBall(1, false) },
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
         modifier =
           Modifier.constrainAs(btnMinusBall) {
             centerHorizontallyTo(btnAddBall)
@@ -446,32 +489,32 @@ private fun MatchRecordUI(
         style = MaterialTheme.typography.titleLarge,
       )
 
-      FloatingActionButton(
+      LargeFloatingActionButton(
         onClick = { setRun(1, true) },
         modifier =
-          Modifier.size(100.dp).constrainAs(btnAddRun) {
+          Modifier.constrainAs(btnAddRun) {
             centerHorizontallyTo(parent)
             top.linkTo(guidelineAddButtons)
             bottom.linkTo(parent.bottom)
           },
       ) {
         Icon(
-          modifier = Modifier.size(50.dp),
+          modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize),
           painter = painterResource(Res.drawable.ic_add),
           contentDescription = stringResource(Res.string.add_run),
         )
       }
-      FloatingActionButton(
+      LargeFloatingActionButton(
         onClick = { setBall(1, true) },
         modifier =
-          Modifier.size(100.dp).constrainAs(btnAddBall) {
+          Modifier.constrainAs(btnAddBall) {
             centerHorizontallyTo(parent)
             top.linkTo(guidelineAddButtons)
             bottom.linkTo(parent.bottom)
           },
       ) {
         Icon(
-          modifier = Modifier.size(50.dp),
+          modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize),
           painter = painterResource(Res.drawable.ic_add),
           contentDescription = stringResource(Res.string.add_ball),
         )
@@ -501,19 +544,21 @@ private fun ResetDialog(
     confirmButton = {
       Row {
         TextButton(
+          shapes = ButtonDefaults.shapes(),
           onClick = {
             onReset(false)
             dismissDialog()
-          }
+          },
         ) {
           Text(stringResource(Res.string.reset_inning))
         }
         if (record.isFirstInningComplete) {
           TextButton(
+            shapes = ButtonDefaults.shapes(),
             onClick = {
               onReset(true)
               dismissDialog()
-            }
+            },
           ) {
             Text(stringResource(Res.string.reset_full))
           }
@@ -521,7 +566,12 @@ private fun ResetDialog(
       }
     },
     dismissButton = {
-      TextButton(onClick = dismissDialog) { Text(stringResource(Res.string.cancel)) }
+      TextButton(
+        shapes = ButtonDefaults.shapes(),
+        onClick = dismissDialog,
+      ) {
+        Text(stringResource(Res.string.cancel))
+      }
     },
   )
 }
@@ -545,6 +595,7 @@ private fun EditOversDialog(
     },
     confirmButton = {
       TextButton(
+        shapes = ButtonDefaults.shapes(),
         onClick = {
           try {
             val editedBalls = oversToBalls(editedOvers)
@@ -553,13 +604,18 @@ private fun EditOversDialog(
             }
             editedOversInBalls(editedBalls)
           } catch (_: Exception) {}
-        }
+        },
       ) {
         Text(stringResource(Res.string.save))
       }
     },
     dismissButton = {
-      TextButton(onClick = dismissDialog) { Text(stringResource(Res.string.cancel)) }
+      TextButton(
+        shapes = ButtonDefaults.shapes(),
+        onClick = dismissDialog,
+      ) {
+        Text(stringResource(Res.string.cancel))
+      }
     },
   )
 }

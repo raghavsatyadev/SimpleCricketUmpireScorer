@@ -60,7 +60,7 @@
 
 -keep class android.support.v8.renderscript.** { *; }
 
-#Crashlytics
+#Readable stack traces
 -keep public class * extends java.lang.Exception  # Optional: Keep custom exceptions.
 
 #GSON
@@ -94,9 +94,6 @@
 
 # Ignore annotation used for build tooling.
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
-
-#FCM
--dontwarn com.google.firebase.messaging.TopicOperation$TopicOperations
 
 -dontwarn javax.annotation.Nullable
 

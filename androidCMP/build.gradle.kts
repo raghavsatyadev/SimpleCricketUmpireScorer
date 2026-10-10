@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.compose.multiplatform)
@@ -8,9 +10,23 @@ plugins {
 
 kotlin { jvmToolchain(21) }
 
+val secretProps =
+  Properties().apply {
+    rootProject.file("secret.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+  }
+
 android {
+  signingConfigs {
+    create("release") {
+      secretProps.getProperty("storeFile")?.let { storeFile = rootProject.file("app/$it") }
+      storePassword = secretProps.getProperty("storePassword")
+      keyAlias = secretProps.getProperty("keyAlias")
+      keyPassword = secretProps.getProperty("keyPassword")
+    }
+  }
+  buildTypes { getByName("release") { signingConfig = signingConfigs.getByName("release") } }
   namespace = libs.versions.nameSpace.get()
-  compileSdk = libs.versions.compileSdk.get().toInt()
+  compileSdk { version = release(libs.versions.compileSdk.get().toInt()) { minorApiLevel = 1 } }
   buildToolsVersion = libs.versions.buildTools.get()
 
   defaultConfig {

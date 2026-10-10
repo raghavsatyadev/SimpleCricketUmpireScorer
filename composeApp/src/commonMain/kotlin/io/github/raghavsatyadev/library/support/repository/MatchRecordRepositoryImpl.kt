@@ -2,8 +2,10 @@ package io.github.raghavsatyadev.library.support.repository
 
 import io.github.raghavsatyadev.library.support.database.MatchRecordDao
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
-import kotlinx.coroutines.flow.Flow
 import kotlin.time.Clock
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
+import kotlinx.coroutines.flow.Flow
 
 class MatchRecordRepositoryImpl(private val matchRecordDao: MatchRecordDao) :
   MatchRecordRepository {
@@ -21,6 +23,14 @@ class MatchRecordRepositoryImpl(private val matchRecordDao: MatchRecordDao) :
   override fun getCountLive(): Flow<Long> = matchRecordDao.getCountLive()
 
   override suspend fun delete(primaryKeyId: String): Int = matchRecordDao.delete(primaryKeyId)
+
+  @OptIn(ExperimentalUuidApi::class)
+  override suspend fun insert(t: MatchRecord): MatchRecord {
+    if (t.matchRecordId.isEmpty()) t.matchRecordId = Uuid.random().toString()
+    t.localUpdateDateTime = Clock.System.now().toEpochMilliseconds()
+    matchRecordDao.insertReplace(t)
+    return t
+  }
 
   override suspend fun upsert(allNewRecords: List<MatchRecord>) {
     val now = Clock.System.now().toEpochMilliseconds()

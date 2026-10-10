@@ -1,4 +1,3 @@
-import com.android.ide.common.repository.keysMatch
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -19,7 +18,7 @@ room {
 kotlin {
   android {
     namespace = libs.versions.sharedAndroidId.get()
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk { version = release(libs.versions.compileSdk.get().toInt()) { minorApiLevel = 1 } }
     androidResources.enable = true
     compilerOptions { jvmTarget.set(JvmTarget.JVM_21) }
   }
@@ -37,8 +36,6 @@ kotlin {
     androidMain.dependencies {
       implementation(libs.compose.ui.preview)
       implementation(libs.compose.activity)
-      implementation(libs.bundles.firebase)
-      implementation(libs.bundles.firebase.mp)
       implementation(libs.room.runtime)
     }
 

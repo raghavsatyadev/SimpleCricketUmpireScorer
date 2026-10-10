@@ -5,7 +5,6 @@ import io.github.raghavsatyadev.scus.ui.dashboard.DashboardScreenViewModel
 import io.github.raghavsatyadev.scus.ui.main.MainViewModel
 import io.github.raghavsatyadev.scus.ui.match_complete.MatchCompleteScreenViewModel
 import io.github.raghavsatyadev.scus.ui.match_record.MatchRecordScreenViewModel
-import io.github.raghavsatyadev.scus.ui.user.LoginScreenViewModel
 import io.github.raghavsatyadev.support.di.supportModule
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -18,5 +17,4 @@ val appModule = module {
   viewModelOf(::DashboardScreenViewModel)
   viewModelOf(::MatchCompleteScreenViewModel)
   viewModelOf(::MatchRecordScreenViewModel)
-  viewModelOf(::LoginScreenViewModel)
 }

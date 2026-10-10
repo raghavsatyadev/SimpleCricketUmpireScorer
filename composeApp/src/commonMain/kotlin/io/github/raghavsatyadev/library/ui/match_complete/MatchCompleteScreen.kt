@@ -2,6 +2,16 @@
 
 package io.github.raghavsatyadev.library.ui.match_complete
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -11,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ButtonGroupDefaults
@@ -19,10 +28,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,6 +46,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.raghavsatyadev.library.support.components.AppToolBar
 import io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
+import io.github.raghavsatyadev.library.support.components.StatusPill
+import io.github.raghavsatyadev.library.support.components.StatusTone
 import io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.toBasicMatchUIDetails
@@ -72,6 +83,15 @@ fun MatchCompleteScreen(
   MatchCompleteUI(onBack, matchRecord, team1Details, team2Details)
 }
 
+private fun <T> AnimatedContentTransitionScope<T>.verticalSwap(
+  motion: MotionScheme
+): ContentTransform =
+  (slideInVertically(motion.fastSpatialSpec()) { it / 2 } +
+    fadeIn(motion.fastEffectsSpec())) togetherWith
+    (slideOutVertically(motion.fastSpatialSpec()) { -it / 2 } +
+      fadeOut(motion.fastEffectsSpec())) using
+    SizeTransform(clip = false)
+
 @Composable
 private fun MatchCompleteUI(
   onBack: () -> Unit,
@@ -79,6 +99,7 @@ private fun MatchCompleteUI(
   team1Details: BasicMatchUIDetails?,
   team2Details: BasicMatchUIDetails?,
 ) {
+  val motion = MaterialTheme.motionScheme
   var showTeam1 by
     remember(matchRecord) {
       mutableStateOf(
@@ -100,7 +121,8 @@ private fun MatchCompleteUI(
     ) {
       // Main Content centered
       Column(
-        modifier = Modifier.weight(1f).fillMaxWidth(),
+        modifier =
+          Modifier.weight(1f).fillMaxWidth().animateContentSize(motion.defaultSpatialSpec()),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
       ) {
@@ -121,33 +143,33 @@ private fun MatchCompleteUI(
                 isDraw -> Res.string.draw
                 else -> null
               }
-            val color =
+            val tone =
               when {
-                isWin -> MaterialTheme.colorScheme.primary
-                isLoss -> MaterialTheme.colorScheme.error
-                isDraw -> MaterialTheme.colorScheme.secondary
+                isWin -> StatusTone.Positive
+                isLoss -> StatusTone.Negative
+                isDraw -> StatusTone.Neutral
                 else -> null
               }
 
-            if (textRes != null && color != null) {
-              Text(
-                text = stringResource(textRes).uppercase(),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = color,
-                textAlign = TextAlign.Center,
-              )
+            if (textRes != null && tone != null) {
+              StatusPill(text = stringResource(textRes).uppercase(), tone = tone)
               Spacer(modifier = Modifier.height(8.dp))
             }
           }
 
           // Team Name
-          Text(
-            text = d.currentTeamName,
-            style = MaterialTheme.typography.displayMedium,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-          )
+          AnimatedContent(
+            targetState = d.currentTeamName,
+            transitionSpec = { verticalSwap(motion) },
+            label = "teamName",
+          ) { teamName ->
+            Text(
+              text = teamName,
+              style = MaterialTheme.typography.displayMedium,
+              fontWeight = FontWeight.Bold,
+              textAlign = TextAlign.Center,
+            )
+          }
 
           Spacer(modifier = Modifier.height(16.dp))
 
@@ -198,12 +220,18 @@ private fun MatchCompleteUI(
           Spacer(modifier = Modifier.height(16.dp))
 
           // Score
-          Text(
-            text = d.currentRunsAndWickets,
-            style = MaterialTheme.typography.displayLarge,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-          )
+          AnimatedContent(
+            targetState = d.currentRunsAndWickets,
+            transitionSpec = { verticalSwap(motion) },
+            label = "score",
+          ) { score ->
+            Text(
+              text = score,
+              style = MaterialTheme.typography.displayLarge,
+              fontWeight = FontWeight.Bold,
+              textAlign = TextAlign.Center,
+            )
+          }
 
           Spacer(modifier = Modifier.height(8.dp))
 
@@ -228,7 +256,6 @@ private fun MatchCompleteUI(
           modifier = Modifier.weight(1f),
           shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
         ) {
-          Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
           Text(text = stringResource(Res.string.team_1))
         }
         ToggleButton(
@@ -237,7 +264,6 @@ private fun MatchCompleteUI(
           modifier = Modifier.weight(1f),
           shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
         ) {
-          Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
           Text(text = stringResource(Res.string.team_2))
         }
       }

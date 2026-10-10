@@ -37,14 +37,6 @@
             android:value="@integer/google_play_services_version"
             />
 
-        <service
-            android:name="io.github.raghavsatyadev.support.notification.NotificationListener"
-            android:exported="false"
-            >
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"

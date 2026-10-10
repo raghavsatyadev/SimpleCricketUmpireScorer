@@ -2,29 +2,34 @@
 
 package io.github.raghavsatyadev.library.ui.dashboard
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
 import io.github.raghavsatyadev.library.support.components.DarkPreview
 import io.github.raghavsatyadev.library.support.components.LightPreview
+import io.github.raghavsatyadev.library.support.components.StatusPill
+import io.github.raghavsatyadev.library.support.components.StatusTone
 import io.github.raghavsatyadev.library.support.extensions.serializer.SerializationExtensions.toKotlinObject
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getMatchTimings
@@ -68,10 +73,28 @@ fun MatchRecordItem(
   onDeleteClick: (MatchRecord) -> Unit,
   onMatchClick: (MatchRecord) -> Unit,
 ) {
-  ElevatedCard(
-    shape = MaterialTheme.shapes.medium,
-    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-    modifier = modifier.clickable { onMatchClick(matchRecord) },
+  val motion = MaterialTheme.motionScheme
+  val copyShape =
+    RoundedCornerShape(
+      topStartPercent = 50,
+      bottomStartPercent = 50,
+      topEndPercent = 15,
+      bottomEndPercent = 15,
+    )
+  val deleteShape =
+    RoundedCornerShape(
+      topStartPercent = 15,
+      bottomStartPercent = 15,
+      topEndPercent = 50,
+      bottomEndPercent = 50,
+    )
+  Card(
+    onClick = { onMatchClick(matchRecord) },
+    modifier = modifier.animateContentSize(motion.defaultSpatialSpec()),
+    shape = MaterialTheme.shapes.large,
+    colors =
+      CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+    elevation = CardDefaults.cardElevation(),
   ) {
     ConstraintLayout(modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(16.dp)) {
       val midVerticalGuideLine = createGuidelineFromStart(0.5f)
@@ -90,42 +113,42 @@ fun MatchRecordItem(
         separatorTeam,
       ) = createRefs()
 
-      createHorizontalChain(btnCopy, btnDelete)
+      createHorizontalChain(btnCopy, btnDelete, chainStyle = ChainStyle.Packed)
 
       val team1Score = matchRecord.getTeam1FormattedScore()
       val team2Score = matchRecord.getTeam2FormattedScore()
       var team1Status = ""
       var team2Status = ""
-      var team1StatusColor: Color = Color.White
-      var team2StatusColor: Color = Color.White
+      var team1Tone = StatusTone.Neutral
+      var team2Tone = StatusTone.Neutral
       var combinedStatus = ""
-      var combinedStatusColor: Color = Color.White
+      var combinedTone = StatusTone.Neutral
       var shouldShowCombined: Boolean
 
       when (matchRecord.status) {
         MatchStatus.TEAM_1_WON -> {
           team1Status = properties.won
           team2Status = properties.lost
-          team1StatusColor = properties.winColor
-          team2StatusColor = properties.lostColor
+          team1Tone = StatusTone.Positive
+          team2Tone = StatusTone.Negative
           shouldShowCombined = false
         }
         MatchStatus.TEAM_2_WON -> {
           team1Status = properties.lost
           team2Status = properties.won
-          team1StatusColor = properties.lostColor
-          team2StatusColor = properties.winColor
+          team1Tone = StatusTone.Negative
+          team2Tone = StatusTone.Positive
           shouldShowCombined = false
         }
         MatchStatus.DRAW -> {
           shouldShowCombined = true
           combinedStatus = properties.draw
-          combinedStatusColor = properties.drawColor
+          combinedTone = StatusTone.Neutral
         }
         else -> {
           shouldShowCombined = true
           combinedStatus = properties.inProgress
-          combinedStatusColor = properties.inProgressColor
+          combinedTone = StatusTone.Active
         }
       }
 
@@ -142,7 +165,7 @@ fun MatchRecordItem(
               width = Dimension.value(1.dp)
               height = Dimension.fillToConstraints
             }
-            .background(MaterialTheme.colorScheme.outline)
+            .background(MaterialTheme.colorScheme.outlineVariant)
       )
       val combineStatusVisibility =
         if (shouldShowCombined) {
@@ -156,7 +179,9 @@ fun MatchRecordItem(
         } else {
           Visibility.Visible
         }
-      Text(
+      StatusPill(
+        text = combinedStatus,
+        tone = combinedTone,
         modifier =
           Modifier.constrainAs(txtCombinedStatus) {
             start.linkTo(parent.start)
@@ -164,13 +189,10 @@ fun MatchRecordItem(
             top.linkTo(parent.top)
             visibility = combineStatusVisibility
           },
-        text = combinedStatus,
-        fontWeight = FontWeight.Bold,
-        color = combinedStatusColor,
-        style = MaterialTheme.typography.titleMedium,
       )
-      Text(
+      StatusPill(
         text = team1Status,
+        tone = team1Tone,
         modifier =
           Modifier.constrainAs(txtTeam1Status) {
             start.linkTo(parent.start)
@@ -178,12 +200,10 @@ fun MatchRecordItem(
             top.linkTo(txtCombinedStatus.bottom)
             visibility = separateStatusVisibility
           },
-        color = team1StatusColor,
-        fontWeight = FontWeight.ExtraBold,
-        style = MaterialTheme.typography.titleMedium,
       )
-      Text(
+      StatusPill(
         text = team2Status,
+        tone = team2Tone,
         modifier =
           Modifier.constrainAs(txtTeam2Status) {
             end.linkTo(parent.end)
@@ -191,9 +211,6 @@ fun MatchRecordItem(
             top.linkTo(txtCombinedStatus.bottom)
             visibility = separateStatusVisibility
           },
-        fontWeight = FontWeight.ExtraBold,
-        color = team2StatusColor,
-        style = MaterialTheme.typography.titleMedium,
       )
 
       Text(
@@ -204,8 +221,8 @@ fun MatchRecordItem(
             end.linkTo(midVerticalGuideLine)
             top.linkTo(statusBarrier)
           },
-        fontWeight = FontWeight.ExtraBold,
-        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.titleSmall,
       )
       Text(
         text = matchRecord.team2Detail.teamName,
@@ -215,12 +232,12 @@ fun MatchRecordItem(
             end.linkTo(parent.end)
             top.linkTo(statusBarrier)
           },
-        fontWeight = FontWeight.ExtraBold,
-        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.titleSmall,
       )
       Text(
         text = team1Score,
-        style = MaterialTheme.typography.bodyMedium,
+        style = MaterialTheme.typography.titleMedium,
         modifier =
           Modifier.constrainAs(txtTeam1Score) {
             start.linkTo(parent.start)
@@ -230,7 +247,7 @@ fun MatchRecordItem(
       )
       Text(
         text = team2Score,
-        style = MaterialTheme.typography.bodyMedium,
+        style = MaterialTheme.typography.titleMedium,
         modifier =
           Modifier.constrainAs(txtTeam2Score) {
             start.linkTo(midVerticalGuideLine)
@@ -257,22 +274,33 @@ fun MatchRecordItem(
             top.linkTo(txtMatchLocation.bottom)
           },
       )
-      OutlinedIconButton(
+      FilledTonalIconButton(
         onClick = { onCopyClick(matchRecord) },
+        shapes =
+          IconButtonDefaults.shapes(shape = copyShape, pressedShape = MaterialTheme.shapes.small),
         modifier = Modifier.constrainAs(btnCopy) { top.linkTo(txtMatchDuration.bottom, 10.dp) },
       ) {
         Icon(
-          tint = MaterialTheme.colorScheme.primary,
           painter = painterResource(Res.drawable.ic_copy),
           contentDescription = stringResource(Res.string.copy_match_record),
         )
       }
-      OutlinedIconButton(
+      FilledTonalIconButton(
         onClick = { onDeleteClick(matchRecord) },
-        modifier = Modifier.constrainAs(btnDelete) { top.linkTo(txtMatchDuration.bottom, 10.dp) },
+        shapes =
+          IconButtonDefaults.shapes(shape = deleteShape, pressedShape = MaterialTheme.shapes.small),
+        colors =
+          IconButtonDefaults.filledTonalIconButtonColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+          ),
+        modifier =
+          Modifier.constrainAs(btnDelete) {
+            top.linkTo(txtMatchDuration.bottom, 10.dp)
+            start.linkTo(btnCopy.end, margin = ButtonGroupDefaults.ConnectedSpaceBetween)
+          },
       ) {
         Icon(
-          tint = MaterialTheme.colorScheme.primary,
           painter = painterResource(Res.drawable.ic_delete),
           contentDescription = stringResource(Res.string.delete_match_record),
         )

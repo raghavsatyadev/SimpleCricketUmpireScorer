@@ -7,17 +7,16 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -31,7 +30,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDialog
 import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -43,6 +42,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -54,6 +55,7 @@ import io.github.raghavsatyadev.library.support.extensions.DateExtensions.format
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.library.support.models.essential.UiState
 import io.github.raghavsatyadev.library.support.theme.AppTheme
+import kotlin.time.Clock.System
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import scus.composeapp.generated.resources.Res
@@ -70,7 +72,6 @@ import scus.composeapp.generated.resources.team_2
 import scus.composeapp.generated.resources.team_2_name
 import scus.composeapp.generated.resources.toss_won_by
 import scus.composeapp.generated.resources.which_team_bats_first
-import kotlin.time.Clock.System
 
 @Composable
 fun CreateMatchScreen(
@@ -158,6 +159,7 @@ private fun DateTimePickerDialogUI(
       },
       confirmButton = {
         TextButton(
+          shapes = ButtonDefaults.shapes(),
           onClick = {
             pickedDateMillis = datePickerState.selectedDateMillis
             showDatePickerDialogTemp = false
@@ -170,11 +172,12 @@ private fun DateTimePickerDialogUI(
       },
       dismissButton = {
         TextButton(
+          shapes = ButtonDefaults.shapes(),
           onClick = {
             hideDatePickerDialog()
             showTimePickerDialogTemp = false
             showDatePickerDialogTemp = true
-          }
+          },
         ) {
           Text(stringResource(Res.string.cancel))
         }
@@ -193,6 +196,7 @@ private fun DateTimePickerDialogUI(
       },
       confirmButton = {
         TextButton(
+          shapes = ButtonDefaults.shapes(),
           onClick = {
             // we combine the dates by just adding the millis of the time to the
             // date.
@@ -206,18 +210,19 @@ private fun DateTimePickerDialogUI(
             }
             showTimePickerDialogTemp = false
             showDatePickerDialogTemp = true
-          }
+          },
         ) {
           Text(stringResource(Res.string.save))
         }
       },
       dismissButton = {
         TextButton(
+          shapes = ButtonDefaults.shapes(),
           onClick = {
             hideDatePickerDialog()
             showTimePickerDialogTemp = false
             showDatePickerDialogTemp = true
-          }
+          },
         ) {
           Text(stringResource(Res.string.cancel))
         }
@@ -283,9 +288,17 @@ private fun CreateMatchRecordUI(
   var tossWonByTeam1 by remember { mutableStateOf(initialTossWonByTeam1) }
   var batFirstByTeam1 by remember { mutableStateOf(initialBatFirstByTeam1) }
 
+  val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   Scaffold(
-    modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
-    topBar = { AppToolBar(title = stringResource(Res.string.create_match_title)) },
+    modifier =
+      Modifier.windowInsetsPadding(WindowInsets.systemBars)
+        .nestedScroll(scrollBehavior.nestedScrollConnection),
+    topBar = {
+      AppToolBar(
+        title = stringResource(Res.string.create_match_title),
+        scrollBehavior = scrollBehavior,
+      )
+    },
   ) { innerPadding ->
     ConstraintLayout(
       modifier =
@@ -362,7 +375,8 @@ private fun CreateMatchRecordUI(
 
       Text(
         text = stringResource(Res.string.toss_won_by),
-        style = MaterialTheme.typography.titleLarge,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.SemiBold,
         modifier =
           Modifier.constrainAs(tossLabelRef) {
             top.linkTo(overRef.bottom, margin = 20.dp)
@@ -385,7 +399,8 @@ private fun CreateMatchRecordUI(
 
       Text(
         text = stringResource(Res.string.which_team_bats_first),
-        style = MaterialTheme.typography.titleLarge,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.SemiBold,
         modifier =
           Modifier.constrainAs(batLabelRef) {
             top.linkTo(tossToggleRef.bottom, margin = 20.dp)
@@ -421,6 +436,7 @@ private fun CreateMatchRecordUI(
       )
 
       Button(
+        shapes = ButtonDefaults.shapes(),
         onClick = {
           onSaveMatchRecord(
             selectedDateTimeMillis,
@@ -437,6 +453,7 @@ private fun CreateMatchRecordUI(
             top.linkTo(locationRef.bottom, margin = 10.dp)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
+            width = Dimension.fillToConstraints
           },
       ) {
         Text(stringResource(Res.string.save))
@@ -470,7 +487,6 @@ private fun ToggleButtonGroup(
             else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
           },
       ) {
-        Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
         Text(label)
       }
     }

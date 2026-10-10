@@ -1,9 +1,11 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 
 package io.github.raghavsatyadev.library.support.components
 
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -18,7 +20,9 @@ fun ErrorDialog(errorCode: ErrorCode, errorMessage: String? = null, onDismiss: (
     onDismissRequest = { onDismiss() },
     text = { Text(text = errorMessage ?: errorCode.name) },
     confirmButton = {
-      TextButton(onClick = { onDismiss() }) { Text(text = stringResource(Res.string.okay)) }
+      TextButton(onClick = { onDismiss() }, shapes = ButtonDefaults.shapes()) {
+        Text(text = stringResource(Res.string.okay))
+      }
     },
   )
 }

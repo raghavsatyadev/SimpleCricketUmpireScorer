@@ -12,7 +12,6 @@ object SerializationExtensions {
     serializersModule = SerializersModule {
       contextual(ExceptionSerializer)
       contextual(DynamicLookupSerializer)
-      contextual(TimeStampSerializer)
       contextual(DateSerializer)
       contextual(InstantSerializer)
       contextual(HashMapSerializer)

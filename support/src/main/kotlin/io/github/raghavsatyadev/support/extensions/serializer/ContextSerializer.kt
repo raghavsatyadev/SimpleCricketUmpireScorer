@@ -1,6 +1,7 @@
 package io.github.raghavsatyadev.support.extensions.serializer
 
-import com.google.firebase.Timestamp
+import java.time.Instant
+import java.util.Date
 import kotlinx.serialization.ContextualSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.InternalSerializationApi
@@ -14,8 +15,6 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
-import java.time.Instant
-import java.util.Date
 
 object ExceptionSerializer : KSerializer<Exception> {
   override val descriptor: SerialDescriptor =
@@ -44,19 +43,6 @@ object DynamicLookupSerializer : KSerializer<Any> {
 
   override fun deserialize(decoder: Decoder): Any {
     error("Unsupported")
-  }
-}
-
-object TimeStampSerializer : KSerializer<Timestamp> {
-  override val descriptor: SerialDescriptor =
-    PrimitiveSerialDescriptor("Timestamp", PrimitiveKind.LONG)
-
-  override fun serialize(encoder: Encoder, value: Timestamp) {
-    encoder.encodeLong(value.seconds.times(1000))
-  }
-
-  override fun deserialize(decoder: Decoder): Timestamp {
-    return Timestamp(Instant.ofEpochSecond(decoder.decodeLong() / 1000))
   }
 }
 

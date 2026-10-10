@@ -1,20 +1,15 @@
 @file:Suppress("DEPRECATION")
 
-import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import java.util.Properties
 
 plugins {
   alias(libs.plugins.android.application)
-
-  alias(libs.plugins.google.plugin)
 
   alias(libs.plugins.ksp)
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.kotlin.parcelize)
 
   alias(libs.plugins.compose.compiler)
-
-  alias(libs.plugins.crashlytics)
 
   alias(libs.plugins.stability.analyzer)
 }
@@ -35,7 +30,7 @@ val props = readProperties(file("../secret.properties"))
 
 android {
   namespace = libs.versions.nameSpace.get()
-  compileSdk = libs.versions.compileSdk.get().toInt()
+  compileSdk { version = release(libs.versions.compileSdk.get().toInt()) { minorApiLevel = 1 } }
   // compileSdkPreview = libs.versions.compileSdkPreview.get()
   buildToolsVersion = libs.versions.buildTools.get()
   defaultConfig {
@@ -83,7 +78,6 @@ android {
       isMinifyEnabled = false
       isShrinkResources = false
       //            applicationIdSuffix = ".debug"
-      configure<CrashlyticsExtension> { mappingFileUploadEnabled = false }
     }
 
     kotlin { jvmToolchain(21) }
@@ -256,9 +250,6 @@ dependencies {
 
   // Navigation
   implementation(libs.bundles.navigation)
-
-  // Firebase
-  implementation(libs.bundles.firebase)
 
   // Google
   implementation(libs.bundles.google)

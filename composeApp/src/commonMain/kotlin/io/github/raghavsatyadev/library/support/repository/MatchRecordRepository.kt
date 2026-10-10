@@ -16,6 +16,9 @@ interface MatchRecordRepository {
 
   suspend fun delete(primaryKeyId: String): Int
 
+  /** Saves a new match, giving it an id when it has none. */
+  suspend fun insert(t: MatchRecord): MatchRecord
+
   suspend fun upsert(allNewRecords: List<MatchRecord>)
 
   suspend fun updateServerTime(id: String, time: Long)

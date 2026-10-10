@@ -9,18 +9,12 @@ import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
 import coil3.util.DebugLogger
 import com.google.android.gms.ads.MobileAds
-import com.google.firebase.FirebaseApp
-import com.google.firebase.appcheck.FirebaseAppCheck
-import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import io.github.raghavsatyadev.scus.support.di.appModule
 import io.github.raghavsatyadev.support.BuildConfig
 import io.github.raghavsatyadev.support.R
-import io.github.raghavsatyadev.support.background.MatchDataWorkScheduler
 import io.github.raghavsatyadev.support.core.CoreApp
 import io.github.raghavsatyadev.support.google.GoogleExtensions.checkPlayServiceAvailability
 import okio.Path.Companion.toOkioPath
-import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
@@ -38,16 +32,8 @@ class ChildCoreApp : CoreApp() {
       modules(appModule)
     }
 
-    setupWorker()
     setupCoil()
     setupAds()
-    setupFirebaseAppCheck()
-  }
-
-  private val scheduler: MatchDataWorkScheduler by inject()
-
-  private fun setupWorker() {
-    scheduler.enqueuePeriodic()
   }
 
   private fun setupCoil() {
@@ -79,17 +65,5 @@ class ChildCoreApp : CoreApp() {
     } else {
       Toast.makeText(this, R.string.warning_update_play_service, Toast.LENGTH_SHORT).show()
     }
-  }
-
-  private fun setupFirebaseAppCheck() {
-    FirebaseApp.initializeApp(this)
-    val firebaseAppCheck = FirebaseAppCheck.getInstance()
-    firebaseAppCheck.installAppCheckProviderFactory(
-      if (BuildConfig.DEBUG) {
-        DebugAppCheckProviderFactory.getInstance()
-      } else {
-        PlayIntegrityAppCheckProviderFactory.getInstance()
-      }
-    )
   }
 }

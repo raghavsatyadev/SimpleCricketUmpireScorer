@@ -20,7 +20,7 @@ val props = readProperties(file("../secret.properties"))
 
 android {
   namespace = libs.versions.supportId.get()
-  compileSdk = libs.versions.compileSdk.get().toInt()
+  compileSdk { version = release(libs.versions.compileSdk.get().toInt()) { minorApiLevel = 1 } }
   // compileSdkPreview = libs.versions.compileSdkPreview.get()
   buildToolsVersion = libs.versions.buildTools.get()
 
@@ -135,9 +135,6 @@ dependencies {
 
   // Navigation
   implementation(libs.bundles.navigation)
-
-  // Firebase
-  implementation(libs.bundles.firebase)
 
   // Google
   implementation(libs.bundles.google)

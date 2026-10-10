@@ -45,13 +45,6 @@ object Constants {
     // endregion
   }
 
-  object FirebaseConstants {
-    object Collections {
-      const val USER = "User"
-      const val MATCH_RECORD = "Match"
-    }
-  }
-
   object NotificationKeys {
     const val MAIN_KEY = "main"
   }
