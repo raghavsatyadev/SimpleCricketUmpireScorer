@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Extra setup for the local-model skill; global_skills/install.sh runs it after it copies SKILL.md.
 #   ~/.local-model/                local-model.sh, lm-ask, lm-on, lm-off, jgl, lm-rank, lm-diffcheck and
-#                                  the Node hooks (lm-client, lm-gate, lm-loop, lm-route, ...)
+#                                  the Node hooks (lm-client, lm-gate, lm-loop, lm-enforce, lm-route, ...)
 #   ~/.claude/settings.json        Claude Code hooks: SessionStart lm-on, SessionEnd lm-off,
-#                                  PostToolUse lm-gate (long build/test output), Pre/PostToolUse(Failure)
-#                                  lm-loop (repeated failures), UserPromptSubmit lm-route (request
+#                                  PostToolUse lm-gate (long Bash output compressed, build/test verdict), Pre/PostToolUse(Failure)
+#                                  lm-loop (repeated failures), Pre/PostToolUse lm-enforce (log dumps
+#                                  denied, search notes), UserPromptSubmit lm-route (request
 #                                  size hint), UserPromptExpansion lm-diffcheck (before /code-review)
 #   ~/.local-model/mod/            Claude Code mods, as the `local-model` plugin marketplace:
 #                                  lm-savings (/lm-savings sums usage.log). Needs Claude Code 2.1.287+.
@@ -42,6 +43,8 @@ add("PostToolUse", "lm-gate.mjs", "lm-gate.mjs", node("lm-gate.mjs"), { matcher:
 add("PreToolUse", "lm-loop.mjs", "lm-loop.mjs", node("lm-loop.mjs"), { matcher: "Bash" });
 add("PostToolUse", "lm-loop.mjs", "lm-loop.mjs", node("lm-loop.mjs"), { matcher: "Bash|Edit|Write|MultiEdit|NotebookEdit" });
 add("PostToolUseFailure", "lm-loop.mjs", "lm-loop.mjs", node("lm-loop.mjs"), { matcher: "Bash" });
+add("PreToolUse", "lm-enforce.mjs", "lm-enforce.mjs", node("lm-enforce.mjs"), { matcher: "Bash|Read|Grep" });
+add("PostToolUse", "lm-enforce.mjs", "lm-enforce.mjs", node("lm-enforce.mjs"), { matcher: "Bash|Grep|Edit|Write|MultiEdit|NotebookEdit" });
 add("UserPromptSubmit", "lm-route.mjs", "lm-route.mjs", node("lm-route.mjs"));
 add("UserPromptExpansion", "lm-diffcheck.mjs", "lm-diffcheck.mjs", node("lm-diffcheck.mjs", " --hook"), {
   matcher: "code-review|review|security-review|simplify",
@@ -52,7 +55,10 @@ JS
 rm -rf "$bin/mod" && cp -r "$here/mod" "$bin/mod"
 if command -v claude >/dev/null 2>&1; then
   mp="$bin/mod"; command -v cygpath >/dev/null 2>&1 && mp="$(cygpath -w "$mp")"
-  claude plugin marketplace add "$mp" >/dev/null 2>&1 || claude plugin marketplace update local-model >/dev/null 2>&1 || true
-  claude plugin install lm-savings@local-model >/dev/null 2>&1 || claude plugin update lm-savings@local-model >/dev/null 2>&1 || true
+  # add and install succeed on a re-run without picking up a new version, so update both every time.
+  claude plugin marketplace add "$mp" >/dev/null 2>&1 || true
+  claude plugin marketplace update local-model >/dev/null 2>&1 || true
+  claude plugin install lm-savings@local-model >/dev/null 2>&1 || true
+  claude plugin update lm-savings@local-model >/dev/null 2>&1 || true
 fi
 echo "Installed: $bin, hooks in ~/.claude/settings.json, mods from $bin/mod"

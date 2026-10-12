@@ -58,9 +58,21 @@ it first (`grep -n`, `tail -n 400`) when a slice is enough: then it stays local 
 local for one call with `LOCAL_MODEL_ALLOW_JEV=0`. Every Jev call is logged with its input tokens in
 `~/.config/typesafe/usage.log`.
 
-## Long build and test output is shortened for you (Claude Code)
+## Long Bash output is compressed for you (Claude Code)
 
-The global PostToolUse hook `lm-gate.mjs` runs after a Bash build, test or lint command (`gradlew`,
+The global PostToolUse hook `lm-gate.mjs` shrinks any Bash output over 8 KB
+(`LOCAL_MODEL_COMPRESS_KB`) to about 6 KB (`LOCAL_MODEL_COMPRESS_BUDGET`) before you read it, the way
+Headroom does: ANSI codes and progress bars dropped, JSON arrays cut to 3 items plus a count,
+repeated log lines collapsed, then the local model keeps the blocks that matter for the call's
+`description` (write a precise one). The first 12 and last 25 lines and every error line stay. You
+see `[lm-gate] Compressed 20.1 KB -> 4.9 KB (...)`; `[...]` markers show what was cut, and the
+full output is in the file named at the end. Exact reads are never compressed: `cat`/`sed`/`head`/
+`tail`/`nl` of a file that is not a log, `git diff`/`show`/`blame`, `gh pr diff`, and `lm-*`/`jgl`
+calls. Need the raw output: `LM_GATE=0 <command>`. Self-test: `node test/lm-gate.test.mjs`.
+
+### Build and test runs get a verdict instead
+
+`lm-gate.mjs` runs after a Bash build, test or lint command (`gradlew`,
 `gradle-agent.sh`, `ci-local.sh`, `npm test`, `pytest`, `cargo test`, `am instrument` ...) whose
 output is over 200 lines (`LOCAL_MODEL_GATE_LINES`). It saves the full output in
 `~/.local-model/gate/` and asks the local model whether the run passed:
@@ -111,6 +123,18 @@ flags to the prompt. A flag is a lead to check, not a finding. No checks file: i
   run is blocked once. With edits in between, the model is asked whether the 3 errors are the
   same; yes ≥ 0.9 → a warning that the edits are not reaching the cause. When you see
   `[lm-loop]`: stop retrying, read the error, change the approach or ask the user.
+- **Enforce** (`lm-enforce.mjs`). Denies a log dump before it runs: `adb logcat -d` (no `-t N`),
+  `cat`/`less` on a log, `head`/`tail` over 30 lines, `tail -f`, `sed` over a log, `rg`/`grep` on a
+  log without `-c`/`-l`/`-q`/`-m N`, a Read of a log without a small `limit`, a Grep content search
+  of a log without a small `head_limit`. The body of `bash -c`, `powershell -Command`, `$(...)` and
+  backticks is checked too. A pipe into `lm-ask`, `lm-rank`, `wc`, `rg -c` or
+  `head -n 30`, or `> file`, makes it fine. A log is `*.log`, `*.trace`, `tmp/gradle-agent-*`,
+  tombstones, `hs_err_pid*`, `*crash*.txt`, `anr*.txt`, `logcat*.txt`, `bugreport*.txt`. Nothing is
+  denied when neither the local model nor Jev could answer. After the call it adds a note after 3 code
+  searches in a row with no `jgl` or `lm-rank` (an edit resets the count). A code search is
+  `rg`/`grep` over a folder, a glob or the working folder, or Grep on a folder; `cmd | grep x` and a
+  look inside a named file do not count. Self-test: `node test/lm-enforce.test.mjs`. When you see
+  `[lm-enforce]`: do what it names (save to a file, `lm-ask`, or narrow with `rg -c` / `rg -m 20`).
 - **Request size hint** (`lm-route.mjs`). The model sizes each prompt; only a sure answer (≥ 0.9)
   adds a line. Quick request → answer directly, no subagents. Multi-step → search-only subagents
   can use `haiku` or `sonnet`. On 34 real prompts its sure answers were right 14 of 14.
@@ -151,8 +175,12 @@ run it yourself at the end of the task.
 
 `LOCAL_MODEL_URL`, `LOCAL_MODEL_NAME`, `LOCAL_MODEL_MAX_BYTES`, `LOCAL_MODEL_KEEP_ALIVE` (default `10m`),
 `LOCAL_MODEL_TIMEOUT` (default 30 s), `LOCAL_MODEL_LOCAL=0` (Jev only), `LOCAL_MODEL_HOOKS=0` (all off),
-`LOCAL_MODEL_GATE=0` (output gate off), `LOCAL_MODEL_GATE_LINES` (default 200), `LOCAL_MODEL_LOOP=0`
-(loop stop off), `LOCAL_MODEL_LOOP_MAX` (default 3), `LOCAL_MODEL_ROUTE=0` (size hint off),
+`LOCAL_MODEL_GATE=0` (output gate off), `LOCAL_MODEL_GATE_LINES` (default 200),
+`LOCAL_MODEL_COMPRESS=0` (compression off, build verdicts stay), `LOCAL_MODEL_COMPRESS_KB` (default 8),
+`LOCAL_MODEL_COMPRESS_BUDGET` (default 6000 bytes), `LOCAL_MODEL_LOOP=0`
+(loop stop off), `LOCAL_MODEL_LOOP_MAX` (default 3), `LOCAL_MODEL_ENFORCE=0` (enforce off;
+`LM_ENFORCE=0` in one command), `LOCAL_MODEL_ENFORCE_LINES` (default 30), `LOCAL_MODEL_ENFORCE_SEARCHES` (default 3), `LOCAL_MODEL_ENFORCE_LOGS` (log path regex),
+`LOCAL_MODEL_ROUTE=0` (size hint off),
 `LM_DIFFCHECK_MIN` (default 0.7),
 `JEV_API_KEY`, `JEV_MODEL` (default `jev-latest`), `JEV_MAX_BYTES` (default 100000).
 
@@ -162,6 +190,6 @@ run it yourself at the end of the task.
 milliseconds, bytes (the input for `lm-ask`, the output for `jgl`), answer or result count,
 working directory, question or arguments. `LOCAL_MODEL_USAGE_LOG=0` turns it off;
 `LOCAL_MODEL_USAGE_LOG_FILE` moves it. `lm-gate` adds a line for each output it shortens: bytes
-in, then `passed|failed <P(yes)> <bytes out>`, so the savings can be summed. `lm-rank`, `lm-diffcheck`,
-`lm-loop` and `lm-route` add their own lines (tool name in the second column).
+in, then `passed|failed <P(yes)> <bytes out>` or `compressed <ratio> <bytes out>`, so the savings can be summed. `lm-rank`, `lm-diffcheck`,
+`lm-loop`, `lm-enforce` and `lm-route` add their own lines (tool name in the second column).
 `/lm-savings [days|today|all]` (a Claude Code mod, 2.1.287+) sums it per tool without a Claude turn.

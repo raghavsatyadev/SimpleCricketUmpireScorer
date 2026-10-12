@@ -48,9 +48,9 @@ function summarize(text, arg, now) {
     r.ms += Number(f[2]) || 0
     r.bytes += bytesIn
     r.saved += saved(tool, bytesIn, f[4])
-    // lm-route easy/hard, lm-loop denied/warned/same, diffcheck flags
+    // lm-gate compressed/passed/failed, lm-route easy/hard, lm-loop denied/warned/same, lm-enforce denied/nudged/search-nudge, diffcheck flags
     const word = f[4].split(' ')[0]
-    if (tool === 'lm-route' || tool === 'lm-loop') r.notes[word] = (r.notes[word] || 0) + 1
+    if (tool === 'lm-route' || tool === 'lm-loop' || tool === 'lm-enforce' || tool === 'lm-gate') r.notes[word] = (r.notes[word] || 0) + 1
     if (tool === 'lm-diffcheck') r.notes.flags = (r.notes.flags || 0) + (Number(word) || 0)
   }
   const tools = Object.keys(rows).sort((a, b) => rows[b].saved - rows[a].saved || rows[b].calls - rows[a].calls)
