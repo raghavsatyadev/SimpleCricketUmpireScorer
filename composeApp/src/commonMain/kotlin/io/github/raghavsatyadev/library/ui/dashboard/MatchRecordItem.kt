@@ -90,13 +90,21 @@ fun MatchRecordItem(
     )
   Card(
     onClick = { onMatchClick(matchRecord) },
-    modifier = modifier.animateContentSize(motion.defaultSpatialSpec()),
+    modifier = modifier,
     shape = MaterialTheme.shapes.large,
     colors =
       CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
     elevation = CardDefaults.cardElevation(),
   ) {
-    ConstraintLayout(modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(16.dp)) {
+    // The size animates inside the card: animateContentSize clips to its bounds, and on the card
+    // itself it would cut off the card's elevation shadow.
+    ConstraintLayout(
+      modifier =
+        Modifier.animateContentSize(motion.defaultSpatialSpec())
+          .fillMaxWidth()
+          .wrapContentHeight()
+          .padding(16.dp)
+    ) {
       val midVerticalGuideLine = createGuidelineFromStart(0.5f)
       val (
         txtCombinedStatus,

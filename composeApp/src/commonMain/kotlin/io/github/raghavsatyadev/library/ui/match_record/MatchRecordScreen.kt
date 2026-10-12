@@ -3,12 +3,17 @@
 package io.github.raghavsatyadev.library.ui.match_record
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +36,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -41,21 +48,35 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import io.github.raghavsatyadev.library.support.components.AppToolBar
+import io.github.raghavsatyadev.library.support.components.CelebrationBurst
+import io.github.raghavsatyadev.library.support.components.CelebrationSize
 import io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
+import io.github.raghavsatyadev.library.support.components.InningsProgressBar
+import io.github.raghavsatyadev.library.support.components.sharedMatchContainer
 import io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.isMatchCompleted
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.oversToBalls
+import io.github.raghavsatyadev.library.support.theme.AppMotion
 import io.github.raghavsatyadev.library.support.theme.AppTheme
+import io.github.raghavsatyadev.library.support.theme.animationsEnabled
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -92,6 +113,7 @@ import scus.composeapp.generated.resources.wickets
 @Composable
 fun MatchRecordScreen(
   matchRecordId: String,
+  preview: io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord? = null,
   viewModel: MatchRecordScreenViewModel = koinViewModel(),
   onBack: () -> Unit = {},
   onMatchCompleted: () -> Unit = {},
@@ -99,6 +121,8 @@ fun MatchRecordScreen(
   var showResetDialog by remember { mutableStateOf(false) }
   var showEditOversDialog by remember { mutableStateOf(false) }
 
+  // Synchronous, before the first frame, so the screen is complete while its card grows into it.
+  remember(preview) { viewModel.showPreview(preview) }
   LaunchedEffect(matchRecordId) { viewModel.loadMatchRecord(matchRecordId) }
 
   DisposableEffect(Unit) { onDispose { viewModel.clearLoadingState() } }
@@ -137,6 +161,7 @@ fun MatchRecordScreen(
   }
   MatchRecordUI(
     record = recordState,
+    modifier = Modifier.sharedMatchContainer(matchRecordId, fullScreen = true),
     onBack = onBack,
     endInning = { viewModel.endInning(matchRecordId) },
     endMatch = { viewModel.endMatch(matchRecordId) },
@@ -176,6 +201,48 @@ fun MatchRecordUIPreview() {
   }
 }
 
+/**
+ * A score or overs value swapping in: it slides a little and fades on the quick effects spring, so
+ * a number read as data never overshoots. An undo ([retract]) only fades: taking a ball back is a
+ * correction, not progress, so it moves less than the add. With motion reduced it only fades.
+ */
+private fun <T> AnimatedContentTransitionScope<T>.dataSwap(
+  slide: FiniteAnimationSpec<IntOffset>,
+  fade: FiniteAnimationSpec<Float>,
+  animate: Boolean,
+  retract: Boolean,
+): ContentTransform =
+  if (animate && !retract) {
+    (slideInVertically(slide) { it / 2 } + fadeIn(fade)) togetherWith
+      (slideOutVertically(slide) { -it / 2 } + fadeOut(fade)) using
+      SizeTransform(clip = false)
+  } else {
+    fadeIn(fade) togetherWith fadeOut(fade)
+  }
+
+/** Runs and wickets from a "72-5" score; null when it cannot be read. */
+private fun parseScore(runsAndWickets: String): Pair<Int, Int>? {
+  val parts = runsAndWickets.split('-')
+  val runs = parts.getOrNull(0)?.trim()?.toIntOrNull() ?: return null
+  val wickets = parts.getOrNull(1)?.trim()?.toIntOrNull() ?: 0
+  return runs to wickets
+}
+
+/** How much of the innings is bowled, 0 to 1; 0 when the overs cannot be read. */
+private fun inningsProgress(record: BasicMatchUIDetails): Float = runCatching {
+  val total = oversToBalls(record.totalOvers)
+  if (total <= 0) 0f else oversToBalls(record.currentOvers).toFloat() / total
+}
+  .getOrDefault(0f)
+
+/** True in a chase whose required rate is above the current rate. */
+private fun isBehind(record: BasicMatchUIDetails): Boolean {
+  if (!record.isFirstInningComplete) return false
+  val rrr = record.currentRRR.toDoubleOrNull() ?: return false
+  val crr = record.currentCRR.toDoubleOrNull() ?: return false
+  return rrr > crr
+}
+
 @Composable
 private fun MatchRecordUI(
   record: BasicMatchUIDetails?,
@@ -187,11 +254,49 @@ private fun MatchRecordUI(
   setRun: (runs: Int, shouldAdd: Boolean) -> Unit,
   showResetDialog: () -> Unit,
   showEditOversDialog: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-  val motion = MaterialTheme.motionScheme
+  val slide = AppMotion.tapDataSpec<IntOffset>()
+  val fade = AppMotion.tapDataSpec<Float>()
+  val animate = animationsEnabled()
+  // The record arrives a moment after the screen opens; it fades in rather than popping in while
+  // the card is still growing into the screen.
+  val contentSpec = AppMotion.effectsSpec<Float>()
+  val contentAlpha = remember { Animatable(if (record != null) 1f else 0f) }
+  LaunchedEffect(record != null) { if (record != null) contentAlpha.animateTo(1f, contentSpec) }
+  val haptic = LocalHapticFeedback.current
+  // The direction of the last change, read when the score swaps: an undo resolves plainer.
+  var lastWasUndo by remember { mutableStateOf(false) }
+  // Adding is a light tick; taking back is a reject buzz, so a wrong tap feels different.
+  val add = { action: () -> Unit ->
+    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+    lastWasUndo = false
+    action()
+  }
+  val undo = { action: () -> Unit ->
+    haptic.performHapticFeedback(HapticFeedbackType.Reject)
+    lastWasUndo = true
+    action()
+  }
+  // Celebrate events, not taps: a wicket gets a small burst, every 50 runs a bigger one. A run is
+  // tapped a hundred times a match, so it only gets the score swap. Never on an undo or on open.
+  var wicketBurst by remember { mutableIntStateOf(0) }
+  var milestoneBurst by remember { mutableIntStateOf(0) }
+  val score = record?.let { parseScore(it.currentRunsAndWickets) }
+  var previousScore by remember { mutableStateOf(score) }
+  LaunchedEffect(score) {
+    val before = previousScore
+    previousScore = score
+    if (before == null || score == null || lastWasUndo) return@LaunchedEffect
+    if (score.second > before.second) wicketBurst++
+    if (score.first / RUN_MILESTONE > before.first / RUN_MILESTONE) {
+      milestoneBurst++
+      haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+    }
+  }
 
   Scaffold(
-    modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
+    modifier = modifier.windowInsetsPadding(WindowInsets.systemBars),
     topBar = {
       val title =
         record?.let { stringResource(Res.string.team) + " " + it.currentTeamName }
@@ -210,11 +315,27 @@ private fun MatchRecordUI(
       )
     },
   ) { padding ->
+    if (record == null) {
+      // The record loads in a few milliseconds; the indicator only shows when it takes longer, so
+      // it never flashes during the card's transform.
+      var slow by remember { mutableStateOf(false) }
+      LaunchedEffect(Unit) {
+        delay(LOADING_INDICATOR_DELAY_MILLIS)
+        slow = true
+      }
+      Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+        if (slow) LoadingIndicator()
+      }
+      return@Scaffold
+    }
     ConstraintLayout(
       modifier =
-        Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState())
+        Modifier.fillMaxSize()
+          .padding(padding)
+          .padding(16.dp)
+          .graphicsLayer { alpha = contentAlpha.value }
+          .verticalScroll(rememberScrollState())
     ) {
-      if (record == null) return@ConstraintLayout
       val (
         txtRequired,
         txtCrr,
@@ -227,6 +348,7 @@ private fun MatchRecordUI(
         spaceRr,
         spaceRunsWickets,
         spaceMinusTop,
+        barProgress,
       ) = createRefs()
 
       val (
@@ -239,6 +361,7 @@ private fun MatchRecordUI(
         btnMinusWicket,
         btnAddWicket,
       ) = createRefs()
+      val (burstWicket, burstMilestone) = createRefs()
 
       createHorizontalChain(btnAddBall, btnAddRun)
 
@@ -333,6 +456,19 @@ private fun MatchRecordUI(
         color = MaterialTheme.colorScheme.outlineVariant,
       )
 
+      // Drawn before the score, so the pieces fly out from behind it.
+      CelebrationBurst(
+        trigger = wicketBurst,
+        color = MaterialTheme.colorScheme.tertiary,
+        modifier = Modifier.constrainAs(burstWicket) { centerTo(txtRunsWickets) },
+      )
+      CelebrationBurst(
+        trigger = milestoneBurst,
+        color = MaterialTheme.colorScheme.primary,
+        size = CelebrationSize.Large,
+        shape = MaterialShapes.Sunny,
+        modifier = Modifier.constrainAs(burstMilestone) { centerTo(txtRunsWickets) },
+      )
       AnimatedContent(
         targetState = record.currentRunsAndWickets,
         modifier =
@@ -340,13 +476,7 @@ private fun MatchRecordUI(
             centerHorizontallyTo(parent)
             bottom.linkTo(txtOvers.top, 12.dp)
           },
-        transitionSpec = {
-          (slideInVertically(motion.fastSpatialSpec()) { it / 2 } +
-            fadeIn(motion.fastEffectsSpec())) togetherWith
-            (slideOutVertically(motion.fastSpatialSpec()) { -it / 2 } +
-              fadeOut(motion.fastEffectsSpec())) using
-            SizeTransform(clip = false)
-        },
+        transitionSpec = { dataSwap(slide, fade, animate, retract = lastWasUndo) },
         label = "runs",
       ) {
         Text(
@@ -360,15 +490,9 @@ private fun MatchRecordUI(
         modifier =
           Modifier.constrainAs(txtOvers) {
             centerHorizontallyTo(parent)
-            bottom.linkTo(btnAddWicket.top, 12.dp)
+            bottom.linkTo(barProgress.top, 12.dp)
           },
-        transitionSpec = {
-          (slideInVertically(motion.fastSpatialSpec()) { it / 2 } +
-            fadeIn(motion.fastEffectsSpec())) togetherWith
-            (slideOutVertically(motion.fastSpatialSpec()) { -it / 2 } +
-              fadeOut(motion.fastEffectsSpec())) using
-            SizeTransform(clip = false)
-        },
+        transitionSpec = { dataSwap(slide, fade, animate, retract = lastWasUndo) },
         label = "overs",
       ) {
         Text(text = it, style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold)
@@ -391,8 +515,20 @@ private fun MatchRecordUI(
         }
       }
 
+      InningsProgressBar(
+        progress = inningsProgress(record),
+        behind = isBehind(record),
+        modifier =
+          Modifier.constrainAs(barProgress) {
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            bottom.linkTo(btnAddWicket.top, 16.dp)
+            width = Dimension.fillToConstraints
+          },
+      )
+
       FloatingActionButton(
-        onClick = { setWicket(true) },
+        onClick = { add { setWicket(true) } },
         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
         modifier =
           Modifier.constrainAs(btnAddWicket) {
@@ -416,7 +552,7 @@ private fun MatchRecordUI(
         style = MaterialTheme.typography.titleLarge,
       )
       FloatingActionButton(
-        onClick = { setWicket(false) },
+        onClick = { undo { setWicket(false) } },
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
         modifier =
           Modifier.constrainAs(btnMinusWicket) {
@@ -441,7 +577,7 @@ private fun MatchRecordUI(
       )
 
       FloatingActionButton(
-        onClick = { setRun(1, false) },
+        onClick = { undo { setRun(1, false) } },
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
         modifier =
           Modifier.constrainAs(btnMinusRun) {
@@ -455,7 +591,7 @@ private fun MatchRecordUI(
         )
       }
       FloatingActionButton(
-        onClick = { setBall(1, false) },
+        onClick = { undo { setBall(1, false) } },
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
         modifier =
           Modifier.constrainAs(btnMinusBall) {
@@ -490,7 +626,7 @@ private fun MatchRecordUI(
       )
 
       LargeFloatingActionButton(
-        onClick = { setRun(1, true) },
+        onClick = { add { setRun(1, true) } },
         modifier =
           Modifier.constrainAs(btnAddRun) {
             centerHorizontallyTo(parent)
@@ -505,7 +641,7 @@ private fun MatchRecordUI(
         )
       }
       LargeFloatingActionButton(
-        onClick = { setBall(1, true) },
+        onClick = { add { setBall(1, true) } },
         modifier =
           Modifier.constrainAs(btnAddBall) {
             centerHorizontallyTo(parent)
@@ -619,3 +755,8 @@ private fun EditOversDialog(
     },
   )
 }
+
+private const val LOADING_INDICATOR_DELAY_MILLIS = 400L
+
+/** A run milestone worth a bigger celebration: 50, 100, 150... */
+private const val RUN_MILESTONE = 50

@@ -101,4 +101,7 @@
     <string name="rrr_at_start">RRR at start: %1$s</string>
     <string name="required_runs_balls_at_end">Required at the end\n%1$s</string>
 
+    <string name="theme_system">Theme: follow device. Tap for light</string>
+    <string name="theme_light">Theme: light. Tap for dark</string>
+    <string name="theme_dark">Theme: dark. Tap to follow device</string>
 </resources>

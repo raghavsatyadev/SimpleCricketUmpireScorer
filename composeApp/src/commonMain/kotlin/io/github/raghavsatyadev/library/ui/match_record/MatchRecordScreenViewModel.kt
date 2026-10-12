@@ -8,6 +8,8 @@ import io.github.raghavsatyadev.library.support.models.db.match_record.MatchReco
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.isTeam1CurrentlyBatting
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.toBasicMatchUIDetails
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
+import io.github.raghavsatyadev.library.support.repository.MatchRecordRepository as MatchRecordDataUtil
+import kotlin.time.Clock.System
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,8 +17,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.time.Clock.System
-import io.github.raghavsatyadev.library.support.repository.MatchRecordRepository as MatchRecordDataUtil
 
 class MatchRecordScreenViewModel(
   private val matchRecordDataUtil: MatchRecordDataUtil,
@@ -26,6 +26,16 @@ class MatchRecordScreenViewModel(
   val matchRecordEvent = _matchRecordEvent.asStateFlow()
 
   private var loadingJob: Job? = null
+
+  /** Shows [record] at once, until the database copy arrives. Does nothing once one is shown. */
+  fun showPreview(
+    record: io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord?
+  ) {
+    if (record != null && _matchRecordEvent.value == null) {
+      _matchRecordEvent.value = record.toBasicMatchUIDetails()
+    }
+  }
+
   private var currentLoadingMatchId: String? = null
 
   fun loadMatchRecord(matchRecordId: String) {
@@ -33,23 +43,22 @@ class MatchRecordScreenViewModel(
     // Update the current match ID being loaded
     currentLoadingMatchId = matchRecordId
 
-    loadingJob =
-      viewModelScope.launch {
-        try {
-          matchRecordDataUtil.getItemLive(matchRecordId).distinctUntilChanged().collectLatest {
-            value ->
-            // Only emit if this is still the current loading match
-            if (currentLoadingMatchId == matchRecordId) {
-              _matchRecordEvent.emit(value.toBasicMatchUIDetails())
-            }
-          }
-        } catch (_: Exception) {
-          // Handle cancellation gracefully
+    loadingJob = viewModelScope.launch {
+      try {
+        matchRecordDataUtil.getItemLive(matchRecordId).distinctUntilChanged().collectLatest { value
+          ->
+          // Only emit if this is still the current loading match
           if (currentLoadingMatchId == matchRecordId) {
-            _matchRecordEvent.emit(null)
+            _matchRecordEvent.emit(value.toBasicMatchUIDetails())
           }
         }
+      } catch (_: Exception) {
+        // Handle cancellation gracefully
+        if (currentLoadingMatchId == matchRecordId) {
+          _matchRecordEvent.emit(null)
+        }
       }
+    }
   }
 
   fun clearLoadingState() {

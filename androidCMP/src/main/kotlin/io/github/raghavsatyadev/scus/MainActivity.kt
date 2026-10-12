@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import io.github.raghavsatyadev.library.support.theme.AppTheme
+import io.github.raghavsatyadev.library.support.theme.AppRoot
 import io.github.raghavsatyadev.library.ui.main.MainScreen
 
 class MainActivity : ComponentActivity() {
@@ -13,6 +13,6 @@ class MainActivity : ComponentActivity() {
     installSplashScreen()
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
-    setContent { AppTheme { MainScreen() } }
+    setContent { AppRoot { MainScreen() } }
   }
 }

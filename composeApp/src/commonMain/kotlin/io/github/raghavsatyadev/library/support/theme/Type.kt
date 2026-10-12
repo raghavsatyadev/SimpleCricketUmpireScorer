@@ -56,5 +56,15 @@ fun getAppTypoGraphy(): Typography {
       labelSmall = baseline.labelSmall.copy(fontFamily = fontFamily),
     )
 
-  return typography
+  // Scores and overs sit in display and headline styles: tabular figures keep each digit the same
+  // width, so a number does not shift sideways when it changes.
+  val tabular = "tnum"
+  return typography.copy(
+    displayLarge = typography.displayLarge.copy(fontFeatureSettings = tabular),
+    displayMedium = typography.displayMedium.copy(fontFeatureSettings = tabular),
+    displaySmall = typography.displaySmall.copy(fontFeatureSettings = tabular),
+    headlineLarge = typography.headlineLarge.copy(fontFeatureSettings = tabular),
+    headlineMedium = typography.headlineMedium.copy(fontFeatureSettings = tabular),
+    headlineSmall = typography.headlineSmall.copy(fontFeatureSettings = tabular),
+  )
 }

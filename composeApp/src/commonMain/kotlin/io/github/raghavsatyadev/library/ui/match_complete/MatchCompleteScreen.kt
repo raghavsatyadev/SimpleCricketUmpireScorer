@@ -6,13 +6,15 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +29,7 @@ import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.Scaffold
@@ -41,19 +44,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.github.raghavsatyadev.library.support.components.AppToolBar
 import io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
+import io.github.raghavsatyadev.library.support.components.DriftingShape
 import io.github.raghavsatyadev.library.support.components.StatusPill
 import io.github.raghavsatyadev.library.support.components.StatusTone
+import io.github.raghavsatyadev.library.support.components.liquidRipple
+import io.github.raghavsatyadev.library.support.components.rememberLiquidRippleState
+import io.github.raghavsatyadev.library.support.components.sharedMatchContainer
 import io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.toBasicMatchUIDetails
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
 import io.github.raghavsatyadev.library.support.models.db.match_record.TeamDetail
+import io.github.raghavsatyadev.library.support.theme.AppMotion
 import io.github.raghavsatyadev.library.support.theme.AppTheme
+import io.github.raghavsatyadev.library.support.theme.animationsEnabled
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import scus.composeapp.generated.resources.Res
@@ -70,9 +81,12 @@ import scus.composeapp.generated.resources.won
 @Composable
 fun MatchCompleteScreen(
   matchId: String,
+  preview: MatchRecord? = null,
   viewModel: MatchCompleteScreenViewModel = koinViewModel(),
   onBack: () -> Unit = {},
 ) {
+  // Synchronous, before the first frame, so the screen is complete while its card grows into it.
+  remember(preview) { viewModel.showPreview(preview) }
   LaunchedEffect(matchId) { viewModel.loadMatchRecord(matchId) }
 
   val matchRecord by viewModel.matchRecord.collectAsState()
@@ -80,7 +94,13 @@ fun MatchCompleteScreen(
   val team1Details = remember(matchRecord) { matchRecord?.toBasicMatchUIDetails(true) }
   val team2Details = remember(matchRecord) { matchRecord?.toBasicMatchUIDetails(false) }
 
-  MatchCompleteUI(onBack, matchRecord, team1Details, team2Details)
+  MatchCompleteUI(
+    onBack,
+    matchRecord,
+    team1Details,
+    team2Details,
+    Modifier.sharedMatchContainer(matchId, fullScreen = true),
+  )
 }
 
 private fun <T> AnimatedContentTransitionScope<T>.verticalSwap(
@@ -92,12 +112,22 @@ private fun <T> AnimatedContentTransitionScope<T>.verticalSwap(
       fadeOut(motion.fastEffectsSpec())) using
     SizeTransform(clip = false)
 
+/** For a value read as data, such as the score: the same swap, but it never overshoots. */
+private fun <T> AnimatedContentTransitionScope<T>.dataSwap(
+  slide: FiniteAnimationSpec<IntOffset>,
+  fade: FiniteAnimationSpec<Float>,
+): ContentTransform =
+  (slideInVertically(slide) { it / 2 } + fadeIn(fade)) togetherWith
+    (slideOutVertically(slide) { -it / 2 } + fadeOut(fade)) using
+    SizeTransform(clip = false)
+
 @Composable
 private fun MatchCompleteUI(
   onBack: () -> Unit,
   matchRecord: MatchRecord?,
   team1Details: BasicMatchUIDetails?,
   team2Details: BasicMatchUIDetails?,
+  modifier: Modifier = Modifier,
 ) {
   val motion = MaterialTheme.motionScheme
   var showTeam1 by
@@ -107,9 +137,20 @@ private fun MatchCompleteUI(
       )
     }
   val details: BasicMatchUIDetails? = if (showTeam1) team1Details else team2Details
+  val shownTeamWon =
+    (showTeam1 && matchRecord?.status == MatchStatus.TEAM_1_WON) ||
+      (!showTeam1 && matchRecord?.status == MatchStatus.TEAM_2_WON)
+  val dataSlide = AppMotion.dataSpec<IntOffset>()
+  val dataFade = AppMotion.dataSpec<Float>()
+  val ripple = rememberLiquidRippleState()
+  // The record arrives a moment after the screen opens; the result fades in rather than popping in
+  // while the card is still growing into the screen.
+  val contentSpec = AppMotion.effectsSpec<Float>()
+  val contentAlpha = remember { Animatable(if (details != null) 1f else 0f) }
+  LaunchedEffect(details != null) { if (details != null) contentAlpha.animateTo(1f, contentSpec) }
 
   Scaffold(
-    modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
+    modifier = modifier.windowInsetsPadding(WindowInsets.systemBars),
     topBar = {
       AppToolBar(title = stringResource(Res.string.match_complete_title), onNavigateBack = onBack)
     },
@@ -119,129 +160,149 @@ private fun MatchCompleteUI(
       verticalArrangement = Arrangement.SpaceBetween,
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-      // Main Content centered
-      Column(
+      // Main Content centered, with a slowly turning shape behind the winner's score
+      // A tap on the result sends a ripple across it: pure delight, nothing to read.
+      Box(
         modifier =
-          Modifier.weight(1f).fillMaxWidth().animateContentSize(motion.defaultSpatialSpec()),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+          Modifier.weight(1f)
+            .fillMaxWidth()
+            .graphicsLayer { alpha = contentAlpha.value }
+            .liquidRipple(
+              ripple,
+              enabled = animationsEnabled(),
+              highlight = MaterialTheme.colorScheme.primaryContainer,
+            ),
+        contentAlignment = Alignment.Center,
       ) {
-        details?.let { d ->
-          matchRecord?.status?.let { status ->
-            val isWin =
-              (showTeam1 && status == MatchStatus.TEAM_1_WON) ||
-                (!showTeam1 && status == MatchStatus.TEAM_2_WON)
-            val isLoss =
-              (showTeam1 && status == MatchStatus.TEAM_2_WON) ||
-                (!showTeam1 && status == MatchStatus.TEAM_1_WON)
-            val isDraw = status == MatchStatus.DRAW
+        if (shownTeamWon) {
+          DriftingShape(
+            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
+            shape = MaterialShapes.Cookie9Sided,
+            size = 280.dp,
+          )
+        }
+        Column(
+          modifier = Modifier.fillMaxWidth(),
+          verticalArrangement = Arrangement.Center,
+          horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+          details?.let { d ->
+            matchRecord?.status?.let { status ->
+              val isWin =
+                (showTeam1 && status == MatchStatus.TEAM_1_WON) ||
+                  (!showTeam1 && status == MatchStatus.TEAM_2_WON)
+              val isLoss =
+                (showTeam1 && status == MatchStatus.TEAM_2_WON) ||
+                  (!showTeam1 && status == MatchStatus.TEAM_1_WON)
+              val isDraw = status == MatchStatus.DRAW
 
-            val textRes =
-              when {
-                isWin -> Res.string.won
-                isLoss -> Res.string.lost
-                isDraw -> Res.string.draw
-                else -> null
-              }
-            val tone =
-              when {
-                isWin -> StatusTone.Positive
-                isLoss -> StatusTone.Negative
-                isDraw -> StatusTone.Neutral
-                else -> null
-              }
+              val textRes =
+                when {
+                  isWin -> Res.string.won
+                  isLoss -> Res.string.lost
+                  isDraw -> Res.string.draw
+                  else -> null
+                }
+              val tone =
+                when {
+                  isWin -> StatusTone.Positive
+                  isLoss -> StatusTone.Negative
+                  isDraw -> StatusTone.Neutral
+                  else -> null
+                }
 
-            if (textRes != null && tone != null) {
-              StatusPill(text = stringResource(textRes).uppercase(), tone = tone)
-              Spacer(modifier = Modifier.height(8.dp))
+              if (textRes != null && tone != null) {
+                StatusPill(text = stringResource(textRes).uppercase(), tone = tone)
+                Spacer(modifier = Modifier.height(8.dp))
+              }
             }
-          }
 
-          // Team Name
-          AnimatedContent(
-            targetState = d.currentTeamName,
-            transitionSpec = { verticalSwap(motion) },
-            label = "teamName",
-          ) { teamName ->
-            Text(
-              text = teamName,
-              style = MaterialTheme.typography.displayMedium,
-              fontWeight = FontWeight.Bold,
-              textAlign = TextAlign.Center,
-            )
-          }
-
-          Spacer(modifier = Modifier.height(16.dp))
-
-          matchRecord?.let { record ->
-            val isBattingFirst = record.isTeam1BattingFirst
-            val showRequired = (showTeam1 && !isBattingFirst) || (!showTeam1 && isBattingFirst)
-
-            if (showRequired) {
+            // Team Name
+            AnimatedContent(
+              targetState = d.currentTeamName,
+              transitionSpec = { verticalSwap(motion) },
+              label = "teamName",
+            ) { teamName ->
               Text(
-                text = stringResource(Res.string.required_runs_balls_at_end, d.requiredRunsBalls),
-                style = MaterialTheme.typography.titleLarge,
+                text = teamName,
+                style = MaterialTheme.typography.displayMedium,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
               )
             }
-          }
 
-          Spacer(modifier = Modifier.height(16.dp))
-          HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(0.8f),
-            color = MaterialTheme.colorScheme.outlineVariant,
-          )
-          Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-          matchRecord?.let { record ->
-            val isBattingFirst = record.isTeam1BattingFirst
-            val showRequired = (showTeam1 && !isBattingFirst) || (!showTeam1 && isBattingFirst)
+            matchRecord?.let { record ->
+              val isBattingFirst = record.isTeam1BattingFirst
+              val showRequired = (showTeam1 && !isBattingFirst) || (!showTeam1 && isBattingFirst)
 
-            if (showRequired) {
+              if (showRequired) {
+                Text(
+                  text = stringResource(Res.string.required_runs_balls_at_end, d.requiredRunsBalls),
+                  style = MaterialTheme.typography.titleLarge,
+                  textAlign = TextAlign.Center,
+                )
+              }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalDivider(
+              modifier = Modifier.fillMaxWidth(0.8f),
+              color = MaterialTheme.colorScheme.outlineVariant,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            matchRecord?.let { record ->
+              val isBattingFirst = record.isTeam1BattingFirst
+              val showRequired = (showTeam1 && !isBattingFirst) || (!showTeam1 && isBattingFirst)
+
+              if (showRequired) {
+                Text(
+                  text = stringResource(Res.string.rrr_at_start, record.rrrAtSecondInningStart),
+                  style = MaterialTheme.typography.titleMedium,
+                  textAlign = TextAlign.Center,
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+              }
               Text(
-                text = stringResource(Res.string.rrr_at_start, record.rrrAtSecondInningStart),
+                text = stringResource(Res.string.crr, d.currentCRR),
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
               )
-              Spacer(modifier = Modifier.height(4.dp))
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalDivider(
+              modifier = Modifier.fillMaxWidth(0.8f),
+              color = MaterialTheme.colorScheme.outlineVariant,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Score
+            AnimatedContent(
+              targetState = d.currentRunsAndWickets,
+              transitionSpec = { dataSwap(dataSlide, dataFade) },
+              label = "score",
+            ) { score ->
+              Text(
+                text = score,
+                style = MaterialTheme.typography.displayLarge,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+              )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Overs
             Text(
-              text = stringResource(Res.string.crr, d.currentCRR),
-              style = MaterialTheme.typography.titleMedium,
+              text = d.currentFormattedOvers,
+              style = MaterialTheme.typography.displaySmall,
+              fontWeight = FontWeight.Normal,
               textAlign = TextAlign.Center,
             )
           }
-
-          Spacer(modifier = Modifier.height(16.dp))
-          HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(0.8f),
-            color = MaterialTheme.colorScheme.outlineVariant,
-          )
-          Spacer(modifier = Modifier.height(16.dp))
-
-          // Score
-          AnimatedContent(
-            targetState = d.currentRunsAndWickets,
-            transitionSpec = { verticalSwap(motion) },
-            label = "score",
-          ) { score ->
-            Text(
-              text = score,
-              style = MaterialTheme.typography.displayLarge,
-              fontWeight = FontWeight.Bold,
-              textAlign = TextAlign.Center,
-            )
-          }
-
-          Spacer(modifier = Modifier.height(8.dp))
-
-          // Overs
-          Text(
-            text = d.currentFormattedOvers,
-            style = MaterialTheme.typography.displaySmall,
-            fontWeight = FontWeight.Normal,
-            textAlign = TextAlign.Center,
-          )
         }
       }
 
