@@ -19,8 +19,10 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import io.github.raghavsatyadev.library.support.components.CREATE_MATCH_KEY
 import io.github.raghavsatyadev.library.support.components.LocalEntryVisibilityScope
 import io.github.raghavsatyadev.library.support.components.LocalSharedTransitionScope
+import io.github.raghavsatyadev.library.support.components.copyMatchKey
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
 import io.github.raghavsatyadev.library.support.theme.animationsEnabled
 import io.github.raghavsatyadev.library.ui.create_match.CreateMatchScreen
@@ -126,19 +128,23 @@ fun AppNavHost(vararg elements: AppRoutes) {
                 )
               }
             }
-            entry<AppRoutes.CreateMatch> {
-              CreateMatchScreen(
-                matchRecord = it.matchRecord,
-                onMatchCreated = { matchRecord ->
-                  if (backStack.isNotEmpty()) backStack.removeAt(backStack.size - 1)
-                  backStack.add(
-                    AppRoutes.MatchRecord(
-                      matchId = matchRecord.matchRecordId,
-                      preview = matchRecord,
+            entry<AppRoutes.CreateMatch>(metadata = containerTransform) {
+              SharedEntry {
+                CreateMatchScreen(
+                  matchRecord = it.matchRecord,
+                  sharedKey =
+                    it.matchRecord?.let { r -> copyMatchKey(r.matchRecordId) } ?: CREATE_MATCH_KEY,
+                  onMatchCreated = { matchRecord ->
+                    if (backStack.isNotEmpty()) backStack.removeAt(backStack.size - 1)
+                    backStack.add(
+                      AppRoutes.MatchRecord(
+                        matchId = matchRecord.matchRecordId,
+                        preview = matchRecord,
+                      )
                     )
-                  )
-                },
-              )
+                  },
+                )
+              }
             }
             entry<AppRoutes.MatchRecord>(metadata = containerTransform) { key ->
               SharedEntry {

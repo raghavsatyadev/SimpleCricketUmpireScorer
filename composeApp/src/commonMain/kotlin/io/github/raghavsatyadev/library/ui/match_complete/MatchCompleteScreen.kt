@@ -174,12 +174,34 @@ private fun MatchCompleteUI(
             ),
         contentAlignment = Alignment.Center,
       ) {
-        if (shownTeamWon) {
-          DriftingShape(
-            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
-            shape = MaterialShapes.Cookie9Sided,
-            size = 280.dp,
-          )
+        // Every result gets its hero shape, told apart by shape as well as colour: a sunny cookie
+        // for a win, a soft puffy cloud for a loss, a clover for a draw.
+        val shownTeamLost =
+          (showTeam1 && matchRecord?.status == MatchStatus.TEAM_2_WON) ||
+            (!showTeam1 && matchRecord?.status == MatchStatus.TEAM_1_WON)
+        val hero =
+          when {
+            shownTeamWon ->
+              MaterialShapes.Cookie9Sided to MaterialTheme.colorScheme.primaryContainer
+            shownTeamLost ->
+              MaterialShapes.Puffy to MaterialTheme.colorScheme.surfaceContainerHighest
+            matchRecord?.status == MatchStatus.DRAW ->
+              MaterialShapes.Clover8Leaf to MaterialTheme.colorScheme.tertiaryContainer
+            else -> null
+          }
+        val heroFade = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+        AnimatedContent(
+          targetState = hero,
+          transitionSpec = { fadeIn(heroFade) togetherWith fadeOut(heroFade) },
+          label = "hero",
+        ) { shown ->
+          if (shown != null) {
+            DriftingShape(
+              color = shown.second.copy(alpha = 0.6f),
+              shape = shown.first,
+              size = 300.dp,
+            )
+          }
         }
         Column(
           modifier = Modifier.fillMaxWidth(),

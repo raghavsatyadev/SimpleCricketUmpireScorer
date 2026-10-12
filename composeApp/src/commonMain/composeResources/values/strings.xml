@@ -68,6 +68,8 @@
     <string name="runs">Runs</string>
     <string name="overs">Overs</string>
     <string name="wickets">Wickets</string>
+    <string name="celebrate_wicket">Wicket!</string>
+    <string name="celebrate_runs">%1$d up!</string>
 
     <string name="add_ball">Add Ball</string>
     <string name="add_run">Add Run</string>

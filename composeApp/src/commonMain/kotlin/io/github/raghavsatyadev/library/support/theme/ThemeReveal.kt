@@ -46,6 +46,14 @@ enum class ThemeMode {
 
   /** The next mode for a button that cycles through them. */
   fun next(): ThemeMode = entries[(ordinal + 1) % entries.size]
+
+  /** Whether this mode shows the dark theme, given the device's own setting. */
+  fun isDark(systemDark: Boolean): Boolean =
+    when (this) {
+      System -> systemDark
+      Light -> false
+      Dark -> true
+    }
 }
 
 /** The chosen [ThemeMode] and how to change it. Get it from [LocalAppearance] inside [AppRoot]. */
@@ -75,12 +83,7 @@ fun AppRoot(content: @Composable () -> Unit) {
     rememberSaveable(saver = Saver({ it.mode.name }, { Appearance(ThemeMode.valueOf(it)) })) {
       Appearance(ThemeMode.System)
     }
-  val dark =
-    when (appearance.mode) {
-      ThemeMode.System -> isSystemInDarkTheme()
-      ThemeMode.Light -> false
-      ThemeMode.Dark -> true
-    }
+  val dark = appearance.mode.isDark(isSystemInDarkTheme())
   SystemBarsFollow(dark)
   AppTheme(darkTheme = dark) {
     ThemeRevealHost(themeKey = dark) {
@@ -91,7 +94,9 @@ fun AppRoot(content: @Composable () -> Unit) {
 
 /**
  * Changes [appearance] to [next] through the [LocalThemeReveal] from [origin] (in root
- * coordinates), or at once where there is none.
+ * coordinates), or at once where there is none. A change that keeps the same colours (dark to
+ * "device" on a dark device) also applies at once: there is nothing to reveal, and a still would
+ * only hide the new icon until the reveal gave up waiting.
  */
 fun changeThemeMode(
   appearance: Appearance,
@@ -99,8 +104,10 @@ fun changeThemeMode(
   reveal: ThemeReveal?,
   origin: Offset,
   animate: Boolean,
+  systemDark: Boolean,
 ) {
-  if (reveal == null) appearance.mode = next
+  val same = appearance.mode.isDark(systemDark) == next.isDark(systemDark)
+  if (reveal == null || same) appearance.mode = next
   else reveal.start(origin, animate) { appearance.mode = next }
 }
 

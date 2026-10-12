@@ -49,8 +49,11 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import io.github.raghavsatyadev.library.support.components.AppToolBar
+import io.github.raghavsatyadev.library.support.components.CREATE_MATCH_KEY
 import io.github.raghavsatyadev.library.support.components.DarkPreview
 import io.github.raghavsatyadev.library.support.components.ErrorDialog
+import io.github.raghavsatyadev.library.support.components.FAB_CORNER
+import io.github.raghavsatyadev.library.support.components.sharedContainer
 import io.github.raghavsatyadev.library.support.extensions.DateExtensions.formatMillisToDate
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.library.support.models.essential.UiState
@@ -76,6 +79,7 @@ import scus.composeapp.generated.resources.which_team_bats_first
 @Composable
 fun CreateMatchScreen(
   matchRecord: MatchRecord? = null,
+  sharedKey: String = CREATE_MATCH_KEY,
   viewModel: CreateMatchScreenViewModel = koinViewModel(),
   onMatchCreated: (MatchRecord) -> Unit = {},
 ) {
@@ -107,6 +111,7 @@ fun CreateMatchScreen(
   )
 
   CreateMatchRecordUI(
+    sharedKey = sharedKey,
     selectedDateTimeMillis = selectedDateTimeMillis,
     onMatchDateTimeClick = { showDateTimeDialogs = true },
     onSaveMatchRecord = { dateTimeMillis, team1, team2, over, toss, bat, location ->
@@ -257,6 +262,7 @@ fun ClickableReadOnlyOutlinedTextField(
 @Composable
 private fun CreateMatchRecordUI(
   selectedDateTimeMillis: Long,
+  sharedKey: String = CREATE_MATCH_KEY,
   onMatchDateTimeClick: () -> Unit,
   onSaveMatchRecord:
     (
@@ -291,7 +297,8 @@ private fun CreateMatchRecordUI(
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   Scaffold(
     modifier =
-      Modifier.windowInsetsPadding(WindowInsets.systemBars)
+      Modifier.sharedContainer(sharedKey, fullScreen = true, corner = FAB_CORNER)
+        .windowInsetsPadding(WindowInsets.systemBars)
         .nestedScroll(scrollBehavior.nestedScrollConnection),
     topBar = {
       AppToolBar(

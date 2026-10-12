@@ -38,11 +38,14 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import io.github.raghavsatyadev.library.support.components.AppToolBar
+import io.github.raghavsatyadev.library.support.components.CREATE_MATCH_KEY
 import io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
 import io.github.raghavsatyadev.library.support.components.ENTRANCE_DURATION_MILLIS
+import io.github.raghavsatyadev.library.support.components.FAB_CORNER
 import io.github.raghavsatyadev.library.support.components.LightRealDevicePreview
 import io.github.raghavsatyadev.library.support.components.StaggeredEntrance
 import io.github.raghavsatyadev.library.support.components.ThemeModeButton
+import io.github.raghavsatyadev.library.support.components.sharedContainer
 import io.github.raghavsatyadev.library.support.components.sharedMatchContainer
 import io.github.raghavsatyadev.library.support.components.staggerDelayMillis
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
@@ -130,7 +133,9 @@ private fun DashboardUI(
               end.linkTo(parent.end)
               bottom.linkTo(parent.bottom) // boxAd.top once AdUI is back
             }
-            .padding(16.dp),
+            .padding(16.dp)
+            // The create screen grows out of this button.
+            .sharedContainer(CREATE_MATCH_KEY, corner = FAB_CORNER),
       )
       // AdUI(
       //   modifier =

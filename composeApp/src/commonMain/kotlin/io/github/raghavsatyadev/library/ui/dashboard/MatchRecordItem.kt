@@ -30,6 +30,8 @@ import io.github.raghavsatyadev.library.support.components.DarkPreview
 import io.github.raghavsatyadev.library.support.components.LightPreview
 import io.github.raghavsatyadev.library.support.components.StatusPill
 import io.github.raghavsatyadev.library.support.components.StatusTone
+import io.github.raghavsatyadev.library.support.components.copyMatchKey
+import io.github.raghavsatyadev.library.support.components.sharedContainer
 import io.github.raghavsatyadev.library.support.extensions.serializer.SerializationExtensions.toKotlinObject
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getMatchTimings
@@ -286,7 +288,10 @@ fun MatchRecordItem(
         onClick = { onCopyClick(matchRecord) },
         shapes =
           IconButtonDefaults.shapes(shape = copyShape, pressedShape = MaterialTheme.shapes.small),
-        modifier = Modifier.constrainAs(btnCopy) { top.linkTo(txtMatchDuration.bottom, 10.dp) },
+        modifier =
+          Modifier.constrainAs(btnCopy) { top.linkTo(txtMatchDuration.bottom, 10.dp) }
+            // A copy opens the create screen, which grows out of this button.
+            .sharedContainer(copyMatchKey(matchRecord.matchRecordId), corner = 20.dp),
       ) {
         Icon(
           painter = painterResource(Res.drawable.ic_copy),

@@ -37,7 +37,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.LoadingIndicator
-import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -54,8 +53,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -65,8 +68,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import io.github.raghavsatyadev.library.support.components.AppToolBar
-import io.github.raghavsatyadev.library.support.components.CelebrationBurst
-import io.github.raghavsatyadev.library.support.components.CelebrationSize
+import io.github.raghavsatyadev.library.support.components.CelebrationKind
+import io.github.raghavsatyadev.library.support.components.CelebrationOverlay
 import io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
 import io.github.raghavsatyadev.library.support.components.InningsProgressBar
 import io.github.raghavsatyadev.library.support.components.sharedMatchContainer
@@ -85,6 +88,8 @@ import scus.composeapp.generated.resources.add_ball
 import scus.composeapp.generated.resources.add_run
 import scus.composeapp.generated.resources.add_wicket
 import scus.composeapp.generated.resources.cancel
+import scus.composeapp.generated.resources.celebrate_runs
+import scus.composeapp.generated.resources.celebrate_wicket
 import scus.composeapp.generated.resources.crr
 import scus.composeapp.generated.resources.edit_total_overs
 import scus.composeapp.generated.resources.end_inning
@@ -278,22 +283,30 @@ private fun MatchRecordUI(
     lastWasUndo = true
     action()
   }
-  // Celebrate events, not taps: a wicket gets a small burst, every 50 runs a bigger one. A run is
+  // Celebrate events, not taps: a wicket gets a burst, every 50 runs a confetti shower. A run is
   // tapped a hundred times a match, so it only gets the score swap. Never on an undo or on open.
-  var wicketBurst by remember { mutableIntStateOf(0) }
-  var milestoneBurst by remember { mutableIntStateOf(0) }
+  var celebrationTrigger by remember { mutableIntStateOf(0) }
+  var celebrationKind by remember { mutableStateOf(CelebrationKind.Wicket) }
+  var milestoneRuns by remember { mutableIntStateOf(0) }
   val score = record?.let { parseScore(it.currentRunsAndWickets) }
   var previousScore by remember { mutableStateOf(score) }
   LaunchedEffect(score) {
     val before = previousScore
     previousScore = score
     if (before == null || score == null || lastWasUndo) return@LaunchedEffect
-    if (score.second > before.second) wicketBurst++
-    if (score.first / RUN_MILESTONE > before.first / RUN_MILESTONE) {
-      milestoneBurst++
+    val milestone = score.first / RUN_MILESTONE > before.first / RUN_MILESTONE
+    val wicket = score.second > before.second
+    if (milestone || wicket) {
+      // A milestone outranks a wicket that lands on the same change.
+      celebrationKind = if (milestone) CelebrationKind.Milestone else CelebrationKind.Wicket
+      milestoneRuns = score.first / RUN_MILESTONE * RUN_MILESTONE
+      celebrationTrigger++
       haptic.performHapticFeedback(HapticFeedbackType.Confirm)
     }
   }
+  // Where the score sits, so the celebration bursts out of it.
+  var scoreCenter by remember { mutableStateOf(Offset.Zero) }
+  var overlayOrigin by remember { mutableStateOf(Offset.Zero) }
 
   Scaffold(
     modifier = modifier.windowInsetsPadding(WindowInsets.systemBars),
@@ -328,333 +341,348 @@ private fun MatchRecordUI(
       }
       return@Scaffold
     }
-    ConstraintLayout(
-      modifier =
-        Modifier.fillMaxSize()
-          .padding(padding)
-          .padding(16.dp)
-          .graphicsLayer { alpha = contentAlpha.value }
-          .verticalScroll(rememberScrollState())
+    Box(
+      modifier = Modifier.fillMaxSize().onGloballyPositioned { overlayOrigin = it.positionInRoot() }
     ) {
-      val (
-        txtRequired,
-        txtCrr,
-        txtRrr,
-        txtRunsWickets,
-        txtOvers,
-        labelOvers,
-        labelRuns,
-        labelWickets,
-        spaceRr,
-        spaceRunsWickets,
-        spaceMinusTop,
-        barProgress,
-      ) = createRefs()
-
-      val (
-        btnEndInningMatch,
-        btnEditOvers,
-        btnMinusBall,
-        btnAddBall,
-        btnMinusRun,
-        btnAddRun,
-        btnMinusWicket,
-        btnAddWicket,
-      ) = createRefs()
-      val (burstWicket, burstMilestone) = createRefs()
-
-      createHorizontalChain(btnAddBall, btnAddRun)
-
-      val isFirstInningComplete = record.isFirstInningComplete
-
-      if (isFirstInningComplete) createHorizontalChain(txtCrr, txtRrr)
-
-      val guidelineAddButtons = createGuidelineFromTop(0.8f)
-
-      Button(
-        shapes = ButtonDefaults.shapes(),
-        onClick = {
-          if (isFirstInningComplete) {
-            endMatch()
-          } else {
-            endInning()
-          }
-        },
+      ConstraintLayout(
         modifier =
-          Modifier.constrainAs(btnEndInningMatch) {
-            centerHorizontallyTo(parent)
-            bottom.linkTo(if (isFirstInningComplete) txtRequired.top else spaceRr.top, 12.dp)
-          },
+          Modifier.fillMaxSize()
+            .padding(padding)
+            .padding(16.dp)
+            .graphicsLayer { alpha = contentAlpha.value }
+            .verticalScroll(rememberScrollState())
       ) {
-        Text(
-          text =
+        val (
+          txtRequired,
+          txtCrr,
+          txtRrr,
+          txtRunsWickets,
+          txtOvers,
+          labelOvers,
+          labelRuns,
+          labelWickets,
+          spaceRr,
+          spaceRunsWickets,
+          spaceMinusTop,
+          barProgress,
+        ) = createRefs()
+
+        val (
+          btnEndInningMatch,
+          btnEditOvers,
+          btnMinusBall,
+          btnAddBall,
+          btnMinusRun,
+          btnAddRun,
+          btnMinusWicket,
+          btnAddWicket,
+        ) = createRefs()
+
+        createHorizontalChain(btnAddBall, btnAddRun)
+
+        val isFirstInningComplete = record.isFirstInningComplete
+
+        if (isFirstInningComplete) createHorizontalChain(txtCrr, txtRrr)
+
+        val guidelineAddButtons = createGuidelineFromTop(0.8f)
+
+        Button(
+          shapes = ButtonDefaults.shapes(),
+          onClick = {
             if (isFirstInningComplete) {
-              stringResource(Res.string.end_match)
+              endMatch()
             } else {
-              stringResource(Res.string.end_inning)
+              endInning()
             }
-        )
-      }
-
-      if (isFirstInningComplete) {
-        Text(
-          text = stringResource(Res.string.required_runs_balls, record.requiredRunsBalls),
-          style = MaterialTheme.typography.titleLarge,
-          textAlign = TextAlign.Center,
-          modifier =
-            Modifier.constrainAs(txtRequired) {
-              start.linkTo(parent.start)
-              end.linkTo(parent.end)
-              bottom.linkTo(spaceRr.top, 8.dp)
-            },
-        )
-      }
-      HorizontalDivider(
-        modifier =
-          Modifier.constrainAs(spaceRr) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            bottom.linkTo(txtCrr.top, 8.dp)
           },
-        thickness = 1.dp,
-        color = MaterialTheme.colorScheme.outlineVariant,
-      )
-
-      Text(
-        text = stringResource(Res.string.crr, record.currentCRR),
-        style = MaterialTheme.typography.titleLarge,
-        modifier =
-          Modifier.constrainAs(txtCrr) {
-            if (isFirstInningComplete) {
-              start.linkTo(parent.start)
-            } else {
+          modifier =
+            Modifier.constrainAs(btnEndInningMatch) {
               centerHorizontallyTo(parent)
-            }
-            bottom.linkTo(spaceRunsWickets.top, 8.dp)
-          },
-      )
-      if (isFirstInningComplete) {
+              bottom.linkTo(if (isFirstInningComplete) txtRequired.top else spaceRr.top, 12.dp)
+            },
+        ) {
+          Text(
+            text =
+              if (isFirstInningComplete) {
+                stringResource(Res.string.end_match)
+              } else {
+                stringResource(Res.string.end_inning)
+              }
+          )
+        }
+
+        if (isFirstInningComplete) {
+          Text(
+            text = stringResource(Res.string.required_runs_balls, record.requiredRunsBalls),
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
+            modifier =
+              Modifier.constrainAs(txtRequired) {
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                bottom.linkTo(spaceRr.top, 8.dp)
+              },
+          )
+        }
+        HorizontalDivider(
+          modifier =
+            Modifier.constrainAs(spaceRr) {
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+              bottom.linkTo(txtCrr.top, 8.dp)
+            },
+          thickness = 1.dp,
+          color = MaterialTheme.colorScheme.outlineVariant,
+        )
+
         Text(
-          text = stringResource(Res.string.rrr, record.currentRRR),
+          text = stringResource(Res.string.crr, record.currentCRR),
           style = MaterialTheme.typography.titleLarge,
           modifier =
-            Modifier.constrainAs(txtRrr) {
-              end.linkTo(parent.end)
+            Modifier.constrainAs(txtCrr) {
+              if (isFirstInningComplete) {
+                start.linkTo(parent.start)
+              } else {
+                centerHorizontallyTo(parent)
+              }
               bottom.linkTo(spaceRunsWickets.top, 8.dp)
             },
         )
-      }
+        if (isFirstInningComplete) {
+          Text(
+            text = stringResource(Res.string.rrr, record.currentRRR),
+            style = MaterialTheme.typography.titleLarge,
+            modifier =
+              Modifier.constrainAs(txtRrr) {
+                end.linkTo(parent.end)
+                bottom.linkTo(spaceRunsWickets.top, 8.dp)
+              },
+          )
+        }
 
-      HorizontalDivider(
-        modifier =
-          Modifier.constrainAs(spaceRunsWickets) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            bottom.linkTo(txtRunsWickets.top, 8.dp)
-          },
-        thickness = 1.dp,
-        color = MaterialTheme.colorScheme.outlineVariant,
-      )
-
-      // Drawn before the score, so the pieces fly out from behind it.
-      CelebrationBurst(
-        trigger = wicketBurst,
-        color = MaterialTheme.colorScheme.tertiary,
-        modifier = Modifier.constrainAs(burstWicket) { centerTo(txtRunsWickets) },
-      )
-      CelebrationBurst(
-        trigger = milestoneBurst,
-        color = MaterialTheme.colorScheme.primary,
-        size = CelebrationSize.Large,
-        shape = MaterialShapes.Sunny,
-        modifier = Modifier.constrainAs(burstMilestone) { centerTo(txtRunsWickets) },
-      )
-      AnimatedContent(
-        targetState = record.currentRunsAndWickets,
-        modifier =
-          Modifier.constrainAs(txtRunsWickets) {
-            centerHorizontallyTo(parent)
-            bottom.linkTo(txtOvers.top, 12.dp)
-          },
-        transitionSpec = { dataSwap(slide, fade, animate, retract = lastWasUndo) },
-        label = "runs",
-      ) {
-        Text(
-          text = it,
-          style = MaterialTheme.typography.displayMedium,
-          fontWeight = FontWeight.Bold,
-        )
-      }
-      AnimatedContent(
-        targetState = record.currentFormattedOvers,
-        modifier =
-          Modifier.constrainAs(txtOvers) {
-            centerHorizontallyTo(parent)
-            bottom.linkTo(barProgress.top, 12.dp)
-          },
-        transitionSpec = { dataSwap(slide, fade, animate, retract = lastWasUndo) },
-        label = "overs",
-      ) {
-        Text(text = it, style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold)
-      }
-
-      if (!isFirstInningComplete) {
-        IconButton(
-          onClick = showEditOversDialog,
+        HorizontalDivider(
           modifier =
-            Modifier.constrainAs(btnEditOvers) {
-              start.linkTo(txtOvers.end)
-              centerVerticallyTo(txtOvers)
+            Modifier.constrainAs(spaceRunsWickets) {
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+              bottom.linkTo(txtRunsWickets.top, 8.dp)
+            },
+          thickness = 1.dp,
+          color = MaterialTheme.colorScheme.outlineVariant,
+        )
+
+        AnimatedContent(
+          targetState = record.currentRunsAndWickets,
+          modifier =
+            Modifier.constrainAs(txtRunsWickets) {
+                centerHorizontallyTo(parent)
+                bottom.linkTo(txtOvers.top, 12.dp)
+              }
+              .onGloballyPositioned { scoreCenter = it.boundsInRoot().center },
+          transitionSpec = { dataSwap(slide, fade, animate, retract = lastWasUndo) },
+          label = "runs",
+        ) {
+          Text(
+            text = it,
+            style = MaterialTheme.typography.displayMedium,
+            fontWeight = FontWeight.Bold,
+          )
+        }
+        AnimatedContent(
+          targetState = record.currentFormattedOvers,
+          modifier =
+            Modifier.constrainAs(txtOvers) {
+              centerHorizontallyTo(parent)
+              bottom.linkTo(barProgress.top, 12.dp)
+            },
+          transitionSpec = { dataSwap(slide, fade, animate, retract = lastWasUndo) },
+          label = "overs",
+        ) {
+          Text(
+            text = it,
+            style = MaterialTheme.typography.displaySmall,
+            fontWeight = FontWeight.Bold,
+          )
+        }
+
+        if (!isFirstInningComplete) {
+          IconButton(
+            onClick = showEditOversDialog,
+            modifier =
+              Modifier.constrainAs(btnEditOvers) {
+                start.linkTo(txtOvers.end)
+                centerVerticallyTo(txtOvers)
+              },
+          ) {
+            Icon(
+              tint = MaterialTheme.colorScheme.primary,
+              painter = painterResource(Res.drawable.ic_edit),
+              contentDescription = stringResource(Res.string.edit_total_overs),
+            )
+          }
+        }
+
+        InningsProgressBar(
+          progress = inningsProgress(record),
+          behind = isBehind(record),
+          modifier =
+            Modifier.constrainAs(barProgress) {
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+              bottom.linkTo(btnAddWicket.top, 16.dp)
+              width = Dimension.fillToConstraints
+            },
+        )
+
+        FloatingActionButton(
+          onClick = { add { setWicket(true) } },
+          containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+          modifier =
+            Modifier.constrainAs(btnAddWicket) {
+              centerHorizontallyTo(btnAddRun)
+              bottom.linkTo(spaceMinusTop.top, 12.dp)
             },
         ) {
           Icon(
-            tint = MaterialTheme.colorScheme.primary,
-            painter = painterResource(Res.drawable.ic_edit),
-            contentDescription = stringResource(Res.string.edit_total_overs),
+            painter = painterResource(Res.drawable.ic_add),
+            contentDescription = stringResource(Res.string.add_wicket),
+          )
+        }
+        Text(
+          modifier =
+            Modifier.constrainAs(labelWickets) {
+              centerHorizontallyTo(parent)
+              centerVerticallyTo(btnAddWicket)
+            },
+          textAlign = TextAlign.Center,
+          text = stringResource(Res.string.wickets),
+          style = MaterialTheme.typography.titleLarge,
+        )
+        FloatingActionButton(
+          onClick = { undo { setWicket(false) } },
+          containerColor = MaterialTheme.colorScheme.secondaryContainer,
+          modifier =
+            Modifier.constrainAs(btnMinusWicket) {
+              centerHorizontallyTo(btnAddBall)
+              bottom.linkTo(spaceMinusTop.top, 12.dp)
+            },
+        ) {
+          Icon(
+            painter = painterResource(Res.drawable.ic_minus),
+            contentDescription = stringResource(Res.string.minus_wicket),
+          )
+        }
+
+        HorizontalDivider(
+          modifier =
+            Modifier.constrainAs(spaceMinusTop) {
+              centerHorizontallyTo(parent)
+              bottom.linkTo(btnMinusRun.top, 12.dp)
+            },
+          thickness = 1.dp,
+          color = MaterialTheme.colorScheme.outlineVariant,
+        )
+
+        FloatingActionButton(
+          onClick = { undo { setRun(1, false) } },
+          containerColor = MaterialTheme.colorScheme.secondaryContainer,
+          modifier =
+            Modifier.constrainAs(btnMinusRun) {
+              centerHorizontallyTo(btnAddRun)
+              bottom.linkTo(labelRuns.top, 12.dp)
+            },
+        ) {
+          Icon(
+            painter = painterResource(Res.drawable.ic_minus),
+            contentDescription = stringResource(Res.string.minus_run),
+          )
+        }
+        FloatingActionButton(
+          onClick = { undo { setBall(1, false) } },
+          containerColor = MaterialTheme.colorScheme.secondaryContainer,
+          modifier =
+            Modifier.constrainAs(btnMinusBall) {
+              centerHorizontallyTo(btnAddBall)
+              bottom.linkTo(labelOvers.top, 12.dp)
+            },
+        ) {
+          Icon(
+            painter = painterResource(Res.drawable.ic_minus),
+            contentDescription = stringResource(Res.string.minus_ball),
+          )
+        }
+        Text(
+          modifier =
+            Modifier.constrainAs(labelRuns) {
+              centerHorizontallyTo(btnAddRun)
+              bottom.linkTo(guidelineAddButtons)
+            },
+          textAlign = TextAlign.Center,
+          text = stringResource(Res.string.runs),
+          style = MaterialTheme.typography.titleLarge,
+        )
+        Text(
+          modifier =
+            Modifier.constrainAs(labelOvers) {
+              centerHorizontallyTo(btnAddBall)
+              bottom.linkTo(guidelineAddButtons)
+            },
+          textAlign = TextAlign.Center,
+          text = stringResource(Res.string.overs),
+          style = MaterialTheme.typography.titleLarge,
+        )
+
+        LargeFloatingActionButton(
+          onClick = { add { setRun(1, true) } },
+          modifier =
+            Modifier.constrainAs(btnAddRun) {
+              centerHorizontallyTo(parent)
+              top.linkTo(guidelineAddButtons)
+              bottom.linkTo(parent.bottom)
+            },
+        ) {
+          Icon(
+            modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize),
+            painter = painterResource(Res.drawable.ic_add),
+            contentDescription = stringResource(Res.string.add_run),
+          )
+        }
+        LargeFloatingActionButton(
+          onClick = { add { setBall(1, true) } },
+          modifier =
+            Modifier.constrainAs(btnAddBall) {
+              centerHorizontallyTo(parent)
+              top.linkTo(guidelineAddButtons)
+              bottom.linkTo(parent.bottom)
+            },
+        ) {
+          Icon(
+            modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize),
+            painter = painterResource(Res.drawable.ic_add),
+            contentDescription = stringResource(Res.string.add_ball),
           )
         }
       }
-
-      InningsProgressBar(
-        progress = inningsProgress(record),
-        behind = isBehind(record),
-        modifier =
-          Modifier.constrainAs(barProgress) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            bottom.linkTo(btnAddWicket.top, 16.dp)
-            width = Dimension.fillToConstraints
+      // Over everything, but with no pointer input: taps reach the scoring buttons beneath it.
+      CelebrationOverlay(
+        trigger = celebrationTrigger,
+        kind = celebrationKind,
+        label =
+          if (celebrationKind == CelebrationKind.Milestone) {
+            stringResource(Res.string.celebrate_runs, milestoneRuns)
+          } else {
+            stringResource(Res.string.celebrate_wicket)
           },
+        origin = scoreCenter - overlayOrigin,
+        colors =
+          listOf(
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.tertiary,
+            MaterialTheme.colorScheme.secondary,
+            MaterialTheme.colorScheme.error,
+          ),
+        modifier = Modifier.fillMaxSize(),
       )
-
-      FloatingActionButton(
-        onClick = { add { setWicket(true) } },
-        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        modifier =
-          Modifier.constrainAs(btnAddWicket) {
-            centerHorizontallyTo(btnAddRun)
-            bottom.linkTo(spaceMinusTop.top, 12.dp)
-          },
-      ) {
-        Icon(
-          painter = painterResource(Res.drawable.ic_add),
-          contentDescription = stringResource(Res.string.add_wicket),
-        )
-      }
-      Text(
-        modifier =
-          Modifier.constrainAs(labelWickets) {
-            centerHorizontallyTo(parent)
-            centerVerticallyTo(btnAddWicket)
-          },
-        textAlign = TextAlign.Center,
-        text = stringResource(Res.string.wickets),
-        style = MaterialTheme.typography.titleLarge,
-      )
-      FloatingActionButton(
-        onClick = { undo { setWicket(false) } },
-        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-        modifier =
-          Modifier.constrainAs(btnMinusWicket) {
-            centerHorizontallyTo(btnAddBall)
-            bottom.linkTo(spaceMinusTop.top, 12.dp)
-          },
-      ) {
-        Icon(
-          painter = painterResource(Res.drawable.ic_minus),
-          contentDescription = stringResource(Res.string.minus_wicket),
-        )
-      }
-
-      HorizontalDivider(
-        modifier =
-          Modifier.constrainAs(spaceMinusTop) {
-            centerHorizontallyTo(parent)
-            bottom.linkTo(btnMinusRun.top, 12.dp)
-          },
-        thickness = 1.dp,
-        color = MaterialTheme.colorScheme.outlineVariant,
-      )
-
-      FloatingActionButton(
-        onClick = { undo { setRun(1, false) } },
-        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-        modifier =
-          Modifier.constrainAs(btnMinusRun) {
-            centerHorizontallyTo(btnAddRun)
-            bottom.linkTo(labelRuns.top, 12.dp)
-          },
-      ) {
-        Icon(
-          painter = painterResource(Res.drawable.ic_minus),
-          contentDescription = stringResource(Res.string.minus_run),
-        )
-      }
-      FloatingActionButton(
-        onClick = { undo { setBall(1, false) } },
-        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-        modifier =
-          Modifier.constrainAs(btnMinusBall) {
-            centerHorizontallyTo(btnAddBall)
-            bottom.linkTo(labelOvers.top, 12.dp)
-          },
-      ) {
-        Icon(
-          painter = painterResource(Res.drawable.ic_minus),
-          contentDescription = stringResource(Res.string.minus_ball),
-        )
-      }
-      Text(
-        modifier =
-          Modifier.constrainAs(labelRuns) {
-            centerHorizontallyTo(btnAddRun)
-            bottom.linkTo(guidelineAddButtons)
-          },
-        textAlign = TextAlign.Center,
-        text = stringResource(Res.string.runs),
-        style = MaterialTheme.typography.titleLarge,
-      )
-      Text(
-        modifier =
-          Modifier.constrainAs(labelOvers) {
-            centerHorizontallyTo(btnAddBall)
-            bottom.linkTo(guidelineAddButtons)
-          },
-        textAlign = TextAlign.Center,
-        text = stringResource(Res.string.overs),
-        style = MaterialTheme.typography.titleLarge,
-      )
-
-      LargeFloatingActionButton(
-        onClick = { add { setRun(1, true) } },
-        modifier =
-          Modifier.constrainAs(btnAddRun) {
-            centerHorizontallyTo(parent)
-            top.linkTo(guidelineAddButtons)
-            bottom.linkTo(parent.bottom)
-          },
-      ) {
-        Icon(
-          modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize),
-          painter = painterResource(Res.drawable.ic_add),
-          contentDescription = stringResource(Res.string.add_run),
-        )
-      }
-      LargeFloatingActionButton(
-        onClick = { add { setBall(1, true) } },
-        modifier =
-          Modifier.constrainAs(btnAddBall) {
-            centerHorizontallyTo(parent)
-            top.linkTo(guidelineAddButtons)
-            bottom.linkTo(parent.bottom)
-          },
-      ) {
-        Icon(
-          modifier = Modifier.size(FloatingActionButtonDefaults.LargeIconSize),
-          painter = painterResource(Res.drawable.ic_add),
-          contentDescription = stringResource(Res.string.add_ball),
-        )
-      }
     }
   }
 }

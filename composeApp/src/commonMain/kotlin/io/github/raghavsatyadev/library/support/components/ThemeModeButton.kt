@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,8 +49,9 @@ fun ThemeModeButton(modifier: Modifier = Modifier) {
   val animate = animationsEnabled()
   var center by remember { mutableStateOf(Offset.Zero) }
   val mode = appearance.mode
+  val systemDark = isSystemInDarkTheme()
   IconButton(
-    onClick = { changeThemeMode(appearance, mode.next(), reveal, center, animate) },
+    onClick = { changeThemeMode(appearance, mode.next(), reveal, center, animate, systemDark) },
     shapes = IconButtonDefaults.shapes(),
     modifier = modifier.onGloballyPositioned { center = it.boundsInRoot().center },
   ) {
