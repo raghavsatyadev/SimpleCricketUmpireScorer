@@ -32,6 +32,10 @@ import io.github.raghavsatyadev.library.support.components.StatusPill
 import io.github.raghavsatyadev.library.support.components.StatusTone
 import io.github.raghavsatyadev.library.support.components.copyMatchKey
 import io.github.raghavsatyadev.library.support.components.sharedContainer
+import io.github.raghavsatyadev.library.support.components.sharedContent
+import io.github.raghavsatyadev.library.support.components.teamNameKey
+import io.github.raghavsatyadev.library.support.components.teamScoreKey
+import io.github.raghavsatyadev.library.support.components.teamStatusKey
 import io.github.raghavsatyadev.library.support.extensions.serializer.SerializationExtensions.toKotlinObject
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getMatchTimings
@@ -193,40 +197,59 @@ fun MatchRecordItem(
         text = combinedStatus,
         tone = combinedTone,
         modifier =
-          Modifier.constrainAs(txtCombinedStatus) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            top.linkTo(parent.top)
-            visibility = combineStatusVisibility
-          },
+          Modifier.then(
+              if (matchRecord.status == MatchStatus.DRAW) {
+                Modifier.sharedContent(teamStatusKey(matchRecord.matchRecordId, true))
+              } else {
+                Modifier
+              }
+            )
+            .constrainAs(txtCombinedStatus) {
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+              top.linkTo(parent.top)
+              visibility = combineStatusVisibility
+            },
       )
       StatusPill(
         text = team1Status,
         tone = team1Tone,
         modifier =
-          Modifier.constrainAs(txtTeam1Status) {
-            start.linkTo(parent.start)
-            end.linkTo(midVerticalGuideLine)
-            top.linkTo(txtCombinedStatus.bottom)
-            visibility = separateStatusVisibility
-          },
+          // Hidden on a draw, where the combined pill carries the key.
+          Modifier.then(
+              if (shouldShowCombined) Modifier
+              else Modifier.sharedContent(teamStatusKey(matchRecord.matchRecordId, true))
+            )
+            .constrainAs(txtTeam1Status) {
+              start.linkTo(parent.start)
+              end.linkTo(midVerticalGuideLine)
+              top.linkTo(txtCombinedStatus.bottom)
+              visibility = separateStatusVisibility
+            },
       )
       StatusPill(
         text = team2Status,
         tone = team2Tone,
         modifier =
-          Modifier.constrainAs(txtTeam2Status) {
-            end.linkTo(parent.end)
-            start.linkTo(midVerticalGuideLine)
-            top.linkTo(txtCombinedStatus.bottom)
-            visibility = separateStatusVisibility
-          },
+          // Hidden on a draw, where the combined pill carries the key.
+          Modifier.then(
+              if (shouldShowCombined) Modifier
+              else Modifier.sharedContent(teamStatusKey(matchRecord.matchRecordId, false))
+            )
+            .constrainAs(txtTeam2Status) {
+              end.linkTo(parent.end)
+              start.linkTo(midVerticalGuideLine)
+              top.linkTo(txtCombinedStatus.bottom)
+              visibility = separateStatusVisibility
+            },
       )
 
       Text(
         text = matchRecord.team1Detail.teamName,
         modifier =
-          Modifier.constrainAs(txtTeam1Name) {
+          Modifier.sharedContent(teamNameKey(matchRecord.matchRecordId, true)).constrainAs(
+            txtTeam1Name
+          ) {
             start.linkTo(parent.start)
             end.linkTo(midVerticalGuideLine)
             top.linkTo(statusBarrier)
@@ -237,7 +260,9 @@ fun MatchRecordItem(
       Text(
         text = matchRecord.team2Detail.teamName,
         modifier =
-          Modifier.constrainAs(txtTeam2Name) {
+          Modifier.sharedContent(teamNameKey(matchRecord.matchRecordId, false)).constrainAs(
+            txtTeam2Name
+          ) {
             start.linkTo(midVerticalGuideLine)
             end.linkTo(parent.end)
             top.linkTo(statusBarrier)
@@ -249,7 +274,9 @@ fun MatchRecordItem(
         text = team1Score,
         style = MaterialTheme.typography.titleMedium,
         modifier =
-          Modifier.constrainAs(txtTeam1Score) {
+          Modifier.sharedContent(teamScoreKey(matchRecord.matchRecordId, true)).constrainAs(
+            txtTeam1Score
+          ) {
             start.linkTo(parent.start)
             end.linkTo(midVerticalGuideLine)
             top.linkTo(txtTeam1Name.bottom)
@@ -259,7 +286,9 @@ fun MatchRecordItem(
         text = team2Score,
         style = MaterialTheme.typography.titleMedium,
         modifier =
-          Modifier.constrainAs(txtTeam2Score) {
+          Modifier.sharedContent(teamScoreKey(matchRecord.matchRecordId, false)).constrainAs(
+            txtTeam2Score
+          ) {
             start.linkTo(midVerticalGuideLine)
             end.linkTo(parent.end)
             top.linkTo(txtTeam2Name.bottom)

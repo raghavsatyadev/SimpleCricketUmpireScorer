@@ -117,6 +117,7 @@ object MatchRecordExtensions {
           team2Detail.teamName
         },
       currentRunsAndWickets = currentRunsAndWickets,
+      isTeam1 = shouldPrepareTeam1Details,
       currentFormattedOvers = currentFormattedOvers,
       currentOvers = currentOvers,
       totalOvers = totalOvers,

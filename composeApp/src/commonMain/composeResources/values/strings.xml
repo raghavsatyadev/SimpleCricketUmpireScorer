@@ -106,4 +106,8 @@
     <string name="theme_system">Theme: follow device. Tap for light</string>
     <string name="theme_light">Theme: light. Tap for dark</string>
     <string name="theme_dark">Theme: dark. Tap to follow device</string>
+
+    <string name="empty_matches_title">No matches yet</string>
+    <string name="empty_matches_message">Tap Add Match to score your first game.</string>
+    <string name="warning_overs_below_bowled">Overs cannot be fewer than already bowled</string>
 </resources>

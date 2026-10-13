@@ -90,6 +90,22 @@ for "behind" or destructive. Light in a shimmer: white at 0.65 alpha on light, 0
   Medium and Large are for a screen whose one job is that action (the scoring buttons).
 - **Stale data.** Draw it at 0.6 alpha and 0.15 saturation (a `ColorMatrix` layer), and say why in
   words for screen readers.
+- **Empty state.** One `DriftingShape` (`MaterialShapes`, `primaryContainer`) with an icon on it,
+  a `headlineSmall` title and a `bodyLarge` hint in `onSurfaceVariant`; fade + `scaleIn(0.92)` in.
+  Collect the list with `initial = null` and show it only once the data says empty, or it flashes
+  on every open.
+- **Destructive actions confirm.** A delete asks first in an `AlertDialog` with the icon, and the
+  confirm `TextButton` in `colorScheme.error`. Never delete on a single tap.
+- **Form errors are inline.** A rejected value sets `isError` and a `supportingText` that says
+  why; never ignore the tap silently.
+- **The screen's one action is bigger.** A form's submit button is
+  `ButtonDefaults.MediumContainerHeight` with `shapesFor` / `contentPaddingFor` /
+  `textStyleFor` of that height, full width.
+- **Search and filter (lists).** `SearchBar`/`DockedSearchBar` or a pill `OutlinedTextField` with
+  a leading search icon; filters as `FilterChip`s in a horizontally scrolling row (multi-select,
+  `selected` shows a check); sort in a `DropdownMenu` from a tonal icon button, the active
+  direction as an arrow icon. Keep every choice in `rememberSaveable` or the ViewModel so it
+  survives rotation.
 - **Haptics** (`LocalHapticFeedback`): `SegmentTick` for an add, `Reject` for an undo,
   `GestureThresholdActivate` / `GestureEnd` for drags, `Confirm` for a finished action.
 
@@ -142,6 +158,13 @@ recording; keep all of them:
 7. **Crossfade.** `enter = fadeIn(defaultEffectsSpec)`, `exit = fadeOut(fastEffectsSpec)`: the side
    that leaves goes fast, so the card and the screen are never both clearly visible.
 8. **Reduced motion:** no shared bounds, the screens fade.
+9. **Pieces fly on their own.** Inside the container, the card's team names, scores and result
+   pills fly to the same pieces on the screen (`sharedContent(teamNameKey(...))` and friends), so
+   the eye follows the score rather than the box. Put `sharedContent` on both sides with one key
+   per piece (`match-<id>-score-1`), `scaleToBounds(ContentScale.Fit, Alignment.Center)` and the
+   same `screenTransformSpec`, so the pieces land with the container. A piece that shows twice on
+   one side (a draw's single pill) gets a key only once. Check it at `animator_duration_scale 5`:
+   in the first frames the pieces must still sit where they were on the card.
 
 ## Verify motion on a device
 

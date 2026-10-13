@@ -38,10 +38,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -72,7 +72,9 @@ import io.github.raghavsatyadev.library.support.components.CelebrationKind
 import io.github.raghavsatyadev.library.support.components.CelebrationOverlay
 import io.github.raghavsatyadev.library.support.components.DarkRealDevicePreview
 import io.github.raghavsatyadev.library.support.components.InningsProgressBar
+import io.github.raghavsatyadev.library.support.components.sharedContent
 import io.github.raghavsatyadev.library.support.components.sharedMatchContainer
+import io.github.raghavsatyadev.library.support.components.teamScoreKey
 import io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.isMatchCompleted
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.oversToBalls
@@ -113,6 +115,7 @@ import scus.composeapp.generated.resources.rrr
 import scus.composeapp.generated.resources.runs
 import scus.composeapp.generated.resources.save
 import scus.composeapp.generated.resources.team
+import scus.composeapp.generated.resources.warning_overs_below_bowled
 import scus.composeapp.generated.resources.wickets
 
 @Composable
@@ -166,6 +169,7 @@ fun MatchRecordScreen(
   }
   MatchRecordUI(
     record = recordState,
+    matchId = matchRecordId,
     modifier = Modifier.sharedMatchContainer(matchRecordId, fullScreen = true),
     onBack = onBack,
     endInning = { viewModel.endInning(matchRecordId) },
@@ -251,6 +255,7 @@ private fun isBehind(record: BasicMatchUIDetails): Boolean {
 @Composable
 private fun MatchRecordUI(
   record: BasicMatchUIDetails?,
+  matchId: String = "",
   onBack: () -> Unit,
   endMatch: () -> Unit,
   endInning: () -> Unit,
@@ -478,7 +483,8 @@ private fun MatchRecordUI(
                 centerHorizontallyTo(parent)
                 bottom.linkTo(txtOvers.top, 12.dp)
               }
-              .onGloballyPositioned { scoreCenter = it.boundsInRoot().center },
+              .onGloballyPositioned { scoreCenter = it.boundsInRoot().center }
+              .sharedContent(teamScoreKey(matchId, record.isTeam1)),
           transitionSpec = { dataSwap(slide, fade, animate, retract = lastWasUndo) },
           label = "runs",
         ) {
@@ -508,6 +514,7 @@ private fun MatchRecordUI(
         if (!isFirstInningComplete) {
           IconButton(
             onClick = showEditOversDialog,
+            shapes = IconButtonDefaults.shapes(),
             modifier =
               Modifier.constrainAs(btnEditOvers) {
                 start.linkTo(txtOvers.end)
@@ -747,13 +754,25 @@ private fun EditOversDialog(
   dismissDialog: () -> Unit,
 ) {
   var editedOvers by remember { mutableStateOf(record.totalOvers) }
+  var belowBowled by remember { mutableStateOf(false) }
   AlertDialog(
     onDismissRequest = dismissDialog,
     title = { Text(stringResource(Res.string.edit_total_overs)) },
     text = {
-      TextField(
+      OutlinedTextField(
         value = editedOvers,
-        onValueChange = { editedOvers = it },
+        onValueChange = {
+          editedOvers = it
+          belowBowled = false
+        },
+        singleLine = true,
+        isError = belowBowled,
+        supportingText =
+          if (belowBowled) {
+            { Text(stringResource(Res.string.warning_overs_below_bowled)) }
+          } else {
+            null
+          },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
       )
     },
@@ -764,6 +783,7 @@ private fun EditOversDialog(
           try {
             val editedBalls = oversToBalls(editedOvers)
             if (editedBalls < oversToBalls(record.currentFormattedOvers)) {
+              belowBowled = true
               return@TextButton
             }
             editedOversInBalls(editedBalls)

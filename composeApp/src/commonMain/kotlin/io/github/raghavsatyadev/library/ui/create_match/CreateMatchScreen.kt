@@ -7,9 +7,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -22,6 +25,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -30,6 +34,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDialog
 import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
@@ -59,11 +64,13 @@ import io.github.raghavsatyadev.library.support.models.db.match_record.MatchReco
 import io.github.raghavsatyadev.library.support.models.essential.UiState
 import io.github.raghavsatyadev.library.support.theme.AppTheme
 import kotlin.time.Clock.System
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import scus.composeapp.generated.resources.Res
 import scus.composeapp.generated.resources.cancel
 import scus.composeapp.generated.resources.create_match_title
+import scus.composeapp.generated.resources.ic_check
 import scus.composeapp.generated.resources.match_date_time
 import scus.composeapp.generated.resources.match_location
 import scus.composeapp.generated.resources.overs_per_inning
@@ -309,7 +316,7 @@ private fun CreateMatchRecordUI(
   ) { innerPadding ->
     ConstraintLayout(
       modifier =
-        Modifier.fillMaxSize().padding(innerPadding).verticalScroll(scrollState).padding(15.dp)
+        Modifier.fillMaxSize().padding(innerPadding).verticalScroll(scrollState).padding(16.dp)
     ) {
       val (
         dateTimeRef,
@@ -344,7 +351,7 @@ private fun CreateMatchRecordUI(
         label = { Text(stringResource(Res.string.team_1_name)) },
         modifier =
           Modifier.constrainAs(team1Ref) {
-            top.linkTo(dateTimeRef.bottom)
+            top.linkTo(dateTimeRef.bottom, margin = 12.dp)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             width = Dimension.fillToConstraints
@@ -358,7 +365,7 @@ private fun CreateMatchRecordUI(
         label = { Text(stringResource(Res.string.team_2_name)) },
         modifier =
           Modifier.constrainAs(team2Ref) {
-            top.linkTo(team1Ref.bottom)
+            top.linkTo(team1Ref.bottom, margin = 12.dp)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             width = Dimension.fillToConstraints
@@ -372,7 +379,7 @@ private fun CreateMatchRecordUI(
         label = { Text(stringResource(Res.string.overs_per_inning)) },
         modifier =
           Modifier.constrainAs(overRef) {
-            top.linkTo(team2Ref.bottom)
+            top.linkTo(team2Ref.bottom, margin = 12.dp)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             width = Dimension.fillToConstraints
@@ -396,7 +403,7 @@ private fun CreateMatchRecordUI(
         options,
         tossWonByTeam1,
         Modifier.constrainAs(tossToggleRef) {
-          top.linkTo(tossLabelRef.bottom)
+          top.linkTo(tossLabelRef.bottom, margin = 8.dp)
           start.linkTo(parent.start)
           end.linkTo(parent.end)
           width = Dimension.fillToConstraints
@@ -421,7 +428,7 @@ private fun CreateMatchRecordUI(
         isFirstOptionSelected = batFirstByTeam1,
         modifier =
           Modifier.constrainAs(batToggleRef) {
-            top.linkTo(batLabelRef.bottom)
+            top.linkTo(batLabelRef.bottom, margin = 8.dp)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             width = Dimension.fillToConstraints
@@ -435,15 +442,17 @@ private fun CreateMatchRecordUI(
         label = { Text(stringResource(Res.string.match_location)) },
         modifier =
           Modifier.constrainAs(locationRef) {
-            top.linkTo(batToggleRef.bottom, margin = 10.dp)
+            top.linkTo(batToggleRef.bottom, margin = 20.dp)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             width = Dimension.fillToConstraints
           },
       )
 
+      val saveHeight = ButtonDefaults.MediumContainerHeight
       Button(
-        shapes = ButtonDefaults.shapes(),
+        shapes = ButtonDefaults.shapesFor(saveHeight),
+        contentPadding = ButtonDefaults.contentPaddingFor(saveHeight),
         onClick = {
           onSaveMatchRecord(
             selectedDateTimeMillis,
@@ -457,13 +466,14 @@ private fun CreateMatchRecordUI(
         },
         modifier =
           Modifier.constrainAs(saveBtnRef) {
-            top.linkTo(locationRef.bottom, margin = 10.dp)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            width = Dimension.fillToConstraints
-          },
+              top.linkTo(locationRef.bottom, margin = 24.dp)
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+              width = Dimension.fillToConstraints
+            }
+            .heightIn(min = saveHeight),
       ) {
-        Text(stringResource(Res.string.save))
+        Text(stringResource(Res.string.save), style = ButtonDefaults.textStyleFor(saveHeight))
       }
     }
   }
@@ -494,6 +504,15 @@ private fun ToggleButtonGroup(
             else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
           },
       ) {
+        // Selection reads by the check as well as the fill.
+        if (isSelected) {
+          Icon(
+            painter = painterResource(Res.drawable.ic_check),
+            contentDescription = null,
+            modifier = Modifier.size(ToggleButtonDefaults.IconSize),
+          )
+          Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
+        }
         Text(label)
       }
     }

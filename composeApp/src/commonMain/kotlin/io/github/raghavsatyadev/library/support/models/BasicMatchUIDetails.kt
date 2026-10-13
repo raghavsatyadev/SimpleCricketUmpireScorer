@@ -27,4 +27,6 @@ data class BasicMatchUIDetails(
   val currentRRR: String = "",
   val requiredRunsBalls: String = "",
   val matchStatus: MatchStatus = MatchStatus.IN_PROGRESS,
+  /** True when these details are team 1's. */
+  val isTeam1: Boolean = true,
 )
