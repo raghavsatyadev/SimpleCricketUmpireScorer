@@ -647,6 +647,8 @@ New-Item -ItemType Directory -Force -Path $claudeSkills | Out-Null
 $linked = 0
 foreach ($skill in Get-ChildItem -Directory (Join-Path $repoRoot ".agents\skills")) {
   $link = Join-Path $claudeSkills $skill.Name
+  # A plain copy (left by Git Bash's ln -s) goes stale; replace it with a junction.
+  if ((Test-Path $link) -and -not (Get-Item $link -Force).LinkType) { Remove-Item -Recurse -Force $link }
   if (Test-Path $link) { continue }
   New-Item -ItemType Junction -Path $link -Target $skill.FullName | Out-Null
   $linked++
