@@ -25,7 +25,7 @@ bash scripts/setup-env.sh                                         # macOS / Linu
 | Submodules *(if any)* | `git submodule update --init` |
 | Git hooks | `git config core.hooksPath .githooks` |
 | Global skills | `global_skills/*` copied to the user's global skill folders (see below) |
-| Android skills | `android` CLI, then `android skills add --all` (see below) |
+| Android skills | `android` CLI, then `android skills add` for the named list below |
 | GitHub CLI | `gh`, logged in (`gh auth login`) with push access to the repo |
 | Python / uv | Python 3.10+, `uv` |
 | ARTEMIS | cloned, MCP registered with your agent, Gemini key in its `.env` |
@@ -61,11 +61,17 @@ permissions and intent security, testing setup, Play policy, …) are not kept i
 #   Windows: curl -fsSL https://dl.google.com/android/cli/latest/windows_x86_64/install.cmd -o "%TEMP%\i.cmd" && "%TEMP%\i.cmd"
 #   macOS (Apple Silicon): curl -fsSL https://dl.google.com/android/cli/latest/darwin_arm64/install.sh | bash
 #   Linux: curl -fsSL https://dl.google.com/android/cli/latest/linux_x86_64/install.sh | bash
-android skills add --all    # every official skill, for every agent it finds on this PC
-android skills update       # later, to refresh them
+# Only the skills these projects use; never --all (it re-adds TV, Wear, XR, Cast, billing, camera…).
+# Drop any the project does not use (ml-kit-genai-prompt-api, navigation-3, navigation-event).
+for s in adaptive android-cli android-intent-security android-permissions-security android-profiler appfunctions edge-to-edge ml-kit-genai-prompt-api navigation-3 navigation-event play-policy-insights r8-analyzer testing-setup; do
+  # Claude Code: this repo only, in .claude/skills (gitignored), so non-Android projects don't load them
+  android skills add "$s" --agent=claude-code --project=.
+  android skills add "$s" --agent=gemini   # Gemini: global
+done
+android skills update --project=.   # later, to refresh them
 ```
 
-`agp-9-upgrade` is for Android-only projects; do not run it on a KMP project.
+Need another official skill for a one-off task? `android skills add <id>`, then remove it after.
 
 ### ARTEMIS
 

@@ -554,8 +554,15 @@ mkdir -p .claude/skills
 linked=0
 for skill in .agents/skills/*/; do
   name="$(basename "$skill")"
-  [ -e ".claude/skills/$name" ] && continue
-  ln -s "../../.agents/skills/$name" ".claude/skills/$name"
+  link=".claude/skills/$name"
+  # Git Bash's ln -s copies without Developer Mode, and a copy goes stale. Replace copies with links.
+  [ -e "$link" ] && [ ! -L "$link" ] && rm -rf "$link"
+  [ -e "$link" ] && continue
+  case "$(uname -s)" in
+    MINGW* | MSYS* | CYGWIN*) # Junctions need no admin rights or Developer Mode.
+      MSYS_NO_PATHCONV=1 cmd /c mklink /J "$(cygpath -w "$link")" "$(cygpath -w "$REPO_ROOT/.agents/skills/$name")" >/dev/null ;;
+    *) ln -s "../../.agents/skills/$name" "$link" ;;
+  esac
   linked=$((linked + 1))
 done
 pass "Claude Code sees every skill in .agents/skills/ ($linked new link(s) in .claude/skills/)."
