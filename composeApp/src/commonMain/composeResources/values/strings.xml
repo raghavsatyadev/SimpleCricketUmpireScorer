@@ -42,6 +42,7 @@
     <string name="lost">Lost</string>
     <string name="draw">Draw</string>
     <string name="in_progress">In Progress</string>
+    <string name="batting">Batting</string>
     <string name="delete_match_record">Delete Match Record</string>
     <string name="copy_match_record">Copy Match Record</string>
     <string name="delete_match_record_message">Are you sure you want to delete this record?</string>

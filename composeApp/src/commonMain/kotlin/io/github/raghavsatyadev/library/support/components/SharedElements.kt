@@ -43,13 +43,23 @@ fun copyMatchKey(matchId: String): String = "copy-$matchId"
 
 /**
  * The pieces of a match card that fly on their own into the screen it opens, inside the container
- * transform: each team's name, score and result pill. [team1] picks the team.
+ * transform: each team's name, score, overs and result pill. [team1] picks the team.
  */
 fun teamNameKey(matchId: String, team1: Boolean): String = "match-$matchId-name-${team(team1)}"
 
 fun teamScoreKey(matchId: String, team1: Boolean): String = "match-$matchId-score-${team(team1)}"
 
+fun teamOversKey(matchId: String, team1: Boolean): String = "match-$matchId-overs-${team(team1)}"
+
 fun teamStatusKey(matchId: String, team1: Boolean): String = "match-$matchId-status-${team(team1)}"
+
+/** A match card's single status pill ("In Progress"), which the scoring screen keeps. */
+fun matchStatusKey(matchId: String): String = "match-$matchId-status"
+
+/** Where and when a match was played, as the card shows it. */
+fun matchLocationKey(matchId: String): String = "match-$matchId-location"
+
+fun matchTimingsKey(matchId: String): String = "match-$matchId-timings"
 
 private fun team(team1: Boolean) = if (team1) 1 else 2
 

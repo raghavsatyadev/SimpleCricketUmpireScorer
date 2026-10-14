@@ -22,10 +22,12 @@ import io.github.raghavsatyadev.library.support.theme.AppTheme
 import io.github.raghavsatyadev.library.support.theme.animationsEnabled
 
 /**
- * How much of the innings is bowled. Flat unless [behind] is true, which marks a chase that needs
- * attention (the required rate is above the current rate); then it is wavy and in the error colour.
- * With animations off it is always flat, and the colour alone still says "behind". New values move
- * on [AppMotion.dataSpec] and never overshoot.
+ * How much of the innings is bowled. Always the same wavy line, in either innings and at any point
+ * of it, so it never changes shape under a tap; [behind] (a chase whose required rate is above the
+ * current rate) only turns it the error colour. The wave keeps its full height from start to end:
+ * the default amplitude flattens it near 0 and 1, which reads as the bar switching style. With
+ * animations off it is flat throughout. New values move on [AppMotion.dataSpec] and never
+ * overshoot.
  */
 @Composable
 fun InningsProgressBar(progress: Float, behind: Boolean, modifier: Modifier = Modifier) {
@@ -38,12 +40,13 @@ fun InningsProgressBar(progress: Float, behind: Boolean, modifier: Modifier = Mo
   val color: Color =
     if (behind) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
   val track = MaterialTheme.colorScheme.secondaryContainer
-  if (behind && animationsEnabled()) {
+  if (animationsEnabled()) {
     LinearWavyProgressIndicator(
       progress = { animated },
       modifier = modifier.fillMaxWidth(),
       color = color,
       trackColor = track,
+      amplitude = { 1f },
     )
   } else {
     LinearProgressIndicator(

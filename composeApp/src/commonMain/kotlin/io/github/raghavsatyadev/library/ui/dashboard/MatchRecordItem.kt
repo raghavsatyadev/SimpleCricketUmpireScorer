@@ -4,9 +4,11 @@ package io.github.raghavsatyadev.library.ui.dashboard
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroupDefaults
@@ -19,8 +21,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -31,16 +35,20 @@ import io.github.raghavsatyadev.library.support.components.LightPreview
 import io.github.raghavsatyadev.library.support.components.StatusPill
 import io.github.raghavsatyadev.library.support.components.StatusTone
 import io.github.raghavsatyadev.library.support.components.copyMatchKey
+import io.github.raghavsatyadev.library.support.components.matchLocationKey
+import io.github.raghavsatyadev.library.support.components.matchStatusKey
+import io.github.raghavsatyadev.library.support.components.matchTimingsKey
 import io.github.raghavsatyadev.library.support.components.sharedContainer
 import io.github.raghavsatyadev.library.support.components.sharedContent
 import io.github.raghavsatyadev.library.support.components.teamNameKey
+import io.github.raghavsatyadev.library.support.components.teamOversKey
 import io.github.raghavsatyadev.library.support.components.teamScoreKey
 import io.github.raghavsatyadev.library.support.components.teamStatusKey
 import io.github.raghavsatyadev.library.support.extensions.serializer.SerializationExtensions.toKotlinObject
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getMatchTimings
-import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getTeam1FormattedScore
-import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getTeam2FormattedScore
+import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getTeamOvers
+import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getTeamRunsAndWickets
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
 import io.github.raghavsatyadev.library.support.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
@@ -129,8 +137,6 @@ fun MatchRecordItem(
 
       createHorizontalChain(btnCopy, btnDelete, chainStyle = ChainStyle.Packed)
 
-      val team1Score = matchRecord.getTeam1FormattedScore()
-      val team2Score = matchRecord.getTeam2FormattedScore()
       var team1Status = ""
       var team2Status = ""
       var team1Tone = StatusTone.Neutral
@@ -197,11 +203,14 @@ fun MatchRecordItem(
         text = combinedStatus,
         tone = combinedTone,
         modifier =
+          // A draw's pill flies to the result screen's pill, an unfinished match's to the scoring
+          // screen's.
           Modifier.then(
-              if (matchRecord.status == MatchStatus.DRAW) {
-                Modifier.sharedContent(teamStatusKey(matchRecord.matchRecordId, true))
-              } else {
-                Modifier
+              when {
+                !shouldShowCombined -> Modifier
+                matchRecord.status == MatchStatus.DRAW ->
+                  Modifier.sharedContent(teamStatusKey(matchRecord.matchRecordId, true))
+                else -> Modifier.sharedContent(matchStatusKey(matchRecord.matchRecordId))
               }
             )
             .constrainAs(txtCombinedStatus) {
@@ -253,9 +262,12 @@ fun MatchRecordItem(
             start.linkTo(parent.start)
             end.linkTo(midVerticalGuideLine)
             top.linkTo(statusBarrier)
+            // Wraps within its half rather than running into the other team's name.
+            width = Dimension.preferredWrapContent
           },
         fontWeight = FontWeight.Bold,
         style = MaterialTheme.typography.titleSmall,
+        textAlign = TextAlign.Center,
       )
       Text(
         text = matchRecord.team2Detail.teamName,
@@ -266,29 +278,32 @@ fun MatchRecordItem(
             start.linkTo(midVerticalGuideLine)
             end.linkTo(parent.end)
             top.linkTo(statusBarrier)
+            // Wraps within its half rather than running into the other team's name.
+            width = Dimension.preferredWrapContent
           },
         fontWeight = FontWeight.Bold,
         style = MaterialTheme.typography.titleSmall,
+        textAlign = TextAlign.Center,
       )
-      Text(
-        text = team1Score,
-        style = MaterialTheme.typography.titleMedium,
+      TeamScore(
+        matchId = matchRecord.matchRecordId,
+        team1 = true,
+        runsAndWickets = matchRecord.getTeamRunsAndWickets(true),
+        overs = matchRecord.getTeamOvers(true),
         modifier =
-          Modifier.sharedContent(teamScoreKey(matchRecord.matchRecordId, true)).constrainAs(
-            txtTeam1Score
-          ) {
+          Modifier.constrainAs(txtTeam1Score) {
             start.linkTo(parent.start)
             end.linkTo(midVerticalGuideLine)
             top.linkTo(txtTeam1Name.bottom)
           },
       )
-      Text(
-        text = team2Score,
-        style = MaterialTheme.typography.titleMedium,
+      TeamScore(
+        matchId = matchRecord.matchRecordId,
+        team1 = false,
+        runsAndWickets = matchRecord.getTeamRunsAndWickets(false),
+        overs = matchRecord.getTeamOvers(false),
         modifier =
-          Modifier.sharedContent(teamScoreKey(matchRecord.matchRecordId, false)).constrainAs(
-            txtTeam2Score
-          ) {
+          Modifier.constrainAs(txtTeam2Score) {
             start.linkTo(midVerticalGuideLine)
             end.linkTo(parent.end)
             top.linkTo(txtTeam2Name.bottom)
@@ -299,7 +314,9 @@ fun MatchRecordItem(
         style = MaterialTheme.typography.bodyMedium,
         fontWeight = FontWeight.ExtraBold,
         modifier =
-          Modifier.constrainAs(txtMatchLocation) {
+          Modifier.sharedContent(matchLocationKey(matchRecord.matchRecordId)).constrainAs(
+            txtMatchLocation
+          ) {
             start.linkTo(parent.start)
             top.linkTo(txtTeam1Score.bottom, 10.dp)
           },
@@ -308,7 +325,9 @@ fun MatchRecordItem(
         text = matchRecord.getMatchTimings(),
         style = MaterialTheme.typography.bodyMedium,
         modifier =
-          Modifier.constrainAs(txtMatchDuration) {
+          Modifier.sharedContent(matchTimingsKey(matchRecord.matchRecordId)).constrainAs(
+            txtMatchDuration
+          ) {
             start.linkTo(parent.start)
             top.linkTo(txtMatchLocation.bottom)
           },
@@ -348,6 +367,33 @@ fun MatchRecordItem(
         )
       }
     }
+  }
+}
+
+/**
+ * A team's score and its overs as two pieces, so each flies on its own to its place on the screen
+ * the card opens.
+ */
+@Composable
+private fun TeamScore(
+  matchId: String,
+  team1: Boolean,
+  runsAndWickets: String,
+  overs: String,
+  modifier: Modifier = Modifier,
+) {
+  Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+    Text(
+      text = runsAndWickets,
+      style = MaterialTheme.typography.titleMedium,
+      modifier = Modifier.sharedContent(teamScoreKey(matchId, team1)),
+    )
+    Spacer(modifier = Modifier.width(4.dp))
+    Text(
+      text = overs,
+      style = MaterialTheme.typography.titleMedium,
+      modifier = Modifier.sharedContent(teamOversKey(matchId, team1)),
+    )
   }
 }
 

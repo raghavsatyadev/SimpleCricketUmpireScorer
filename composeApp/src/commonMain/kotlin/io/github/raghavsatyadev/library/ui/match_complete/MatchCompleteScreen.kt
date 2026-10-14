@@ -50,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.github.raghavsatyadev.library.support.components.AppToolBar
@@ -58,14 +59,18 @@ import io.github.raghavsatyadev.library.support.components.DriftingShape
 import io.github.raghavsatyadev.library.support.components.StatusPill
 import io.github.raghavsatyadev.library.support.components.StatusTone
 import io.github.raghavsatyadev.library.support.components.liquidRipple
+import io.github.raghavsatyadev.library.support.components.matchLocationKey
+import io.github.raghavsatyadev.library.support.components.matchTimingsKey
 import io.github.raghavsatyadev.library.support.components.rememberLiquidRippleState
 import io.github.raghavsatyadev.library.support.components.sharedContent
 import io.github.raghavsatyadev.library.support.components.sharedMatchContainer
 import io.github.raghavsatyadev.library.support.components.teamNameKey
+import io.github.raghavsatyadev.library.support.components.teamOversKey
 import io.github.raghavsatyadev.library.support.components.teamScoreKey
 import io.github.raghavsatyadev.library.support.components.teamStatusKey
 import io.github.raghavsatyadev.library.support.models.BasicMatchUIDetails
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
+import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.getMatchTimings
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecordExtensions.toBasicMatchUIDetails
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
 import io.github.raghavsatyadev.library.support.models.db.match_record.TeamDetail
@@ -170,6 +175,20 @@ private fun MatchCompleteUI(
       verticalArrangement = Arrangement.SpaceBetween,
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+      // Where and when, flown in from the match card.
+      matchRecord?.let { record ->
+        Text(
+          text = record.location,
+          style = MaterialTheme.typography.bodyMedium,
+          fontWeight = FontWeight.ExtraBold,
+          modifier = Modifier.sharedContent(matchLocationKey(matchId)),
+        )
+        Text(
+          text = record.getMatchTimings(),
+          style = MaterialTheme.typography.bodyMedium,
+          modifier = Modifier.sharedContent(matchTimingsKey(matchId)),
+        )
+      }
       // Main Content centered, with a slowly turning shape behind the winner's score
       // A tap on the result sends a ripple across it: pure delight, nothing to read.
       Box(
@@ -339,6 +358,7 @@ private fun MatchCompleteUI(
               style = MaterialTheme.typography.displaySmall,
               fontWeight = FontWeight.Normal,
               textAlign = TextAlign.Center,
+              modifier = Modifier.sharedContent(teamOversKey(matchId, showTeam1)),
             )
           }
         }
@@ -363,7 +383,13 @@ private fun MatchCompleteUI(
             )
             Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
           }
-          Text(text = stringResource(Res.string.team_1))
+          TeamToggleLabel(
+            name = matchRecord?.team1Detail?.teamName,
+            fallback = stringResource(Res.string.team_1),
+            // The shown team's name is the big one above; the other one flies here from its card.
+            modifier =
+              if (showTeam1) Modifier else Modifier.sharedContent(teamNameKey(matchId, true)),
+          )
         }
         ToggleButton(
           checked = !showTeam1,
@@ -379,11 +405,28 @@ private fun MatchCompleteUI(
             )
             Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
           }
-          Text(text = stringResource(Res.string.team_2))
+          TeamToggleLabel(
+            name = matchRecord?.team2Detail?.teamName,
+            fallback = stringResource(Res.string.team_2),
+            // The shown team's name is the big one above; the other one flies here from its card.
+            modifier =
+              if (!showTeam1) Modifier else Modifier.sharedContent(teamNameKey(matchId, false)),
+          )
         }
       }
     }
   }
+}
+
+/** A team toggle's label: the team's name, or "Team 1" while there is none. */
+@Composable
+private fun TeamToggleLabel(name: String?, fallback: String, modifier: Modifier = Modifier) {
+  Text(
+    text = name?.takeIf { it.isNotBlank() } ?: fallback,
+    maxLines = 1,
+    overflow = TextOverflow.Ellipsis,
+    modifier = modifier,
+  )
 }
 
 @DarkRealDevicePreview
