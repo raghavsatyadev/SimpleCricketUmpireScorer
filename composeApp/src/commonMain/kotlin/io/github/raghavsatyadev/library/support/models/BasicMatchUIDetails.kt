@@ -27,4 +27,15 @@ data class BasicMatchUIDetails(
   val currentRRR: String = "",
   val requiredRunsBalls: String = "",
   val matchStatus: MatchStatus = MatchStatus.IN_PROGRESS,
+  /** True when these details are team 1's. */
+  val isTeam1: Boolean = true,
+  /** The name of the other team, the one not in these details. */
+  val otherTeamName: String = "",
+  /** The other team's score as the match card shows it: "runs-wickets". */
+  val otherTeamRunsAndWickets: String = "",
+  /** The overs the other team has batted, as the match card shows them: "(overs)". */
+  val otherTeamOvers: String = "",
+  val location: String = "",
+  /** When the match started and, once it is over, ended. */
+  val matchTimings: String = "",
 )

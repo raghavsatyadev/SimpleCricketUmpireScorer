@@ -41,6 +41,28 @@ val FAB_CORNER: Dp = 16.dp
 /** The shared key of the create-match screen opened by copying match [matchId]. */
 fun copyMatchKey(matchId: String): String = "copy-$matchId"
 
+/**
+ * The pieces of a match card that fly on their own into the screen it opens, inside the container
+ * transform: each team's name, score, overs and result pill. [team1] picks the team.
+ */
+fun teamNameKey(matchId: String, team1: Boolean): String = "match-$matchId-name-${team(team1)}"
+
+fun teamScoreKey(matchId: String, team1: Boolean): String = "match-$matchId-score-${team(team1)}"
+
+fun teamOversKey(matchId: String, team1: Boolean): String = "match-$matchId-overs-${team(team1)}"
+
+fun teamStatusKey(matchId: String, team1: Boolean): String = "match-$matchId-status-${team(team1)}"
+
+/** A match card's single status pill ("In Progress"), which the scoring screen keeps. */
+fun matchStatusKey(matchId: String): String = "match-$matchId-status"
+
+/** Where and when a match was played, as the card shows it. */
+fun matchLocationKey(matchId: String): String = "match-$matchId-location"
+
+fun matchTimingsKey(matchId: String): String = "match-$matchId-timings"
+
+private fun team(team1: Boolean) = if (team1) 1 else 2
+
 /** The corner radius of a match card, which the transform starts from and ends on. */
 val MatchCardCorner: Dp = 24.dp
 
@@ -100,8 +122,9 @@ fun Modifier.sharedContainer(
 
 /**
  * A piece of content, such as a score, that moves from where it sits on one screen to where it sits
- * on the next. Both sides use the same [key]; the text is scaled, never reflowed, while it moves.
- * Does nothing outside the nav host or with motion reduced.
+ * on the next, on top of the container transform around it. Both sides use the same [key]; the two
+ * versions crossfade (a card's "167-6 (10.0)" becomes the screen's "167-6") and are scaled, never
+ * reflowed, while they move. Does nothing outside the nav host or with motion reduced.
  */
 @Composable
 fun Modifier.sharedContent(key: String): Modifier {

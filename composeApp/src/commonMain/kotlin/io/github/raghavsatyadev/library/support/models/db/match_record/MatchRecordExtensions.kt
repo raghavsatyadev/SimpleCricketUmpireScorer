@@ -117,6 +117,7 @@ object MatchRecordExtensions {
           team2Detail.teamName
         },
       currentRunsAndWickets = currentRunsAndWickets,
+      isTeam1 = shouldPrepareTeam1Details,
       currentFormattedOvers = currentFormattedOvers,
       currentOvers = currentOvers,
       totalOvers = totalOvers,
@@ -125,6 +126,16 @@ object MatchRecordExtensions {
       currentRRR = currentRRR,
       requiredRunsBalls = requiredRunsBalls,
       matchStatus = status,
+      otherTeamName =
+        if (shouldPrepareTeam1Details) {
+          team2Detail.teamName
+        } else {
+          team1Detail.teamName
+        },
+      otherTeamRunsAndWickets = getTeamRunsAndWickets(!shouldPrepareTeam1Details),
+      otherTeamOvers = getTeamOvers(!shouldPrepareTeam1Details),
+      location = location,
+      matchTimings = getMatchTimings(),
     )
   }
 
@@ -135,11 +146,12 @@ object MatchRecordExtensions {
       team2Detail.runs
     }
 
-  fun MatchRecord.getTeam1FormattedScore() =
-    "${getRuns(true)}-${getWickets(true)} (${formatToOvers(getBalls(true))})"
+  /** A team's score as the match card shows it: "runs-wickets". [team1] picks the team. */
+  fun MatchRecord.getTeamRunsAndWickets(team1: Boolean) =
+    formatCurrentRunsAndWickets(getRuns(team1), getWickets(team1))
 
-  fun MatchRecord.getTeam2FormattedScore() =
-    "${getRuns(false)}-${getWickets(false)} (${formatToOvers(getBalls(false))})"
+  /** The overs a team has batted, as the match card shows them: "(overs)". */
+  fun MatchRecord.getTeamOvers(team1: Boolean) = "(${formatToOvers(getBalls(team1))})"
 
   private fun formatCurrentRunsAndWickets(runs: Int, wickets: Int) = "$runs-$wickets"
 
