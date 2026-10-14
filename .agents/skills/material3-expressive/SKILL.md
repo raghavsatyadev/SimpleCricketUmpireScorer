@@ -70,9 +70,12 @@ for "behind" or destructive. Light in a shimmer: white at 0.65 alpha on light, 0
 
 ## Patterns
 
-- **Wavy means attention.** A progress indicator is `LinearWavyProgressIndicator` only when the
-  state needs attention (a chase behind the required rate); otherwise flat
-  `LinearProgressIndicator` with `StrokeCap.Round`. Flat when animations are off.
+- **Wavy stays wavy.** Choose a progress indicator's style per screen, never per state: a bar
+  that swaps flat ↔ wavy as its value changes reads as a flicker. `LinearWavyProgressIndicator`'s
+  default amplitude flattens the wave near 0 and 1, so a bar at 90 % draws straight and turns wavy
+  on the next tap — pass `amplitude = { 1f }`. Signal attention with colour (`error`) and text, not
+  with the shape (`InningsProgressBar`). Flat `LinearProgressIndicator` (`StrokeCap.Round`) only
+  when animations are off.
 - **One hero moment per screen.** A single slow, decorative motion (`DriftingShape` behind the
   winner's score) — not motion everywhere.
 - **Selection pop.** A newly selected swatch or chip scales to 1.25 on `StiffnessMedium`, then back
@@ -108,6 +111,18 @@ for "behind" or destructive. Light in a shimmer: white at 0.65 alpha on light, 0
   survives rotation.
 - **Haptics** (`LocalHapticFeedback`): `SegmentTick` for an add, `Reject` for an undo,
   `GestureThresholdActivate` / `GestureEnd` for drags, `Confirm` for a finished action.
+- **Busy controls never scroll away.** On a screen whose job is repeated input (scoring, a
+  counter, a keypad), pin the controls and the value they change below the scroll; only the
+  secondary details above them scroll, and only when they do not fit:
+  `Column { BoxWithConstraints(Modifier.weight(1f)) { Column(Modifier.verticalScroll(state)
+  .heightIn(min = maxHeight), verticalArrangement = Arrangement.SpaceBetween) { details } };
+  value; controls }`. A full-screen `ConstraintLayout` inside `verticalScroll` grows taller than
+  the screen as soon as anything is added, and the buttons scroll off.
+- **Check at font scale 1.5.** `adb shell settings put system font_scale 1.5`, look at every
+  changed screen, then set it back to `1.0`. Two texts sharing a row in a `ConstraintLayout` need
+  `width = Dimension.preferredWrapContent` (in a `Row`, `Modifier.weight`) or they run into each
+  other. A "place · time" line is a `FlowRow`, so a whole item wraps rather than a word. Before
+  letting a screen scroll, pack secondary labels side by side (three weighted columns for rates).
 
 ## Motion judgement
 
@@ -165,6 +180,11 @@ recording; keep all of them:
    same `screenTransformSpec`, so the pieces land with the container. A piece that shows twice on
    one side (a draw's single pill) gets a key only once. Check it at `animator_duration_scale 5`:
    in the first frames the pieces must still sit where they were on the card.
+10. **Every piece needs a twin.** Split a composite label into its parts on the card ("167-6"
+    and "(10.0)", not "167-6 (10.0)"), so each part has its own key and lands in its own place. Show the card's pieces on the
+    destination too, in a compact header (status, names, place and time on one line): a piece
+    with no twin only fades with the container. Keep that header small, so it never costs the
+    screen's main controls their room.
 
 ## Verify motion on a device
 
@@ -197,7 +217,7 @@ Seed realistic data first (a debug build allows `run-as <pkg>` to replace the Ro
 | `AppMotion`, `animationsEnabled()`, `LocalReduceMotion` | `support/theme/AppMotion.kt` | Motion roles above |
 | `StaggeredEntrance`, `staggerDelayMillis` | `support/components/Motion.kt` | List items on first open: 180 ms, 40 ms steps, capped at 120 ms; `play = false` after the first cascade |
 | `DriftingShape` | `support/components/Motion.kt` | The one decorative hero shape |
-| `InningsProgressBar` | `support/components/InningsProgressBar.kt` | Innings bowled; wavy and error colour when behind |
+| `InningsProgressBar` | `support/components/InningsProgressBar.kt` | Innings bowled; always wavy at full amplitude, error colour when behind |
 | `StatusPill`, `StatusTone` | `support/components/StatusPill.kt` | Won / lost / draw / in progress |
 | `AppToolBar` | `support/components/AppToolBar.kt` | Top bar with scroll behaviour |
 | `sharedMatchContainer`, `LocalSharedTransitionScope`, `LocalEntryVisibilityScope` | `support/components/SharedElements.kt` | Card → screen transform (above) |
@@ -221,6 +241,8 @@ in connected groups, `SmallExtendedFloatingActionButton`, `LargeFloatingActionBu
 - [ ] Motion fits how often it is seen; an undo is plainer than the action it reverses.
 - [ ] Input stays live while anything animates; motion starts on the input frame.
 - [ ] Exits only fade; back retraces forward.
+- [ ] Controls tapped all the time stay on screen; every changed screen checked at font scale 1.5.
+- [ ] A progress indicator keeps one style whatever its value.
 
 People planning a new screen can sketch it in [M3E Canvas](https://lnkiai.github.io/m3e-canvas/)
 and paste its prompt here. Patterns adapted from [rock3r/headroom](https://github.com/rock3r/headroom)
