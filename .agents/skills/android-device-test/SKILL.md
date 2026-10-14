@@ -76,3 +76,11 @@ Device cache in `memory/devices/`, dumps and screenshots in `tmp/` — see
 10. **A Room schema older than the device's database can stop writes silently** (e.g. after a
     branch switch). Stop the app, then delete the database with its WAL files:
     `adb shell "run-as io.github.raghavsatyadev.scus sh -c 'rm -f databases/<db-name>*'"`.
+11. **Look before a coordinate tap.** A tap meant for a card can land on a button inside it (a
+    delete opens its dialog, or worse). Take a screenshot first, aim at plain text on the card,
+    and check the next screenshot shows the screen you expected before recording or tapping on.
+12. **Put back every device setting you change.** `animator_duration_scale` (5 for frame-by-frame
+    recordings) and `font_scale` (1.5 for large-text checks) are global: set them back to `1` /
+    `1.0` in the same command that changed them, and read them back to confirm. Record at
+    `screenrecord --size 720x1560` (or similar): native resolution on a tall phone fails or
+    produces huge files.
