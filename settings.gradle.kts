@@ -1,4 +1,5 @@
 @file:Suppress("UnstableApiUsage")
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
   repositories {
@@ -6,6 +7,9 @@ pluginManagement {
     mavenCentral()
     gradlePluginPortal()
   }
+}
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 dependencyResolutionManagement {
@@ -16,7 +20,7 @@ dependencyResolutionManagement {
     mavenLocal()
     gradlePluginPortal()
     maven(url = "https://jitpack.io")
-    maven(url = "https://central.maven.org/maven2/")
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
   }
 }
 
@@ -24,4 +28,4 @@ rootProject.buildFileName = "project.gradle.kts"
 
 rootProject.name = "SCUS"
 
-include(":app", ":support")
+include(":app", ":support", ":composeApp", ":androidCMP", ":desktopCMP")

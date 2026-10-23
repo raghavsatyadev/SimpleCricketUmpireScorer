@@ -13,12 +13,13 @@ nameSpace = "io.github.raghavsatyadev.scus"
 appIdDev = "io.github.raghavsatyadev.scus"
 appIdProd = "io.github.raghavsatyadev.scus"
 supportId = "io.github.raghavsatyadev.support"
+sharedAndroidId = "io.github.raghavsatyadev.android.library"
 
 # SDK Versions
-targetSdk = "36"
+targetSdk = "37"
 targetSdkPreview = "Baklava"
 minSdk = "26"
-compileSdk = "36"
+compileSdk = "37"
 compileSdkPreview = "Baklava"
 
 buildTools = "36.1.0"
@@ -28,68 +29,56 @@ versionCode = "4"
 versionName = "1.0.0"
 
 # Plugin Versions
-agp = "9.1.0-alpha08"
-kotlin = "2.3.10"
-ksp = "2.3.4"
-google-plugin = "4.4.4"
+agp = "9.5.0-alpha10"
+kotlin = "2.5.0-Beta1"
+kotlinx-datetime = "0.8.0"
+ksp = "2.3.12"
 
 # Library Versions
-activity = "1.13.0-alpha01"
-androidx-core = "1.18.0-alpha01"
+activity = "1.14.0-alpha03"
+androidx-core = "1.19.1"
 androidx-junit = "1.3.0"
 androidx-test = "1.7.0"
-coil = "3.3.0"
-collection = "1.6.0-beta01"
-compose-constraint = "1.1.1"
-compose-material3 = "1.5.0-alpha13"
-compose-ui = "1.11.0-alpha04"
-concurrent-futures = "1.3.0"
-coroutines = "1.10.2"
-credentials = "1.6.0-rc01"
-datastore = "1.3.0-alpha05"
+coil = "3.6.3"
+compose-constraint = "1.1.2"
+compose-constraint-mp = "0.8.3"
+compose-material3 = "1.5.0-beta01"
+compose-material3-mp = "1.13.0-alpha02"
+compose-multiplatform = "1.13.0-alpha02"
+compose-ui = "1.13.0-beta01"
+coroutines = "1.11.0"
+datastore = "1.3.0-alpha11"
 desugar-jdk-libs = "2.1.5"
-firebase-analytics = "23.0.0"
-firebase-appcheck = "19.0.2"
-firebase-auth = "24.0.1"
-firebase-crashlytics = "20.0.4"
-firebase-firestore = "26.1.0"
-firebase-crashlytics-gradle = "3.0.6"
-firebase-messaging = "25.0.1"
-google-id = "1.2.0"
-integrity = "1.6.0"
-koin = "4.2.0-RC1"
 junit = "4.13.2"
-lifecycle = "2.10.0"
-navigation3 = "1.1.0-alpha03"
-play-services-ads = "24.9.0"
-play-services-auth = "21.5.0"
-room = "2.8.4"
-serialization = "1.10.0"
-sonarqube = "7.2.2.6593"
+koin = "4.2.2"
+lifecycle = "2.12.0-alpha04"
+lifecycle-mp = "2.11.0"
+logback = "1.6.5"
+navigation3 = "1.3.0-alpha02"
+navigation3-mp = "1.2.0-rc01"
+play-services-ads = "25.5.0"
+room = "2.8.5"
+room-sqlite = "2.8.0-alpha01"
+serialization = "1.12.0-RC"
+sonarqube = "7.5.0.8588"
 splashscreen = "1.2.0"
-stability-analyzer = "0.6.6"
+stability-analyzer = "0.15.0"
 startup = "1.2.0"
-work-manager = "2.11.1"
+work-manager = "2.12.0"
 
 [libraries]
 # Classpaths
-com-google-firebase = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebase-crashlytics-gradle" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 # Android
-androidx-collection = { module = "androidx.collection:collection-ktx", version.ref = "collection" }
-androidx-concurrent-futures = { module = "androidx.concurrent:concurrent-futures-ktx", version.ref = "concurrent-futures" }
 androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
-androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
-androidx-play-credentials = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 androidx-startup = { module = "androidx.startup:startup-runtime", version.ref = "startup" }
 
-#Compose
+# Compose
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
-
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "activity" }
-
 compose-constraint = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "compose-constraint" }
 
 compose-ui-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose-ui" }
@@ -97,25 +86,40 @@ compose-ui-font = { module = "androidx.compose.ui:ui-text-google-fonts", version
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-ui" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-ui" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-ui" }
-
 compose-ui-animation = { module = "androidx.compose.animation:animation", version.ref = "compose-ui" }
 
-#Kotlin
-kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+# Compose Multiplatform
+compose-ui-mp = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
+compose-foundation-mp = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
+compose-material3-mp = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-material3-mp" }
+compose-components-resources-mp = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
+compose-ui-tooling-preview-mp = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-multiplatform" }
+compose-runtime-mp = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
+compose-constraint-mp = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "compose-constraint-mp" }
+
+# Kotlin
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
-#Lifecycle
-lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
+# Lifecycle
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycle" }
 
-#Navigation
+# Lifecycle Multiplatform
+lifecycle-viewmodel-compose-mp = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle-mp" }
+lifecycle-runtime-compose-mp = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-mp" }
+lifecycle-viewmodel-navigation3-mp = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycle-mp" }
+
+# Navigation
 navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
 navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
+navigation3-ui-mp = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3-mp" }
 
 # Koin
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
@@ -124,36 +128,36 @@ koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4", version.ref = "koin" }
 
-#Firebase
-firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebase-analytics" }
-firebase-appcheck-debug = { module = "com.google.firebase:firebase-appcheck-debug", version.ref = "firebase-appcheck" }
-firebase-appcheck-playintegrity = { module = "com.google.firebase:firebase-appcheck-playintegrity", version.ref = "firebase-appcheck" }
-firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebase-auth" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebase-crashlytics" }
-firebase-firestore = { module = "com.google.firebase:firebase-firestore", version.ref = "firebase-firestore" }
-firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebase-messaging" }
+# Koin Multiplatform
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-compose-mp = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel-mp = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 
-#Google
-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "play-services-auth" }
+# Google
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "play-services-ads" }
-google-id = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "google-id" }
-play-integrity = { module = "com.google.android.play:integrity", version.ref = "integrity" }
 
-#Room
+# Room
 room = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 
-#WorkManager
+# Room Multiplatform
+room-sqlite-bundled-mp = { module = "androidx.sqlite:sqlite-bundled", version.ref = "room-sqlite" }
+
+# WorkManager
 androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "work-manager" }
 
-#Coil
+# Coil
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 
-#Support
+# Coil Multiplatform
+coil-compose-mp = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-ktor-mp = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+
+# Support
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar-jdk-libs" }
 
-#Tests
+# Tests
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-junit" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 androidx-rules = { module = "androidx.test:rules", version.ref = "androidx-test" }
@@ -164,39 +168,39 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 
-google-plugin = { id = "com.google.gms.google-services", version.ref = "google-plugin" }
 
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
-compose-plugin = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
 room = { id = "androidx.room", version.ref = "room" }
 stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "stability-analyzer" }
-crashlytics = { id = "com.google.firebase.crashlytics" }
 
 [bundles]
 kotlin = [
-    "kotlin-stdlib-jdk8",
     "kotlinx-coroutines-android",
     "kotlinx-coroutines-core",
     "kotlinx-serialization-json",
 ]
 androidx = [
-    "androidx-collection",
-    "androidx-concurrent-futures",
     "androidx-core",
-    "androidx-credentials",
     "androidx-datastore-preferences",
-    "androidx-play-credentials",
     "androidx-splashscreen",
     "androidx-startup",
 ]
 coil = [
     "coil",
+]
+coil-mp = [
+    "coil-compose-mp",
+    "coil-network-ktor-mp",
 ]
 compose = [
     "compose-activity",
@@ -206,36 +210,56 @@ compose = [
     "compose-ui-preview",
     "compose-ui-animation",
 ]
-firebase = [
-    "firebase-analytics",
-    "firebase-appcheck-debug",
-    "firebase-appcheck-playintegrity",
-    "firebase-auth",
-    "firebase-crashlytics",
-    "firebase-firestore",
-    "firebase-messaging",
+android-mp = [
+    "androidx-splashscreen",
+    "compose-ui-preview",
+    "compose-activity",
+    "koin-core",
+    "koin-android",
+    "koin-androidx-compose",
+    "koin-compose-mp",
+    "koin-compose-viewmodel-mp",
+    "koin-androidx-workmanager",
+]
+compose-mp = [
+    "compose-ui-mp",
+    "compose-ui-tooling-preview-mp",
+    "compose-foundation-mp",
+    "compose-material3-mp",
+    "compose-components-resources-mp",
+    "compose-runtime-mp",
+    "compose-constraint-mp",
 ]
 google = [
-    "google-id",
     "play-services-ads",
-    "play-services-auth",
-    "play-integrity",
 ]
 koin = [
     "koin-android",
     "koin-androidx-compose",
     "koin-androidx-workmanager",
 ]
+koin-mp = [
+    "koin-core",
+    "koin-compose-mp",
+    "koin-compose-viewmodel-mp",
+]
 lifecycle = [
-    "lifecycle-common-java8",
     "lifecycle-runtime",
     "lifecycle-viewmodel",
     "lifecycle-viewmodel-compose",
     "lifecycle-viewmodel-navigation3",
 ]
+lifecycle-mp = [
+    "lifecycle-viewmodel-compose-mp",
+    "lifecycle-runtime-compose-mp",
+    "lifecycle-viewmodel-navigation3-mp",
+]
 navigation = [
     "navigation3-runtime",
     "navigation3-ui",
+]
+navigation-mp = [
+    "navigation3-ui-mp",
 ]
 other = [
     "androidx-work-runtime",
@@ -243,6 +267,10 @@ other = [
 room = [
     "room",
     "room-runtime",
+]
+room-mp = [
+    "room-runtime",
+    "room-sqlite-bundled-mp",
 ]
 ksp = [
     "room-compiler",
@@ -268,4 +296,68 @@ androidTest = [
 debug = [
     "compose-ui-test-manifest",
     "compose-ui-tooling",
+]
+
+update-libs = [
+    "kotlin-gradle-plugin",
+    "androidx-core",
+    "androidx-datastore-preferences",
+    "androidx-splashscreen",
+    "androidx-startup",
+    "compose-material3",
+    "compose-activity",
+    "compose-constraint",
+    "compose-ui-preview",
+    "compose-ui-font",
+    "compose-ui-test-junit4",
+    "compose-ui-test-manifest",
+    "compose-ui-tooling",
+    "compose-ui-animation",
+    "compose-ui-mp",
+    "compose-foundation-mp",
+    "compose-material3-mp",
+    "compose-components-resources-mp",
+    "compose-ui-tooling-preview-mp",
+    "compose-runtime-mp",
+    "compose-constraint-mp",
+    "kotlinx-datetime",
+    "kotlinx-coroutines-android",
+    "kotlinx-coroutines-core",
+    "kotlinx-coroutines-swing",
+    "kotlinx-serialization-json",
+    "logback-classic",
+    "lifecycle-viewmodel",
+    "lifecycle-runtime",
+    "lifecycle-viewmodel-compose",
+    "lifecycle-viewmodel-navigation3",
+    "lifecycle-viewmodel-compose-mp",
+    "lifecycle-runtime-compose-mp",
+    "lifecycle-viewmodel-navigation3-mp",
+    "navigation3-runtime",
+    "navigation3-ui",
+    "navigation3-ui-mp",
+    "koin-android",
+    "koin-androidx-compose",
+    "koin-androidx-workmanager",
+    "koin-test",
+    "koin-test-junit4",
+    "koin-core",
+    "koin-compose-mp",
+    "koin-compose-viewmodel-mp",
+    "play-services-ads",
+    "room",
+    "room-compiler",
+    "room-runtime",
+    "room-sqlite-bundled-mp",
+    "androidx-work-runtime",
+    "coil",
+    "coil-compose-mp",
+    "coil-network-ktor-mp",
+    "desugar_jdk_libs",
+    "androidx-junit",
+    "androidx-room-testing",
+    "androidx-rules",
+    "androidx-runner",
+    "androidx-test-core",
+    "junit",
 ]

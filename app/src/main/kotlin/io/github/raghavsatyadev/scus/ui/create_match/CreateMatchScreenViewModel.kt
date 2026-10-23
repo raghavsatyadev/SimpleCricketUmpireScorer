@@ -1,25 +1,24 @@
 package io.github.raghavsatyadev.scus.ui.create_match
 
 import androidx.lifecycle.viewModelScope
+import io.github.raghavsatyadev.support.R as Rs
 import io.github.raghavsatyadev.support.components.UiStateManager
 import io.github.raghavsatyadev.support.core.CoreScreenViewModel
-import io.github.raghavsatyadev.support.google.repository.AuthRepository
-import io.github.raghavsatyadev.support.google.repository.FireStoreRepository
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
+import io.github.raghavsatyadev.support.models.db.match_record.MatchRecordDataUtil
 import io.github.raghavsatyadev.support.models.db.match_record.TeamDetail
 import io.github.raghavsatyadev.support.models.essential.CustomError
 import io.github.raghavsatyadev.support.models.essential.ErrorCode
 import io.github.raghavsatyadev.support.models.essential.UiState
 import io.github.raghavsatyadev.support.providers.StringResourceProvider
+import java.util.Date
+import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.Date
-import io.github.raghavsatyadev.support.R as Rs
 
 class CreateMatchScreenViewModel(
-  private val authRepository: AuthRepository,
-  private val fireStoreRepository: FireStoreRepository,
+  private val matchRecordDataUtil: MatchRecordDataUtil,
   private val stringResourceProvider: StringResourceProvider,
   uiStateManager: UiStateManager,
 ) : CoreScreenViewModel(uiStateManager) {
@@ -48,7 +47,6 @@ class CreateMatchScreenViewModel(
     executeWithLoader {
       try {
         validateMatchDetails(matchLocation, inningOver, team1Name, team2Name)
-        val currentUserId = authRepository.currentUserId
         val matchRecord =
           MatchRecord(
             location = matchLocation,
@@ -58,12 +56,13 @@ class CreateMatchScreenViewModel(
             team2Detail = TeamDetail(teamName = team2Name),
             didTeam1WonToss = didTeam1WinToss,
             isTeam1BattingFirst = isTeam1BattingFirst,
+            matchRecordId = UUID.randomUUID().toString(),
             localUpdateDateTime = Date(),
-            serverUpdateDateTime = Date(),
-            matchAdminID = currentUserId!!,
+            matchAdminID = "",
           )
 
-        val record = fireStoreRepository.createMatchRecord(matchRecord)
+        matchRecordDataUtil.insertReplace(matchRecord)
+        val record = matchRecord
         _createMatchRecordEvent.emit(UiState.Success(record))
       } catch (e: Exception) {
         _createMatchRecordEvent.emit(UiState.Error(CustomError(ErrorCode.UNKNOWN_ERROR, e)))
@@ -77,10 +76,7 @@ class CreateMatchScreenViewModel(
     team1Name: String,
     team2Name: String,
   ) {
-    val currentUserId = authRepository.currentUserId
     when {
-      currentUserId.isNullOrEmpty() ->
-        throw Exception(stringResourceProvider.getString(Rs.string.warning_please_login))
       matchLocation.isEmpty() ->
         throw Exception(stringResourceProvider.getString(Rs.string.warning_match_location))
       inningOver.isEmpty() ->

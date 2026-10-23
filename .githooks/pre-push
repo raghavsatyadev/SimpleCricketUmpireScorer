@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Runs the CI checks locally before a push.
+#
+# GitHub Actions is disabled for this repo (org billing), so this hook is the only
+# thing standing between a bad commit and the default branch.
+#
+# Skip once:  git push --no-verify
+# Skip always: SKIP_CI_LOCAL=1 git push
+
+[ "${SKIP_CI_LOCAL:-0}" = "1" ] && exit 0
+
+# Deleting a remote branch pushes no commits: nothing to check.
+deletes_only=1
+while read -r _ local_sha _ _; do
+  [ "$local_sha" = "0000000000000000000000000000000000000000" ] || deletes_only=0
+done
+[ "$deletes_only" = 1 ] && exit 0
+
+REPO="$(git rev-parse --show-toplevel)"
+SCRIPT="$REPO/scripts/ci-local.sh"
+[ -f "$SCRIPT" ] || exit 0
+
+# Only what is being pushed matters, not uncommitted scratch work.
+exec bash "$SCRIPT" --committed-only

@@ -11,28 +11,10 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
-import io.github.raghavsatyadev.support.database.RoomDBUtil
 import io.github.raghavsatyadev.support.extensions.ImplicitIntentExtensions.openPlayServiceUpdate
-import io.github.raghavsatyadev.support.google.FirebaseAuthUtil
 import io.github.raghavsatyadev.support.google.GoogleExtensions.checkPlayServiceAvailability
-import io.github.raghavsatyadev.support.google.repository.FireStoreRepository
-import io.github.raghavsatyadev.support.preferences.AppPrefsUtil
 
 object AppHelpers {
-
-  suspend fun signOut(
-    fireStoreRepository: FireStoreRepository,
-    authUtil: FirebaseAuthUtil,
-    roomDBUtil: RoomDBUtil,
-    doSignOutFromFirestore: Boolean = false,
-  ) {
-    if (doSignOutFromFirestore) {
-      fireStoreRepository.signOutUser()
-    }
-    roomDBUtil.deleteAll()
-    AppPrefsUtil.clearAppPreferences()
-    authUtil.signOut()
-  }
 
   @Composable fun activity(): Activity? = LocalActivity.current
 

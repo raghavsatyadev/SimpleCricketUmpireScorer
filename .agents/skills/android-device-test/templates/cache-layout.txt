@@ -1,0 +1,13 @@
+Git-ignored agent data (see the workspace-cleanup skill before deleting any of it)
+
+memory/                        dev.sh (kept)
+  last-serial                  device used last
+  devices/<serial>/device.env  see device.env.example
+  devices/<serial>/coords.tsv  see coords.tsv.example
+
+tmp/                           dev.sh (disposable)
+  ui-dump.xml                  last uiautomator dump
+  artifacts/                   <timestamp>-<label>.png|.mp4|.log
+
+.cache/ktfmt/                  scripts/ci-local.sh
+  ktfmt-<ver>-with-dependencies.jar   latest Maven Central release = the version CI uses

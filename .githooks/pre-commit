@@ -1,0 +1,184 @@
+#!/bin/sh
+#
+# pre-commit hook — block the commit if any staged Kotlin source is not
+# formatted according to Google's ktfmt style (--google-style).
+#
+# On a violation it prints, for every offending file, the EXACT changes ktfmt
+# would make (a unified diff: "-" = your code, "+" = ktfmt's fix) and the one
+# command that fixes everything.
+#
+# Bypass (use sparingly): git commit --no-verify
+#
+set -eu
+
+# ---------------------------------------------------------------------------
+# Config (override via environment if needed)
+# ---------------------------------------------------------------------------
+KTFMT_STYLE="${KTFMT_STYLE:---google-style}"
+CACHE_DIR="${KTFMT_CACHE_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/ktfmt}"
+
+# Colors only when stderr is a terminal.
+if [ -t 2 ]; then
+  RED=$(printf '\033[31m'); GRN=$(printf '\033[32m'); YEL=$(printf '\033[33m')
+  BLD=$(printf '\033[1m'); RST=$(printf '\033[0m')
+else
+  RED=""; GRN=""; YEL=""; BLD=""; RST=""
+fi
+
+err() { printf '%s\n' "$*" >&2; }
+
+# ---------------------------------------------------------------------------
+# Requirements: Java
+# ---------------------------------------------------------------------------
+if ! command -v java >/dev/null 2>&1; then
+  err "${RED}${BLD}pre-commit: 'java' not found on PATH.${RST} ktfmt needs a JDK to run."
+  exit 1
+fi
+
+download() {
+  # $1 url  $2 dest
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL --connect-timeout 3 "$1" -o "$2"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -q -T 3 "$1" -O "$2"
+  else
+    return 127
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# Work area (created early for temp metadata checks)
+# ---------------------------------------------------------------------------
+TMP=$(mktemp -d "${TMPDIR:-/tmp}/ktfmt-precommit.XXXXXX")
+trap 'rm -rf "$TMP"' EXIT INT TERM
+
+# ---------------------------------------------------------------------------
+# Version Check: Query Maven Central for the latest release
+# ---------------------------------------------------------------------------
+METADATA_URL="https://repo1.maven.org/maven2/com/facebook/ktfmt/maven-metadata.xml"
+tmp_meta="$TMP/maven-metadata.xml"
+latest_version=""
+_root="$(git rev-parse --show-toplevel)"
+[ -f "$_root/agent-kit.env" ] && KTFMT_VERSION="$(sed -n 's/^KTFMT_VERSION=//p' "$_root/agent-kit.env" | tr -d '"' | tr -d '[:cntrl:]')"
+
+# Try downloading metadata to find the latest version
+if [ -n "${KTFMT_VERSION:-}" ]; then
+  latest_version="$KTFMT_VERSION"
+elif download "$METADATA_URL" "$tmp_meta"; then
+  latest_version=$(sed -n 's/.*<release>\([^<]*\)<\/release>.*/\1/p' "$tmp_meta")
+fi
+
+if [ -z "$latest_version" ]; then
+  # Offline or download failed — attempt to use the newest cached jar
+  cached_jar=$(ls -1 "$CACHE_DIR"/ktfmt-*-with-dependencies.jar 2>/dev/null | sort -V | tail -n 1 || true)
+  if [ -n "$cached_jar" ] && [ -f "$cached_jar" ]; then
+    KTFMT_JAR="$cached_jar"
+    # Extract version for message
+    version_name="${KTFMT_JAR##*/}"
+    version_name="${version_name#ktfmt-}"
+    version_name="${version_name%-with-dependencies.jar}"
+    err "${YEL}pre-commit: offline/cannot contact Maven Central. Using cached version: ${version_name}${RST}"
+  else
+    err "${RED}pre-commit: failed to check latest version and no cached jar found.${RST}"
+    exit 1
+  fi
+else
+  # Online — check if we already have the latest version cached
+  KTFMT_JAR="$CACHE_DIR/ktfmt-${latest_version}-with-dependencies.jar"
+  if [ ! -f "$KTFMT_JAR" ]; then
+    err "${YEL}pre-commit: downloading new ktfmt version ${latest_version} (~70MB)...${RST}"
+    mkdir -p "$CACHE_DIR"
+    tmp_jar="$KTFMT_JAR.tmp.$$"
+    jar_url="https://repo1.maven.org/maven2/com/facebook/ktfmt/${latest_version}/ktfmt-${latest_version}-with-dependencies.jar"
+    if download "$jar_url" "$tmp_jar"; then
+      # Delete old versions to keep cache clean
+      rm -f "$CACHE_DIR"/ktfmt-*-with-dependencies.jar
+      mv "$tmp_jar" "$KTFMT_JAR"
+      err "${GRN}pre-commit: ktfmt ${latest_version} successfully cached.${RST}"
+    else
+      rm -f "$tmp_jar"
+      # Download failed — fallback to the newest cached version we have
+      cached_jar=$(ls -1 "$CACHE_DIR"/ktfmt-*-with-dependencies.jar 2>/dev/null | sort -V | tail -n 1 || true)
+      if [ -n "$cached_jar" ] && [ -f "$cached_jar" ]; then
+        KTFMT_JAR="$cached_jar"
+        err "${YEL}pre-commit: download failed. Using cached ${KTFMT_JAR##*/}.${RST}"
+      else
+        err "${RED}pre-commit: failed to download ktfmt ${latest_version} and no cached version found.${RST}"
+        exit 1
+      fi
+    fi
+  fi
+fi
+
+# ---------------------------------------------------------------------------
+# Collect staged files
+# ---------------------------------------------------------------------------
+LIST="$TMP/list"          # Staged Kotlin files
+: > "$LIST"
+
+# Collect only staged Kotlin files (Added, Copied, Modified, Renamed)
+git diff --cached --name-only --diff-filter=ACMR -- '*.kt' '*.kts' 2>/dev/null > "$LIST"
+
+if [ ! -s "$LIST" ]; then
+  exit 0
+fi
+
+# ---------------------------------------------------------------------------
+# Check each file against ktfmt; collect violations + exact diffs.
+# ---------------------------------------------------------------------------
+violations=0
+checked=0
+REPORT="$TMP/report"; : > "$REPORT"
+BADPATHS="$TMP/badpaths"; : > "$BADPATHS"
+
+while read -r f; do
+  [ -z "$f" ] && continue
+  # Ensure the file exists on disk (not deleted)
+  [ ! -f "$f" ] && continue
+
+  checked=$((checked + 1))
+
+  # Run ktfmt in dry-run mode on the file directly
+  if ! java -jar "$KTFMT_JAR" "$KTFMT_STYLE" --dry-run --set-exit-if-changed "$f" >/dev/null 2>"$TMP/ktfmt.err"; then
+    violations=$((violations + 1))
+    printf '%s\n' "$f" >> "$BADPATHS"
+    {
+      printf '\n%s\u2717 %s%s\n' "$RED$BLD" "$f" "$RST"
+      if [ -s "$TMP/ktfmt.err" ]; then
+        sed -e "s#$f#$f#g" -e 's/^/    /' "$TMP/ktfmt.err"
+      else
+        # Generate format diff from standard input to avoid modifying the file on disk
+        java -jar "$KTFMT_JAR" "$KTFMT_STYLE" - < "$f" > "$TMP/formatted" 2>/dev/null || true
+        diff -u \
+          --label "a/$f (current)" \
+          --label "b/$f (ktfmt $KTFMT_STYLE)" \
+          "$f" "$TMP/formatted" || true
+      fi
+    } >> "$REPORT"
+  fi
+done < "$LIST"
+
+# ---------------------------------------------------------------------------
+# Verdict
+# ---------------------------------------------------------------------------
+if [ "$violations" -eq 0 ]; then
+  err "${GRN}pre-commit: all ${checked} staged Kotlin file(s) conform to ktfmt ${KTFMT_STYLE} \u2713${RST}"
+  exit 0
+fi
+
+err ""
+err "${RED}${BLD}Commit rejected: ${violations} Kotlin file(s) violate ktfmt (Google style).${RST}"
+err "${YEL}In the diffs below, '-' is your code and '+' is what ktfmt expects.${RST}"
+cat "$REPORT" >&2
+err ""
+err "${BLD}Offending files:${RST}"
+while read -r p; do err "  - $p"; done < "$BADPATHS"
+err ""
+err "${BLD}Fix them automatically by running, from the repo root:${RST}"
+fixcmd="java -jar \"$KTFMT_JAR\" $KTFMT_STYLE"
+while read -r p; do fixcmd="$fixcmd \"$p\""; done < "$BADPATHS"
+err "  ${GRN}${fixcmd}${RST}"
+err "  then stage the changes (${GRN}git add <files>${RST}) and commit again."
+err ""
+err "Bypass (not recommended): ${YEL}git commit --no-verify${RST}"
+exit 1

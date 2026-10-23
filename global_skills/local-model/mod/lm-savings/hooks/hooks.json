@@ -1,0 +1,4 @@
+{
+  "description": "The lm-savings command",
+  "modules": ["./register.js"]
+}

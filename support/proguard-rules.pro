@@ -60,7 +60,7 @@
 
 -keep class android.support.v8.renderscript.** { *; }
 
-#Crashlytics
+#Readable stack traces
 -keepattributes SourceFile,LineNumberTable        # Keep file names and line numbers.
 -keep public class * extends java.lang.Exception  # Optional: Keep custom exceptions.
 
@@ -97,9 +97,6 @@
 
 # Ignore annotation used for build tooling.
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
-
-#FCM
--dontwarn com.google.firebase.messaging.TopicOperation$TopicOperations
 
 -dontwarn javax.annotation.Nullable
 

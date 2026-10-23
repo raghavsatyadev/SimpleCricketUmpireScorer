@@ -7,7 +7,7 @@ plugins {
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.kotlin.parcelize)
 
-  alias(libs.plugins.compose.plugin)
+  alias(libs.plugins.compose.compiler)
 
   alias(libs.plugins.room)
   alias(libs.plugins.stability.analyzer)
@@ -20,7 +20,7 @@ val props = readProperties(file("../secret.properties"))
 
 android {
   namespace = libs.versions.supportId.get()
-  compileSdk = libs.versions.compileSdk.get().toInt()
+  compileSdk { version = release(libs.versions.compileSdk.get().toInt()) { minorApiLevel = 1 } }
   // compileSdkPreview = libs.versions.compileSdkPreview.get()
   buildToolsVersion = libs.versions.buildTools.get()
 
@@ -135,9 +135,6 @@ dependencies {
 
   // Navigation
   implementation(libs.bundles.navigation)
-
-  // Firebase
-  implementation(libs.bundles.firebase)
 
   // Google
   implementation(libs.bundles.google)

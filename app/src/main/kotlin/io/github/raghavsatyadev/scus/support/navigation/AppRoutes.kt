@@ -6,8 +6,6 @@ import kotlinx.serialization.Serializable
 object AppRoutes {
   @Serializable data object Dashboard : NavKey
 
-  @Serializable data object Login : NavKey
-
   @Serializable
   data class CreateMatch(
     val matchRecord: io.github.raghavsatyadev.support.models.db.match_record.MatchRecord? = null
