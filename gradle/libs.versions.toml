@@ -29,7 +29,7 @@ versionCode = "4"
 versionName = "1.0.0"
 
 # Plugin Versions
-agp = "9.5.0-alpha09"
+agp = "9.5.0-alpha10"
 kotlin = "2.5.0-Beta1"
 kotlinx-datetime = "0.8.0"
 ksp = "2.3.12"
