@@ -5,8 +5,6 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -43,14 +41,12 @@ private val config = SavedStateConfiguration {
   }
 }
 
+/** Any screen change that is not a container transform: a quick fade, back and forward alike. */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun sharedAxisX(motion: MotionScheme, forward: Boolean): ContentTransform {
-  val dir = if (forward) 1 else -1
-  return (slideInHorizontally(motion.defaultSpatialSpec()) { (it * 0.3f).toInt() * dir } +
-    fadeIn(motion.defaultEffectsSpec())) togetherWith
-    (slideOutHorizontally(motion.defaultSpatialSpec()) { -(it * 0.3f).toInt() * dir } +
-      fadeOut(motion.fastEffectsSpec()))
-}
+private fun quickFade(motion: MotionScheme, animate: Boolean): ContentTransform =
+  if (animate)
+    fadeIn(tween(QUICK_FADE_IN_MILLIS)) togetherWith fadeOut(tween(QUICK_FADE_OUT_MILLIS))
+  else fadeIn(motion.defaultEffectsSpec()) togetherWith fadeOut(motion.fastEffectsSpec())
 
 /**
  * Gives [content] the visibility scope of its nav entry, so a card and the screen it opens can
@@ -85,6 +81,7 @@ fun AppNavHost(vararg elements: AppRoutes) {
     } else {
       fadeIn(motion.defaultEffectsSpec()) togetherWith fadeOut(motion.fastEffectsSpec())
     }
+  val quickFade = quickFade(motion, animationsEnabled())
   val containerTransform =
     NavDisplay.transitionSpec { fadeThrough } +
       NavDisplay.popTransitionSpec { fadeThrough } +
@@ -96,9 +93,10 @@ fun AppNavHost(vararg elements: AppRoutes) {
         backStack = backStack,
         onBack = { if (backStack.isNotEmpty()) backStack.removeAt(backStack.size - 1) },
         sharedTransitionScope = this,
-        transitionSpec = { sharedAxisX(motion, forward = true) },
-        popTransitionSpec = { sharedAxisX(motion, forward = false) },
-        predictivePopTransitionSpec = { sharedAxisX(motion, forward = false) },
+        transitionSpec = { quickFade },
+        popTransitionSpec = { quickFade },
+        // The system back button and gesture too, not the library's default slide and scale.
+        predictivePopTransitionSpec = { quickFade },
         entryProvider =
           entryProvider {
             entry<AppRoutes.Dashboard> {
@@ -178,3 +176,6 @@ fun AppNavHost(vararg elements: AppRoutes) {
 private const val HOLD_MILLIS = 380
 
 private const val HOLD_FADE_MILLIS = 120
+
+private const val QUICK_FADE_IN_MILLIS = 150
+private const val QUICK_FADE_OUT_MILLIS = 90
