@@ -1,3 +1,2 @@
 *.sh text eol=lf
 .githooks/* text eol=lf
-global_skills/** text eol=lf

@@ -2,15 +2,15 @@
 # Claude Code UserPromptSubmit hook: point the agent at the .agents/rules files that fit the prompt.
 #
 # Wired in .claude/settings.json (hooks.UserPromptSubmit). Reads the hook JSON on stdin.
-# Asks the optional local decision model (scripts/local-model.sh) to classify the prompt, then prints
+# Asks the optional local decision model (~/.local-model/local-model.sh, from agent-workflow) to classify the prompt, then prints
 # {"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"..."}}.
 # Prints NOTHING when the local model is off, slow (2 s cap), unsure (top choice < 0.6) or the class is
 # "other". It never blocks: every path exits 0.
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-[ -f "$here/local-model.sh" ] || exit 0
-# shellcheck source=local-model.sh
-. "$here/local-model.sh"
+[ -f "$HOME/.local-model/local-model.sh" ] || exit 0
+# shellcheck source=/dev/null
+. "$HOME/.local-model/local-model.sh"
 LOCAL_MODEL_ALLOW_JEV=0   # hooks stay local and free; Jev is for lm-ask only
 lm_enabled || exit 0
 

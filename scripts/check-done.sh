@@ -95,7 +95,7 @@ fi
 
 # Fuzzy check (optional, local model): the last assistant text claims the fix is done, but the
 # transcript shows no device re-run. Reminder only; silent when the local model is off, slow or unsure.
-if [ -z "$msg" ] && [ -f "$REPO/scripts/local-model.sh" ]; then
+if [ -z "$msg" ] && [ -f "$HOME/.local-model/local-model.sh" ]; then
   tpath=$(printf '%s' "$flat" \
     | sed -n 's/.*"transcript_path"[[:space:]]*:[[:space:]]*"\(\([^"\\]\|\\.\)*\)".*/\1/p' \
     | sed 's/\\\\/\\/g; s/\\/\//g')
@@ -103,8 +103,8 @@ if [ -z "$msg" ] && [ -f "$REPO/scripts/local-model.sh" ]; then
     last=$(grep '"type":"assistant"' "$tpath" | grep '"type":"text"' | tail -n 1 \
       | sed -n 's/.*"type":"text","text":"\(\([^"\\]\|\\.\)*\)".*/\1/p')
     if printf '%s' "$last" | grep -Eiq '(fixed|done|resolved|works now|complete)'; then
-      # shellcheck source=local-model.sh
-      . "$REPO/scripts/local-model.sh"
+      # shellcheck source=/dev/null
+      . "$HOME/.local-model/local-model.sh"
       LOCAL_MODEL_ALLOW_JEV=0   # hooks stay local and free
       q='{"rerun":{"type":"noul","instructions":"Is there a device re-run in the text?"}}'
       if resp=$(tail -c 60000 "$tpath" | lm_ask 2 "$q") \

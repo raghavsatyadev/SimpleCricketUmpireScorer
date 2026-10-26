@@ -24,7 +24,7 @@ bash scripts/setup-env.sh                                         # macOS / Linu
 | NDK / CMake *(if used)* | set `NDK_VERSION` in `agent-kit.env` |
 | Submodules *(if any)* | `git submodule update --init` |
 | Git hooks | `git config core.hooksPath .githooks` |
-| Global skills | `global_skills/*` copied to the user's global skill folders (see below) |
+| Global skills | agent-workflow repo cloned, its `install.sh` run (see below) |
 | Android skills | `android` CLI, then `android skills add` for the named list below |
 | GitHub CLI | `gh`, logged in (`gh auth login`) with push access to the repo |
 | Python / uv | Python 3.10+, `uv` |
@@ -35,20 +35,21 @@ bash scripts/setup-env.sh                                         # macOS / Linu
 
 ### Global skills — ask the user to install them
 
-Some skills are global: they live in each developer's own skill folders and work in every
-project. The repo keeps the shared copy in `global_skills/` (now: `local-model`). No agent reads that
-folder directly, so a new machine has none of them until they are copied.
+Some skills are global (`local-model`, `code-graph`, `headless-emulator`, ...): they live in each
+developer's own skill folders and work in every project. They come from the private agent-workflow
+repo (https://github.com/raghavsatyadev/agent-workflow), not from this one, so a new machine has none of them until it is installed.
 
 Ask the user to install them, then on a yes run (Git Bash on Windows; the doctor offers the same):
 
 ```bash
-bash global_skills/install.sh   # re-run after a pull that changes global_skills/
+git clone https://github.com/raghavsatyadev/agent-workflow.git ../agent-workflow   # once
+bash ../agent-workflow/install.sh   # re-run after a pull in agent-workflow
 ```
 
-It copies each skill folder to `~/.claude/skills/` (Claude Code), `~/.gemini/skills/`
-(Gemini CLI / Antigravity) and `~/.agents/skills/` (Codex and other agents), and runs the skill's
-own `install.sh` (`local-model`: `~/.local-model/` commands and Claude Code hooks). On a no, tell the user
-which skills are missing. Restart the agent afterwards so it loads them.
+It links each skill into `~/.claude/skills/` (Claude Code), `~/.gemini/skills/` (Gemini CLI /
+Antigravity) and `~/.agents/skills/` (Codex and other agents), and runs each skill's own
+`install.sh` (`local-model`: `~/.local-model/` commands and Claude Code hooks). On a no, tell the
+user which skills are missing. Restart the agent afterwards so it loads them.
 
 ### Android skills — official, from the `android` CLI
 
@@ -65,7 +66,8 @@ permissions and intent security, testing setup, Play policy, …) are not kept i
 # Drop any the project does not use (ml-kit-genai-prompt-api, navigation-3, navigation-event).
 for s in adaptive android-cli android-intent-security android-permissions-security android-profiler appfunctions edge-to-edge ml-kit-genai-prompt-api navigation-3 navigation-event play-policy-insights r8-analyzer testing-setup; do
   # Claude Code: this repo only, in .claude/skills (gitignored), so non-Android projects don't load them
-  android skills add "$s" --agent=claude-code --project=.
+  [ -d ~/.claude/skills/"$s" ] ||   # already global: a project copy would only duplicate it
+    android skills add "$s" --agent=claude-code --project=.
   android skills add "$s" --agent=gemini   # Gemini: global
 done
 android skills update --project=.   # later, to refresh them
@@ -131,8 +133,8 @@ sessions short. If a local run seems to use Gemini, check `stdout.log` for
 ## Part 1b — Decision model for agents: Nimble / Tev1 / Laya (local) and Jev (hosted)
 
 Optional. A System One model answers yes/no and pick-one questions so agents need not read long
-text: the hooks in `scripts/` (through `scripts/local-model.sh`) and the `local-model` skill
-(`global_skills/local-model/SKILL.md` — how to use it, Jev rules, `jgl`, unloading). Without a model every
+text: the hooks in `scripts/` (through `~/.local-model/local-model.sh`, from agent-workflow) and the `local-model` skill
+(`~/.claude/skills/local-model/SKILL.md`, from agent-workflow — how to use it, Jev rules, `jgl`, unloading). Without a model every
 hook stays silent.
 
 The doctor (step 8b; `-DecisionModel` / `DECISION_MODEL=` for no prompt) checks the PC,
@@ -163,6 +165,6 @@ skips; stored in `~/.config/typesafe/api_key`, never in the repo) and offers the
 Nimble and a local ARTEMIS `qwen3-vl` model do not both fit under ~18 GB VRAM; Ollama swaps them.
 Tev1 4B and `qwen3-vl:4b` fit together in ~10 GB.
 
-The `local-model` skill comes from the global skills step above (`bash global_skills/install.sh`).
+The `local-model` skill comes from the global skills step above (agent-workflow `install.sh`).
 After the model works, check it with
 `echo hi | bash ~/.local-model/lm-ask yesno "Is this a greeting?"`.

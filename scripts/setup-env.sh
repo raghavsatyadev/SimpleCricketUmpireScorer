@@ -362,7 +362,7 @@ fi
 # -------------------------------------------------------------
 # 8b. Decision model for agents: Nimble / Tev1 / Laya (local) and Jev (hosted, optional)
 # -------------------------------------------------------------
-# Optional. The hooks (scripts/local-model.sh) and the local-model skill ask a System One model quick yes/no
+# Optional. The hooks (~/.local-model/local-model.sh, from agent-workflow) and the local-model skill ask a System One model quick yes/no
 # and pick-one questions instead of reading long text. All run on Ollama 0.35+ except Laya.
 # Measured on an RTX 5080 (60 tone samples, 10 log questions):
 #   Nimble 9B   ~9 GB VRAM, ~8K-token window, tone 55/60, logs 10/10
@@ -513,23 +513,20 @@ if [[ -n "$DECISION" && "$DECISION" != jev ]]; then
   fi
 fi
 
-# Global skills (global_skills/, e.g. `local-model`) work in every project, so they live in each
-# user's global skill folders: Claude Code, Gemini/Antigravity, Codex. Installed only when asked.
-missing_skills=()
-for d in "$REPO_ROOT"/global_skills/*/; do
-  [[ -f "$d/SKILL.md" ]] || continue
-  s="$(basename "$d")"
-  for t in .claude .gemini .agents; do
-    [[ -f "$HOME/$t/skills/$s/SKILL.md" ]] || { missing_skills+=("$s"); break; }
-  done
-done
-if [[ ${#missing_skills[@]} -eq 0 ]]; then
-  pass "Global skills are installed. Re-run global_skills/install.sh after a pull that changes them."
-elif prompt_fix "Install the global skills (${missing_skills[*]}) for Claude Code, Gemini and Codex (every project)?"; then
-  bash "$REPO_ROOT/global_skills/install.sh"
-  pass "Restart your agent. Check: echo hi | ~/.local-model/lm-ask yesno \"Is this a greeting?\""
+# Global skills (`local-model`, `code-graph`, ...) work in every project, so they live in each user's
+# global skill folders (Claude Code, Gemini/Antigravity, Codex), linked there by the agent-workflow
+# repo (https://github.com/raghavsatyadev/agent-workflow, private) and its install.sh. Installed only when asked.
+AW_DIR="${AGENT_WORKFLOW_DIR:-$(dirname "$REPO_ROOT")/agent-workflow}"
+if [[ -f "$HOME/.claude/skills/local-model/SKILL.md" ]]; then
+  pass "Global skills are installed (agent-workflow). Update: git pull in agent-workflow, then bash install.sh there."
+elif prompt_fix "Install the global skills from agent-workflow ($AW_DIR) for Claude Code, Gemini and Codex (every project)?"; then
+  if { [[ -d "$AW_DIR" ]] || git clone https://github.com/raghavsatyadev/agent-workflow.git "$AW_DIR"; } && bash "$AW_DIR/install.sh"; then
+    pass "Restart your agent. Check: echo hi | ~/.local-model/lm-ask yesno \"Is this a greeting?\""
+  else
+    warn "agent-workflow did not install (it is private: no access, or the clone failed). The project works without it."
+  fi
 else
-  warn "Skipped. Missing global skills: ${missing_skills[*]}. Later: bash global_skills/install.sh"
+  warn "Skipped. Later: git clone https://github.com/raghavsatyadev/agent-workflow.git, then bash install.sh in it (AGENT_WORKFLOW_DIR sets the folder)."
 fi
 if [[ -n "$DECISION" ]]; then
   [[ -n "${OLLAMA_MODEL:-}" ]] && info "Free the GPU after use: ~/.local-model/lm-off $OLLAMA_MODEL (Claude Code does it on session end)."
