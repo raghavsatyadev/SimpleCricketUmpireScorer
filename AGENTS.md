@@ -31,6 +31,7 @@ base branch `migration-cmp`. Values also live in `agent-kit.env`.
 | [branch-pr-policy.md](.agents/rules/branch-pr-policy.md) | *always* — see the summary below |
 | [parallel-agents.md](.agents/rules/parallel-agents.md) | the user asks for agents in parallel worktrees — pin the base commit, cap Gradle memory, clean up after |
 | [migration.md](.agents/rules/migration.md) | *always* — moving code to CMP; never edit `app` or `support` |
+| [compose-previews.md](.agents/rules/compose-previews.md) | *on demand* — rendering a `@Preview` to an image with `android studio render-compose-preview` |
 
 ## Skills — `.agents/skills/`
 
