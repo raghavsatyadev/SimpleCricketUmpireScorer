@@ -8,8 +8,9 @@ pluginManagement {
     gradlePluginPortal()
   }
 }
+
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+  id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 dependencyResolutionManagement {
@@ -28,4 +29,4 @@ rootProject.buildFileName = "project.gradle.kts"
 
 rootProject.name = "SCUS"
 
-include(":app", ":support", ":composeApp", ":androidCMP", ":desktopCMP")
+include(":composeApp", ":androidCMP", ":desktopCMP")

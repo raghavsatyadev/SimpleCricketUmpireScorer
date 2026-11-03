@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Run Gradle with short output for coding agents.
 # Success: one line. Failure: the "What went wrong" block, the Kotlin errors and the full log path.
-# Usage: scripts/gradle-agent.sh :app:compileDebugKotlin [more tasks or flags]
+# Usage: scripts/gradle-agent.sh :androidCMP:compileDebugKotlin [more tasks or flags]
 set -u
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
