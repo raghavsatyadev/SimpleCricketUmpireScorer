@@ -12,23 +12,16 @@ import androidx.compose.material3.MotionScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import androidx.navigation3.scene.Scene
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import io.github.raghavsatyadev.library.support.components.CREATE_MATCH_KEY
-import io.github.raghavsatyadev.library.support.components.LocalEntryVisibilityScope
 import io.github.raghavsatyadev.library.support.components.LocalSharedTransitionScope
-import io.github.raghavsatyadev.library.support.components.copyMatchKey
-import io.github.raghavsatyadev.library.support.models.db.match_record.MatchStatus
 import io.github.raghavsatyadev.library.support.theme.animationsEnabled
-import io.github.raghavsatyadev.library.ui.create_match.CreateMatchScreen
-import io.github.raghavsatyadev.library.ui.dashboard.DashboardScreen
-import io.github.raghavsatyadev.library.ui.match_complete.MatchCompleteScreen
-import io.github.raghavsatyadev.library.ui.match_record.MatchRecordScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
+import org.koin.compose.navigation3.koinEntryProvider
+import org.koin.core.annotation.KoinExperimentalAPI
 
 private val config = SavedStateConfiguration {
   serializersModule = SerializersModule {
@@ -48,19 +41,7 @@ private fun quickFade(motion: MotionScheme, animate: Boolean): ContentTransform 
     fadeIn(tween(QUICK_FADE_IN_MILLIS)) togetherWith fadeOut(tween(QUICK_FADE_OUT_MILLIS))
   else fadeIn(motion.defaultEffectsSpec()) togetherWith fadeOut(motion.fastEffectsSpec())
 
-/**
- * Gives [content] the visibility scope of its nav entry, so a card and the screen it opens can
- * share bounds (see sharedMatchContainer).
- */
-@Composable
-private fun SharedEntry(content: @Composable () -> Unit) {
-  CompositionLocalProvider(
-    LocalEntryVisibilityScope provides LocalNavAnimatedContentScope.current,
-    content = content,
-  )
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, KoinExperimentalAPI::class)
 @Composable
 fun AppNavHost(vararg elements: AppRoutes) {
 
@@ -82,91 +63,25 @@ fun AppNavHost(vararg elements: AppRoutes) {
       fadeIn(motion.defaultEffectsSpec()) togetherWith fadeOut(motion.fastEffectsSpec())
     }
   val quickFade = quickFade(motion, animationsEnabled())
-  val containerTransform =
-    NavDisplay.transitionSpec { fadeThrough } +
-      NavDisplay.popTransitionSpec { fadeThrough } +
-      NavDisplay.predictivePopTransitionSpec { fadeThrough }
+  // Screens marked CONTAINER_TRANSFORM grow out of a card on the way in and shrink back on the way
+  // out.
+  fun Scene<NavKey>.grows() = metadata[CONTAINER_TRANSFORM] == true
+  val entries = koinEntryProvider<NavKey>()
 
   SharedTransitionLayout {
-    CompositionLocalProvider(LocalSharedTransitionScope provides this) {
+    CompositionLocalProvider(
+      LocalSharedTransitionScope provides this,
+      LocalBackStack provides backStack,
+    ) {
       NavDisplay(
         backStack = backStack,
         onBack = { if (backStack.isNotEmpty()) backStack.removeAt(backStack.size - 1) },
         sharedTransitionScope = this,
-        transitionSpec = { quickFade },
-        popTransitionSpec = { quickFade },
+        transitionSpec = { if (targetState.grows()) fadeThrough else quickFade },
+        popTransitionSpec = { if (initialState.grows()) fadeThrough else quickFade },
         // The system back button and gesture too, not the library's default slide and scale.
-        predictivePopTransitionSpec = { quickFade },
-        entryProvider =
-          entryProvider {
-            entry<AppRoutes.Dashboard> {
-              SharedEntry {
-                DashboardScreen(
-                  onAddMatchClick = { backStack.add(AppRoutes.CreateMatch()) },
-                  onMatchClick = { matchRecord ->
-                    val route =
-                      when (matchRecord.status) {
-                        MatchStatus.NOT_STARTED,
-                        MatchStatus.IN_PROGRESS -> {
-                          AppRoutes.MatchRecord(
-                            matchId = matchRecord.matchRecordId,
-                            preview = matchRecord,
-                          )
-                        }
-                        else -> {
-                          AppRoutes.MatchComplete(
-                            matchId = matchRecord.matchRecordId,
-                            preview = matchRecord,
-                          )
-                        }
-                      }
-                    backStack.add(route)
-                  },
-                  onCopyMatchRecord = { backStack.add(AppRoutes.CreateMatch(matchRecord = it)) },
-                )
-              }
-            }
-            entry<AppRoutes.CreateMatch>(metadata = containerTransform) {
-              SharedEntry {
-                CreateMatchScreen(
-                  matchRecord = it.matchRecord,
-                  sharedKey =
-                    it.matchRecord?.let { r -> copyMatchKey(r.matchRecordId) } ?: CREATE_MATCH_KEY,
-                  onMatchCreated = { matchRecord ->
-                    if (backStack.isNotEmpty()) backStack.removeAt(backStack.size - 1)
-                    backStack.add(
-                      AppRoutes.MatchRecord(
-                        matchId = matchRecord.matchRecordId,
-                        preview = matchRecord,
-                      )
-                    )
-                  },
-                )
-              }
-            }
-            entry<AppRoutes.MatchRecord>(metadata = containerTransform) { key ->
-              SharedEntry {
-                MatchRecordScreen(
-                  matchRecordId = key.matchId,
-                  preview = key.preview,
-                  onBack = { if (backStack.isNotEmpty()) backStack.removeAt(backStack.size - 1) },
-                  onMatchCompleted = {
-                    if (backStack.isNotEmpty()) backStack.removeAt(backStack.size - 1)
-                    backStack.add(AppRoutes.MatchComplete(matchId = key.matchId))
-                  },
-                )
-              }
-            }
-            entry<AppRoutes.MatchComplete>(metadata = containerTransform) { key ->
-              SharedEntry {
-                MatchCompleteScreen(
-                  matchId = key.matchId,
-                  preview = key.preview,
-                  onBack = { if (backStack.isNotEmpty()) backStack.removeAt(backStack.size - 1) },
-                )
-              }
-            }
-          },
+        predictivePopTransitionSpec = { if (initialState.grows()) fadeThrough else quickFade },
+        entryProvider = entries,
       )
     }
   }

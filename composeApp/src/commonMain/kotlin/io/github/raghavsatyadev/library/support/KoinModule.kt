@@ -3,6 +3,7 @@ package io.github.raghavsatyadev.library.support
 import io.github.raghavsatyadev.library.support.components.UiStateManager
 import io.github.raghavsatyadev.library.support.database.commonDatabaseModule
 import io.github.raghavsatyadev.library.support.database.platformDatabaseModule
+import io.github.raghavsatyadev.library.support.navigation.navigationModule
 import io.github.raghavsatyadev.library.ui.create_match.CreateMatchScreenViewModel
 import io.github.raghavsatyadev.library.ui.dashboard.DashboardScreenViewModel
 import io.github.raghavsatyadev.library.ui.main.MainViewModel
@@ -27,6 +28,6 @@ val appModule = module {
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
   startKoin {
     appDeclaration()
-    modules(appModule, commonDatabaseModule, platformDatabaseModule())
+    modules(appModule, navigationModule, commonDatabaseModule, platformDatabaseModule())
   }
 }
