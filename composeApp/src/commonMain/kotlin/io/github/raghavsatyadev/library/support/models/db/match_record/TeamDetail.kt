@@ -1,6 +1,6 @@
 package io.github.raghavsatyadev.library.support.models.db.match_record
 
-import androidx.room.ColumnInfo
+import androidx.room3.ColumnInfo
 import io.github.raghavsatyadev.library.support.Constants
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

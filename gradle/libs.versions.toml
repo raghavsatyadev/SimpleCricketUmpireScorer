@@ -58,8 +58,9 @@ navigation3 = "1.3.0-alpha03"
 navigation3-mp = "1.2.0"
 play-services-ads = "25.5.0"
 room = "2.8.5"
+room3 = "3.1.0-alpha03"
 room-sqlite = "2.8.0-alpha01"
-serialization = "1.12.0-RC"
+serialization = "1.12.0"
 sonarqube = "7.5.0.8588"
 splashscreen = "1.2.0"
 stability-analyzer = "0.15.0"
@@ -141,7 +142,9 @@ room = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 
-# Room Multiplatform
+# Room 3 Multiplatform (composeApp); the legacy support module stays on Room 2
+room3-runtime-mp = { module = "androidx.room3:room3-runtime", version.ref = "room3" }
+room3-compiler-mp = { module = "androidx.room3:room3-compiler", version.ref = "room3" }
 room-sqlite-bundled-mp = { module = "androidx.sqlite:sqlite-bundled", version.ref = "room-sqlite" }
 
 # WorkManager
@@ -181,6 +184,7 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
 room = { id = "androidx.room", version.ref = "room" }
+room3 = { id = "androidx.room3", version.ref = "room3" }
 stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "stability-analyzer" }
 
 [bundles]
@@ -269,7 +273,7 @@ room = [
     "room-runtime",
 ]
 room-mp = [
-    "room-runtime",
+    "room3-runtime-mp",
     "room-sqlite-bundled-mp",
 ]
 ksp = [

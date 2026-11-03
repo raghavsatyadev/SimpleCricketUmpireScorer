@@ -40,7 +40,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +52,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.raghavsatyadev.library.support.components.AppToolBar
 import io.github.raghavsatyadev.library.support.components.CREATE_MATCH_KEY
 import io.github.raghavsatyadev.library.support.components.DarkPreview
@@ -536,7 +536,7 @@ private fun HandleCreateMatchEvents(
   viewModel: CreateMatchScreenViewModel,
   onMatchCreated: (MatchRecord) -> Unit,
 ) {
-  val createMatchState by viewModel.createMatchRecordEvent.collectAsState()
+  val createMatchState by viewModel.createMatchRecordEvent.collectAsStateWithLifecycle()
 
   if (createMatchState is UiState.Error) {
     val state = createMatchState as UiState.Error

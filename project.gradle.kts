@@ -20,6 +20,7 @@ plugins {
   alias(libs.plugins.stability.analyzer) apply false
 
   alias(libs.plugins.room) apply false
+  alias(libs.plugins.room3) apply false
 
   alias(libs.plugins.sonarqube)
 }

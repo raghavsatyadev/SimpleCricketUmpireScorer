@@ -1,6 +1,6 @@
 package io.github.raghavsatyadev.library.support.database
 
-import androidx.room.TypeConverter
+import androidx.room3.ColumnTypeConverter
 import io.github.raghavsatyadev.library.support.extensions.serializer.SerializationExtensions.toJsonString
 import io.github.raghavsatyadev.library.support.extensions.serializer.SerializationExtensions.toKotlinObject
 
@@ -8,42 +8,42 @@ import io.github.raghavsatyadev.library.support.extensions.serializer.Serializat
 class EssentialConverters {
   // region Essential Converters
 
-  @TypeConverter
+  @ColumnTypeConverter
   fun fromIntegerArrayList(data: ArrayList<Int>?): String {
     return data?.toJsonString() ?: "[]"
   }
 
-  @TypeConverter
+  @ColumnTypeConverter
   fun toIntegerArrayList(s: String?): ArrayList<Int> {
     return s?.toKotlinObject<ArrayList<Int>>() ?: ArrayList()
   }
 
-  @TypeConverter
+  @ColumnTypeConverter
   fun fromIntegerList(data: List<Int>?): String {
     return data?.toJsonString() ?: "[]"
   }
 
-  @TypeConverter
+  @ColumnTypeConverter
   fun toIntegerList(s: String?): List<Int> {
     return s?.toKotlinObject<ArrayList<Int>>() ?: ArrayList()
   }
 
-  @TypeConverter
+  @ColumnTypeConverter
   fun fromStringArrayList(data: ArrayList<String>?): String {
     return data?.toJsonString() ?: "[]"
   }
 
-  @TypeConverter
+  @ColumnTypeConverter
   fun toStringArrayList(s: String?): ArrayList<String> {
     return s?.toKotlinObject<ArrayList<String>>() ?: ArrayList()
   }
 
-  @TypeConverter
+  @ColumnTypeConverter
   fun fromStringList(data: List<String>?): String {
     return data?.toJsonString() ?: "[]"
   }
 
-  @TypeConverter
+  @ColumnTypeConverter
   fun toStringList(s: String?): List<String> {
     return s?.toKotlinObject<ArrayList<String>>() ?: ArrayList()
   }

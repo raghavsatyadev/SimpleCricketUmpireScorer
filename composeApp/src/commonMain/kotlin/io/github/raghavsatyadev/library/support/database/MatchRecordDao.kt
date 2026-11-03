@@ -1,7 +1,7 @@
 package io.github.raghavsatyadev.library.support.database
 
-import androidx.room.Dao
-import androidx.room.Query
+import androidx.room3.Dao
+import androidx.room3.Query
 import io.github.raghavsatyadev.library.support.models.db.match_record.MatchRecord
 import kotlinx.coroutines.flow.Flow
 

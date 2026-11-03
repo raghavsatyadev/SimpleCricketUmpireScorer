@@ -1,11 +1,11 @@
 package io.github.raghavsatyadev.library.support.database
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.RawQuery
-import androidx.room.RoomRawQuery
-import androidx.room.Update
+import androidx.room3.Delete
+import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy
+import androidx.room3.RawQuery
+import androidx.room3.RoomRawQuery
+import androidx.room3.Update
 
 interface BaseDao<T> {
   @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertReplace(t: T): Long

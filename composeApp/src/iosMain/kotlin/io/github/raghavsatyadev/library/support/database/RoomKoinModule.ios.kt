@@ -1,7 +1,7 @@
 package io.github.raghavsatyadev.library.support.database
 
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
 import io.github.raghavsatyadev.library.support.Constants
 import kotlinx.cinterop.ExperimentalForeignApi
 import org.koin.core.module.Module

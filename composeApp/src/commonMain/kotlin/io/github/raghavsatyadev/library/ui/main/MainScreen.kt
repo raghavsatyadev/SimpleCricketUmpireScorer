@@ -10,10 +10,10 @@ import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.raghavsatyadev.library.support.navigation.AppNavHost
 import io.github.raghavsatyadev.library.support.navigation.AppRoutes
 import org.koin.compose.viewmodel.koinViewModel
@@ -22,7 +22,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
   val motion = MaterialTheme.motionScheme
-  val isLoading by viewModel.isLoading.collectAsState()
+  val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
   Box(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surface)) {
     AppNavHost(AppRoutes.Dashboard)

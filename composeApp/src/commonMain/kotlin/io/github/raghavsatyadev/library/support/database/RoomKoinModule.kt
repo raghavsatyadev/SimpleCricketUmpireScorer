@@ -1,6 +1,6 @@
 package io.github.raghavsatyadev.library.support.database
 
-import androidx.room.RoomDatabase
+import androidx.room3.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import io.github.raghavsatyadev.library.support.repository.MatchRecordRepository
 import io.github.raghavsatyadev.library.support.repository.MatchRecordRepositoryImpl

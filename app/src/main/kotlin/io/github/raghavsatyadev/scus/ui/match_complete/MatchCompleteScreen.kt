@@ -25,7 +25,6 @@ import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.components.AppToolBar
 import io.github.raghavsatyadev.support.components.DarkRealDevicePreview
@@ -63,7 +63,7 @@ fun MatchCompleteScreen(
     viewModel.loadMatchRecord(matchId)
   }
 
-  val matchRecord by viewModel.matchRecord.collectAsState()
+  val matchRecord by viewModel.matchRecord.collectAsStateWithLifecycle()
 
   val team1Details = remember(matchRecord) { matchRecord?.toBasicMatchUIDetails(true) }
   val team2Details = remember(matchRecord) { matchRecord?.toBasicMatchUIDetails(false) }

@@ -7,13 +7,10 @@ plugins {
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.ksp)
-  alias(libs.plugins.room)
+  alias(libs.plugins.room3)
 }
 
-room {
-  schemaDirectory("$projectDir/schemas")
-  generateKotlin = true
-}
+room3 { schemaDirectory("$projectDir/schemas") }
 
 kotlin {
   android {
@@ -36,7 +33,6 @@ kotlin {
     androidMain.dependencies {
       implementation(libs.compose.ui.preview)
       implementation(libs.compose.activity)
-      implementation(libs.room.runtime)
     }
 
     commonMain.dependencies {
@@ -56,8 +52,8 @@ kotlin {
 
 dependencies {
   androidRuntimeClasspath(libs.compose.ui.tooling)
-  add("kspAndroid", libs.room.compiler)
-  add("kspDesktop", libs.room.compiler)
-  add("kspIosSimulatorArm64", libs.room.compiler)
-  add("kspIosArm64", libs.room.compiler)
+  add("kspAndroid", libs.room3.compiler.mp)
+  add("kspDesktop", libs.room3.compiler.mp)
+  add("kspIosSimulatorArm64", libs.room3.compiler.mp)
+  add("kspIosArm64", libs.room3.compiler.mp)
 }

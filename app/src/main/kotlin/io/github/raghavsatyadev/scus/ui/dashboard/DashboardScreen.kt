@@ -20,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,8 +27,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.scus.support.models.MatchRecordProperties
+import io.github.raghavsatyadev.support.R as Rs
 import io.github.raghavsatyadev.support.components.AdUI
 import io.github.raghavsatyadev.support.components.AppToolBar
 import io.github.raghavsatyadev.support.components.DarkRealDevicePreview
@@ -37,7 +38,6 @@ import io.github.raghavsatyadev.support.components.LightRealDevicePreview
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
-import io.github.raghavsatyadev.support.R as Rs
 
 @Composable
 fun DashboardScreen(
@@ -47,7 +47,8 @@ fun DashboardScreen(
   onCopyMatchRecord: (MatchRecord) -> Unit,
 ) {
 
-  val matchRecords by viewModel.matchRecordsFlow.collectAsState(initial = emptyList())
+  val matchRecords by
+    viewModel.matchRecordsFlow.collectAsStateWithLifecycle(initialValue = emptyList())
 
   DashboardUI(
     matchRecords = matchRecords,

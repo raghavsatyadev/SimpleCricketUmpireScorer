@@ -54,7 +54,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -75,6 +74,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.raghavsatyadev.library.support.components.AppToolBar
 import io.github.raghavsatyadev.library.support.components.CelebrationKind
 import io.github.raghavsatyadev.library.support.components.CelebrationOverlay
@@ -152,7 +152,7 @@ fun MatchRecordScreen(
 
   DisposableEffect(Unit) { onDispose { viewModel.clearLoadingState() } }
 
-  val recordState by viewModel.matchRecordEvent.collectAsState()
+  val recordState by viewModel.matchRecordEvent.collectAsStateWithLifecycle()
   val matchStatus = recordState?.matchStatus
 
   LaunchedEffect(matchStatus) {

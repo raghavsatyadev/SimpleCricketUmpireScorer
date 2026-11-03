@@ -28,7 +28,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.components.AppToolBar
 import io.github.raghavsatyadev.support.components.DarkRealDevicePreview
@@ -71,7 +71,7 @@ fun MatchRecordScreen(
 
   DisposableEffect(Unit) { onDispose { viewModel.clearLoadingState() } }
 
-  val recordState by viewModel.matchRecordEvent.collectAsState()
+  val recordState by viewModel.matchRecordEvent.collectAsStateWithLifecycle()
 
   val matchStatus = recordState?.matchStatus
 

@@ -36,7 +36,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +47,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.raghavsatyadev.scus.R
 import io.github.raghavsatyadev.support.components.AppToolBar
 import io.github.raghavsatyadev.support.components.DarkPreview
@@ -59,10 +59,10 @@ import io.github.raghavsatyadev.support.extensions.DateExtensions.toZoneLocalDat
 import io.github.raghavsatyadev.support.models.db.match_record.MatchRecord
 import io.github.raghavsatyadev.support.models.essential.UiState
 import io.github.raghavsatyadev.support.theme.AppTheme
-import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.Calendar
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CreateMatchScreen(
@@ -126,13 +126,14 @@ private fun HandleCreateMatchEvents(
   viewModel: CreateMatchScreenViewModel,
   onMatchCreated: (MatchRecord) -> Unit,
 ) {
-  val createMatchState by viewModel.createMatchRecordEvent.collectAsState()
+  val createMatchState by viewModel.createMatchRecordEvent.collectAsStateWithLifecycle()
 
   if (createMatchState is UiState.Error) {
     val state = createMatchState as UiState.Error
     ErrorDialog(
       errorCode = state.error.errorCode,
-      errorMessage = state.error.exception?.message ?: stringResource(state.error.errorCode.warning),
+      errorMessage =
+        state.error.exception?.message ?: stringResource(state.error.errorCode.warning),
     ) {
       viewModel.createMatchEventConsumed()
     }
