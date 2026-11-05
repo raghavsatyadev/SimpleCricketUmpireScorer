@@ -24,7 +24,14 @@ android {
       keyPassword = secretProps.getProperty("keyPassword")
     }
   }
-  buildTypes { getByName("release") { signingConfig = signingConfigs.getByName("release") } }
+  buildTypes {
+    getByName("release") {
+      signingConfig = signingConfigs.getByName("release")
+      isMinifyEnabled = true
+      isShrinkResources = true
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    }
+  }
   namespace = libs.versions.nameSpace.get()
   compileSdk { version = release(libs.versions.compileSdk.get().toInt()) { minorApiLevel = 1 } }
   buildToolsVersion = libs.versions.buildTools.get()
