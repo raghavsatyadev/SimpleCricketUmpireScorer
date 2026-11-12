@@ -11,4 +11,4 @@ Record a flow once an ARTEMIS run has proven it:
 
 Tips: prefer `tapOn: "<text or id>"` over coordinates; add `assertVisible` at the end so the flow
 fails loudly; use `clearState` first for a clean start. Record the flow's purpose in
-`.agents/skills/android-device-test/flows.md`.
+`.agents/flows/flows.md`.

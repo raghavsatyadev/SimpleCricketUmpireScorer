@@ -113,3 +113,28 @@ memory/
 # setup-env links each .agents/skills/<name> here; links, not files to commit
 .claude/skills/
 .claude/settings.local.json
+# >>> agent-workflow project kit (scripts/link-project.sh) >>>
+/.agents/rules/android-build.md
+/.agents/rules/artemis-mobile-testing.md
+/.agents/rules/branch-pr-policy.md
+/.agents/rules/compose-previews.md
+/.agents/rules/format.md
+/.agents/rules/parallel-agents.md
+/.agents/skills/android-device-test
+/.agents/skills/artemis-key-rotation
+/.agents/skills/cmp-best-practices
+/.agents/skills/compose-screenshot-test
+/.agents/skills/fix-issue
+/.agents/skills/material3-expressive
+/.agents/skills/project-onboarding-setup
+/.agents/skills/workspace-cleanup
+/.claude/skills/android-device-test
+/.claude/skills/artemis-key-rotation
+/.claude/skills/cmp-best-practices
+/.claude/skills/compose-screenshot-test
+/.claude/skills/fix-issue
+/.claude/skills/material3-expressive
+/.claude/skills/project-onboarding-setup
+/.claude/skills/workspace-cleanup
+/tmp/agents-replaced/
+# <<< agent-workflow project kit <<<

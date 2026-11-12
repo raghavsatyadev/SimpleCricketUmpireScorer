@@ -25,6 +25,7 @@ base branch `migration-cmp`. Values also live in `agent-kit.env`.
 
 | Rule | Read it when |
 | --- | --- |
+| [project.md](.agents/rules/project.md) | *always* — this app's overrides of the shared rules and skills (theme, build, git, device notes); wins over them |
 | [android-build.md](.agents/rules/android-build.md) | before calling any task done — the code must compile |
 | [format.md](.agents/rules/format.md) | touching any Kotlin — ktfmt Google style is mandatory |
 | [artemis-mobile-testing.md](.agents/rules/artemis-mobile-testing.md) | *on demand* — using ARTEMIS MCP tools |
