@@ -5,7 +5,7 @@ Shared instructions for every coding agent in this repo — Claude, Gemini, Code
 
 **SimpleCricketUmpireScorer (SCUS)** — a cricket umpire scoring app, mid-migration from Jetpack Compose (`app`, `support`) to Compose Multiplatform (`composeApp`, `androidCMP`).
 Modules: `app`, `support`, `composeApp`, `androidCMP`, `desktopCMP` · app module `:androidCMP` · applicationId `io.github.raghavsatyadev.scus` ·
-base branch `migration-cmp`. Values also live in `agent-kit.env`.
+base branch `master`. Values also live in `agent-kit.env`.
 
 ## How to work
 
@@ -57,8 +57,8 @@ matches CI exactly. Never format with a `ktfmt` from your PATH; `ci-local.sh` fe
 
 ## Branches & PRs (strict)
 
-Never push to `migration-cmp` or `master`. Branch off `origin/migration-cmp` as `<type>/<slug>`,
-push, and open a PR against `migration-cmp` with `gh pr create --body-file <file>` (never inline
+Never push to `master`. Branch off `origin/master` as `<type>/<slug>`,
+push, and open a PR against `master` with `gh pr create --body-file <file>` (never inline
 `--body`). Never merge or approve a PR — hand off the URL.
 
 ## Working on a bug
