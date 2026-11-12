@@ -17,5 +17,5 @@ Shared skills/rules are links into agent-workflow (`scripts/link-project.sh`); t
   `InningsProgressBar` is the shaped progress; the one hero motion is `DriftingShape` behind the
   winner's score; match cards open via `sharedMatchContainer` with per-piece keys
   (`match-<id>-score-1`, `teamNameKey(...)`).
-- **Migration**: see the project-local `migration` rule (`BASE_BRANCH=migration-cmp`).
+- **Migration**: see the project-local `migration` rule.
 - **Preview example**: `composeApp/src/commonMain/kotlin/io/github/raghavsatyadev/library/support/components/AppToolBar.kt AppToolBarPreview`.
